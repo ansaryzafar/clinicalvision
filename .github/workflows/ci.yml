@@ -105,8 +105,8 @@ jobs:
       
       - name: Build
         env:
-          CI: false
-          DISABLE_ESLINT_PLUGIN: true
+          CI: 'false'
+          DISABLE_ESLINT_PLUGIN: 'true'
         run: |
           cd clinicalvision_frontend
           npm run build

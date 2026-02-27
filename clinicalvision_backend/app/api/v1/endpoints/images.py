@@ -6,6 +6,7 @@ Handles medical image upload, download, management, and lifecycle operations
 from typing import List, Optional
 from uuid import UUID
 import logging
+import shutil
 
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Query, Response
 from fastapi.responses import FileResponse, StreamingResponse

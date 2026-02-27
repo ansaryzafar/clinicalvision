@@ -580,7 +580,7 @@ class RealModelInference(BaseModelInference):
             logger.warning(f"GPU compatibility test failed: {e}")
             return False
     
-    def _build_model(self, use_mc_dropout: bool = False) -> "keras.Model":
+    def _build_model(self, use_mc_dropout: bool = False) -> "keras.Model":  # noqa: F821
         """
         Build DenseNet-121 model matching V12 ROI production architecture EXACTLY.
         
@@ -645,7 +645,7 @@ class RealModelInference(BaseModelInference):
         model = self.keras.Model(inputs=inputs, outputs=outputs, name='v12_densenet121')
         return model
     
-    def _transfer_weights(self, source: "keras.Model", target: "keras.Model"):
+    def _transfer_weights(self, source: "keras.Model", target: "keras.Model"):  # noqa: F821
         """Transfer weights between models with matching layer names."""
         source_weights = {layer.name: layer.get_weights() for layer in source.layers if layer.get_weights()}
         transferred = 0
@@ -1234,7 +1234,7 @@ def get_model_inference(version: Optional[str] = None) -> BaseModelInference:
     Returns:
         Model inference instance (mock or real)
     """
-    global _model_instances, _mock_instance
+    global _mock_instance
     
     if settings.USE_MOCK_MODEL:
         if _mock_instance is None:

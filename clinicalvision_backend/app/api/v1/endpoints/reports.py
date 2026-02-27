@@ -351,7 +351,7 @@ async def update_report(
         # Use authenticated user for audit trail
         report = service.update_report(report_id, update_data, current_user.id)
         
-        logger.info(f"Updated report {report.report_number} by user {user.id}")
+        logger.info(f"Updated report {report.report_number} by user {current_user.id}")
         
         return report
         
