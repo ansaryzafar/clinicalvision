@@ -1,0 +1,730 @@
+/* ============================================
+   LUNIT.IO DESIGN SYSTEM - ANIMATIONS & EFFECTS
+   ClinicalVision Implementation
+   ============================================ */
+
+/* ==============================
+   CSS CUSTOM PROPERTIES
+   ============================== */
+:root {
+  /* Transition Variables */
+  --transition-fast: all 0.2s ease;
+  --transition-default: all 0.3s ease;
+  --transition-medium: all 0.3s ease-in-out;
+  --transition-slow: all 0.4s ease-in-out;
+  --transition-card: all 0.5s ease;
+  --transition-gradient: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+  --transition-bg-scale: transform 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Lunit Colors */
+  --lunit-teal: #00C9EA;
+  --lunit-teal-darker: #0F95AB;
+  --lunit-black: #000000;
+  --lunit-white: #FFFFFF;
+  --lunit-darker-gray: #233232;
+  --lunit-dark-grey: #5C6A6B;
+  --lunit-grey: #95A3A4;
+  --lunit-light-gray: #CFD6D7;
+  --lunit-lightest-gray: #EFF0F4;
+  --lunit-orange: #FF5321;
+  --lunit-green: #56C14D;
+  --lunit-yellow: #FFE205;
+  
+  /* Button Transition */
+  --btn-transition: all 0.4s ease-in-out;
+}
+
+/* ==============================
+   GLOBAL TRANSITIONS
+   ============================== */
+a {
+  transition: color 0.3s ease;
+}
+
+button,
+.MuiButton-root {
+  transition: var(--btn-transition) !important;
+}
+
+/* ==============================
+   KEYFRAME ANIMATIONS
+   ============================== */
+
+/* Spin animation for loading states */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fade in up animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide in from right */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Pulse animation for indicators */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.2);
+  }
+}
+
+/* Scanning Square Animation - Idle */
+@keyframes scanPulseIdle {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+
+/* Scanning Square Animation - Active (on hover) */
+@keyframes scanPulseActive {
+  0% {
+    transform: scale(1);
+    border-color: #E53935;
+    box-shadow: 0 0 20px rgba(229, 57, 53, 0.5);
+  }
+  50% {
+    transform: scale(1.25);
+    border-color: #FF1744;
+    box-shadow: 0 0 40px rgba(255, 23, 68, 0.7);
+  }
+  100% {
+    transform: scale(1);
+    border-color: #E53935;
+    box-shadow: 0 0 20px rgba(229, 57, 53, 0.5);
+  }
+}
+
+/* Scan Zone Container */
+.scan-zone {
+  position: absolute;
+  cursor: pointer;
+}
+
+.scan-zone .scan-frame {
+  animation: scanPulseIdle 3s ease-in-out infinite;
+}
+
+.scan-zone:hover .scan-frame {
+  animation: scanPulseActive 1s ease-in-out infinite !important;
+}
+
+.scan-zone:hover .scan-corner {
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 8px #E53935);
+}
+
+.scan-zone:hover .scan-glow {
+  opacity: 0.9 !important;
+}
+
+/* Heatmap pulse for medical imagery */
+@keyframes heatmapPulse {
+  0%, 100% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+/* Logo scroll animation */
+@keyframes scrollLogos {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Counter animation */
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Gentle float animation */
+@keyframes gentleFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Scale in animation */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ==============================
+   BUTTON HOVER EFFECTS
+   ============================== */
+
+/* Primary Button - Black to Teal */
+.btn-primary-lunit {
+  background: var(--lunit-black);
+  color: var(--lunit-white);
+  border-radius: 100px;
+  transition: var(--btn-transition);
+}
+
+.btn-primary-lunit:hover,
+.btn-primary-lunit:focus-visible {
+  background: var(--lunit-teal);
+  color: var(--lunit-black);
+  box-shadow: none;
+}
+
+/* Secondary Button - Outlined */
+.btn-secondary-lunit {
+  background: transparent;
+  color: var(--lunit-black);
+  border: 1px solid var(--lunit-black);
+  border-radius: 100px;
+  transition: var(--btn-transition);
+}
+
+.btn-secondary-lunit:hover,
+.btn-secondary-lunit:focus-visible {
+  background: var(--lunit-teal);
+  color: var(--lunit-black);
+  border-color: var(--lunit-teal);
+}
+
+/* Secondary Button Dark - For dark backgrounds */
+.btn-secondary-dark-lunit {
+  background: transparent;
+  color: var(--lunit-white);
+  border: 1px solid var(--lunit-white);
+  border-radius: 100px;
+  transition: var(--btn-transition);
+}
+
+.btn-secondary-dark-lunit:hover,
+.btn-secondary-dark-lunit:focus-visible {
+  background: var(--lunit-teal);
+  color: var(--lunit-black);
+  border-color: var(--lunit-teal);
+}
+
+/* Link Button with arrow icon */
+.btn-link-lunit {
+  background: transparent;
+  border: none;
+  padding: 0;
+  transition: var(--transition-default);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-link-lunit:hover {
+  text-decoration: underline;
+}
+
+/* ==============================
+   CARD HOVER EFFECTS
+   ============================== */
+
+/* Dark card with gradient hover */
+.card-dark-gradient-lunit {
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition-card);
+}
+
+.card-dark-gradient-lunit::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  bottom: 0;
+  left: 0;
+  transition: var(--transition-gradient);
+  pointer-events: none;
+  background: radial-gradient(50.27% 24.55% at 127.43% 100%, var(--lunit-yellow) 61.78%, rgba(255, 194, 5, 0) 100%),
+              radial-gradient(36.13% 27.7% at 100% 108.78%, var(--lunit-green) 13.95%, rgba(86, 193, 77, 0) 100%),
+              radial-gradient(53.41% 62.42% at 104.04% 128.98%, var(--lunit-teal) 50.51%, rgba(0, 201, 234, 0) 100%);
+  opacity: 0;
+  z-index: 1;
+}
+
+.card-dark-gradient-lunit:hover::before {
+  opacity: 1;
+  transform: scale(1.02);
+}
+
+/* Light card with gradient hover */
+.card-light-gradient-lunit {
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition-card);
+}
+
+.card-light-gradient-lunit::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  bottom: 0;
+  left: 0;
+  transition: var(--transition-gradient);
+  pointer-events: none;
+  background: radial-gradient(50.27% 24.55% at 127.43% 100%, var(--lunit-teal) 10.78%, rgba(0, 201, 234, 0) 100%),
+              radial-gradient(36.13% 27.7% at 100% 108.78%, var(--lunit-green) 5.95%, rgba(86, 193, 77, 0) 100%);
+  opacity: 0;
+  z-index: 1;
+}
+
+.card-light-gradient-lunit:hover::before {
+  opacity: 1;
+  transform: scale(1.02);
+}
+
+/* Partner card with background zoom */
+.card-partner-lunit {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.card-partner-lunit .card-bg {
+  transition: var(--transition-bg-scale);
+}
+
+.card-partner-lunit:hover .card-bg {
+  transform: scale(1.2);
+}
+
+.card-partner-lunit::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) 59.12%);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.card-partner-lunit::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  bottom: 0;
+  left: 0;
+  transition: var(--transition-gradient);
+  pointer-events: none;
+  background: radial-gradient(30.27% 17.55% at 102.13% 100%, var(--lunit-yellow) 16.78%, rgba(255, 194, 5, 0) 100%),
+              radial-gradient(5.13% 10.7% at 100% 100.78%, var(--lunit-green) 3.95%, rgba(86, 193, 77, 0) 100%),
+              radial-gradient(41.41% 26.42% at 100.04% 100.98%, var(--lunit-teal) 27.51%, rgba(0, 201, 234, 0) 100%),
+              linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) 51.93%);
+  opacity: 0;
+  z-index: 1;
+}
+
+.card-partner-lunit:hover::before {
+  opacity: 1;
+  transform: scale(1.02);
+}
+
+/* News card hover effect */
+.card-news-lunit {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: transform 0.6s ease-in-out;
+}
+
+.card-news-lunit:hover {
+  transform: scale(1.02);
+}
+
+.card-news-lunit::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  bottom: 0;
+  left: 0;
+  transform-origin: bottom;
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 1;
+}
+
+.card-news-lunit:hover::before {
+  opacity: 1;
+}
+
+/* ==============================
+   LINK WITH ICON EFFECTS
+   ============================== */
+
+/* Arrow icon link - Lunit exact style */
+.link-with-arrow {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: var(--transition-default);
+}
+
+.link-with-arrow .arrow-circle {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: var(--lunit-black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-default);
+}
+
+.link-with-arrow .arrow-circle svg {
+  color: var(--lunit-white);
+  width: 10px;
+  height: 10px;
+  transition: var(--transition-default);
+}
+
+.link-with-arrow:hover {
+  text-decoration: underline;
+}
+
+.link-with-arrow:hover .arrow-circle {
+  background-color: var(--lunit-teal);
+}
+
+.link-with-arrow:hover .arrow-circle svg {
+  color: var(--lunit-black);
+}
+
+/* White arrow variant for dark backgrounds */
+.link-with-arrow-light .arrow-circle {
+  background-color: var(--lunit-white);
+}
+
+.link-with-arrow-light .arrow-circle svg {
+  color: var(--lunit-black);
+}
+
+.link-with-arrow-light:hover .arrow-circle {
+  background-color: var(--lunit-teal);
+}
+
+/* ==============================
+   NAV HOVER EFFECTS
+   ============================== */
+
+.nav-link-lunit {
+  position: relative;
+  transition: var(--transition-default);
+}
+
+.nav-link-lunit::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--lunit-teal);
+  transition: width 0.3s ease;
+}
+
+.nav-link-lunit:hover::after {
+  width: 100%;
+}
+
+/* ==============================
+   TESTIMONIALS SLIDER
+   ============================== */
+
+.testimonial-slider-lunit {
+  position: relative;
+}
+
+.testimonial-slide {
+  transition: opacity 0.5s ease-in-out;
+}
+
+.testimonial-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--lunit-white);
+  border: 1px solid var(--lunit-black);
+  cursor: pointer;
+  transition: var(--transition-medium);
+  padding: 9px;
+}
+
+.testimonial-nav-btn:hover {
+  background: var(--lunit-teal);
+}
+
+.testimonial-nav-btn svg {
+  transition: var(--transition-medium);
+}
+
+.testimonial-nav-btn:hover svg {
+  filter: invert(1);
+}
+
+.testimonial-nav-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ==============================
+   STATS COUNTER ANIMATION
+   ============================== */
+
+.stat-counter-lunit {
+  animation: countUp 0.8s ease-out forwards;
+  animation-delay: var(--delay, 0s);
+}
+
+.stat-item-lunit {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.stat-item-lunit:nth-child(1) { animation-delay: 0.1s; }
+.stat-item-lunit:nth-child(2) { animation-delay: 0.2s; }
+.stat-item-lunit:nth-child(3) { animation-delay: 0.3s; }
+.stat-item-lunit:nth-child(4) { animation-delay: 0.4s; }
+
+/* ==============================
+   LOGO IMAGE HOVER
+   ============================== */
+
+.logo-image-lunit {
+  transition: opacity 0.3s ease;
+}
+
+.logo-image-lunit:hover {
+  opacity: 0.8;
+}
+
+/* ==============================
+   VIDEO PLAY BUTTON
+   ============================== */
+
+.video-play-btn-lunit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform 0.3s ease;
+}
+
+.video-play-btn-lunit:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* ==============================
+   FORM INPUT TRANSITIONS
+   ============================== */
+
+.input-lunit {
+  transition: border-color 0.3s ease;
+}
+
+.input-lunit:focus {
+  border-color: var(--lunit-teal);
+  outline: none;
+}
+
+/* Submit icon hover */
+.submit-icon-lunit {
+  transition: transform 0.3s ease;
+}
+
+.submit-icon-lunit:hover {
+  transform: scale(1.1);
+}
+
+/* ==============================
+   SOCIAL LINK HOVER
+   ============================== */
+
+.social-link-lunit {
+  transition: var(--transition-medium);
+}
+
+.social-link-lunit svg path {
+  transition: var(--transition-medium);
+}
+
+.social-link-lunit:hover {
+  color: var(--lunit-teal);
+}
+
+.social-link-lunit:hover svg path {
+  fill: var(--lunit-teal);
+}
+
+/* ==============================
+   ACCORDION / EXPAND EFFECTS
+   ============================== */
+
+.accordion-icon-lunit {
+  transition: transform 0.3s ease-in-out;
+}
+
+.accordion-icon-lunit.expanded {
+  transform: rotate(180deg);
+}
+
+.accordion-content-lunit {
+  transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  overflow: hidden;
+}
+
+/* ==============================
+   SCROLL REVEAL ANIMATIONS
+   ============================== */
+
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered reveal */
+.reveal-on-scroll[data-delay="1"] { transition-delay: 0.1s; }
+.reveal-on-scroll[data-delay="2"] { transition-delay: 0.2s; }
+.reveal-on-scroll[data-delay="3"] { transition-delay: 0.3s; }
+.reveal-on-scroll[data-delay="4"] { transition-delay: 0.4s; }
+
+/* ==============================
+   MOBILE MENU ANIMATION
+   ============================== */
+
+.mobile-menu-lunit {
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.mobile-menu-lunit.open {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+/* ==============================
+   DROPDOWN MENU ANIMATION
+   ============================== */
+
+.dropdown-menu-lunit {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+}
+
+.dropdown-menu-lunit.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* ==============================
+   LOADING SPINNER
+   ============================== */
+
+.spinner-lunit {
+  animation: spin 1s linear infinite;
+}
+
+/* ==============================
+   REDUCED MOTION SUPPORT
+   ============================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

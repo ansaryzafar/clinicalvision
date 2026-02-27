@@ -1,0 +1,343 @@
+# =============================================================================
+# ClinicalVision AI - Root .gitignore
+# =============================================================================
+
+# ---------------------------------------------------------------------------
+# Environment & Secrets
+# ---------------------------------------------------------------------------
+.env
+.env.local
+.env.*.local
+!.env.development.example
+!.env.production.example
+
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+*.egg
+.eggs/
+dist/
+build/
+*.whl
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# ---------------------------------------------------------------------------
+# Node.js
+# ---------------------------------------------------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp
+.pnp.js
+
+# ---------------------------------------------------------------------------
+# IDE & Editor
+# ---------------------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-*
+
+# ---------------------------------------------------------------------------
+# OS
+# ---------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------------------------------------------------------------------------
+# Backup files
+# ---------------------------------------------------------------------------
+*.bak
+*.backup
+*.orig
+
+# ---------------------------------------------------------------------------
+# Testing & Coverage
+# ---------------------------------------------------------------------------
+coverage/
+htmlcov/
+.coverage
+*.cover
+.pytest_cache/
+test_output.log
+
+# ---------------------------------------------------------------------------
+# Build Artifacts
+# ---------------------------------------------------------------------------
+clinicalvision_frontend/build/
+clinicalvision_backend/build/
+
+# ---------------------------------------------------------------------------
+# Logs
+# ---------------------------------------------------------------------------
+*.log
+logs/
+
+# ---------------------------------------------------------------------------
+# Uploads & Runtime Data
+# ---------------------------------------------------------------------------
+uploads/
+temp/
+backups/
+
+# ---------------------------------------------------------------------------
+# ML Model Weights (large binary files)
+# ---------------------------------------------------------------------------
+*.h5
+*.hdf5
+*.pth
+*.pt
+*.pkl
+*.onnx
+*.tflite
+*.pb
+ml_models/**/ensemble/
+ml_models/**/calibration/
+ml_models/cache/
+!ml_models/README.md
+!ml_models/**/config.json
+
+# ---------------------------------------------------------------------------
+# SSL Certificates
+# ---------------------------------------------------------------------------
+ssl/
+
+# ---------------------------------------------------------------------------
+# Research Materials (not part of application)
+# ---------------------------------------------------------------------------
+*.pdf
+*.odt
+*.docx
+*.pptx
+
+# Research papers & literature
+background-research.txt
+densenet_brain_tumor_paper.txt
+densenet_breast_cancer_paper.txt
+IBM*
+mit_breast_cancer.txt
+medicalimage-UI.txt
+prelim-report.txt
+project-proposal-example.txt
+project-proposal-guide.txt
+project_templates.txt
+feature-prototype.txt
+improving-usability.txt
+draft-report-subtitle.txt
+report_subtitle.txt
+
+# ---------------------------------------------------------------------------
+# Jupyter Notebooks (research/experimentation)
+# ---------------------------------------------------------------------------
+*.ipynb
+!docs/*.ipynb
+
+# ---------------------------------------------------------------------------
+# Prototype & Reference Files
+# ---------------------------------------------------------------------------
+ui_prototypes/
+video_frames/
+frontend_sdk/
+phase2/
+A Guide to Medical Imaging Software Development*
+
+# ---------------------------------------------------------------------------
+# Images & Media (non-application assets)
+# ---------------------------------------------------------------------------
+*.avif
+*.mp4
+*.gif
+*.svg
+!clinicalvision_frontend/public/**/*.svg
+!clinicalvision_frontend/src/**/*.svg
+*.webp
+*.jpg
+*.JPG
+*.jpeg
+*.JPEG
+*.png
+*.PNG
+!clinicalvision_frontend/public/**/*.png
+!clinicalvision_frontend/public/**/*.ico
+!clinicalvision_frontend/src/**/*.png
+
+# ---------------------------------------------------------------------------
+# TCIA Dataset Files
+# ---------------------------------------------------------------------------
+*.tcia
+
+# ---------------------------------------------------------------------------
+# Root-level files that are NOT part of the application
+# ---------------------------------------------------------------------------
+
+# Root package.json is not the app (app is in clinicalvision_frontend/)
+/package.json
+/package-lock.json
+
+# Research and reference docs at root
+BreastDCEDL.md
+
+# ---------------------------------------------------------------------------
+# Miscellaneous Development Files
+# ---------------------------------------------------------------------------
+CBIS-DDSM model training/
+*.json.json
+server.log
+backend.log
+frontend.log
+analyze_ui_frames.py
+data_prep_quickstart_notebook.tsx
+lunit.css
+test_frontend_integration.js
+test_integration_suite.py
+test_workflow.sh
+run_all_tests.sh
+validation_notebook.py
+check_widths.html
+suite-example-interface.html
+fix-grid.sh
+fix_grid_types.py
+enhanced_results*.json
+normalization_stats.json.json
+
+# ---------------------------------------------------------------------------
+# Accidental terminal artifact files (safe to ignore)
+# ---------------------------------------------------------------------------
+es
+ycopg2
+t\ terminal*
+= row*
+e_id=*
+tatus*
+ecure_dev_password*
+sword_*
+
+# ---------------------------------------------------------------------------
+# Internal Documentation (keep only select docs)
+# ---------------------------------------------------------------------------
+ALGORITHM_DESIGN.md
+ANATOMICAL_*.md
+API_TEST_RESULTS.md
+ARCHITECTURE_EVOLUTION_ROADMAP.md
+BACKEND_SECURITY_FIXES_DOCUMENTATION.md
+BASELINE_*.md
+BREASTDCEDL_*.md
+CBIS_DDSM_*.md
+CLINICAL_AI_COMPREHENSIVE_STRATEGY.md*
+CLINICALVISION_DEVELOPMENT_ROADMAP.md
+CLINICALVISION_WORKFLOW_DEMONSTRATION.md
+COMMERCIAL_READINESS_ROADMAP.md
+COMPLETE_API_FIX_SUMMARY.md
+COMPLETE_TEST_STATUS.md
+COMPREHENSIVE_SYSTEM_EVALUATION.md
+CROSS_PHASE_AUDIT_REPORT.md
+DEPLOYMENT_READINESS_PLAN.md
+DEVELOPMENT_CHANGELOG.md
+DOCKER_EMAIL_IMPLEMENTATION.md
+ENSEMBLE_*.md*
+FAIRNESS_MONITORING_DOCUMENTATION.md
+FEATURE_INTEGRITY_AUDIT.md
+FRONTEND_BACKEND_ROBUSTNESS_IMPLEMENTATION.md
+FRONTEND_COMPONENT_AUDIT.md
+FRONTEND_INTEGRATION_TEST_RESULTS.md
+FULL_SIZE_MAMMOGRAM_SOLUTION.md
+HYBRID_*.md*
+IMAGE_ANALYSIS_SUITE_INTEGRATION_PLAN.md
+IMPLEMENTATION_ROADMAP.md
+IMPROVEMENT_ACTIONABLE_CHECKLIST.md
+INTEGRATION_COMPLETE.md
+LIVE_TESTING_INVESTIGATION_REPORT.md
+LUNIT_TYPOGRAPHY_SPECS.md
+MC_IMPLEMENTATION_SUMMARY.md*
+MC_Dropout_Feature_Prototype.py
+MULTITASK_*.md*
+PHASE*.md
+PHASE*.md*
+PREPROCESSING_*.md
+PRODUCTION_*.md
+QUICKSTART.md
+QUICK_REFERENCE_CARD.md
+QUICK_START.md
+README-li-sheng.md
+REMAINING_IMPLEMENTATION_ROADMAP.md
+RESEARCH_INSIGHTS_ANALYSIS.md
+REUSABLE_FEATURES_*.md
+SECURITY_FIXES_PROGRESS.md
+SINGLE_TASK_*.md
+SYSTEM_*.md
+TERMINAL_ERRORS_RESOLVED.md
+TESTING_COMPLETE.md
+TEST_COMPLETION_SUMMARY.md
+TEST_DOCUMENTATION.md
+TEST_FIXES_SUMMARY.md
+TEST_QUICK_REFERENCE.md
+TEST_RESULTS*.md
+UI_FEATURES_ANALYSIS.md
+UI_IMPLEMENTATION_*.md
+UI_UX_COMPREHENSIVE_AUDIT.md
+UX_ENHANCEMENT_IMPLEMENTATION.md
+WEEK1_COMPLETION_REPORT.md*
+WORKFLOW_*.md
+clinical_ai_17week_roadmap.md
+1.setup_instructions.md
+
+# Sub-project internal docs
+clinicalvision_frontend/*.md
+!clinicalvision_frontend/README.md
+clinicalvision_backend/*.md
+!clinicalvision_backend/README.md
+
+# ---------------------------------------------------------------------------
+# Rclone & Cloud Sync
+# ---------------------------------------------------------------------------
+rclone-gdrive.png
+
+# ---------------------------------------------------------------------------
+# Docker runtime
+# ---------------------------------------------------------------------------
+docker-compose.override.yml
+
+# Backend-level duplicate docker-compose
+clinicalvision_backend/docker-compose.yml
+
+# Backend junk/artifact files
+clinicalvision_backend/aux*
+clinicalvision_backend/sword_*
+clinicalvision_backend/browse_db.py
+clinicalvision_backend/debug_images_list.py
+clinicalvision_backend/init_test_user.py
+clinicalvision_backend/quick_validation.py
+clinicalvision_backend/seed_database.py
+clinicalvision_backend/seed_industry_standards.py
+clinicalvision_backend/validate_production.py
+clinicalvision_backend/verify_industry_standards.py
+clinicalvision_backend/verify_install.py
+clinicalvision_backend/test_*.py
+clinicalvision_backend/backend*.log
+
+# Frontend build artifacts and temp files
+clinicalvision_frontend/build/
+clinicalvision_frontend/coverage/
+clinicalvision_frontend/test_output.log
+clinicalvision_frontend/frontend.log
+clinicalvision_frontend/test_phase1.sh
+clinicalvision_frontend/check_widths.html
+clinicalvision_frontend/suite-example-interface.html
+clinicalvision_frontend/fix-grid.sh
+clinicalvision_frontend/fix_grid_types.py
+clinicalvision_frontend/ClashGrotesk_Complete.zip

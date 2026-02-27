@@ -1,0 +1,81 @@
+{
+  "registry_version": "1.0",
+  "active_model": "v12_production",
+  "models": {
+    "v12_production": {
+      "version": "v12_production",
+      "description": "DenseNet-121 ROI ensemble with MC Dropout uncertainty",
+      "created_at": "2026-02-02",
+      "architecture": {
+        "backbone": "DenseNet121",
+        "dense_units": 2048,
+        "dropout_rate": 0.35,
+        "ensemble_size": 3,
+        "image_size": [224, 224]
+      },
+      "training": {
+        "dataset": "CBIS-DDSM ROI",
+        "stages": 3,
+        "total_epochs": 180,
+        "loss": "focal_loss",
+        "focal_gamma": 2.0,
+        "focal_alpha": 0.7
+      },
+      "mc_dropout": {
+        "n_samples": 75,
+        "mc_dropout_rate": 0.65,
+        "spatial_dropout_rate": 0.35,
+        "calibration_method": "auto"
+      },
+      "artifacts": {
+        "ensemble": [
+          "ensemble/model_0_stage3_best.h5",
+          "ensemble/model_1_stage3_best.h5",
+          "ensemble/model_2_stage3_best.h5"
+        ],
+        "calibrator": "calibration/calibrator.pkl",
+        "config": "config.json"
+      },
+      "storage": {
+        "type": "gdrive",
+        "gdrive_path": "CBIS-DDSM-data/checkpoints_roi",
+        "s3_uri": "s3://clinicalvision-models/v12_production/",
+        "local_path": "./ml_models/v12_production"
+      },
+      "metrics": {
+        "auc": 0.881,
+        "auc_ci_lower": 0.84,
+        "auc_ci_upper": 0.92,
+        "accuracy": 0.803,
+        "sensitivity": 0.786,
+        "specificity": 0.812,
+        "sensitivity_at_90": 0.90,
+        "specificity_at_90_sens": 0.624,
+        "sensitivity_at_95": 0.95,
+        "specificity_at_95_sens": 0.467,
+        "ece": 0.141,
+        "f1_score": 0.733,
+        "precision": 0.686,
+        "test_samples": 300,
+        "evaluation_date": "2026-02-09",
+        "notes": "Evaluated on CBIS-DDSM test set with MC Dropout (30 samples)"
+      },
+      "status": "validated"
+    }
+  },
+  "storage_backends": {
+    "gdrive": {
+      "enabled": true,
+      "base_path": "CBIS-DDSM-data"
+    },
+    "s3": {
+      "enabled": false,
+      "bucket": "clinicalvision-models",
+      "region": "us-east-1"
+    },
+    "local": {
+      "enabled": true,
+      "base_path": "./ml_models"
+    }
+  }
+}

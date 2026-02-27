@@ -1,0 +1,32 @@
+[Unit]
+Description=ClinicalVision Database Backup Service
+Documentation=https://github.com/yourusername/clinicalvision
+After=postgresql.service
+Requires=postgresql.service
+
+[Service]
+Type=oneshot
+User=clinicalvision
+Group=clinicalvision
+
+# Environment
+WorkingDirectory=/opt/clinicalvision/backend
+EnvironmentFile=/opt/clinicalvision/backend/.env
+
+# Execute backup script
+ExecStart=/opt/clinicalvision/backend/scripts/backup_database.sh /var/backups/clinicalvision
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=clinicalvision-backup
+
+# Security hardening
+PrivateTmp=yes
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/backups/clinicalvision
+
+[Install]
+WantedBy=multi-user.target

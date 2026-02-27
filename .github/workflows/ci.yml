@@ -1,0 +1,242 @@
+# ClinicalVision AI - CI/CD Pipeline
+# GitHub Actions workflow for automated testing and deployment
+
+name: ClinicalVision CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  PYTHON_VERSION: '3.10'
+  NODE_VERSION: '18'
+
+jobs:
+  # ===========================================================================
+  # Backend Tests
+  # ===========================================================================
+  backend-tests:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: clinicalvision_test
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          cd clinicalvision_backend
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov pytest-asyncio
+      
+      - name: Run linting
+        run: |
+          cd clinicalvision_backend
+          pip install flake8
+          flake8 app/ --count --select=E9,F63,F7,F82 --show-source --statistics
+      
+      - name: Run tests
+        env:
+          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/clinicalvision_test
+          SECRET_KEY: test-secret-key-for-ci-pipeline
+          ENVIRONMENT: testing
+          USE_MOCK_MODEL: 'true'
+        run: |
+          cd clinicalvision_backend
+          pytest tests/ -v --cov=app --cov-report=xml --cov-report=html
+      
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v4
+        with:
+          files: clinicalvision_backend/coverage.xml
+          flags: backend
+          name: backend-coverage
+
+  # ===========================================================================
+  # Frontend Build & Tests
+  # ===========================================================================
+  frontend-tests:
+    name: Frontend Build & Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: clinicalvision_frontend/package-lock.json
+      
+      - name: Install dependencies
+        run: |
+          cd clinicalvision_frontend
+          npm ci
+      
+      - name: Type check
+        run: |
+          cd clinicalvision_frontend
+          npm run build
+      
+      - name: Run tests
+        run: |
+          cd clinicalvision_frontend
+          npm test -- --coverage --watchAll=false --passWithNoTests
+      
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v4
+        with:
+          files: clinicalvision_frontend/coverage/lcov.info
+          flags: frontend
+          name: frontend-coverage
+
+  # ===========================================================================
+  # Security Scanning
+  # ===========================================================================
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Run Trivy vulnerability scanner (Python)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: 'clinicalvision_backend'
+          format: 'sarif'
+          output: 'trivy-backend.sarif'
+        continue-on-error: true
+      
+      - name: Run Trivy vulnerability scanner (Node.js)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: 'clinicalvision_frontend'
+          format: 'sarif'
+          output: 'trivy-frontend.sarif'
+        continue-on-error: true
+
+  # ===========================================================================
+  # Docker Build
+  # ===========================================================================
+  docker-build:
+    name: Docker Build
+    runs-on: ubuntu-latest
+    needs: [backend-tests, frontend-tests]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Build backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./clinicalvision_backend
+          push: false
+          tags: clinicalvision-backend:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      
+      - name: Build frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./clinicalvision_frontend
+          push: false
+          tags: clinicalvision-frontend:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ===========================================================================
+  # Deploy to Staging (on develop branch)
+  # ===========================================================================
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [docker-build]
+    if: github.ref == 'refs/heads/develop'
+    environment: staging
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Deploy to staging
+        run: |
+          echo "Deploying to staging environment..."
+          # Add your staging deployment commands here
+          # Example: kubectl apply -f k8s/staging/
+          # Example: aws ecs update-service --cluster staging --service clinicalvision
+
+  # ===========================================================================
+  # Deploy to Production (on main branch)
+  # ===========================================================================
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [docker-build, security-scan]
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Deploy to production
+        run: |
+          echo "Deploying to production environment..."
+          # Add your production deployment commands here
+          # This should require manual approval in GitHub environments
+
+  # ===========================================================================
+  # Notification
+  # ===========================================================================
+  notify:
+    name: Notify Team
+    runs-on: ubuntu-latest
+    needs: [backend-tests, frontend-tests]
+    if: always()
+    
+    steps:
+      - name: Notify on success
+        if: ${{ needs.backend-tests.result == 'success' && needs.frontend-tests.result == 'success' }}
+        run: |
+          echo "✅ All tests passed!"
+          # Add Slack/Discord notification here
+      
+      - name: Notify on failure
+        if: ${{ needs.backend-tests.result == 'failure' || needs.frontend-tests.result == 'failure' }}
+        run: |
+          echo "❌ Tests failed!"
+          # Add Slack/Discord notification here

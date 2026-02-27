@@ -1,0 +1,225 @@
+/* Lunit-Inspired Design System */
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* CSS Variables - Lunit Color Palette */
+:root {
+  /* Primary Colors */
+  --lunit-teal: #00C9EA;
+  --lunit-teal-darker: #0F95AB;
+  --lunit-black: #000000;
+  --lunit-white: #FFFFFF;
+  
+  /* Accent Colors */
+  --lunit-green: #56C14D;
+  --lunit-yellow: #FFC205;
+  --lunit-bright-yellow: #FFE205;
+  --lunit-orange: #FF5321;
+  
+  /* Neutral Colors */
+  --lunit-darker-gray: #233232;
+  --lunit-dark-grey: #5C6A6B;
+  --lunit-grey: #95A3A4;
+  --lunit-light-gray: #CFD6D7;
+  --lunit-lightest-gray: #EFF0F4;
+  
+  /* Text Colors */
+  --lunit-heading-color: #151515;
+  --lunit-text: #233232;
+  
+  /* Typography */
+  --font-family-heading: "ClashGrotesk", "Poppins", system-ui, sans-serif;
+  --font-family-body: "Lexend", system-ui, sans-serif;
+  
+  /* Shadows */
+  --shadow-light: 0 2px 4px rgba(35, 50, 50, 0.1);
+  --shadow-medium: 0 4px 8px rgba(35, 50, 50, 0.15);
+  --shadow-heavy: 0 8px 16px rgba(35, 50, 50, 0.2);
+  
+  /* Border Radius */
+  --radius-full: 100px;
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-sm: 8px;
+  
+  /* Transitions */
+  --transition-fast: all 0.2s ease;
+  --transition-normal: all 0.3s ease;
+  --transition-slow: all 0.4s ease-in-out;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  color: var(--lunit-text);
+  background-color: var(--lunit-white);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-heading);
+  font-weight: 300;
+  color: var(--lunit-heading-color);
+  margin: 0;
+}
+
+p {
+  font-family: var(--font-family-body);
+  line-height: 1.7;
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: var(--transition-normal);
+}
+
+a:hover {
+  color: var(--lunit-teal);
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection styling */
+::selection {
+  background-color: rgba(0, 201, 234, 0.2);
+  color: var(--lunit-heading-color);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--lunit-lightest-gray);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--lunit-grey);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--lunit-dark-grey);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PRINT STYLES — Report PDF Export
+   Hide all chrome (sidebar, header, stepper, buttons) and show only the
+   report content area at full width with proper margins.
+   ═══════════════════════════════════════════════════════════════════════ */
+@media print {
+  /* Hide navigation drawer / sidebar */
+  .MuiDrawer-root,
+  .MuiDrawer-paper {
+    display: none !important;
+  }
+
+  /* Hide app bar / header */
+  .MuiAppBar-root,
+  header {
+    display: none !important;
+  }
+
+  /* Hide stepper, action buttons, and toolbar spacer */
+  .MuiStepper-root,
+  .MuiToolbar-root {
+    display: none !important;
+  }
+
+  /* Hide all buttons during print */
+  button,
+  .MuiButton-root,
+  .MuiIconButton-root,
+  .MuiFab-root {
+    display: none !important;
+  }
+
+  /* Hide dialogs, alerts, snackbars, tooltips, menus */
+  .MuiDialog-root,
+  .MuiSnackbar-root,
+  .MuiTooltip-popper,
+  .MuiMenu-root,
+  .MuiAlert-root {
+    display: none !important;
+  }
+
+  /* Hide linear progress bars */
+  .MuiLinearProgress-root {
+    display: none !important;
+  }
+
+  /* Elements marked as no-print */
+  .no-print,
+  [data-no-print] {
+    display: none !important;
+  }
+
+  /* Make main content area full width */
+  main,
+  [role="main"] {
+    margin-left: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Remove background colors and shadows for print */
+  body {
+    background: white !important;
+    color: black !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Ensure report Paper element is full width with no shadow */
+  .MuiPaper-root {
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 16px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Ensure container doesn't constrain width */
+  .MuiContainer-root {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Page setup */
+  @page {
+    margin: 1.5cm;
+    size: A4;
+  }
+
+  /* Prevent page breaks inside sections */
+  .MuiPaper-root,
+  .MuiBox-root {
+    page-break-inside: avoid;
+  }
+
+  /* Keep report header on first page */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+}

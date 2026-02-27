@@ -1,0 +1,64 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Database
+*.db
+*.sqlite
+
+# Uploads
+uploads/
+temp/
+
+# Models - exclude weights but keep config/structure
+models/*.pth
+models/*.pt
+ml_models/**/ensemble/*.h5
+ml_models/**/calibration/*.pkl
+ml_models/cache/
+
+# Keep these tracked
+!ml_models/README.md
+!ml_models/model_registry.json
+!ml_models/**/config.json
+
+# Logs
+*.log
+logs/

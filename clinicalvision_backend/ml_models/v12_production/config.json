@@ -1,0 +1,117 @@
+{
+  "model_version": "v12_production",
+  "description": "DenseNet-121 ROI ensemble for breast cancer classification",
+  "architecture": {
+    "backbone": "DenseNet121",
+    "backbone_weights": "imagenet",
+    "image_size": [
+      224,
+      224
+    ],
+    "image_channels": 3,
+    "dense_units": 2048,
+    "dropout_rate": 0.35,
+    "l2_regularization": 0.0005,
+    "output_activation": "sigmoid"
+  },
+  "ensemble": {
+    "size": 3,
+    "seeds": [
+      42,
+      123,
+      456
+    ],
+    "aggregation": "mean"
+  },
+  "preprocessing": {
+    "clahe_enabled": true,
+    "clahe_clip_limit": 2.0,
+    "clahe_tile_size": [
+      8,
+      8
+    ],
+    "normalize": true,
+    "to_rgb": true
+  },
+  "tta": {
+    "enabled": true,
+    "augmentations": [
+      "identity",
+      "flip_horizontal",
+      "flip_vertical",
+      "rotate_90",
+      "rotate_180",
+      "rotate_270",
+      "flip_horizontal_rotate_90",
+      "flip_vertical_rotate_90"
+    ],
+    "num_augmentations": 8
+  },
+  "mc_dropout": {
+    "enabled": true,
+    "n_samples": 30,
+    "mc_dropout_rate": 0.65,
+    "spatial_dropout_rate": 0.35,
+    "use_spatial_dropout": true,
+    "note": "Optimized: 30 samples (10 per model) balances speed vs uncertainty quality"
+  },
+  "calibration": {
+    "enabled": true,
+    "methods": [
+      "temperature",
+      "platt",
+      "isotonic"
+    ],
+    "auto_select": true,
+    "selection_metric": "ece"
+  },
+  "clinical_thresholds": {
+    "high_confidence": 0.85,
+    "medium_confidence": 0.65,
+    "low_confidence": 0.5,
+    "classification_threshold": 0.5
+  },
+  "uncertainty_thresholds": {
+    "low_uncertainty": 0.02,
+    "medium_uncertainty": 0.05,
+    "high_uncertainty": 0.1
+  },
+  "inference": {
+    "batch_size": 16,
+    "use_gpu": true,
+    "mixed_precision": false,
+    "timeout_seconds": 30
+  },
+  "files": {
+    "ensemble_models": [
+      "ensemble/model_0_stage3_best.h5",
+      "ensemble/model_1_stage3_best.h5",
+      "ensemble/model_2_stage3_best.h5"
+    ],
+    "calibrator": "calibration/calibrator.pkl"
+  },
+  "validated_performance": {
+    "base_model": {
+      "auc_roc": 0.7995,
+      "accuracy": 0.7033,
+      "sensitivity": 0.7964,
+      "specificity": 0.6432,
+      "precision": 0.5903,
+      "f1_score": 0.678
+    },
+    "with_mc_dropout": {
+      "auc_roc": 0.7212,
+      "accuracy": 0.6633,
+      "ece_calibrated": 0.084,
+      "mean_variance": 0.0155,
+      "variance_ratio": 1.29,
+      "auto_classify_rate": 21.8,
+      "auto_classify_accuracy": 82.4
+    },
+    "calibration": {
+      "best_method": "isotonic",
+      "ece_before": 0.162,
+      "ece_after": 0.084
+    }
+  }
+}

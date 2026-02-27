@@ -1,0 +1,21 @@
+[Unit]
+Description=ClinicalVision Database Backup Timer
+Documentation=https://github.com/yourusername/clinicalvision
+Requires=clinicalvision-backup.service
+
+[Timer]
+# Run daily at 2:00 AM
+OnCalendar=daily
+OnCalendar=*-*-* 02:00:00
+
+# Run 15 minutes after system boot (for reliability)
+OnBootSec=15min
+
+# If a backup was missed (e.g., system was off), run it ASAP
+Persistent=true
+
+# Add randomized delay (0-30 minutes) to avoid load spikes
+RandomizedDelaySec=30min
+
+[Install]
+WantedBy=timers.target

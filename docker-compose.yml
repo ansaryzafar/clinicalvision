@@ -1,0 +1,154 @@
+# ClinicalVision AI - Full Stack Docker Compose
+# Production-ready configuration with all services
+
+services:
+  # ===========================================================================
+  # PostgreSQL Database
+  # ===========================================================================
+  db:
+    image: postgres:15-alpine
+    container_name: clinicalvision-db
+    environment:
+      POSTGRES_USER: ${DB_USER:-clinicalvision}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-change_me_in_production}
+      POSTGRES_DB: ${DB_NAME:-clinicalvision_db}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./clinicalvision_backend/backups:/backups
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-clinicalvision} -d ${DB_NAME:-clinicalvision_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - clinicalvision-network
+
+  # ===========================================================================
+  # Backend API (FastAPI)
+  # ===========================================================================
+  backend:
+    build: 
+      context: ./clinicalvision_backend
+      dockerfile: Dockerfile
+    container_name: clinicalvision-backend
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER:-clinicalvision}:${DB_PASSWORD:-change_me_in_production}@db:5432/${DB_NAME:-clinicalvision_db}
+      - SECRET_KEY=${SECRET_KEY:-generate-a-secure-256-bit-key}
+      - ALGORITHM=${ALGORITHM:-HS256}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES:-30}
+      - USE_MOCK_MODEL=${USE_MOCK_MODEL:-false}
+      - DEBUG=${DEBUG:-false}
+      - ENVIRONMENT=${ENVIRONMENT:-production}
+      - CORS_ORIGINS=["http://localhost:3000","https://clinicalvision.ai"]
+    env_file:
+      - ./clinicalvision_backend/.env
+    volumes:
+      - ./clinicalvision_backend/uploads:/app/uploads
+      - ./clinicalvision_backend/logs:/app/logs
+      - ./clinicalvision_backend/models:/app/models
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - clinicalvision-network
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          memory: 1G
+
+  # ===========================================================================
+  # Frontend (React + Nginx)
+  # ===========================================================================
+  frontend:
+    build:
+      context: ./clinicalvision_frontend
+      dockerfile: Dockerfile
+    container_name: clinicalvision-frontend
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+      - "${FRONTEND_SSL_PORT:-3443}:443"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - clinicalvision-network
+    volumes:
+      # Mount SSL certificates for HTTPS (optional)
+      - ./ssl:/etc/nginx/ssl:ro
+
+  # ===========================================================================
+  # Redis Cache (Optional - for session storage and caching)
+  # ===========================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: clinicalvision-redis
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis_password}
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - clinicalvision-network
+
+  # ===========================================================================
+  # pgAdmin (Development/Debug only - remove in production)
+  # ===========================================================================
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: clinicalvision-pgadmin
+    profiles:
+      - debug
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@clinicalvision.ai}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    restart: unless-stopped
+    networks:
+      - clinicalvision-network
+
+# ===========================================================================
+# Volumes
+# ===========================================================================
+volumes:
+  postgres_data:
+    name: clinicalvision_postgres_data
+  redis_data:
+    name: clinicalvision_redis_data
+
+# ===========================================================================
+# Networks
+# ===========================================================================
+networks:
+  clinicalvision-network:
+    name: clinicalvision-network
+    driver: bridge
