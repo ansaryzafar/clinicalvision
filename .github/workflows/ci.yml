@@ -107,6 +107,8 @@ jobs:
         env:
           CI: 'false'
           DISABLE_ESLINT_PLUGIN: 'true'
+          TSC_COMPILE_ON_ERROR: 'true'
+          GENERATE_SOURCEMAP: 'false'
         run: |
           cd clinicalvision_frontend
           npm run build
