@@ -46,21 +46,34 @@ describe('Logo SVG — Structural Efficiency', () => {
     expect(height).toBe(120);
   });
 
-  it('text group scale factor should be ≥ 1.30 for readable text at logo sizes', () => {
-    // Original scale(1.15) produced 12.45px text at 48px render — invisible.
-    // At scale ≥ 1.30, text height ≥ 35 SVG units → ≥ 17.5px at 60px render.
-    const textGroupMatch = svgContent.match(
-      /g\s+transform="translate\(\s*[\d.]+\s*,\s*[\d.]+\s*\)\s*scale\(\s*([\d.]+)\s*\)"\s*>/
+  it('should use live <text> elements with Lexend font for crisp rendering', () => {
+    // Live SVG <text> renders with browser sub-pixel anti-aliasing
+    // vs outlined <path> which can't benefit from hinting/subpixel.
+    const hasTextElement = /<text\s[^>]*font-family="[^"]*Lexend[^"]*"/.test(svgContent);
+    expect(hasTextElement).toBe(true);
+  });
+
+  it('text font-size should be ≥ 36 SVG units for prominence at logo sizes', () => {
+    // At 72px rendered height (120 SVG units), font-size 42 → ~25px rendered.
+    // This ensures readable, prominent text.
+    const fontSizeMatch = svgContent.match(/font-size="(\d+)"/);
+    expect(fontSizeMatch).not.toBeNull();
+    const fontSize = parseInt(fontSizeMatch![1], 10);
+    expect(fontSize).toBeGreaterThanOrEqual(36);
+    expect(fontSize).toBeLessThanOrEqual(54);
+  });
+
+  it('text should use a dedicated textGradient with ≥ 3 stops for visible sweep', () => {
+    // Old gradient had 3 stops in narrow ΔE≈15 range — invisible.
+    // New textGradient spans deep teal to bright cyan for a clearly visible sweep.
+    const hasTextGradient = /id="textGradient"/.test(svgContent);
+    expect(hasTextGradient).toBe(true);
+    const gradientStops = svgContent.match(
+      /id="textGradient"[\s\S]*?<\/linearGradient>/
     );
-    // Find the text group (second g with translate+scale, after the dots group)
-    const allTransforms = [...svgContent.matchAll(
-      /transform="translate\(\s*[\d.]+\s*,\s*[\d.]+\s*\)\s*scale\(\s*([\d.]+)\s*\)"/g
-    )];
-    // The text group is the second transform (first is the dotted-C group)
-    expect(allTransforms.length).toBeGreaterThanOrEqual(2);
-    const textScale = parseFloat(allTransforms[1][1]);
-    expect(textScale).toBeGreaterThanOrEqual(1.30);
-    expect(textScale).toBeLessThanOrEqual(1.60); // Don't overshoot
+    expect(gradientStops).not.toBeNull();
+    const stopCount = (gradientStops![0].match(/<stop\s/g) || []).length;
+    expect(stopCount).toBeGreaterThanOrEqual(3);
   });
 
   it('SVG aspect ratio should be between 2.2:1 and 3.0:1 (content-filling)', () => {
@@ -144,11 +157,11 @@ describe('Landing Page Navbar — Lunit Proportions', () => {
     expect(weight).toBeGreaterThanOrEqual(300);
   });
 
-  it('logo image uses cache-busted URL (v=8+)', () => {
+  it('logo image uses cache-busted URL (v=10+)', () => {
     const versionMatch = source.match(/clinicalvision-logo\.svg\?v=(\d+)/);
     expect(versionMatch).not.toBeNull();
     const version = parseInt(versionMatch![1], 10);
-    expect(version).toBeGreaterThanOrEqual(9);
+    expect(version).toBeGreaterThanOrEqual(10);
   });
 });
 
@@ -183,10 +196,10 @@ describe('Sidebar Logo — Proportional to 260px Drawer', () => {
     expect(maxWidth).toBeGreaterThanOrEqual(180);
   });
 
-  it('sidebar logo uses cache-busted URL (v=9+)', () => {
+  it('sidebar logo uses cache-busted URL (v=10+)', () => {
     const versionMatch = source.match(/clinicalvision-logo\.svg\?v=(\d+)/);
     expect(versionMatch).not.toBeNull();
     const version = parseInt(versionMatch![1], 10);
-    expect(version).toBeGreaterThanOrEqual(9);
+    expect(version).toBeGreaterThanOrEqual(10);
   });
 });

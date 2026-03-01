@@ -284,7 +284,7 @@ const LandingPage: React.FC = () => {
             >
               <Box
                 component="img"
-                src="/images/clinicalvision-logo.svg?v=9"
+                src="/images/clinicalvision-logo.svg?v=10"
                 alt="ClinicalVision AI Logo"
                 sx={{
                   height: { xs: 52, md: 72 },
@@ -3322,7 +3322,7 @@ const LandingPage: React.FC = () => {
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
                 <Box
                   component="img"
-                  src="/images/clinicalvision-logo.svg?v=6"
+                  src="/images/clinicalvision-logo.svg?v=10"
                   alt="ClinicalVision AI Logo"
                   sx={{
                     height: 64,
