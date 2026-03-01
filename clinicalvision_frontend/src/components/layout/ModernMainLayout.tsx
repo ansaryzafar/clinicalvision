@@ -273,7 +273,6 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             height: 72,
             display: 'block',
             objectFit: 'contain',
-            imageRendering: 'crisp-edges',
             filter: 'drop-shadow(0 2px 4px rgba(59, 130, 246, 0.10))',
           }}
         />
