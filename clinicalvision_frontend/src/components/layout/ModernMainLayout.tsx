@@ -269,8 +269,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           src="/images/clinicalvision-logo.svg?v=7"
           alt="ClinicalVision Logo"
           sx={{
-            width: 180,
-            height: 44,
+            height: 48,
+            width: 'auto',
+            maxWidth: 200,
             display: 'block',
             objectFit: 'contain',
             filter: 'drop-shadow(0 2px 4px rgba(59, 130, 246, 0.10))',

@@ -93,6 +93,7 @@ const LUNIT = {
   midGray: '#6B7280',
   gray: '#6B7280',
   lightGray: '#E5E7EB',
+  disabledGray: '#9CA3AF',
   lightest: '#EFF0F4',
   white: '#FFFFFF',
   green: '#22C55E',
@@ -172,7 +173,7 @@ const StepNavItem: React.FC<StepNavItemProps> = ({
           fontSize: '0.82rem',
           fontWeight: isCurrent ? 500 : 400,
           color: !accessible
-            ? LUNIT.lightGray
+            ? LUNIT.disabledGray
             : isCurrent
             ? phaseColor
             : completed
@@ -185,7 +186,7 @@ const StepNavItem: React.FC<StepNavItemProps> = ({
             ? `1.5px solid ${alpha(phaseColor, 0.3)}`
             : '1.5px solid transparent',
           transition: 'all 0.25s ease',
-          opacity: accessible ? 1 : 0.6,
+          opacity: accessible ? 1 : 0.65,
           whiteSpace: 'nowrap',
           '&:hover': accessible ? {
             background: alpha(phaseColor, 0.06),
@@ -221,8 +222,8 @@ const StepNavItem: React.FC<StepNavItemProps> = ({
                 }
               : {
                   background: 'transparent',
-                  border: `1.5px solid ${accessible ? LUNIT.gray : LUNIT.lightGray}`,
-                  color: accessible ? LUNIT.gray : LUNIT.lightGray,
+                  border: `1.5px solid ${accessible ? LUNIT.gray : LUNIT.disabledGray}`,
+                  color: accessible ? LUNIT.gray : LUNIT.disabledGray,
                 }),
           }}
         >
@@ -565,6 +566,18 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
 
   const currentStepConfig = WORKFLOW_STEP_CONFIG[currentStepIndex];
 
+  // ── Auto-scroll stepper to show current phase ────────────────────────
+  const stepperRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!stepperRef.current) return;
+    const phaseIdx = PHASES.indexOf(currentPhase);
+    const phaseEls = stepperRef.current.querySelectorAll('[data-phase-group]');
+    const el = phaseEls[phaseIdx] as HTMLElement | undefined;
+    if (el?.scrollIntoView) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  }, [currentPhase]);
+
   // ── RENDER: Loading state ────────────────────────────────────────────
   if (isLoading) {
     return (
@@ -902,10 +915,10 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
             borderRadius: '16px',
             border: `1px solid ${LUNIT.lightest}`,
             background: LUNIT.white,
-            overflow: 'hidden',
           }}
         >
           <Box
+            ref={stepperRef}
             sx={{
               display: 'flex',
               overflowX: 'auto',
@@ -925,6 +938,7 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
                 <React.Fragment key={phase.id}>
                   {/* Phase group */}
                   <Box
+                    data-phase-group
                     sx={{
                       display: 'flex',
                       flexDirection: 'column',

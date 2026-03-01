@@ -53,6 +53,16 @@ describe('Workflow Stepper — Phase Visibility (R3)', () => {
     expect(opacityMatch).not.toBeNull();
     const lockedOpacity = parseFloat(opacityMatch![1]);
     expect(lockedOpacity).toBeGreaterThanOrEqual(0.5);
+    expect(lockedOpacity).toBeLessThanOrEqual(0.85);
+  });
+
+  it('inaccessible steps use a readable text color (not lightGray #E5E7EB)', () => {
+    // The color for !accessible should NOT be LUNIT.lightGray which is invisible on white
+    // It should use disabledGray or another readable color
+    const colorMatch = sourceFile.match(/color:\s*!accessible\s*\?\s*LUNIT\.(\w+)/);
+    expect(colorMatch).not.toBeNull();
+    expect(colorMatch![1]).not.toBe('lightGray');
+    expect(colorMatch![1]).toBe('disabledGray');
   });
 
   it('WORKFLOW_STEP_CONFIG contains all 10 step labels', () => {

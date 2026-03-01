@@ -287,7 +287,7 @@ const LandingPage: React.FC = () => {
                 src="/images/clinicalvision-logo.svg?v=7"
                 alt="ClinicalVision AI Logo"
                 sx={{
-                  height: { xs: 36, md: 44 },
+                  height: { xs: 44, md: 48 },
                   width: 'auto',
                   display: 'block',
                   objectFit: 'contain',
