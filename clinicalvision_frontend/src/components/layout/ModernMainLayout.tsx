@@ -266,10 +266,10 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         {/* Full Logo (Dotted C + Vision AI) */}
         <Box
           component="img"
-          src="/images/clinicalvision-logo.svg?v=8"
+          src="/images/clinicalvision-logo.svg?v=9"
           alt="ClinicalVision Logo"
           sx={{
-            height: 52,
+            height: 56,
             width: 'auto',
             maxWidth: 220,
             display: 'block',

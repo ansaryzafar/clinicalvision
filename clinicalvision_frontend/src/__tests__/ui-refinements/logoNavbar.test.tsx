@@ -104,15 +104,15 @@ describe('Landing Page Navbar — Lunit Proportions', () => {
     const heightMatch = source.match(/md:\s*(\d+)\s*[},]/);
     expect(heightMatch).not.toBeNull();
     const desktopHeight = parseInt(heightMatch![1], 10);
-    expect(desktopHeight).toBeGreaterThanOrEqual(56);
-    expect(desktopHeight).toBeLessThanOrEqual(72);
+    expect(desktopHeight).toBeGreaterThanOrEqual(64);
+    expect(desktopHeight).toBeLessThanOrEqual(80);
   });
 
   it('logo mobile height should be ≥ 44px', () => {
     const heightMatch = source.match(/xs:\s*(\d+)\s*,\s*md:/);
     expect(heightMatch).not.toBeNull();
     const mobileHeight = parseInt(heightMatch![1], 10);
-    expect(mobileHeight).toBeGreaterThanOrEqual(44);
+    expect(mobileHeight).toBeGreaterThanOrEqual(48);
   });
 
   it('navbar non-scrolled padding should produce ~100-110px total height', () => {
@@ -148,7 +148,7 @@ describe('Landing Page Navbar — Lunit Proportions', () => {
     const versionMatch = source.match(/clinicalvision-logo\.svg\?v=(\d+)/);
     expect(versionMatch).not.toBeNull();
     const version = parseInt(versionMatch![1], 10);
-    expect(version).toBeGreaterThanOrEqual(8);
+    expect(version).toBeGreaterThanOrEqual(9);
   });
 });
 
@@ -170,8 +170,8 @@ describe('Sidebar Logo — Proportional to 260px Drawer', () => {
     const heightMatch = source.match(/height:\s*(\d+)\s*,\s*\n\s*width:/);
     expect(heightMatch).not.toBeNull();
     const height = parseInt(heightMatch![1], 10);
-    expect(height).toBeGreaterThanOrEqual(48);
-    expect(height).toBeLessThanOrEqual(64);
+    expect(height).toBeGreaterThanOrEqual(52);
+    expect(height).toBeLessThanOrEqual(68);
   });
 
   it('sidebar logo maxWidth should accommodate the new SVG ratio', () => {
@@ -183,10 +183,10 @@ describe('Sidebar Logo — Proportional to 260px Drawer', () => {
     expect(maxWidth).toBeGreaterThanOrEqual(180);
   });
 
-  it('sidebar logo uses cache-busted URL (v=8+)', () => {
+  it('sidebar logo uses cache-busted URL (v=9+)', () => {
     const versionMatch = source.match(/clinicalvision-logo\.svg\?v=(\d+)/);
     expect(versionMatch).not.toBeNull();
     const version = parseInt(versionMatch![1], 10);
-    expect(version).toBeGreaterThanOrEqual(8);
+    expect(version).toBeGreaterThanOrEqual(9);
   });
 });

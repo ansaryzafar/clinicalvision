@@ -264,7 +264,7 @@ const LandingPage: React.FC = () => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              py: scrolled ? '16px' : '22px',
+              py: scrolled ? '14px' : '20px',
               transition: 'all 0.3s ease-in-out',
             }}
           >
@@ -284,10 +284,10 @@ const LandingPage: React.FC = () => {
             >
               <Box
                 component="img"
-                src="/images/clinicalvision-logo.svg?v=8"
+                src="/images/clinicalvision-logo.svg?v=9"
                 alt="ClinicalVision AI Logo"
                 sx={{
-                  height: { xs: 48, md: 60 },
+                  height: { xs: 52, md: 72 },
                   width: 'auto',
                   display: 'block',
                   objectFit: 'contain',
