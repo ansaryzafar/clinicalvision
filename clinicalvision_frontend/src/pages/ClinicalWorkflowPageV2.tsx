@@ -185,7 +185,7 @@ const StepNavItem: React.FC<StepNavItemProps> = ({
             ? `1.5px solid ${alpha(phaseColor, 0.3)}`
             : '1.5px solid transparent',
           transition: 'all 0.25s ease',
-          opacity: accessible ? 1 : 0.45,
+          opacity: accessible ? 1 : 0.55,
           whiteSpace: 'nowrap',
           '&:hover': accessible ? {
             background: alpha(phaseColor, 0.06),

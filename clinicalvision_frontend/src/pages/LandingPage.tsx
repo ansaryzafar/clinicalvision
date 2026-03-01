@@ -290,7 +290,6 @@ const LandingPage: React.FC = () => {
                   width: 'auto',
                   display: 'block',
                   objectFit: 'contain',
-                  imageRendering: 'crisp-edges',
                   filter: 'drop-shadow(0 2px 8px rgba(0, 201, 234, 0.15))',
                 }}
               />
@@ -3329,7 +3328,6 @@ const LandingPage: React.FC = () => {
                     width: 'auto',
                     display: 'block',
                     objectFit: 'contain',
-                    imageRendering: 'crisp-edges',
                   }}
                 />
               </Box>

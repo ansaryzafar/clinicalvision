@@ -68,18 +68,16 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ variant = 'light' }) => 
             onClick={() => navigate(ROUTES.HOME)}
           >
             <Box
+              component="img"
+              src="/images/clinicalvision-logo.svg"
+              alt="ClinicalVision"
               sx={{
-                width: 40,
-                height: 40,
-                borderRadius: '10px',
-                background: `linear-gradient(135deg, ${lunitColors.teal} 0%, ${lunitColors.tealDarker} 100%)`,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                height: 36,
+                width: 'auto',
+                display: 'block',
+                objectFit: 'contain',
               }}
-            >
-              <Assessment sx={{ color: lunitColors.black, fontSize: 24 }} />
-            </Box>
+            />
             <Typography
               sx={{
                 fontFamily: lunitTypography.fontFamilyHeading,

@@ -275,10 +275,10 @@ describe('ImageAnalysisPage empty state (F4)', () => {
 
     // Should show helpful empty state instead of blank analysis suite
     await waitFor(() => {
-      // Look for actionable guidance text
+      // Look for actionable guidance text — the redesigned empty state shows "Analysis Suite"
       expect(
-        screen.getByText(/No Image Loaded/i)
-      ).toBeInTheDocument();
+        screen.getAllByText(/Analysis Suite/i).length
+      ).toBeGreaterThanOrEqual(1);
     }, { timeout: 8000 });
   }, 15000);
 
