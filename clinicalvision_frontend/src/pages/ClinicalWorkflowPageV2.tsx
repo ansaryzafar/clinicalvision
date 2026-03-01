@@ -166,11 +166,11 @@ const StepNavItem: React.FC<StepNavItemProps> = ({
           cursor: accessible ? 'pointer' : 'default',
           display: 'flex',
           alignItems: 'center',
-          gap: '8px',
-          padding: '8px 14px',
+          gap: '5px',
+          padding: '5px 8px',
           borderRadius: '100px',
           fontFamily: LUNIT.fontBody,
-          fontSize: '0.82rem',
+          fontSize: '0.74rem',
           fontWeight: isCurrent ? 500 : 400,
           color: !accessible
             ? LUNIT.disabledGray
@@ -201,14 +201,14 @@ const StepNavItem: React.FC<StepNavItemProps> = ({
         {/* Status circle */}
         <Box
           sx={{
-            width: 22,
-            height: 22,
+            width: 20,
+            height: 20,
             borderRadius: '50%',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             flexShrink: 0,
-            fontSize: '0.72rem',
+            fontSize: '0.7rem',
             fontWeight: 700,
             ...(completed
               ? {
@@ -568,6 +568,31 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
 
   // ── Auto-scroll stepper to show current phase ────────────────────────
   const stepperRef = useRef<HTMLDivElement>(null);
+  const [showLeftFade, setShowLeftFade] = useState(false);
+  const [showRightFade, setShowRightFade] = useState(false);
+
+  const updateScrollIndicators = useCallback(() => {
+    const el = stepperRef.current;
+    if (!el) return;
+    setShowLeftFade(el.scrollLeft > 10);
+    setShowRightFade(el.scrollLeft < el.scrollWidth - el.clientWidth - 10);
+  }, []);
+
+  // Scroll listeners for fade indicators
+  useEffect(() => {
+    const el = stepperRef.current;
+    if (!el) return;
+    // Initial check after layout
+    const timer = setTimeout(updateScrollIndicators, 100);
+    el.addEventListener('scroll', updateScrollIndicators);
+    window.addEventListener('resize', updateScrollIndicators);
+    return () => {
+      clearTimeout(timer);
+      el.removeEventListener('scroll', updateScrollIndicators);
+      window.removeEventListener('resize', updateScrollIndicators);
+    };
+  }, [updateScrollIndicators]);
+
   useEffect(() => {
     if (!stepperRef.current) return;
     const phaseIdx = PHASES.indexOf(currentPhase);
@@ -576,7 +601,9 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
     if (el?.scrollIntoView) {
       el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     }
-  }, [currentPhase]);
+    // Update fade indicators after scroll settles
+    setTimeout(updateScrollIndicators, 350);
+  }, [currentPhase, updateScrollIndicators]);
 
   // ── RENDER: Loading state ────────────────────────────────────────────
   if (isLoading) {
@@ -915,18 +942,55 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
             borderRadius: '16px',
             border: `1px solid ${LUNIT.lightest}`,
             background: LUNIT.white,
+            position: 'relative',
           }}
         >
+          {/* Left scroll fade indicator */}
+          <Box
+            sx={{
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              bottom: 0,
+              width: '32px',
+              background: 'linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%)',
+              pointerEvents: 'none',
+              zIndex: 2,
+              borderRadius: '16px 0 0 16px',
+              opacity: showLeftFade ? 1 : 0,
+              transition: 'opacity 0.3s ease',
+            }}
+          />
+          {/* Right scroll fade indicator */}
+          <Box
+            sx={{
+              position: 'absolute',
+              right: 0,
+              top: 0,
+              bottom: 0,
+              width: '40px',
+              background: 'linear-gradient(to left, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%)',
+              pointerEvents: 'none',
+              zIndex: 2,
+              borderRadius: '0 16px 16px 0',
+              opacity: showRightFade ? 1 : 0,
+              transition: 'opacity 0.3s ease',
+            }}
+          />
           <Box
             ref={stepperRef}
             sx={{
               display: 'flex',
               overflowX: 'auto',
               px: 1,
-              pr: 3,
-              py: 1,
+              py: 0.75,
               gap: 0,
-              '&::-webkit-scrollbar': { height: 0 },
+              '&::-webkit-scrollbar': { height: '3px' },
+              '&::-webkit-scrollbar-thumb': {
+                background: alpha(LUNIT.midGray, 0.2),
+                borderRadius: '4px',
+              },
+              '&::-webkit-scrollbar-track': { background: 'transparent' },
             }}
           >
             {PHASES.map((phase, phaseIdx) => {
@@ -943,14 +1007,14 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
                       display: 'flex',
                       flexDirection: 'column',
                       minWidth: 'fit-content',
-                      px: 1,
+                      px: 0.5,
                     }}
                   >
                     {/* Phase label */}
                     <Typography
                       sx={{
                         fontFamily: LUNIT.fontBody,
-                        fontSize: '0.62rem',
+                        fontSize: '0.58rem',
                         fontWeight: 600,
                         letterSpacing: '0.06em',
                         textTransform: 'none',
@@ -959,15 +1023,15 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
                           : phaseCompleted
                           ? LUNIT.green
                           : LUNIT.gray,
-                        px: 1.75,
-                        mb: 0.5,
+                        px: 1.25,
+                        mb: 0.25,
                       }}
                     >
                       {phase.label}
                     </Typography>
 
                     {/* Steps in this phase */}
-                    <Box sx={{ display: 'flex', gap: 0.5 }}>
+                    <Box sx={{ display: 'flex', gap: 0.25 }}>
                       {phaseSteps.map(step => (
                         <StepNavItem
                           key={step.step}

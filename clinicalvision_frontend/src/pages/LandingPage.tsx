@@ -264,7 +264,7 @@ const LandingPage: React.FC = () => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              py: scrolled ? '12px' : '20px',
+              py: scrolled ? '16px' : '24px',
               transition: 'all 0.3s ease-in-out',
             }}
           >
