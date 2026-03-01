@@ -116,7 +116,7 @@ const AnalysisSuiteEmptyState: React.FC<{ onNavigateWorkflow: () => void }> = ({
             fontWeight: 600,
           }}
         >
-          Open Workflow to Upload &amp; Analyze
+          Open Workflow to Upload & Analyze
         </Button>
       </Paper>
 

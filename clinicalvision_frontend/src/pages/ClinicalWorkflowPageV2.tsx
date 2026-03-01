@@ -185,7 +185,7 @@ const StepNavItem: React.FC<StepNavItemProps> = ({
             ? `1.5px solid ${alpha(phaseColor, 0.3)}`
             : '1.5px solid transparent',
           transition: 'all 0.25s ease',
-          opacity: accessible ? 1 : 0.55,
+          opacity: accessible ? 1 : 0.6,
           whiteSpace: 'nowrap',
           '&:hover': accessible ? {
             background: alpha(phaseColor, 0.06),
@@ -910,6 +910,7 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
               display: 'flex',
               overflowX: 'auto',
               px: 1,
+              pr: 3,
               py: 1,
               gap: 0,
               '&::-webkit-scrollbar': { height: 0 },
