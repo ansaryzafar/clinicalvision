@@ -264,7 +264,7 @@ const LandingPage: React.FC = () => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              py: scrolled ? '16px' : '24px',
+              py: scrolled ? '16px' : '22px',
               transition: 'all 0.3s ease-in-out',
             }}
           >
@@ -284,10 +284,10 @@ const LandingPage: React.FC = () => {
             >
               <Box
                 component="img"
-                src="/images/clinicalvision-logo.svg?v=7"
+                src="/images/clinicalvision-logo.svg?v=8"
                 alt="ClinicalVision AI Logo"
                 sx={{
-                  height: { xs: 44, md: 48 },
+                  height: { xs: 48, md: 60 },
                   width: 'auto',
                   display: 'block',
                   objectFit: 'contain',
@@ -312,7 +312,7 @@ const LandingPage: React.FC = () => {
                     color: lunitColors.text,
                     fontFamily: '"Lexend", sans-serif',
                     fontSize: '15px',
-                    fontWeight: 500,
+                    fontWeight: 400,
                     px: 2.5,
                     py: 1.25,
                     borderRadius: '8px',
