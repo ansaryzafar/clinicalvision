@@ -1222,6 +1222,17 @@ _model_instances: dict[str, BaseModelInference] = {}
 _mock_instance: Optional[BaseModelInference] = None
 
 
+def _reset_model_instances():
+    """Reset singleton model instances. For testing only.
+    
+    Called by conftest.py's reset_singletons fixture to ensure
+    each test gets a clean model state.
+    """
+    global _model_instances, _mock_instance
+    _model_instances.clear()
+    _mock_instance = None
+
+
 def get_model_inference(version: Optional[str] = None) -> BaseModelInference:
     """
     Factory function to get appropriate model inference instance.
@@ -1254,8 +1265,29 @@ def get_model_inference(version: Optional[str] = None) -> BaseModelInference:
         if model_key in _model_instances:
             return _model_instances[model_key]
         
-        # Create new instance and cache it
-        logger.info(f"Using REAL model from: {model_path}")
-        instance = RealModelInference(model_path=str(model_path))
-        _model_instances[model_key] = instance
-        return instance
+        # Create new instance and cache it — with resilient fallback
+        try:
+            logger.info(f"Using REAL model from: {model_path}")
+            instance = RealModelInference(model_path=str(model_path))
+            
+            # Verify model actually loaded (TF ImportError sets _loaded=False without raising)
+            if not instance.is_loaded():
+                raise RuntimeError(
+                    "Model created but failed to load — check TensorFlow installation and model weights"
+                )
+            
+            _model_instances[model_key] = instance
+            return instance
+            
+        except Exception as e:
+            logger.error(f"❌ Failed to load real model: {e}")
+            logger.warning(
+                "⚠️  FALLING BACK TO MOCK MODEL — real model failed to initialize. "
+                "AI predictions will be SIMULATED, not real. "
+                "Fix the model loading issue and restart the server."
+            )
+            if _mock_instance is None:
+                _mock_instance = MockModelInference()
+            _mock_instance._fallback_active = True
+            _mock_instance._fallback_reason = str(e)
+            return _mock_instance

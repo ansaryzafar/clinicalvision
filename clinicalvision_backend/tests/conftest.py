@@ -467,10 +467,18 @@ def narrative_service_instance():
 
 @pytest.fixture(autouse=True)
 def reset_singletons():
-    """Reset singleton instances between tests."""
+    """Reset singleton instances between tests.
+    
+    Ensures each test gets a clean model state — prevents
+    singleton leakage between tests that could mask bugs.
+    """
     yield
-    # Cleanup after test
-    # Reset any singleton patterns if needed
+    # Cleanup after test — actually reset inference singletons
+    try:
+        from app.models.inference import _reset_model_instances
+        _reset_model_instances()
+    except ImportError:
+        pass  # inference module may not be loaded in all test contexts
 
 
 # =============================================================================

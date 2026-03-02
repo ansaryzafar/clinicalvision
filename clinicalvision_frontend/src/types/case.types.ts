@@ -1265,7 +1265,7 @@ export interface BatchAnalysisOptions {
   /** Maximum parallel analyses (default: 4) */
   concurrencyLimit?: number;
   
-  /** Timeout per image in ms (default: 60000) */
+  /** Timeout per image in ms (default: 180000, must match API_TIMEOUT in api.ts) */
   timeoutPerImage?: number;
   
   /** Progress callback */
@@ -1283,6 +1283,6 @@ export interface BatchAnalysisOptions {
  */
 export const DEFAULT_BATCH_ANALYSIS_OPTIONS: Required<Omit<BatchAnalysisOptions, 'onProgress' | 'abortSignal'>> = {
   concurrencyLimit: 4,
-  timeoutPerImage: 60000,
+  timeoutPerImage: 180000,
   continueOnError: true,
 };
