@@ -1006,7 +1006,8 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
                     sx={{
                       display: 'flex',
                       flexDirection: 'column',
-                      minWidth: 'fit-content',
+                      flex: '1 1 0',
+                      minWidth: 0,
                       px: 0.5,
                     }}
                   >

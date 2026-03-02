@@ -150,8 +150,8 @@
   <!-- Text: Live Lexend font for crisp sub-pixel rendering at any scale -->
   <g id="VisionAI-text">
     <!-- "Vision" — Lexend SemiBold 600, prominent wordmark -->
-    <text x="122" y="72" font-family="'Lexend', 'Poppins', system-ui, sans-serif" font-size="42" font-weight="600" letter-spacing="-0.5" fill="url(#textGradient)">Vision</text>
+    <text x="122" y="78" font-family="'Lexend', 'Poppins', system-ui, sans-serif" font-size="42" font-weight="600" letter-spacing="-0.5" fill="url(#textGradient)">Vision</text>
     <!-- "AI" — Lexend Medium 500, slightly lighter for visual hierarchy -->
-    <text x="263" y="72" font-family="'Lexend', 'Poppins', system-ui, sans-serif" font-size="42" font-weight="500" letter-spacing="1" fill="url(#aiGradient)">AI</text>
+    <text x="263" y="78" font-family="'Lexend', 'Poppins', system-ui, sans-serif" font-size="42" font-weight="500" letter-spacing="1" fill="url(#aiGradient)">AI</text>
   </g>
  </svg>
