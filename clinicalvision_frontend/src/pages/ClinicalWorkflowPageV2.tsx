@@ -166,6 +166,9 @@ const StepNavItem: React.FC<StepNavItemProps> = ({
           cursor: accessible ? 'pointer' : 'default',
           display: 'flex',
           alignItems: 'center',
+          justifyContent: 'center',
+          flex: '1 1 0',
+          minWidth: 0,
           gap: '5px',
           padding: '5px 8px',
           borderRadius: '100px',
@@ -188,6 +191,8 @@ const StepNavItem: React.FC<StepNavItemProps> = ({
           transition: 'all 0.25s ease',
           opacity: accessible ? 1 : 0.65,
           whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
           '&:hover': accessible ? {
             background: alpha(phaseColor, 0.06),
             border: `1.5px solid ${alpha(phaseColor, 0.2)}`,
@@ -1008,7 +1013,7 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
                       flexDirection: 'column',
                       flex: '1 1 0',
                       minWidth: 0,
-                      px: 0.5,
+                      px: 0.75,
                     }}
                   >
                     {/* Phase label */}
@@ -1019,6 +1024,7 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
                         fontWeight: 600,
                         letterSpacing: '0.06em',
                         textTransform: 'none',
+                        textAlign: 'center',
                         color: phaseActive
                           ? phase.color
                           : phaseCompleted
@@ -1032,7 +1038,7 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
                     </Typography>
 
                     {/* Steps in this phase */}
-                    <Box sx={{ display: 'flex', gap: 0.25 }}>
+                    <Box sx={{ display: 'flex', gap: 0.25, width: '100%' }}>
                       {phaseSteps.map(step => (
                         <StepNavItem
                           key={step.step}
@@ -1056,6 +1062,7 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
                         width: '1px',
                         alignSelf: 'stretch',
                         my: 1,
+                        mx: 0.25,
                         background: LUNIT.lightest,
                         flexShrink: 0,
                       }}
