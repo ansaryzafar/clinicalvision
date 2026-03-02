@@ -163,14 +163,13 @@ const StepNavItem: React.FC<StepNavItemProps> = ({
         onClick={accessible ? onClick : undefined}
         sx={{
           all: 'unset',
+          boxSizing: 'border-box',
           cursor: accessible ? 'pointer' : 'default',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          flex: '1 1 0',
-          minWidth: 0,
           gap: '5px',
-          padding: '5px 8px',
+          padding: '5px 6px',
           borderRadius: '100px',
           fontFamily: LUNIT.fontBody,
           fontSize: '0.74rem',
@@ -190,9 +189,6 @@ const StepNavItem: React.FC<StepNavItemProps> = ({
             : '1.5px solid transparent',
           transition: 'all 0.25s ease',
           opacity: accessible ? 1 : 0.65,
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
           '&:hover': accessible ? {
             background: alpha(phaseColor, 0.06),
             border: `1.5px solid ${alpha(phaseColor, 0.2)}`,
@@ -985,11 +981,11 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
           <Box
             ref={stepperRef}
             sx={{
-              display: 'flex',
+              display: 'grid',
+              gridTemplateColumns: `repeat(${TOTAL_WORKFLOW_STEPS}, 1fr)`,
+              gridTemplateRows: 'auto auto',
               overflowX: 'auto',
-              px: 1,
               py: 0.75,
-              gap: 0,
               '&::-webkit-scrollbar': { height: '3px' },
               '&::-webkit-scrollbar-thumb': {
                 background: alpha(LUNIT.midGray, 0.2),
@@ -998,77 +994,79 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
               '&::-webkit-scrollbar-track': { background: 'transparent' },
             }}
           >
+            {/* Row 1: Phase labels — each spans its step columns */}
             {PHASES.map((phase, phaseIdx) => {
               const phaseSteps = phase.stepIndices.map(i => steps[i]);
               const phaseCompleted = phaseSteps.every(s => s.completed);
               const phaseActive = phaseSteps.some(s => s.isCurrent);
+              const startCol = phase.stepIndices[0] + 1; // CSS grid is 1-indexed
+              const spanCount = phase.stepIndices.length;
+              const isLastPhase = phaseIdx === PHASES.length - 1;
 
               return (
-                <React.Fragment key={phase.id}>
-                  {/* Phase group */}
-                  <Box
-                    data-phase-group
+                <Box
+                  key={`label-${phase.id}`}
+                  data-phase-group
+                  sx={{
+                    gridColumn: `${startCol} / span ${spanCount}`,
+                    gridRow: 1,
+                    textAlign: 'center',
+                    px: 1,
+                    pb: 0.25,
+                    borderRight: isLastPhase ? 'none' : `1px solid ${LUNIT.lightest}`,
+                  }}
+                >
+                  <Typography
                     sx={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      flex: '1 1 0',
-                      minWidth: 0,
-                      px: 0.75,
+                      fontFamily: LUNIT.fontBody,
+                      fontSize: '0.58rem',
+                      fontWeight: 600,
+                      letterSpacing: '0.06em',
+                      textTransform: 'none',
+                      color: phaseActive
+                        ? phase.color
+                        : phaseCompleted
+                        ? LUNIT.green
+                        : LUNIT.gray,
                     }}
                   >
-                    {/* Phase label */}
-                    <Typography
-                      sx={{
-                        fontFamily: LUNIT.fontBody,
-                        fontSize: '0.58rem',
-                        fontWeight: 600,
-                        letterSpacing: '0.06em',
-                        textTransform: 'none',
-                        textAlign: 'center',
-                        color: phaseActive
-                          ? phase.color
-                          : phaseCompleted
-                          ? LUNIT.green
-                          : LUNIT.gray,
-                        px: 1.25,
-                        mb: 0.25,
-                      }}
-                    >
-                      {phase.label}
-                    </Typography>
+                    {phase.label}
+                  </Typography>
+                </Box>
+              );
+            })}
 
-                    {/* Steps in this phase */}
-                    <Box sx={{ display: 'flex', gap: 0.25, width: '100%' }}>
-                      {phaseSteps.map(step => (
-                        <StepNavItem
-                          key={step.step}
-                          index={step.index}
-                          label={step.label}
-                          icon={step.icon}
-                          completed={step.completed}
-                          isCurrent={step.isCurrent}
-                          accessible={step.accessible}
-                          phaseColor={phase.color}
-                          onClick={() => handleStepClick(step.index)}
-                        />
-                      ))}
-                    </Box>
-                  </Box>
+            {/* Row 2: Step buttons — one per grid column */}
+            {steps.map((step, idx) => {
+              const phase = PHASES.find(p => p.stepIndices.includes(idx))!;
+              const isLastInPhase = phase.stepIndices[phase.stepIndices.length - 1] === idx;
+              const isLastPhase = PHASES.indexOf(phase) === PHASES.length - 1;
 
-                  {/* Separator between phases */}
-                  {phaseIdx < PHASES.length - 1 && (
-                    <Box
-                      sx={{
-                        width: '1px',
-                        alignSelf: 'stretch',
-                        my: 1,
-                        mx: 0.25,
-                        background: LUNIT.lightest,
-                        flexShrink: 0,
-                      }}
-                    />
-                  )}
-                </React.Fragment>
+              return (
+                <Box
+                  key={step.step}
+                  sx={{
+                    gridColumn: idx + 1,
+                    gridRow: 2,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    px: 0.25,
+                    borderRight: (isLastInPhase && !isLastPhase)
+                      ? `1px solid ${LUNIT.lightest}`
+                      : 'none',
+                  }}
+                >
+                  <StepNavItem
+                    index={step.index}
+                    label={step.label}
+                    icon={step.icon}
+                    completed={step.completed}
+                    isCurrent={step.isCurrent}
+                    accessible={step.accessible}
+                    phaseColor={phase.color}
+                    onClick={() => handleStepClick(step.index)}
+                  />
+                </Box>
               );
             })}
           </Box>
