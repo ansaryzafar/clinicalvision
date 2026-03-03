@@ -1228,7 +1228,7 @@ def _reset_model_instances():
     Called by conftest.py's reset_singletons fixture to ensure
     each test gets a clean model state.
     """
-    global _model_instances, _mock_instance
+    global _mock_instance
     _model_instances.clear()
     _mock_instance = None
 
