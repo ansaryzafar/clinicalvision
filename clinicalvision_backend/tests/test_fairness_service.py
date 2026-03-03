@@ -147,7 +147,8 @@ class DisparityResult:
     def passes_80_percent_rule(self) -> bool:
         """Check if disparity passes the 80% rule."""
         ratio = self.disparity_ratio
-        return ratio >= DISPARITY_THRESHOLD and ratio <= (1 / DISPARITY_THRESHOLD)
+        eps = 1e-9  # tolerance for IEEE 754 floating-point boundary
+        return ratio >= (DISPARITY_THRESHOLD - eps) and ratio <= (1 / DISPARITY_THRESHOLD + eps)
     
     @property
     def severity(self) -> str:

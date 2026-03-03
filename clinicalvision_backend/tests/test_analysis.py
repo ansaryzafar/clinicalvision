@@ -4,9 +4,32 @@ Unit tests for analysis endpoints
 
 import pytest
 from fastapi.testclient import TestClient
+from unittest.mock import MagicMock
 from PIL import Image
 import io
+import uuid
 from main import app
+from app.core.dependencies import get_current_active_user
+
+
+def _make_mock_user():
+    user = MagicMock()
+    user.id = uuid.uuid4()
+    user.email = "test@clinicalvision.ai"
+    user.role = "radiologist"
+    user.is_active = True
+    user.organization_id = uuid.uuid4()
+    return user
+
+
+@pytest.fixture(autouse=True)
+def _override_auth():
+    """Set auth override before each test; restore after."""
+    mock_user = _make_mock_user()
+    app.dependency_overrides[get_current_active_user] = lambda: mock_user
+    yield
+    app.dependency_overrides.pop(get_current_active_user, None)
+
 
 client = TestClient(app)
 
