@@ -1,0 +1,46 @@
+{
+  "caseId": "DEMO-003",
+  "version": "1.0.0",
+  "patient": {
+    "mrn": "DEMO-003",
+    "firstName": "Sarah",
+    "lastName": "Williams",
+    "middleInitial": "L",
+    "dateOfBirth": "1982-11-08",
+    "sex": "F"
+  },
+  "clinicalHistory": {
+    "indication": "Calcifications noted on prior screening",
+    "priorStudies": "Screening 6 months ago \u2014 BI-RADS 3",
+    "brcaStatus": "Positive (BRCA1)",
+    "familyHistory": "Sister \u2014 breast cancer at age 45, maternal aunt \u2014 ovarian cancer",
+    "symptoms": "No palpable mass \u2014 calcifications on imaging only",
+    "hormoneTherapy": "None",
+    "priorBiopsies": "None"
+  },
+  "expectedOutcome": {
+    "biRads": "4B or 4C",
+    "description": "Calcification cluster \u2014 high suspicion, BRCA positive",
+    "pathology": "MALIGNANT"
+  },
+  "images": [
+    {
+      "filename": "DEMO-003_LEFT_CC",
+      "viewType": "CC",
+      "laterality": "L",
+      "formats": [
+        "png"
+      ],
+      "source": "ClinicalVision Synthetic Demo"
+    },
+    {
+      "filename": "DEMO-003_LEFT_MLO",
+      "viewType": "MLO",
+      "laterality": "L",
+      "formats": [
+        "png"
+      ],
+      "source": "ClinicalVision Synthetic Demo"
+    }
+  ]
+}

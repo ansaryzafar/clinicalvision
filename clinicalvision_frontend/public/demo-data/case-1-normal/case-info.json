@@ -1,0 +1,64 @@
+{
+  "caseId": "DEMO-001",
+  "version": "1.0.0",
+  "patient": {
+    "mrn": "DEMO-001",
+    "firstName": "Jane",
+    "lastName": "Thompson",
+    "middleInitial": "A",
+    "dateOfBirth": "1968-03-15",
+    "sex": "F"
+  },
+  "clinicalHistory": {
+    "indication": "Routine annual screening mammography",
+    "priorStudies": "Annual screening \u2014 no prior findings",
+    "brcaStatus": "Negative",
+    "familyHistory": "No significant family history",
+    "symptoms": "None \u2014 asymptomatic screening",
+    "hormoneTherapy": "None",
+    "priorBiopsies": "None"
+  },
+  "expectedOutcome": {
+    "biRads": "1 or 2",
+    "description": "Normal/Benign \u2014 no suspicious findings expected",
+    "pathology": "BENIGN"
+  },
+  "images": [
+    {
+      "filename": "DEMO-001_RIGHT_CC",
+      "viewType": "CC",
+      "laterality": "R",
+      "formats": [
+        "png"
+      ],
+      "source": "ClinicalVision Synthetic Demo"
+    },
+    {
+      "filename": "DEMO-001_RIGHT_MLO",
+      "viewType": "MLO",
+      "laterality": "R",
+      "formats": [
+        "png"
+      ],
+      "source": "ClinicalVision Synthetic Demo"
+    },
+    {
+      "filename": "DEMO-001_LEFT_CC",
+      "viewType": "CC",
+      "laterality": "L",
+      "formats": [
+        "png"
+      ],
+      "source": "ClinicalVision Synthetic Demo"
+    },
+    {
+      "filename": "DEMO-001_LEFT_MLO",
+      "viewType": "MLO",
+      "laterality": "L",
+      "formats": [
+        "png"
+      ],
+      "source": "ClinicalVision Synthetic Demo"
+    }
+  ]
+}

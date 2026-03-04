@@ -19,6 +19,10 @@ import {
   Menu as MenuIcon,
   ChevronLeft,
   ChevronRight,
+  CloudDownload,
+  Visibility as ViewsIcon,
+  CheckCircleOutline,
+  WarningAmber,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES, DEFAULT_AUTH_REDIRECT } from '../routes/paths';
@@ -3160,6 +3164,261 @@ const LandingPage: React.FC = () => {
         </Box>
       </Box>
 
+      {/* ================================================================ */}
+      {/* Demo Data Section — Download & Try with Real AI                  */}
+      {/* ================================================================ */}
+      <Box
+        sx={{
+          bgcolor: lunitColors.lightestGray,
+          py: { xs: '80px', md: '110px' },
+          position: 'relative',
+        }}
+      >
+        <Box sx={{ maxWidth: '1200px', mx: 'auto', px: { xs: 3, md: 6 } }}>
+          {/* Section Header */}
+          <Box sx={{ textAlign: 'center', mb: { xs: 5, md: 7 } }}>
+            <Typography
+              variant="overline"
+              sx={{
+                color: lunitColors.teal,
+                fontWeight: 600,
+                letterSpacing: '3px',
+                fontSize: '13px',
+                mb: 2,
+                display: 'block',
+              }}
+            >
+              GET STARTED
+            </Typography>
+            <Typography
+              variant="h3"
+              sx={{
+                fontWeight: 700,
+                color: lunitColors.headingColor,
+                fontSize: { xs: '28px', md: '40px' },
+                mb: 2,
+                lineHeight: 1.2,
+              }}
+            >
+              Try with Demo Data
+            </Typography>
+            <Typography
+              sx={{
+                color: lunitColors.darkGrey,
+                fontSize: { xs: '16px', md: '18px' },
+                maxWidth: '650px',
+                mx: 'auto',
+                lineHeight: 1.7,
+              }}
+            >
+              Download curated mammogram cases and test the full clinical workflow —
+              AI analysis, MC Dropout uncertainty, GradCAM++ heatmaps, and BI-RADS assessment.
+            </Typography>
+          </Box>
+
+          {/* Case Cards Grid */}
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr' },
+              gap: { xs: 2.5, md: 3 },
+              mb: { xs: 4, md: 5 },
+            }}
+          >
+            {/* Case 1 — Normal */}
+            <Box
+              sx={{
+                bgcolor: '#FFFFFF',
+                borderRadius: '16px',
+                p: { xs: 3, md: 3.5 },
+                border: '1px solid',
+                borderColor: alpha(lunitColors.teal, 0.12),
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  borderColor: lunitColors.teal,
+                  boxShadow: `0 8px 32px ${alpha(lunitColors.teal, 0.12)}`,
+                  transform: 'translateY(-4px)',
+                },
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                <Box
+                  sx={{
+                    px: 1.5, py: 0.5, borderRadius: '8px',
+                    bgcolor: alpha('#4caf50', 0.1), color: '#4caf50',
+                    fontSize: '12px', fontWeight: 600,
+                    display: 'flex', alignItems: 'center', gap: 0.5,
+                  }}
+                >
+                  <CheckCircleOutline sx={{ fontSize: 14 }} /> Easy
+                </Box>
+              </Box>
+              <Typography
+                sx={{
+                  fontWeight: 700, fontSize: '18px',
+                  color: lunitColors.headingColor, mb: 1,
+                }}
+              >
+                Normal / Benign Screening
+              </Typography>
+              <Typography
+                sx={{ color: lunitColors.darkGrey, fontSize: '14px', mb: 2, lineHeight: 1.6 }}
+              >
+                Jane A. Thompson — Routine annual screening. 4-view standard set (RCC, LCC, RMLO, LMLO).
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: lunitColors.grey }}>
+                <ViewsIcon sx={{ fontSize: 16 }} />
+                <Typography sx={{ fontSize: '13px' }}>4 views</Typography>
+                <Typography sx={{ fontSize: '13px', ml: 'auto', color: lunitColors.teal, fontWeight: 600 }}>
+                  BI-RADS 1-2
+                </Typography>
+              </Box>
+            </Box>
+
+            {/* Case 2 — Suspicious */}
+            <Box
+              sx={{
+                bgcolor: '#FFFFFF',
+                borderRadius: '16px',
+                p: { xs: 3, md: 3.5 },
+                border: '1px solid',
+                borderColor: alpha('#ff9800', 0.2),
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  borderColor: '#ff9800',
+                  boxShadow: `0 8px 32px ${alpha('#ff9800', 0.12)}`,
+                  transform: 'translateY(-4px)',
+                },
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                <Box
+                  sx={{
+                    px: 1.5, py: 0.5, borderRadius: '8px',
+                    bgcolor: alpha('#ff9800', 0.1), color: '#ff9800',
+                    fontSize: '12px', fontWeight: 600,
+                    display: 'flex', alignItems: 'center', gap: 0.5,
+                  }}
+                >
+                  <TrendingUp sx={{ fontSize: 14 }} /> Intermediate
+                </Box>
+              </Box>
+              <Typography
+                sx={{
+                  fontWeight: 700, fontSize: '18px',
+                  color: lunitColors.headingColor, mb: 1,
+                }}
+              >
+                Suspicious Mass Finding
+              </Typography>
+              <Typography
+                sx={{ color: lunitColors.darkGrey, fontSize: '14px', mb: 2, lineHeight: 1.6 }}
+              >
+                Maria R. Chen — Palpable mass, diagnostic workup. 4 standard + 2 additional views (SPOT, MAG).
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: lunitColors.grey }}>
+                <ViewsIcon sx={{ fontSize: 16 }} />
+                <Typography sx={{ fontSize: '13px' }}>6 views</Typography>
+                <Typography sx={{ fontSize: '13px', ml: 'auto', color: '#ff9800', fontWeight: 600 }}>
+                  BI-RADS 4-5
+                </Typography>
+              </Box>
+            </Box>
+
+            {/* Case 3 — Calcification */}
+            <Box
+              sx={{
+                bgcolor: '#FFFFFF',
+                borderRadius: '16px',
+                p: { xs: 3, md: 3.5 },
+                border: '1px solid',
+                borderColor: alpha('#f44336', 0.15),
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  borderColor: '#f44336',
+                  boxShadow: `0 8px 32px ${alpha('#f44336', 0.12)}`,
+                  transform: 'translateY(-4px)',
+                },
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                <Box
+                  sx={{
+                    px: 1.5, py: 0.5, borderRadius: '8px',
+                    bgcolor: alpha('#f44336', 0.1), color: '#f44336',
+                    fontSize: '12px', fontWeight: 600,
+                    display: 'flex', alignItems: 'center', gap: 0.5,
+                  }}
+                >
+                  <WarningAmber sx={{ fontSize: 14 }} /> Advanced
+                </Box>
+              </Box>
+              <Typography
+                sx={{
+                  fontWeight: 700, fontSize: '18px',
+                  color: lunitColors.headingColor, mb: 1,
+                }}
+              >
+                Calcification Follow-up
+              </Typography>
+              <Typography
+                sx={{ color: lunitColors.darkGrey, fontSize: '14px', mb: 2, lineHeight: 1.6 }}
+              >
+                Sarah L. Williams — BRCA1 positive, calcifications on prior imaging. 2-view left breast targeted study.
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: lunitColors.grey }}>
+                <ViewsIcon sx={{ fontSize: 16 }} />
+                <Typography sx={{ fontSize: '13px' }}>2 views</Typography>
+                <Typography sx={{ fontSize: '13px', ml: 'auto', color: '#f44336', fontWeight: 600 }}>
+                  BI-RADS 4B-4C
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
+
+          {/* Download Button + Description */}
+          <Box sx={{ textAlign: 'center' }}>
+            <Button
+              variant="contained"
+              size="large"
+              startIcon={<CloudDownload />}
+              href="/demo-data/ClinicalVision_Demo_Package.zip"
+              download
+              sx={{
+                bgcolor: lunitColors.teal,
+                color: '#FFFFFF',
+                fontWeight: 600,
+                fontSize: '16px',
+                px: 5,
+                py: 1.8,
+                borderRadius: '12px',
+                textTransform: 'none',
+                mb: 2,
+                '&:hover': {
+                  bgcolor: lunitColors.tealDarker,
+                  transform: 'translateY(-2px)',
+                  boxShadow: `0 6px 24px ${alpha(lunitColors.teal, 0.35)}`,
+                },
+                transition: 'all 0.3s ease',
+              }}
+            >
+              Download Complete Demo Package (.zip)
+            </Button>
+            <Typography
+              sx={{
+                color: lunitColors.grey,
+                fontSize: '14px',
+                maxWidth: '500px',
+                mx: 'auto',
+              }}
+            >
+              Includes 12 mammogram images, patient demographics, clinical history,
+              and step-by-step testing instructions.
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
+
       {/* CTA Section - Dark with Lunit gradient */}
       <Box 
         ref={ctaReveal.ref}
@@ -3234,7 +3493,6 @@ const LandingPage: React.FC = () => {
               <Button
                 variant="contained"
                 size="large"
-                onClick={() => navigate(ROUTES.LOGIN)}
                 endIcon={<ArrowForward />}
                 sx={{
                   borderRadius: '100px',

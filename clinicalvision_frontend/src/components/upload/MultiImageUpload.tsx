@@ -721,6 +721,26 @@ export const MultiImageUpload: React.FC<MultiImageUploadProps> = ({
         <Typography variant="caption" display="block" sx={{ mt: 2 }} color="text.secondary">
           Supports: PNG, JPEG, DICOM • Max: {MAX_FILE_SIZE / (1024 * 1024)}MB per file
         </Typography>
+
+        {/* Demo data hint — only when no images are pending or uploaded */}
+        {pendingImages.length === 0 && existingImages.length === 0 && (
+          <Typography
+            variant="caption"
+            component="a"
+            href="/demo-data/ClinicalVision_Demo_Package.zip"
+            download
+            sx={{
+              display: 'inline-block',
+              mt: 1.5,
+              color: LUNIT.teal,
+              textDecoration: 'none',
+              cursor: 'pointer',
+              '&:hover': { textDecoration: 'underline' },
+            }}
+          >
+            No images? Download demo mammograms →
+          </Typography>
+        )}
       </DropZone>
       
       {/* Pending Images */}

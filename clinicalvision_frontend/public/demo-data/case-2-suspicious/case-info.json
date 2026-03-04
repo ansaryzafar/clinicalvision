@@ -1,0 +1,82 @@
+{
+  "caseId": "DEMO-002",
+  "version": "1.0.0",
+  "patient": {
+    "mrn": "DEMO-002",
+    "firstName": "Maria",
+    "lastName": "Chen",
+    "middleInitial": "R",
+    "dateOfBirth": "1975-09-22",
+    "sex": "F"
+  },
+  "clinicalHistory": {
+    "indication": "Palpable mass, right breast, 2 o'clock position",
+    "priorStudies": "Previous benign biopsy (2023)",
+    "brcaStatus": "Unknown",
+    "familyHistory": "Mother \u2014 breast cancer at age 52",
+    "symptoms": "Palpable mass right breast, upper outer quadrant",
+    "hormoneTherapy": "None",
+    "priorBiopsies": "Right breast, benign fibroadenoma (2023)"
+  },
+  "expectedOutcome": {
+    "biRads": "4 or 5",
+    "description": "Suspicious mass \u2014 elevated AI confidence expected",
+    "pathology": "MALIGNANT"
+  },
+  "images": [
+    {
+      "filename": "DEMO-002_RIGHT_CC",
+      "viewType": "CC",
+      "laterality": "R",
+      "formats": [
+        "png"
+      ],
+      "source": "ClinicalVision Synthetic Demo"
+    },
+    {
+      "filename": "DEMO-002_RIGHT_MLO",
+      "viewType": "MLO",
+      "laterality": "R",
+      "formats": [
+        "png"
+      ],
+      "source": "ClinicalVision Synthetic Demo"
+    },
+    {
+      "filename": "DEMO-002_LEFT_CC",
+      "viewType": "CC",
+      "laterality": "L",
+      "formats": [
+        "png"
+      ],
+      "source": "ClinicalVision Synthetic Demo"
+    },
+    {
+      "filename": "DEMO-002_LEFT_MLO",
+      "viewType": "MLO",
+      "laterality": "L",
+      "formats": [
+        "png"
+      ],
+      "source": "ClinicalVision Synthetic Demo"
+    },
+    {
+      "filename": "DEMO-002_RIGHT_SPOT",
+      "viewType": "SPOT",
+      "laterality": "R",
+      "formats": [
+        "png"
+      ],
+      "source": "ClinicalVision Synthetic Demo"
+    },
+    {
+      "filename": "DEMO-002_RIGHT_MAG",
+      "viewType": "MAG",
+      "laterality": "R",
+      "formats": [
+        "png"
+      ],
+      "source": "ClinicalVision Synthetic Demo"
+    }
+  ]
+}

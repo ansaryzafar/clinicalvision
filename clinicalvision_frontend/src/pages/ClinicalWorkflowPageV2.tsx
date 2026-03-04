@@ -78,6 +78,9 @@ import { FinalizeStep } from '../components/workflow/FinalizeStep';
 import { DigitalSignatureStep } from '../components/workflow/DigitalSignatureStep';
 import { WorkflowAnalysisSuite } from '../components/workflow/WorkflowAnalysisSuite';
 import { ImageVerificationStep } from '../components/workflow/ImageVerificationStep';
+import { useDemoData } from '../hooks/useDemoData';
+import type { DemoCaseInfo } from '../services/demoDataService';
+import { CloudDownload } from '@mui/icons-material';
 
 // ============================================================================
 // LUNIT DESIGN TOKENS — Inline for self-contained page styling
@@ -753,11 +756,67 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
               >
                 Begin New Case
               </Button>
+
+              {/* Demo Data Prompt */}
+              <Box
+                sx={{
+                  mt: 4,
+                  pt: 3,
+                  borderTop: `1px solid ${alpha(LUNIT.lightest, 0.8)}`,
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: LUNIT.fontBody,
+                    fontSize: '0.85rem',
+                    color: LUNIT.midGray,
+                    mb: 2,
+                  }}
+                >
+                  New to ClinicalVision? Try with sample data:
+                </Typography>
+                <Button
+                  component="a"
+                  href="/demo-data/ClinicalVision_Demo_Package.zip"
+                  download
+                  startIcon={<CloudDownload />}
+                  variant="outlined"
+                  size="small"
+                  sx={{
+                    fontFamily: LUNIT.fontBody,
+                    fontWeight: 500,
+                    fontSize: '0.85rem',
+                    borderRadius: '100px',
+                    borderColor: alpha(LUNIT.teal, 0.4),
+                    color: LUNIT.teal,
+                    textTransform: 'none',
+                    px: 3,
+                    py: 0.75,
+                    '&:hover': {
+                      borderColor: LUNIT.teal,
+                      bgcolor: alpha(LUNIT.teal, 0.05),
+                    },
+                  }}
+                >
+                  Download Demo Data (3 Cases, 12 Images)
+                </Button>
+                <Typography
+                  sx={{
+                    fontFamily: LUNIT.fontBody,
+                    fontSize: '0.75rem',
+                    color: alpha(LUNIT.midGray, 0.7),
+                    mt: 1,
+                  }}
+                >
+                  Includes patient info, clinical history, and mammogram images
+                </Typography>
+              </Box>
             </Paper>
           </Box>
         </Container>
       </Box>
     );
+
   }
 
   // ── RENDER: Active case ──────────────────────────────────────────────
