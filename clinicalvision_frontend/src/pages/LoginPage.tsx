@@ -1,12 +1,13 @@
 /**
- * Login Page - Production Grade
+ * Login Page - Split-Screen Brand-Forward Design
  * 
  * Features:
- * - Material-UI design
- * - Form validation
- * - Error handling
- * - Loading states
+ * - Split-screen layout: brand panel (left) + form panel (right)
+ * - Full lunitDesignSystem integration (ClashGrotesk, Lexend, teal palette)
+ * - SVG brand logo with value propositions
+ * - Form validation, error handling, loading states
  * - Redirect after login
+ * - Responsive: collapses to single column on mobile
  * - Accessible (WCAG compliant)
  */
 
@@ -15,8 +16,6 @@ import { useNavigate, useLocation, Link as RouterLink } from 'react-router-dom';
 import { ROUTES, DEFAULT_AUTH_REDIRECT } from '../routes/paths';
 import {
   Box,
-  Container,
-  Paper,
   TextField,
   Button,
   Typography,
@@ -25,13 +24,24 @@ import {
   Link,
   InputAdornment,
   IconButton,
+  alpha,
 } from '@mui/material';
 import {
   Visibility,
   VisibilityOff,
-  LocalHospital,
+  CheckCircleOutline,
+  ArrowForward,
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
+import { lunitColors } from '../styles/lunitDesignSystem';
+
+/** Value propositions shown on the brand panel */
+const VALUE_PROPS = [
+  { text: '97.5% Detection Sensitivity', sub: 'Industry-leading accuracy for early detection' },
+  { text: 'FDA 510(k) Cleared', sub: 'Regulatory-grade AI diagnostic platform' },
+  { text: 'HIPAA & GDPR Compliant', sub: 'Enterprise security & privacy by design' },
+  { text: '50,000+ Studies Analyzed', sub: 'Trusted by leading healthcare institutions' },
+];
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -58,52 +68,35 @@ export const LoginPage: React.FC = () => {
     }
   }, [isAuthenticated, authLoading, navigate, from]);
 
-  /**
-   * Validate form fields
-   */
+  /** Validate form fields */
   const validateForm = (): boolean => {
     const errors: { email?: string; password?: string } = {};
-
-    // Email validation
     if (!email) {
       errors.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       errors.email = 'Invalid email format';
     }
-
-    // Password validation
     if (!password) {
       errors.password = 'Password is required';
     } else if (password.length < 8) {
       errors.password = 'Password must be at least 8 characters';
     }
-
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
-  /**
-   * Handle form submission
-   */
+  /** Handle form submission */
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     clearError();
-
-    if (!validateForm()) {
-      return;
-    }
-
-    // Prevent double-submit
+    if (!validateForm()) return;
     if (isLoading) return;
     setIsLoading(true);
 
     try {
       await login({ email: email.trim().toLowerCase(), password });
-      // Redirect to intended destination or home
       navigate(from, { replace: true });
     } catch (error: unknown) {
-      // Error is already displayed via authError from AuthContext
-      // Only log in development
       if (process.env.NODE_ENV === 'development') {
         console.error('Login failed:', error);
       }
@@ -112,9 +105,7 @@ export const LoginPage: React.FC = () => {
     }
   };
 
-  /**
-   * Handle field changes and clear validation errors
-   */
+  /** Handle field changes and clear validation errors */
   const handleEmailChange = (value: string) => {
     setEmail(value);
     if (validationErrors.email) {
@@ -131,62 +122,252 @@ export const LoginPage: React.FC = () => {
     clearError();
   };
 
+  // ── Shared input styles (lunitDesignSystem) ──
+  const inputSx = {
+    '& .MuiOutlinedInput-root': {
+      borderRadius: '10px',
+      fontFamily: '"Lexend", sans-serif',
+      fontSize: '15px',
+      transition: 'all 0.2s ease',
+      '& fieldset': { borderColor: lunitColors.lightGray },
+      '&:hover fieldset': { borderColor: lunitColors.grey },
+      '&.Mui-focused fieldset': { borderColor: lunitColors.teal, borderWidth: '2px' },
+    },
+    '& .MuiInputLabel-root': {
+      fontFamily: '"Lexend", sans-serif',
+      fontSize: '14px',
+      color: lunitColors.darkGrey,
+      '&.Mui-focused': { color: lunitColors.tealDarker },
+    },
+    '& .MuiFormHelperText-root': {
+      fontFamily: '"Lexend", sans-serif',
+      fontSize: '12px',
+    },
+  };
+
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        bgcolor: 'background.default',
-        py: 4,
-      }}
-    >
-      <Container maxWidth="sm">
-        <Paper
-          elevation={3}
-          sx={{
-            p: 4,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          {/* Logo and Title */}
+    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+      {/* ═══════════════════════════════════════════════
+          LEFT — Brand Panel (hidden on mobile)
+         ═══════════════════════════════════════════════ */}
+      <Box
+        sx={{
+          display: { xs: 'none', md: 'flex' },
+          flex: '0 0 52%',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'flex-start',
+          position: 'relative',
+          overflow: 'hidden',
+          background: `linear-gradient(155deg, ${lunitColors.darkerGray} 0%, #0a2929 45%, ${lunitColors.tealDarker} 100%)`,
+          px: { md: 6, lg: 8 },
+          py: 6,
+        }}
+      >
+        {/* Decorative radial glows */}
+        <Box sx={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: `
+            radial-gradient(ellipse at 20% 80%, rgba(0, 201, 234, 0.18) 0%, transparent 55%),
+            radial-gradient(ellipse at 85% 15%, rgba(86, 193, 77, 0.10) 0%, transparent 45%)
+          `,
+        }} />
+
+        {/* Content */}
+        <Box sx={{ position: 'relative', zIndex: 1, maxWidth: 520 }}>
+          {/* Logo */}
           <Box
+            component="img"
+            src="/images/clinicalvision-logo.svg?v=11"
+            alt="ClinicalVision AI"
             sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1,
-              mb: 3,
+              height: { md: 56, lg: 64 },
+              width: 'auto',
+              mb: 5,
+              filter: 'brightness(0) invert(1)',
+              opacity: 0.95,
+            }}
+          />
+
+          {/* Headline */}
+          <Typography
+            sx={{
+              fontFamily: '"ClashGrotesk", sans-serif',
+              fontWeight: 300,
+              fontSize: { md: '32px', lg: '38px' },
+              lineHeight: 1.2,
+              color: lunitColors.white,
+              mb: 1.5,
+              letterSpacing: '-0.02em',
             }}
           >
-            <LocalHospital color="primary" sx={{ fontSize: 40 }} />
-            <Typography component="h1" variant="h4" fontWeight="bold">
-              ClinicalVision AI
-            </Typography>
-          </Box>
-
-          <Typography variant="h5" component="h2" gutterBottom>
-            Sign In
+            AI-Powered Breast Cancer Detection
           </Typography>
 
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-            Enter your credentials to access the platform
+          <Typography
+            sx={{
+              fontFamily: '"Lexend", sans-serif',
+              fontWeight: 300,
+              fontSize: '16px',
+              lineHeight: 1.7,
+              color: alpha(lunitColors.white, 0.7),
+              mb: 5,
+              maxWidth: 440,
+            }}
+          >
+            Advanced diagnostic intelligence that augments clinical decision-making with state-of-the-art deep learning.
+          </Typography>
+
+          {/* Value propositions */}
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            {VALUE_PROPS.map((prop) => (
+              <Box key={prop.text} sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
+                <CheckCircleOutline sx={{ color: lunitColors.teal, fontSize: 22, mt: '2px', flexShrink: 0 }} />
+                <Box>
+                  <Typography sx={{
+                    fontFamily: '"Lexend", sans-serif',
+                    fontWeight: 500,
+                    fontSize: '15px',
+                    color: lunitColors.white,
+                    mb: 0.3,
+                  }}>
+                    {prop.text}
+                  </Typography>
+                  <Typography sx={{
+                    fontFamily: '"Lexend", sans-serif',
+                    fontWeight: 300,
+                    fontSize: '13px',
+                    color: alpha(lunitColors.white, 0.55),
+                  }}>
+                    {prop.sub}
+                  </Typography>
+                </Box>
+              </Box>
+            ))}
+          </Box>
+
+          {/* Trust line */}
+          <Box sx={{ mt: 6, pt: 4, borderTop: `1px solid ${alpha(lunitColors.white, 0.12)}` }}>
+            <Typography sx={{
+              fontFamily: '"Lexend", sans-serif',
+              fontWeight: 300,
+              fontSize: '13px',
+              color: alpha(lunitColors.white, 0.45),
+              lineHeight: 1.6,
+            }}>
+              Trusted by radiologists and oncologists at leading healthcare institutions worldwide.
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
+
+      {/* ═══════════════════════════════════════════════
+          RIGHT — Form Panel
+         ═══════════════════════════════════════════════ */}
+      <Box
+        sx={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          bgcolor: lunitColors.white,
+          px: { xs: 3, sm: 5, md: 6 },
+          py: { xs: 4, md: 6 },
+          position: 'relative',
+        }}
+      >
+        {/* Mobile-only brand strip */}
+        <Box
+          sx={{
+            display: { xs: 'flex', md: 'none' },
+            alignItems: 'center',
+            gap: 1.5,
+            mb: 4,
+            cursor: 'pointer',
+          }}
+          onClick={() => navigate(ROUTES.HOME)}
+        >
+          <Box
+            component="img"
+            src="/images/clinicalvision-logo.svg?v=11"
+            alt="ClinicalVision AI"
+            sx={{ height: 40, width: 'auto' }}
+          />
+        </Box>
+
+        {/* Desktop: small logo linking home */}
+        <Box
+          sx={{
+            display: { xs: 'none', md: 'block' },
+            position: 'absolute',
+            top: 32,
+            right: 40,
+          }}
+        >
+          <Box
+            component="img"
+            src="/images/clinicalvision-logo.svg?v=11"
+            alt="Home"
+            onClick={() => navigate(ROUTES.HOME)}
+            sx={{
+              height: 32,
+              width: 'auto',
+              cursor: 'pointer',
+              opacity: 0.5,
+              transition: 'opacity 0.2s',
+              '&:hover': { opacity: 0.8 },
+            }}
+          />
+        </Box>
+
+        {/* Form container */}
+        <Box sx={{ width: '100%', maxWidth: 420 }}>
+          <Typography
+            component="h1"
+            sx={{
+              fontFamily: '"ClashGrotesk", sans-serif',
+              fontWeight: 500,
+              fontSize: { xs: '26px', sm: '30px' },
+              color: lunitColors.headingColor,
+              mb: 0.75,
+              letterSpacing: '-0.01em',
+            }}
+          >
+            Welcome back
+          </Typography>
+
+          <Typography
+            sx={{
+              fontFamily: '"Lexend", sans-serif',
+              fontWeight: 400,
+              fontSize: '15px',
+              color: lunitColors.darkGrey,
+              mb: 4,
+            }}
+          >
+            Enter your credentials to continue
           </Typography>
 
           {/* Error Alert */}
           {authError && (
-            <Alert severity="error" sx={{ width: '100%', mb: 2 }} onClose={clearError}>
+            <Alert
+              severity="error"
+              onClose={clearError}
+              sx={{
+                mb: 3,
+                borderRadius: '10px',
+                fontFamily: '"Lexend", sans-serif',
+                '& .MuiAlertTitle-root': { fontFamily: '"Lexend", sans-serif' },
+              }}
+            >
               {authError}
             </Alert>
           )}
 
           {/* Login Form */}
-          <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
+          <Box component="form" onSubmit={handleSubmit} noValidate>
             <TextField
-              margin="normal"
-              required
               fullWidth
               id="email"
               label="Email Address"
@@ -198,11 +379,10 @@ export const LoginPage: React.FC = () => {
               error={!!validationErrors.email}
               helperText={validationErrors.email}
               disabled={isLoading}
+              sx={{ ...inputSx, mb: 2.5 }}
             />
 
             <TextField
-              margin="normal"
-              required
               fullWidth
               name="password"
               label="Password"
@@ -214,6 +394,7 @@ export const LoginPage: React.FC = () => {
               error={!!validationErrors.password}
               helperText={validationErrors.password}
               disabled={isLoading}
+              sx={{ ...inputSx, mb: 1 }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -222,6 +403,7 @@ export const LoginPage: React.FC = () => {
                       onClick={() => setShowPassword(!showPassword)}
                       edge="end"
                       disabled={isLoading}
+                      sx={{ color: lunitColors.grey }}
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
@@ -230,64 +412,143 @@ export const LoginPage: React.FC = () => {
               }}
             />
 
+            {/* Forgot password link */}
+            <Box sx={{ textAlign: 'right', mb: 3 }}>
+              <Link
+                component={RouterLink}
+                to={ROUTES.FORGOT_PASSWORD}
+                underline="none"
+                sx={{
+                  fontFamily: '"Lexend", sans-serif',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  color: lunitColors.tealDarker,
+                  transition: 'color 0.2s',
+                  '&:hover': { color: lunitColors.teal },
+                }}
+              >
+                Forgot password?
+              </Link>
+            </Box>
+
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2, py: 1.5 }}
               disabled={isLoading}
+              endIcon={!isLoading ? <ArrowForward sx={{ fontSize: '18px !important' }} /> : undefined}
+              sx={{
+                borderRadius: '100px',
+                textTransform: 'none',
+                fontFamily: '"Lexend", sans-serif',
+                fontWeight: 500,
+                fontSize: '16px',
+                py: 1.5,
+                bgcolor: lunitColors.black,
+                color: lunitColors.white,
+                boxShadow: 'none',
+                transition: 'all 0.4s ease-in-out',
+                '&:hover': {
+                  bgcolor: lunitColors.teal,
+                  color: lunitColors.black,
+                  boxShadow: `0 4px 20px ${alpha(lunitColors.teal, 0.4)}`,
+                },
+                '&.Mui-disabled': {
+                  bgcolor: lunitColors.lightGray,
+                  color: lunitColors.grey,
+                },
+              }}
             >
               {isLoading ? (
                 <>
-                  <CircularProgress size={24} sx={{ mr: 1 }} />
-                  Signing in...
+                  <CircularProgress size={22} sx={{ mr: 1, color: lunitColors.grey }} />
+                  Signing in…
                 </>
               ) : (
                 'Sign In'
               )}
             </Button>
 
-            {/* Demo Credentials Help */}
-            <Alert severity="info" sx={{ mt: 2 }}>
-              <Typography variant="body2">
-                <strong>Demo Account:</strong>
-                <br />
-                Email: demo@clinicalvision.ai
-                <br />
-                Password: Demo123!
-                <br />
-                <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
-                  Or use your registered account credentials
-                </Typography>
+            {/* Demo Credentials */}
+            <Box
+              sx={{
+                mt: 3,
+                p: 2.5,
+                borderRadius: '12px',
+                bgcolor: alpha(lunitColors.teal, 0.06),
+                border: `1px solid ${alpha(lunitColors.teal, 0.15)}`,
+              }}
+            >
+              <Typography sx={{
+                fontFamily: '"Lexend", sans-serif',
+                fontWeight: 600,
+                fontSize: '13px',
+                color: lunitColors.tealDarker,
+                mb: 1,
+              }}>
+                Demo Account
               </Typography>
-            </Alert>
+              <Typography sx={{
+                fontFamily: '"Lexend", sans-serif',
+                fontSize: '13px',
+                color: lunitColors.text,
+                lineHeight: 1.8,
+              }}>
+                Email: <Box component="span" sx={{ fontWeight: 500 }}>demo@clinicalvision.ai</Box>
+                <br />
+                Password: <Box component="span" sx={{ fontWeight: 500 }}>Demo123!</Box>
+              </Typography>
+              <Typography sx={{
+                fontFamily: '"Lexend", sans-serif',
+                fontSize: '12px',
+                color: lunitColors.grey,
+                mt: 0.75,
+              }}>
+                Or use your registered account credentials
+              </Typography>
+            </Box>
 
-            {/* Footer Links */}
-            <Box sx={{ mt: 3, textAlign: 'center' }}>
-              <Typography variant="body2" color="text.secondary">
+            {/* Register link */}
+            <Box sx={{ mt: 4, textAlign: 'center' }}>
+              <Typography sx={{
+                fontFamily: '"Lexend", sans-serif',
+                fontSize: '14px',
+                color: lunitColors.darkGrey,
+              }}>
                 Don't have an account?{' '}
-                <Link component={RouterLink} to={ROUTES.REGISTER} underline="hover">
-                  Register here
-                </Link>
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                <Link component={RouterLink} to={ROUTES.FORGOT_PASSWORD} underline="hover">
-                  Forgot password?
+                <Link
+                  component={RouterLink}
+                  to={ROUTES.REGISTER}
+                  underline="none"
+                  sx={{
+                    fontWeight: 600,
+                    color: lunitColors.tealDarker,
+                    transition: 'color 0.2s',
+                    '&:hover': { color: lunitColors.teal },
+                  }}
+                >
+                  Create account
                 </Link>
               </Typography>
             </Box>
           </Box>
-        </Paper>
+        </Box>
 
         {/* Footer */}
         <Typography
-          variant="caption"
-          color="text.secondary"
-          sx={{ display: 'block', textAlign: 'center', mt: 2 }}
+          sx={{
+            position: { md: 'absolute' },
+            bottom: { md: 24 },
+            mt: { xs: 4, md: 0 },
+            fontFamily: '"Lexend", sans-serif',
+            fontSize: '12px',
+            color: lunitColors.grey,
+            textAlign: 'center',
+          }}
         >
           © 2026 ClinicalVision AI. Healthcare professional use only.
         </Typography>
-      </Container>
+      </Box>
     </Box>
   );
 };

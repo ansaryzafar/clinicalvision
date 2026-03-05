@@ -1,8 +1,32 @@
-import React from 'react';
-import { Box, Typography, Button, Container, Stack, alpha } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import {
+  Box,
+  Typography,
+  Button,
+  Container,
+  Stack,
+  alpha,
+  IconButton,
+  Menu,
+  MenuItem,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Divider,
+} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../routes/paths';
-import { Assessment, LinkedIn, Twitter, GitHub } from '@mui/icons-material';
+import {
+  Assessment,
+  LinkedIn,
+  Twitter,
+  GitHub,
+  KeyboardArrowDown,
+  Menu as MenuIcon,
+  ArrowForward,
+} from '@mui/icons-material';
 import {
   lunitColors,
   lunitTypography,
@@ -38,6 +62,41 @@ const footerLinks = {
   ],
 };
 
+// Navigation items — matching LandingPage structure exactly
+const navItems = [
+  {
+    label: 'Products',
+    hasDropdown: true,
+    children: [
+      { label: 'Features', path: ROUTES.FEATURES },
+      { label: 'Pricing', path: ROUTES.PRICING },
+      { label: 'Demo', path: ROUTES.DEMO },
+      { label: 'API', path: ROUTES.API },
+    ],
+  },
+  { label: 'Technology', hasDropdown: false, path: ROUTES.FEATURES },
+  {
+    label: 'About',
+    hasDropdown: true,
+    children: [
+      { label: 'About Us', path: ROUTES.ABOUT },
+      { label: 'Careers', path: ROUTES.CAREERS },
+      { label: 'Research', path: ROUTES.RESEARCH },
+      { label: 'Contact', path: ROUTES.CONTACT },
+    ],
+  },
+  {
+    label: 'Resources',
+    hasDropdown: true,
+    children: [
+      { label: 'Documentation', path: ROUTES.DOCUMENTATION },
+      { label: 'Blog', path: ROUTES.BLOG },
+      { label: 'Support', path: ROUTES.SUPPORT },
+      { label: 'System Status', path: ROUTES.STATUS },
+    ],
+  },
+];
+
 interface PageHeaderProps {
   variant?: 'light' | 'dark';
 }
@@ -45,110 +104,350 @@ interface PageHeaderProps {
 export const PageHeader: React.FC<PageHeaderProps> = ({ variant = 'light' }) => {
   const navigate = useNavigate();
   const isDark = variant === 'dark';
+  const [scrolled, setScrolled] = useState(false);
+  const [menuAnchors, setMenuAnchors] = useState<Record<string, HTMLElement | null>>({});
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+
+  const handleNavOpen = (label: string, el: HTMLElement) =>
+    setMenuAnchors((prev) => ({ ...prev, [label]: el }));
+  const handleNavClose = (label: string) =>
+    setMenuAnchors((prev) => ({ ...prev, [label]: null }));
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const textColor = isDark
+    ? scrolled ? lunitColors.darkerGray : lunitColors.white
+    : lunitColors.text;
 
   return (
+    <>
     <Box
+      component="header"
       sx={{
         position: 'fixed',
         top: 0,
         left: 0,
         right: 0,
-        zIndex: 1000,
-        bgcolor: isDark 
-          ? alpha(lunitColors.darkerGray, 0.95) 
-          : alpha(lunitColors.white, 0.95),
-        backdropFilter: 'blur(10px)',
-        borderBottom: `1px solid ${alpha(isDark ? lunitColors.white : lunitColors.darkerGray, 0.1)}`,
+        zIndex: 1100,
+        bgcolor: scrolled
+          ? 'rgba(255, 255, 255, 0.98)'
+          : isDark
+            ? alpha(lunitColors.darkerGray, 0.95)
+            : 'rgba(255, 255, 255, 0.95)',
+        borderBottom: scrolled
+          ? `1px solid ${alpha(lunitColors.lightGray, 0.5)}`
+          : isDark
+            ? `1px solid ${alpha(lunitColors.white, 0.1)}`
+            : 'none',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        transition: 'all 0.3s ease-in-out',
+        boxShadow: scrolled ? '0 2px 20px rgba(35, 50, 50, 0.08)' : 'none',
       }}
     >
-      <Box sx={{ maxWidth: lunitSpacing.maxWidth, mx: 'auto', px: lunitSpacing.sectionPaddingX }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 2 }}>
+      <Box sx={{ maxWidth: '1440px', width: '100%', mx: 'auto', px: { xs: '20px', lg: '60px' } }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            py: scrolled ? '14px' : '20px',
+            transition: 'all 0.3s ease-in-out',
+          }}
+        >
+          {/* Logo — same size and style as LandingPage */}
           <Box
-            sx={{ display: 'flex', alignItems: 'center', gap: 1.5, cursor: 'pointer' }}
             onClick={() => navigate(ROUTES.HOME)}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              cursor: 'pointer',
+              lineHeight: 0,
+              transition: 'transform 0.2s ease',
+              '&:hover': { transform: 'scale(1.02)' },
+            }}
           >
             <Box
               component="img"
-              src="/images/clinicalvision-logo.svg"
-              alt="ClinicalVision"
+              src="/images/clinicalvision-logo.svg?v=11"
+              alt="ClinicalVision AI Logo"
               sx={{
-                height: 36,
+                height: { xs: 52, md: 72 },
                 width: 'auto',
                 display: 'block',
                 objectFit: 'contain',
+                filter: 'drop-shadow(0 2px 8px rgba(0, 201, 234, 0.15))',
               }}
             />
-            <Typography
-              sx={{
-                fontFamily: lunitTypography.fontFamilyHeading,
-                fontWeight: lunitTypography.fontWeightMedium,
-                fontSize: '18px',
-                color: isDark ? lunitColors.white : lunitColors.headingColor,
-              }}
-            >
-              ClinicalVision
-            </Typography>
           </Box>
-          <Stack direction="row" spacing={3} alignItems="center">
-            <Button
-              onClick={() => navigate(ROUTES.HOME)}
+
+          {/* Main Navigation — 4 items with dropdowns, matching LandingPage */}
+          <Stack
+            direction="row"
+            spacing={0}
+            alignItems="center"
+            sx={{ display: { xs: 'none', md: 'flex' } }}
+          >
+            {navItems.map((item) => (
+              <React.Fragment key={item.label}>
+                <Button
+                  onClick={(e) => {
+                    if (item.hasDropdown && item.children) {
+                      handleNavOpen(item.label, e.currentTarget);
+                    } else if (item.path) {
+                      navigate(item.path);
+                    }
+                  }}
+                  endIcon={
+                    item.hasDropdown ? (
+                      <KeyboardArrowDown sx={{ fontSize: '18px !important', ml: -0.5 }} />
+                    ) : undefined
+                  }
+                  sx={{
+                    textTransform: 'none',
+                    color: scrolled ? lunitColors.text : textColor,
+                    fontFamily: '"Lexend", sans-serif',
+                    fontSize: '15px',
+                    fontWeight: 400,
+                    px: 2.5,
+                    py: 1.25,
+                    borderRadius: '8px',
+                    letterSpacing: '0.01em',
+                    transition: 'all 0.2s ease',
+                    '&:hover': {
+                      bgcolor: alpha(lunitColors.lightestGray, 0.7),
+                      color: lunitColors.tealDarker,
+                    },
+                  }}
+                >
+                  {item.label}
+                </Button>
+                {item.hasDropdown && item.children && (
+                  <Menu
+                    anchorEl={menuAnchors[item.label] || null}
+                    open={Boolean(menuAnchors[item.label])}
+                    onClose={() => handleNavClose(item.label)}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+                    transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+                    slotProps={{
+                      paper: {
+                        sx: {
+                          mt: 1,
+                          minWidth: 200,
+                          borderRadius: '12px',
+                          boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+                          border: `1px solid ${alpha(lunitColors.lightGray, 0.5)}`,
+                        },
+                      },
+                    }}
+                  >
+                    {item.children.map((child) => (
+                      <MenuItem
+                        key={child.label}
+                        onClick={() => {
+                          navigate(child.path);
+                          handleNavClose(item.label);
+                        }}
+                        sx={{
+                          fontFamily: '"Lexend", sans-serif',
+                          fontSize: '14px',
+                          fontWeight: 400,
+                          py: 1.5,
+                          px: 2.5,
+                          color: lunitColors.text,
+                          transition: 'all 0.2s ease',
+                          '&:hover': {
+                            bgcolor: alpha(lunitColors.teal, 0.08),
+                            color: lunitColors.tealDarker,
+                          },
+                        }}
+                      >
+                        {child.label}
+                      </MenuItem>
+                    ))}
+                  </Menu>
+                )}
+              </React.Fragment>
+            ))}
+          </Stack>
+
+          {/* Right Actions — Sign In + Get Started + Mobile Hamburger */}
+          <Stack direction="row" spacing={1} alignItems="center">
+            <IconButton
+              onClick={() => setMobileDrawerOpen(true)}
               sx={{
-                color: isDark ? lunitColors.grey : lunitColors.darkerGray,
-                fontFamily: lunitTypography.fontFamilyBody,
-                textTransform: 'none',
-                fontSize: '14px',
-                '&:hover': { color: lunitColors.teal },
+                display: { xs: 'flex', md: 'none' },
+                color: scrolled ? lunitColors.text : textColor,
               }}
             >
-              Home
-            </Button>
-            <Button
-              onClick={() => navigate(ROUTES.FEATURES)}
-              sx={{
-                color: isDark ? lunitColors.grey : lunitColors.darkerGray,
-                fontFamily: lunitTypography.fontFamilyBody,
-                textTransform: 'none',
-                fontSize: '14px',
-                '&:hover': { color: lunitColors.teal },
-              }}
-            >
-              Features
-            </Button>
-            <Button
-              onClick={() => navigate(ROUTES.PRICING)}
-              sx={{
-                color: isDark ? lunitColors.grey : lunitColors.darkerGray,
-                fontFamily: lunitTypography.fontFamilyBody,
-                textTransform: 'none',
-                fontSize: '14px',
-                '&:hover': { color: lunitColors.teal },
-              }}
-            >
-              Pricing
-            </Button>
-            <Button
-              variant="contained"
-              onClick={() => navigate(ROUTES.DEMO)}
-              sx={{
-                bgcolor: lunitColors.black,
-                color: lunitColors.white,
-                fontFamily: lunitTypography.fontFamilyBody,
-                fontWeight: 500,
-                textTransform: 'none',
-                borderRadius: '100px',
-                px: 3,
-                '&:hover': {
-                  bgcolor: lunitColors.teal,
-                  color: lunitColors.black,
-                },
-              }}
-            >
-              Request Demo
-            </Button>
+              <MenuIcon />
+            </IconButton>
+
+            <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1 }}>
+              <Button
+                variant="text"
+                onClick={() => navigate(ROUTES.LOGIN)}
+                sx={{
+                  textTransform: 'none',
+                  color: scrolled ? lunitColors.text : textColor,
+                  fontFamily: '"Lexend", sans-serif',
+                  fontSize: '15px',
+                  fontWeight: 500,
+                  px: 2.5,
+                  py: 1,
+                  borderRadius: '8px',
+                  letterSpacing: '0.01em',
+                  '&:hover': { bgcolor: alpha(lunitColors.lightestGray, 0.7) },
+                }}
+              >
+                Sign In
+              </Button>
+              <Button
+                variant="contained"
+                onClick={() => navigate(ROUTES.REGISTER)}
+                sx={{
+                  borderRadius: '100px',
+                  textTransform: 'none',
+                  fontFamily: '"Lexend", sans-serif',
+                  fontWeight: 500,
+                  fontSize: '15px',
+                  px: 3.5,
+                  py: 1.25,
+                  bgcolor: lunitColors.black,
+                  color: lunitColors.white,
+                  boxShadow: 'none',
+                  transition: 'all 0.4s ease-in-out',
+                  '&:hover': {
+                    bgcolor: lunitColors.teal,
+                    color: lunitColors.black,
+                    boxShadow: '0 4px 16px rgba(0, 201, 234, 0.4)',
+                  },
+                }}
+              >
+                Get Started
+              </Button>
+            </Box>
           </Stack>
         </Box>
       </Box>
     </Box>
+
+    {/* Mobile Navigation Drawer */}
+    <Drawer
+      anchor="right"
+      open={mobileDrawerOpen}
+      onClose={() => setMobileDrawerOpen(false)}
+      PaperProps={{ sx: { width: 300, bgcolor: lunitColors.white, pt: 2 } }}
+    >
+      <Box sx={{ px: 2, pb: 2, display: 'flex', justifyContent: 'flex-end' }}>
+        <IconButton onClick={() => setMobileDrawerOpen(false)} sx={{ color: lunitColors.text }}>
+          <ArrowForward />
+        </IconButton>
+      </Box>
+      <List>
+        {navItems.map((item) => (
+          <React.Fragment key={item.label}>
+            {item.hasDropdown && item.children ? (
+              <>
+                <ListItem sx={{ px: 3, py: 0.5 }}>
+                  <Typography
+                    sx={{
+                      fontFamily: '"Lexend", sans-serif',
+                      fontSize: '12px',
+                      fontWeight: 600,
+                      color: lunitColors.grey,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.08em',
+                    }}
+                  >
+                    {item.label}
+                  </Typography>
+                </ListItem>
+                {item.children.map((child) => (
+                  <ListItemButton
+                    key={child.label}
+                    onClick={() => {
+                      navigate(child.path);
+                      setMobileDrawerOpen(false);
+                    }}
+                    sx={{ px: 4, py: 1.5, '&:hover': { bgcolor: alpha(lunitColors.teal, 0.06) } }}
+                  >
+                    <ListItemText
+                      primary={child.label}
+                      primaryTypographyProps={{
+                        fontFamily: '"Lexend", sans-serif',
+                        fontSize: '15px',
+                        fontWeight: 400,
+                        color: lunitColors.text,
+                      }}
+                    />
+                  </ListItemButton>
+                ))}
+                <Divider sx={{ my: 1 }} />
+              </>
+            ) : (
+              <ListItemButton
+                onClick={() => {
+                  if (item.path) navigate(item.path);
+                  setMobileDrawerOpen(false);
+                }}
+                sx={{ px: 3, py: 1.5, '&:hover': { bgcolor: alpha(lunitColors.teal, 0.06) } }}
+              >
+                <ListItemText
+                  primary={item.label}
+                  primaryTypographyProps={{
+                    fontFamily: '"Lexend", sans-serif',
+                    fontSize: '15px',
+                    fontWeight: 500,
+                    color: lunitColors.text,
+                  }}
+                />
+              </ListItemButton>
+            )}
+          </React.Fragment>
+        ))}
+        <Divider sx={{ my: 1 }} />
+        <Box sx={{ px: 3, py: 2, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          <Button
+            fullWidth
+            variant="outlined"
+            onClick={() => { navigate(ROUTES.LOGIN); setMobileDrawerOpen(false); }}
+            sx={{
+              borderRadius: '100px',
+              textTransform: 'none',
+              fontFamily: '"Lexend", sans-serif',
+              fontWeight: 500,
+              borderColor: lunitColors.lightGray,
+              color: lunitColors.text,
+              '&:hover': { borderColor: lunitColors.teal, color: lunitColors.tealDarker },
+            }}
+          >
+            Sign In
+          </Button>
+          <Button
+            fullWidth
+            variant="contained"
+            onClick={() => { navigate(ROUTES.REGISTER); setMobileDrawerOpen(false); }}
+            sx={{
+              borderRadius: '100px',
+              textTransform: 'none',
+              fontFamily: '"Lexend", sans-serif',
+              fontWeight: 500,
+              bgcolor: lunitColors.black,
+              color: lunitColors.white,
+              '&:hover': { bgcolor: lunitColors.teal, color: lunitColors.black },
+            }}
+          >
+            Get Started
+          </Button>
+        </Box>
+      </List>
+    </Drawer>
+    </>
   );
 };
 
@@ -367,7 +666,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   return (
     <Box sx={{ bgcolor: lunitColors.white, minHeight: '100vh' }}>
       <PageHeader variant={headerVariant} />
-      <Box sx={{ pt: '72px' }}>
+      <Box sx={{ pt: { xs: '70px', md: '100px' } }}>
         {children}
       </Box>
       {showFooter && <PageFooter />}

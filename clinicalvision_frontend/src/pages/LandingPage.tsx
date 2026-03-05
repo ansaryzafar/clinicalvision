@@ -472,7 +472,7 @@ const LandingPage: React.FC = () => {
                 </Button>
                 <Button
                   variant="contained"
-                  onClick={() => navigate(ROUTES.LOGIN)}
+                  onClick={() => navigate(ROUTES.REGISTER)}
                   sx={{
                     borderRadius: '100px',
                     textTransform: 'none',
@@ -582,7 +582,7 @@ const LandingPage: React.FC = () => {
             <Button
               fullWidth
               variant="contained"
-              onClick={() => { navigate(ROUTES.LOGIN); setMobileDrawerOpen(false); }}
+              onClick={() => { navigate(ROUTES.REGISTER); setMobileDrawerOpen(false); }}
               sx={{
                 borderRadius: '100px', textTransform: 'none', fontFamily: '"Lexend", sans-serif',
                 fontWeight: 500, bgcolor: lunitColors.black, color: lunitColors.white,
