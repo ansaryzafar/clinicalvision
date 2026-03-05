@@ -15,21 +15,21 @@ const services = [
 
 const incidents = [
   {
-    date: 'January 12, 2024',
+    date: 'March 10, 2026',
     title: 'Scheduled Maintenance',
     status: 'completed',
     description: 'Completed database optimization. No user impact.',
     duration: '45 minutes',
   },
   {
-    date: 'January 5, 2024',
+    date: 'February 28, 2026',
     title: 'API Latency Increase',
     status: 'resolved',
     description: 'Brief period of elevated API response times. Issue identified and resolved.',
     duration: '12 minutes',
   },
   {
-    date: 'December 28, 2023',
+    date: 'February 15, 2026',
     title: 'Scheduled Maintenance',
     status: 'completed',
     description: 'Infrastructure upgrades completed successfully.',
@@ -38,12 +38,12 @@ const incidents = [
 ];
 
 const uptimeHistory = [
-  { month: 'Jan 2024', uptime: 99.99 },
-  { month: 'Dec 2023', uptime: 99.98 },
-  { month: 'Nov 2023', uptime: 100.00 },
-  { month: 'Oct 2023', uptime: 99.99 },
-  { month: 'Sep 2023', uptime: 99.97 },
-  { month: 'Aug 2023', uptime: 99.99 },
+  { month: 'Mar 2026', uptime: 99.99 },
+  { month: 'Feb 2026', uptime: 99.98 },
+  { month: 'Jan 2026', uptime: 100.00 },
+  { month: 'Dec 2025', uptime: 99.99 },
+  { month: 'Nov 2025', uptime: 99.97 },
+  { month: 'Oct 2025', uptime: 99.99 },
 ];
 
 const getStatusIcon = (status: string) => {
@@ -105,7 +105,7 @@ const StatusPage: React.FC = () => {
             </>
           )
         }
-        subtitle="Real-time status of ClinicalVision services. Subscribe for updates on incidents and maintenance."
+        subtitle="Real-time status of ClinicalVision services. Check this page for updates on incidents and maintenance."
       />
 
       {/* Overall Status Banner */}

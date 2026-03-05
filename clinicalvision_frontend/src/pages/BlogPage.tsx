@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
-import { Box, Typography, Grid, alpha } from '@mui/material';
+import { Box, Typography, Grid, alpha, Snackbar } from '@mui/material';
 import { ArrowForward, CalendarMonth } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
 import { PageLayout, PageHero, PageSection } from '../components/layout/PageLayout';
 import { lunitColors, lunitTypography, lunitRadius, lunitShadows } from '../styles/lunitDesignSystem';
-import { ROUTES } from '../routes/paths';
 
 const featuredPost = {
-  title: 'How AI is Transforming Breast Cancer Screening: A 2024 Outlook',
+  title: 'How AI is Transforming Breast Cancer Screening: A 2026 Outlook',
   excerpt: 'An in-depth look at the latest advances in AI-assisted mammography and what they mean for radiologists and patients worldwide.',
-  date: 'January 15, 2024',
+  date: 'March 15, 2026',
   category: 'Industry Insights',
   readTime: '8 min read',
 };
@@ -18,42 +16,42 @@ const posts = [
   {
     title: 'Understanding BI-RADS Categories: A Clinician\'s Guide',
     excerpt: 'Breaking down the BI-RADS classification system and how AI can support consistent categorization.',
-    date: 'January 10, 2024',
+    date: 'March 10, 2026',
     category: 'Clinical Education',
     readTime: '6 min read',
   },
   {
     title: 'ClinicalVision Achieves 97.5% Sensitivity in Multi-Center Study',
     excerpt: 'Results from our latest clinical validation study across 12 healthcare institutions.',
-    date: 'January 5, 2024',
+    date: 'March 5, 2026',
     category: 'Research',
     readTime: '5 min read',
   },
   {
     title: 'Integrating AI into Your Radiology Workflow: Best Practices',
     excerpt: 'Practical tips for seamlessly incorporating AI assistance into your daily practice.',
-    date: 'December 20, 2023',
+    date: 'February 20, 2026',
     category: 'Implementation',
     readTime: '7 min read',
   },
   {
     title: 'The Role of Uncertainty Quantification in Medical AI',
     excerpt: 'Why knowing what the AI doesn\'t know is just as important as its predictions.',
-    date: 'December 15, 2023',
+    date: 'February 15, 2026',
     category: 'Technology',
     readTime: '9 min read',
   },
   {
     title: 'Patient Perspectives on AI in Cancer Screening',
     excerpt: 'Survey results reveal how patients feel about AI-assisted diagnostics.',
-    date: 'December 10, 2023',
+    date: 'February 10, 2026',
     category: 'Patient Experience',
     readTime: '5 min read',
   },
   {
     title: 'RSNA 2023: Key Takeaways for AI in Radiology',
     excerpt: 'Highlights and trends from the Radiological Society of North America annual meeting.',
-    date: 'December 5, 2023',
+    date: 'February 5, 2026',
     category: 'Events',
     readTime: '6 min read',
   },
@@ -62,17 +60,15 @@ const posts = [
 const categories = ['All', 'Industry Insights', 'Clinical Education', 'Research', 'Technology', 'Implementation', 'Events'];
 
 const BlogPage: React.FC = () => {
-  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const filteredPosts = selectedCategory === 'All'
     ? posts
     : posts.filter(p => p.category === selectedCategory);
 
-  const handlePostClick = (postTitle: string) => {
-    // Navigate to blog page with post slug as anchor
-    const slug = postTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-    navigate(`${ROUTES.BLOG}#${slug}`);
+  const handlePostClick = () => {
+    setSnackbarOpen(true);
   };
 
   return (
@@ -127,7 +123,7 @@ const BlogPage: React.FC = () => {
       <PageSection paddingY="small">
         <Box
           role="button"
-          onClick={() => handlePostClick(featuredPost.title)}
+          onClick={() => handlePostClick()}
           sx={{
             p: 4,
             borderRadius: lunitRadius['2xl'],
@@ -251,7 +247,7 @@ const BlogPage: React.FC = () => {
             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={idx}>
               <Box
                 role="button"
-                onClick={() => handlePostClick(post.title)}
+                onClick={() => handlePostClick()}
                 sx={{
                   height: '100%',
                   borderRadius: lunitRadius['2xl'],
@@ -366,6 +362,14 @@ const BlogPage: React.FC = () => {
           ))}
         </Grid>
       </PageSection>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarOpen(false)}
+        message="Full blog posts coming soon — stay tuned!"
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      />
     </PageLayout>
   );
 };

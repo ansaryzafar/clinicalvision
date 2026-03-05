@@ -6,6 +6,14 @@ import {
   alpha,
   Stack,
   IconButton,
+  Menu,
+  MenuItem,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Divider,
 } from '@mui/material';
 import {
   ArrowForward,
@@ -235,12 +243,54 @@ const LandingPage: React.FC = () => {
     }
   }, [isAuthenticated, isLoading, navigate]);
 
-  // Navigation items matching Lunit style
+  // Navigation items matching Lunit style — with route mappings and dropdown children
   const navItems = [
-    { label: 'Products', hasDropdown: true },
-    { label: 'Technology', hasDropdown: false },
-    { label: 'About', hasDropdown: true },
-    { label: 'Resources', hasDropdown: true },
+    {
+      label: 'Products',
+      hasDropdown: true,
+      children: [
+        { label: 'Features', path: ROUTES.FEATURES },
+        { label: 'Pricing', path: ROUTES.PRICING },
+        { label: 'Demo', path: ROUTES.DEMO },
+        { label: 'API', path: ROUTES.API },
+      ],
+    },
+    { label: 'Technology', hasDropdown: false, path: ROUTES.FEATURES },
+    {
+      label: 'About',
+      hasDropdown: true,
+      children: [
+        { label: 'About Us', path: ROUTES.ABOUT },
+        { label: 'Careers', path: ROUTES.CAREERS },
+        { label: 'Research', path: ROUTES.RESEARCH },
+        { label: 'Contact', path: ROUTES.CONTACT },
+      ],
+    },
+    {
+      label: 'Resources',
+      hasDropdown: true,
+      children: [
+        { label: 'Documentation', path: ROUTES.DOCUMENTATION },
+        { label: 'Blog', path: ROUTES.BLOG },
+        { label: 'Support', path: ROUTES.SUPPORT },
+        { label: 'System Status', path: ROUTES.STATUS },
+      ],
+    },
+  ];
+
+  // Dropdown menu state (keyed by nav label)
+  const [menuAnchors, setMenuAnchors] = useState<Record<string, HTMLElement | null>>({});
+  const handleNavOpen = (label: string, el: HTMLElement) => setMenuAnchors(prev => ({ ...prev, [label]: el }));
+  const handleNavClose = (label: string) => setMenuAnchors(prev => ({ ...prev, [label]: null }));
+
+  // Mobile drawer state
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+
+  // Social link data
+  const socialLinks = [
+    { label: 'LinkedIn', url: 'https://linkedin.com/company/clinicalvision' },
+    { label: 'Twitter', url: 'https://twitter.com/clinicalvision' },
+    { label: 'GitHub', url: 'https://github.com/ansaryzafar/clinicalvision' },
   ];
 
   return (
@@ -300,7 +350,7 @@ const LandingPage: React.FC = () => {
               />
             </Box>
             
-            {/* Main Navigation - Lunit Style */}
+            {/* Main Navigation - Lunit Style with Dropdown Menus */}
             <Stack 
               direction="row" 
               spacing={0} 
@@ -308,28 +358,81 @@ const LandingPage: React.FC = () => {
               sx={{ display: { xs: 'none', md: 'flex' } }}
             >
               {navItems.map((item) => (
-                <Button
-                  key={item.label}
-                  endIcon={item.hasDropdown ? <KeyboardArrowDown sx={{ fontSize: '18px !important', ml: -0.5 }} /> : undefined}
-                  sx={{
-                    textTransform: 'none',
-                    color: lunitColors.text,
-                    fontFamily: '"Lexend", sans-serif',
-                    fontSize: '15px',
-                    fontWeight: 400,
-                    px: 2.5,
-                    py: 1.25,
-                    borderRadius: '8px',
-                    letterSpacing: '0.01em',
-                    transition: 'all 0.2s ease',
-                    '&:hover': { 
-                      bgcolor: alpha(lunitColors.lightestGray, 0.7),
-                      color: lunitColors.tealDarker,
-                    },
-                  }}
-                >
-                  {item.label}
-                </Button>
+                <React.Fragment key={item.label}>
+                  <Button
+                    onClick={(e) => {
+                      if (item.hasDropdown && item.children) {
+                        handleNavOpen(item.label, e.currentTarget);
+                      } else if (item.path) {
+                        navigate(item.path);
+                      }
+                    }}
+                    endIcon={item.hasDropdown ? <KeyboardArrowDown sx={{ fontSize: '18px !important', ml: -0.5 }} /> : undefined}
+                    sx={{
+                      textTransform: 'none',
+                      color: lunitColors.text,
+                      fontFamily: '"Lexend", sans-serif',
+                      fontSize: '15px',
+                      fontWeight: 400,
+                      px: 2.5,
+                      py: 1.25,
+                      borderRadius: '8px',
+                      letterSpacing: '0.01em',
+                      transition: 'all 0.2s ease',
+                      '&:hover': { 
+                        bgcolor: alpha(lunitColors.lightestGray, 0.7),
+                        color: lunitColors.tealDarker,
+                      },
+                    }}
+                  >
+                    {item.label}
+                  </Button>
+                  {item.hasDropdown && item.children && (
+                    <Menu
+                      anchorEl={menuAnchors[item.label] || null}
+                      open={Boolean(menuAnchors[item.label])}
+                      onClose={() => handleNavClose(item.label)}
+                      anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+                      transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+                      slotProps={{
+                        paper: {
+                          sx: {
+                            mt: 1,
+                            minWidth: 200,
+                            borderRadius: '12px',
+                            boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+                            border: `1px solid ${alpha(lunitColors.lightGray, 0.5)}`,
+                          },
+                        },
+                      }}
+                    >
+                      {item.children.map((child) => (
+                        <MenuItem
+                          key={child.label}
+                          onClick={() => {
+                            navigate(child.path);
+                            handleNavClose(item.label);
+                          }}
+                          sx={{
+                            fontFamily: '"Lexend", sans-serif',
+                            fontSize: '14px',
+                            fontWeight: 400,
+                            py: 1.5,
+                            px: 2.5,
+                            color: lunitColors.text,
+                            transition: 'all 0.2s ease',
+                            '&:hover': {
+                              bgcolor: alpha(lunitColors.teal, 0.08),
+                              color: lunitColors.tealDarker,
+                            },
+                          }}
+                        >
+                          {child.label}
+                        </MenuItem>
+                      ))}
+                    </Menu>
+                  )}
+                </React.Fragment>
               ))}
             </Stack>
 
@@ -337,6 +440,7 @@ const LandingPage: React.FC = () => {
             <Stack direction="row" spacing={1} alignItems="center">
               {/* Mobile Menu */}
               <IconButton
+                onClick={() => setMobileDrawerOpen(true)}
                 sx={{ 
                   display: { xs: 'flex', md: 'none' },
                   color: lunitColors.text,
@@ -395,6 +499,101 @@ const LandingPage: React.FC = () => {
           </Box>
         </Box>
       </Box>
+
+      {/* Mobile Navigation Drawer */}
+      <Drawer
+        anchor="right"
+        open={mobileDrawerOpen}
+        onClose={() => setMobileDrawerOpen(false)}
+        PaperProps={{
+          sx: {
+            width: 300,
+            bgcolor: lunitColors.white,
+            pt: 2,
+          },
+        }}
+      >
+        <Box sx={{ px: 2, pb: 2, display: 'flex', justifyContent: 'flex-end' }}>
+          <IconButton onClick={() => setMobileDrawerOpen(false)} sx={{ color: lunitColors.text }}>
+            <ArrowForward />
+          </IconButton>
+        </Box>
+        <List>
+          {navItems.map((item) => (
+            <React.Fragment key={item.label}>
+              {item.hasDropdown && item.children ? (
+                <>
+                  <ListItem sx={{ px: 3, py: 0.5 }}>
+                    <Typography sx={{ fontFamily: '"Lexend", sans-serif', fontSize: '12px', fontWeight: 600, color: lunitColors.grey, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                      {item.label}
+                    </Typography>
+                  </ListItem>
+                  {item.children.map((child) => (
+                    <ListItemButton
+                      key={child.label}
+                      onClick={() => { navigate(child.path); setMobileDrawerOpen(false); }}
+                      sx={{ px: 4, py: 1.5, '&:hover': { bgcolor: alpha(lunitColors.teal, 0.06) } }}
+                    >
+                      <ListItemText
+                        primary={child.label}
+                        primaryTypographyProps={{
+                          fontFamily: '"Lexend", sans-serif',
+                          fontSize: '15px',
+                          fontWeight: 400,
+                          color: lunitColors.text,
+                        }}
+                      />
+                    </ListItemButton>
+                  ))}
+                  <Divider sx={{ my: 1 }} />
+                </>
+              ) : (
+                <ListItemButton
+                  onClick={() => { if (item.path) navigate(item.path); setMobileDrawerOpen(false); }}
+                  sx={{ px: 3, py: 1.5, '&:hover': { bgcolor: alpha(lunitColors.teal, 0.06) } }}
+                >
+                  <ListItemText
+                    primary={item.label}
+                    primaryTypographyProps={{
+                      fontFamily: '"Lexend", sans-serif',
+                      fontSize: '15px',
+                      fontWeight: 500,
+                      color: lunitColors.text,
+                    }}
+                  />
+                </ListItemButton>
+              )}
+            </React.Fragment>
+          ))}
+          <Divider sx={{ my: 1 }} />
+          <Box sx={{ px: 3, py: 2, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+            <Button
+              fullWidth
+              variant="outlined"
+              onClick={() => { navigate(ROUTES.LOGIN); setMobileDrawerOpen(false); }}
+              sx={{
+                borderRadius: '100px', textTransform: 'none', fontFamily: '"Lexend", sans-serif',
+                fontWeight: 500, borderColor: lunitColors.lightGray, color: lunitColors.text,
+                '&:hover': { borderColor: lunitColors.teal, color: lunitColors.tealDarker },
+              }}
+            >
+              Sign In
+            </Button>
+            <Button
+              fullWidth
+              variant="contained"
+              onClick={() => { navigate(ROUTES.LOGIN); setMobileDrawerOpen(false); }}
+              sx={{
+                borderRadius: '100px', textTransform: 'none', fontFamily: '"Lexend", sans-serif',
+                fontWeight: 500, bgcolor: lunitColors.black, color: lunitColors.white,
+                '&:hover': { bgcolor: lunitColors.teal, color: lunitColors.black },
+              }}
+            >
+              Get Started
+            </Button>
+          </Box>
+        </List>
+      </Drawer>
 
       {/* Spacer for fixed navbar */}
       <Box sx={{ height: { xs: '70px', md: '80px' } }} />
@@ -3797,9 +3996,13 @@ const LandingPage: React.FC = () => {
               © 2026 ClinicalVision AI. All rights reserved.
             </Typography>
             <Stack direction="row" spacing={4}>
-              {['LinkedIn', 'Twitter', 'GitHub'].map((social) => (
+              {socialLinks.map((social) => (
                 <Typography
-                  key={social}
+                  key={social.label}
+                  component="a"
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   variant="body2"
                   sx={{
                     color: lunitColors.darkGrey,
@@ -3807,11 +4010,12 @@ const LandingPage: React.FC = () => {
                     fontSize: '12px',
                     fontWeight: 300,
                     cursor: 'pointer',
+                    textDecoration: 'none',
                     transition: 'color 0.3s ease',
                     '&:hover': { color: lunitColors.tealDarker },
                   }}
                 >
-                  {social}
+                  {social.label}
                 </Typography>
               ))}
             </Stack>

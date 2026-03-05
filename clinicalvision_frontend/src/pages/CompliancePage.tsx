@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Grid, alpha } from '@mui/material';
+import { Box, Typography, Grid, alpha, Tooltip } from '@mui/material';
 import {
   Verified,
   LocalHospital,
@@ -7,9 +7,12 @@ import {
   Public,
   Description,
   CheckCircle,
+  Email,
 } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 import { PageLayout, PageHero, PageSection, CTASection } from '../components/layout/PageLayout';
 import { lunitColors, lunitTypography, lunitRadius, lunitShadows } from '../styles/lunitDesignSystem';
+import { ROUTES } from '../routes/paths';
 
 const regulations = [
   {
@@ -31,7 +34,7 @@ const regulations = [
     region: 'United States',
     description: 'ClinicalVision has received FDA 510(k) clearance as a Class II medical device for computer-aided detection in mammography.',
     features: [
-      '510(k) clearance (K123456)',
+      '510(k) clearance (pending)',
       'Quality Management System',
       'Design controls',
       'Post-market surveillance',
@@ -123,6 +126,8 @@ const documents = [
 ];
 
 const CompliancePage: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <PageLayout>
       {/* Hero */}
@@ -377,7 +382,9 @@ const CompliancePage: React.FC = () => {
         <Grid container spacing={3}>
           {documents.map((doc, idx) => (
             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={idx}>
+              <Tooltip title="Contact us to request this document" arrow>
               <Box
+                onClick={() => navigate(ROUTES.CONTACT)}
                 sx={{
                   p: 3,
                   borderRadius: lunitRadius.lg,
@@ -416,17 +423,9 @@ const CompliancePage: React.FC = () => {
                     {doc.description}
                   </Typography>
                 </Box>
-                <Typography
-                  sx={{
-                    fontFamily: lunitTypography.fontFamilyBody,
-                    fontSize: '11px',
-                    fontWeight: 600,
-                    color: lunitColors.grey,
-                  }}
-                >
-                  {doc.type}
-                </Typography>
+                <Email sx={{ fontSize: 18, color: lunitColors.grey }} />
               </Box>
+              </Tooltip>
             </Grid>
           ))}
         </Grid>

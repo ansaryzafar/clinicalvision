@@ -170,6 +170,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(null);
+  const [notifAnchor, setNotifAnchor] = useState<null | HTMLElement>(null);
 
   // Global keyboard shortcuts
   useEffect(() => {
@@ -525,6 +526,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             <Tooltip title="Help & Documentation">
               <IconButton 
                 size="medium" 
+                onClick={() => navigate(ROUTES.DOCUMENTATION)}
                 sx={{ 
                   color: theme.palette.text.secondary,
                   '&:hover': {
@@ -539,6 +541,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             <Tooltip title="Notifications">
               <IconButton 
                 size="medium" 
+                onClick={(e) => setNotifAnchor(e.currentTarget)}
                 sx={{ 
                   color: theme.palette.text.secondary,
                   '&:hover': {
@@ -547,11 +550,32 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                   }
                 }}
               >
-                <Badge badgeContent={3} color="error" variant="dot">
+                <Badge badgeContent={0} color="error" variant="dot">
                   <NotificationsNone />
                 </Badge>
               </IconButton>
             </Tooltip>
+            <Menu
+              anchorEl={notifAnchor}
+              open={Boolean(notifAnchor)}
+              onClose={() => setNotifAnchor(null)}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+              slotProps={{
+                paper: {
+                  sx: { minWidth: 280, mt: 1, borderRadius: 2 },
+                },
+              }}
+            >
+              <Box sx={{ px: 2, py: 1.5, borderBottom: `1px solid ${theme.palette.divider}` }}>
+                <Typography variant="subtitle2" fontWeight={600}>Notifications</Typography>
+              </Box>
+              <MenuItem disabled sx={{ py: 3, justifyContent: 'center' }}>
+                <Typography variant="body2" color="text.secondary">
+                  No new notifications
+                </Typography>
+              </MenuItem>
+            </Menu>
             <Divider orientation="vertical" flexItem sx={{ mx: 0.5, height: 24, alignSelf: 'center' }} />
             <Button
               onClick={handleUserMenuOpen}

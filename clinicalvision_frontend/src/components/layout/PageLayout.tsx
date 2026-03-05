@@ -313,12 +313,16 @@ export const PageFooter: React.FC = () => {
           </Typography>
           <Stack direction="row" spacing={3}>
             {[
-              { icon: <LinkedIn fontSize="small" />, label: 'LinkedIn' },
-              { icon: <Twitter fontSize="small" />, label: 'Twitter' },
-              { icon: <GitHub fontSize="small" />, label: 'GitHub' },
+              { icon: <LinkedIn fontSize="small" />, label: 'LinkedIn', url: 'https://linkedin.com/company/clinicalvision' },
+              { icon: <Twitter fontSize="small" />, label: 'Twitter', url: 'https://twitter.com/clinicalvision' },
+              { icon: <GitHub fontSize="small" />, label: 'GitHub', url: 'https://github.com/clinicalvision' },
             ].map((social) => (
               <Box
                 key={social.label}
+                component="a"
+                href={social.url}
+                target="_blank"
+                rel="noopener noreferrer"
                 sx={{
                   color: lunitColors.darkGrey,
                   cursor: 'pointer',
@@ -326,6 +330,7 @@ export const PageFooter: React.FC = () => {
                   display: 'flex',
                   alignItems: 'center',
                   gap: 0.5,
+                  textDecoration: 'none',
                   '&:hover': { color: lunitColors.tealDarker },
                 }}
               >

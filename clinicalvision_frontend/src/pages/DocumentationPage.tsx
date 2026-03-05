@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box, Typography, Grid, Button, alpha } from '@mui/material';
+import React, { useState, useMemo } from 'react';
+import { Box, Typography, Grid, Button, alpha, Tooltip } from '@mui/material';
 import {
   MenuBook,
   Code,
@@ -75,6 +75,30 @@ const popularGuides = [
 ];
 
 const DocumentationPage: React.FC = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredCategories = useMemo(() => {
+    if (!searchQuery.trim()) return docCategories;
+    const q = searchQuery.toLowerCase();
+    return docCategories
+      .map((cat) => ({
+        ...cat,
+        links: cat.links.filter(
+          (link) =>
+            link.toLowerCase().includes(q) ||
+            cat.title.toLowerCase().includes(q) ||
+            cat.description.toLowerCase().includes(q),
+        ),
+      }))
+      .filter((cat) => cat.links.length > 0);
+  }, [searchQuery]);
+
+  const handleSearch = () => {
+    // Search is reactive via filteredCategories — this scrolls to results
+    const section = document.getElementById('doc-categories');
+    if (section) section.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <PageLayout>
       {/* Hero */}
@@ -115,6 +139,11 @@ const DocumentationPage: React.FC = () => {
             <Box
               component="input"
               placeholder="Search documentation..."
+              value={searchQuery}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+              onKeyDown={(e: React.KeyboardEvent) => {
+                if (e.key === 'Enter') handleSearch();
+              }}
               sx={{
                 flex: 1,
                 border: 'none',
@@ -129,6 +158,7 @@ const DocumentationPage: React.FC = () => {
             />
             <Button
               variant="contained"
+              onClick={handleSearch}
               sx={{
                 bgcolor: lunitColors.black,
                 color: lunitColors.white,
@@ -151,8 +181,9 @@ const DocumentationPage: React.FC = () => {
 
       {/* Documentation Categories */}
       <PageSection>
+        <Box id="doc-categories">
         <Grid container spacing={4}>
-          {docCategories.map((category, idx) => (
+          {filteredCategories.map((category, idx) => (
             <Grid size={{ xs: 12, md: 4 }} key={idx}>
               <Box
                 sx={{
@@ -210,19 +241,19 @@ const DocumentationPage: React.FC = () => {
 
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                   {category.links.map((link, linkIdx) => (
-                    <Box
-                      key={linkIdx}
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1,
-                        cursor: 'pointer',
-                        '&:hover': {
-                          '& .link-text': { color: lunitColors.teal },
-                          '& .link-arrow': { transform: 'translateX(4px)' },
-                        },
-                      }}
-                    >
+                    <Tooltip key={linkIdx} title="Documentation coming soon" arrow>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1,
+                          cursor: 'default',
+                          '&:hover': {
+                            '& .link-text': { color: lunitColors.teal },
+                            '& .link-arrow': { transform: 'translateX(4px)' },
+                          },
+                        }}
+                      >
                       <Typography
                         className="link-text"
                         sx={{
@@ -244,12 +275,28 @@ const DocumentationPage: React.FC = () => {
                         }}
                       />
                     </Box>
+                    </Tooltip>
                   ))}
                 </Box>
               </Box>
             </Grid>
           ))}
         </Grid>
+
+        {filteredCategories.length === 0 && searchQuery.trim() && (
+          <Box sx={{ textAlign: 'center', py: 6 }}>
+            <Typography
+              sx={{
+                fontFamily: lunitTypography.fontFamilyBody,
+                fontSize: '16px',
+                color: lunitColors.darkGrey,
+              }}
+            >
+              No documentation found for "{searchQuery}". Try a different search term.
+            </Typography>
+          </Box>
+        )}
+        </Box>
       </PageSection>
 
       {/* Popular Guides */}
@@ -283,6 +330,7 @@ const DocumentationPage: React.FC = () => {
         <Grid container spacing={3}>
           {popularGuides.map((guide, idx) => (
             <Grid size={{ xs: 12, sm: 6 }} key={idx}>
+              <Tooltip title="Guide coming soon" arrow>
               <Box
                 sx={{
                   p: 3,
@@ -291,7 +339,7 @@ const DocumentationPage: React.FC = () => {
                   display: 'flex',
                   alignItems: 'center',
                   gap: 3,
-                  cursor: 'pointer',
+                  cursor: 'default',
                   transition: 'all 0.3s ease',
                   '&:hover': {
                     boxShadow: lunitShadows.card,
@@ -344,6 +392,7 @@ const DocumentationPage: React.FC = () => {
                   }}
                 />
               </Box>
+              </Tooltip>
             </Grid>
           ))}
         </Grid>

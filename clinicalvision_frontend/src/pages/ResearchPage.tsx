@@ -11,7 +11,8 @@ const publications = [
     year: '2024',
     authors: 'Chen S, Park M, Rodriguez E, et al.',
     abstract: 'We present a deep learning model achieving 97.5% sensitivity in breast cancer detection across 50,000 mammograms from 12 institutions...',
-    doi: '10.1038/s41591-024-xxxxx',
+    doi: 'preprint-pending',
+    doiStatus: 'pending' as const,
   },
   {
     title: 'Dual-View Fusion for Improved Cancer Localization in Mammography',
@@ -19,7 +20,8 @@ const publications = [
     year: '2023',
     authors: 'Park M, Kim D, Chen S, et al.',
     abstract: 'Our dual-view fusion architecture simultaneously analyzes CC and MLO views, improving localization accuracy by 23% compared to single-view methods...',
-    doi: '10.1148/radiol.2023xxxxxx',
+    doi: 'preprint-pending',
+    doiStatus: 'pending' as const,
   },
   {
     title: 'Uncertainty Quantification in AI-Assisted Breast Cancer Screening',
@@ -27,7 +29,8 @@ const publications = [
     year: '2023',
     authors: 'Rodriguez E, Chen S, Park M, et al.',
     abstract: 'We introduce Monte Carlo dropout-based uncertainty estimation, enabling clinicians to identify cases requiring additional review...',
-    doi: '10.1016/j.media.2023.xxxxxx',
+    doi: 'preprint-pending',
+    doiStatus: 'pending' as const,
   },
   {
     title: 'Clinical Validation of AI-Assisted Mammography Reading Workflow',
@@ -35,7 +38,8 @@ const publications = [
     year: '2023',
     authors: 'Mitchell J, Chen S, Rodriguez E, et al.',
     abstract: 'A prospective study of 10,000 screening mammograms demonstrating 35% reduction in reading time with maintained diagnostic accuracy...',
-    doi: '10.1001/jamanetworkopen.2023.xxxxx',
+    doi: 'preprint-pending',
+    doiStatus: 'pending' as const,
   },
 ];
 
@@ -302,9 +306,11 @@ const ResearchPage: React.FC = () => {
 
               <Button
                 size="small"
-                endIcon={<OpenInNew sx={{ fontSize: 14 }} />}
+                endIcon={pub.doiStatus !== 'pending' ? <OpenInNew sx={{ fontSize: 14 }} /> : undefined}
+                disabled={pub.doiStatus === 'pending'}
+                onClick={pub.doiStatus !== 'pending' ? () => window.open(`https://doi.org/${pub.doi}`, '_blank', 'noopener,noreferrer') : undefined}
                 sx={{
-                  color: lunitColors.darkerGray,
+                  color: pub.doiStatus === 'pending' ? lunitColors.grey : lunitColors.darkerGray,
                   fontFamily: lunitTypography.fontFamilyBody,
                   fontSize: '13px',
                   textTransform: 'none',
@@ -314,7 +320,7 @@ const ResearchPage: React.FC = () => {
                   },
                 }}
               >
-                DOI: {pub.doi}
+                {pub.doiStatus === 'pending' ? 'Preprint — DOI pending' : `DOI: ${pub.doi}`}
               </Button>
             </Box>
           ))}
