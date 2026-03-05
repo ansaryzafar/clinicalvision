@@ -738,7 +738,7 @@ export const MultiImageUpload: React.FC<MultiImageUploadProps> = ({
               '&:hover': { textDecoration: 'underline' },
             }}
           >
-            No images? Download demo mammograms →
+            No images? Download CBIS-DDSM demo mammograms →
           </Typography>
         )}
       </DropZone>

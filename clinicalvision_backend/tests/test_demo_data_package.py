@@ -53,17 +53,15 @@ DEMO_CASES = {
         "label": "Suspicious Mass Finding",
         "difficulty": "Intermediate",
         "dir_name": "case-2-suspicious",
-        "views": 6,
+        "views": 4,
         "lateralities": {"R", "L"},
-        "view_types": {"CC", "MLO", "SPOT", "MAG"},
+        "view_types": {"CC", "MLO"},
         "expected_pathology": "MALIGNANT",
         "filenames": [
             "DEMO-002_RIGHT_CC",
             "DEMO-002_LEFT_CC",
             "DEMO-002_RIGHT_MLO",
             "DEMO-002_LEFT_MLO",
-            "DEMO-002_RIGHT_SPOT",
-            "DEMO-002_RIGHT_MAG",
         ],
     },
     "DEMO-003": {
@@ -81,8 +79,8 @@ DEMO_CASES = {
     },
 }
 
-TOTAL_IMAGES = sum(c["views"] for c in DEMO_CASES.values())  # 12
-TOTAL_FILES = TOTAL_IMAGES * 2  # 24 (PNG + DICOM for each)
+TOTAL_IMAGES = sum(c["views"] for c in DEMO_CASES.values())  # 10
+TOTAL_FILES = TOTAL_IMAGES  # 10 (PNG only — no DICOM)
 
 # Filename pattern: DEMO-NNN_SIDE_VIEW
 FILENAME_PATTERN = re.compile(
@@ -112,7 +110,7 @@ def valid_manifest() -> Dict[str, Any]:
         "description": "ClinicalVision AI Demo Data Package",
         "totalCases": 3,
         "totalImages": TOTAL_IMAGES,
-        "formats": ["DICOM (.dcm)", "PNG (.png)"],
+        "formats": ["PNG (.png)"],
         "zipDownload": "/demo-data/ClinicalVision_Demo_Package.zip",
         "cases": [
             {
@@ -126,7 +124,7 @@ def valid_manifest() -> Dict[str, Any]:
                 "id": "DEMO-002",
                 "label": "Suspicious Mass Finding",
                 "difficulty": "Intermediate",
-                "views": 6,
+                "views": 4,
                 "path": "/demo-data/case-2-suspicious/",
             },
             {
@@ -365,12 +363,11 @@ class TestManifestSchema:
     def test_total_cases_is_3(self, valid_manifest):
         assert valid_manifest["totalCases"] == 3
 
-    def test_total_images_is_12(self, valid_manifest):
+    def test_total_images_is_10(self, valid_manifest):
         assert valid_manifest["totalImages"] == TOTAL_IMAGES
 
-    def test_formats_include_dicom_and_png(self, valid_manifest):
+    def test_formats_include_png(self, valid_manifest):
         formats = valid_manifest["formats"]
-        assert any("DICOM" in f or "dcm" in f for f in formats)
         assert any("PNG" in f or "png" in f for f in formats)
 
     def test_zip_download_path(self, valid_manifest):

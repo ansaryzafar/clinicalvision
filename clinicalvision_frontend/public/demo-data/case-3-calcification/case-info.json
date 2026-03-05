@@ -1,6 +1,6 @@
 {
   "caseId": "DEMO-003",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "patient": {
     "mrn": "DEMO-003",
     "firstName": "Sarah",
@@ -11,16 +11,16 @@
   },
   "clinicalHistory": {
     "indication": "Calcifications noted on prior screening",
-    "priorStudies": "Screening 6 months ago \u2014 BI-RADS 3",
+    "priorStudies": "Screening 6 months ago — BI-RADS 3",
     "brcaStatus": "Positive (BRCA1)",
-    "familyHistory": "Sister \u2014 breast cancer at age 45, maternal aunt \u2014 ovarian cancer",
-    "symptoms": "No palpable mass \u2014 calcifications on imaging only",
+    "familyHistory": "Sister — breast cancer at age 45, maternal aunt — ovarian cancer",
+    "symptoms": "No palpable mass — calcifications on imaging only",
     "hormoneTherapy": "None",
     "priorBiopsies": "None"
   },
   "expectedOutcome": {
     "biRads": "4B or 4C",
-    "description": "Calcification cluster \u2014 high suspicion, BRCA positive",
+    "description": "Suspicious calcifications — biopsy recommended",
     "pathology": "MALIGNANT"
   },
   "images": [
@@ -31,7 +31,9 @@
       "formats": [
         "png"
       ],
-      "source": "ClinicalVision Synthetic Demo"
+      "source": "CBIS-DDSM (TCIA)",
+      "originalCaseId": "P_00012",
+      "md5": "4a6dd94e1766d6161ce791688357cee5"
     },
     {
       "filename": "DEMO-003_LEFT_MLO",
@@ -40,7 +42,9 @@
       "formats": [
         "png"
       ],
-      "source": "ClinicalVision Synthetic Demo"
+      "source": "CBIS-DDSM (TCIA)",
+      "originalCaseId": "P_00012",
+      "md5": "eae2eb4926f27cf4425fea2a7005ebef"
     }
   ]
 }

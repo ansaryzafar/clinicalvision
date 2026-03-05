@@ -1,6 +1,6 @@
 {
   "caseId": "DEMO-002",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "patient": {
     "mrn": "DEMO-002",
     "firstName": "Maria",
@@ -13,14 +13,14 @@
     "indication": "Palpable mass, right breast, 2 o'clock position",
     "priorStudies": "Previous benign biopsy (2023)",
     "brcaStatus": "Unknown",
-    "familyHistory": "Mother \u2014 breast cancer at age 52",
-    "symptoms": "Palpable mass right breast, upper outer quadrant",
+    "familyHistory": "Mother — breast cancer at age 52",
+    "symptoms": "Palpable lump in right breast, no nipple discharge",
     "hormoneTherapy": "None",
     "priorBiopsies": "Right breast, benign fibroadenoma (2023)"
   },
   "expectedOutcome": {
     "biRads": "4 or 5",
-    "description": "Suspicious mass \u2014 elevated AI confidence expected",
+    "description": "Suspicious — irregular mass with spiculated margins",
     "pathology": "MALIGNANT"
   },
   "images": [
@@ -31,7 +31,9 @@
       "formats": [
         "png"
       ],
-      "source": "ClinicalVision Synthetic Demo"
+      "source": "CBIS-DDSM (TCIA)",
+      "originalCaseId": "P_00092",
+      "md5": "c7c5c58cde19f180315d1b1bd6e55f4e"
     },
     {
       "filename": "DEMO-002_RIGHT_MLO",
@@ -40,7 +42,9 @@
       "formats": [
         "png"
       ],
-      "source": "ClinicalVision Synthetic Demo"
+      "source": "CBIS-DDSM (TCIA)",
+      "originalCaseId": "P_00092",
+      "md5": "e0bfde8492c7812c96b30bb0708c59cb"
     },
     {
       "filename": "DEMO-002_LEFT_CC",
@@ -49,7 +53,9 @@
       "formats": [
         "png"
       ],
-      "source": "ClinicalVision Synthetic Demo"
+      "source": "CBIS-DDSM (TCIA)",
+      "originalCaseId": "P_00092",
+      "md5": "3f986093ecbb78c0d3f09075120b45e4"
     },
     {
       "filename": "DEMO-002_LEFT_MLO",
@@ -58,25 +64,9 @@
       "formats": [
         "png"
       ],
-      "source": "ClinicalVision Synthetic Demo"
-    },
-    {
-      "filename": "DEMO-002_RIGHT_SPOT",
-      "viewType": "SPOT",
-      "laterality": "R",
-      "formats": [
-        "png"
-      ],
-      "source": "ClinicalVision Synthetic Demo"
-    },
-    {
-      "filename": "DEMO-002_RIGHT_MAG",
-      "viewType": "MAG",
-      "laterality": "R",
-      "formats": [
-        "png"
-      ],
-      "source": "ClinicalVision Synthetic Demo"
+      "source": "CBIS-DDSM (TCIA)",
+      "originalCaseId": "P_00092",
+      "md5": "6e9a2abf36acd24f5cdc3fac350d7b2f"
     }
   ]
 }

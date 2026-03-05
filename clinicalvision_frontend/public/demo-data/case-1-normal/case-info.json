@@ -1,6 +1,6 @@
 {
   "caseId": "DEMO-001",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "patient": {
     "mrn": "DEMO-001",
     "firstName": "Jane",
@@ -11,16 +11,16 @@
   },
   "clinicalHistory": {
     "indication": "Routine annual screening mammography",
-    "priorStudies": "Annual screening \u2014 no prior findings",
+    "priorStudies": "Annual screening — no prior findings",
     "brcaStatus": "Negative",
     "familyHistory": "No significant family history",
-    "symptoms": "None \u2014 asymptomatic screening",
+    "symptoms": "None — asymptomatic screening",
     "hormoneTherapy": "None",
     "priorBiopsies": "None"
   },
   "expectedOutcome": {
     "biRads": "1 or 2",
-    "description": "Normal/Benign \u2014 no suspicious findings expected",
+    "description": "Normal/Benign — no suspicious findings expected",
     "pathology": "BENIGN"
   },
   "images": [
@@ -31,7 +31,9 @@
       "formats": [
         "png"
       ],
-      "source": "ClinicalVision Synthetic Demo"
+      "source": "CBIS-DDSM (TCIA)",
+      "originalCaseId": "P_00021",
+      "md5": "202618e4ce80086d2f7d880f5e0e4cee"
     },
     {
       "filename": "DEMO-001_RIGHT_MLO",
@@ -40,7 +42,9 @@
       "formats": [
         "png"
       ],
-      "source": "ClinicalVision Synthetic Demo"
+      "source": "CBIS-DDSM (TCIA)",
+      "originalCaseId": "P_00021",
+      "md5": "10f55144de9108776b1c88b0fcb5b93a"
     },
     {
       "filename": "DEMO-001_LEFT_CC",
@@ -49,7 +53,9 @@
       "formats": [
         "png"
       ],
-      "source": "ClinicalVision Synthetic Demo"
+      "source": "CBIS-DDSM (TCIA)",
+      "originalCaseId": "P_00021",
+      "md5": "4e2bdff033c51360ff4437269f3a73be"
     },
     {
       "filename": "DEMO-001_LEFT_MLO",
@@ -58,7 +64,9 @@
       "formats": [
         "png"
       ],
-      "source": "ClinicalVision Synthetic Demo"
+      "source": "CBIS-DDSM (TCIA)",
+      "originalCaseId": "P_00021",
+      "md5": "c3378d41cfc912da58f6d020972d28b0"
     }
   ]
 }

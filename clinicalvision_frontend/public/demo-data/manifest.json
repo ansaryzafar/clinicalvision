@@ -1,9 +1,10 @@
 {
-  "version": "1.0.0",
-  "generatedAt": "2026-03-04T10:32:42.666870+00:00",
-  "description": "ClinicalVision AI Demo Data Package \u2014 Synthetic mammogram images for workflow testing",
+  "version": "2.0.0",
+  "generatedAt": "2026-03-04T16:16:08.373534+00:00",
+  "description": "ClinicalVision AI Demo Data Package — Real CBIS-DDSM mammogram images for workflow testing",
+  "source": "CBIS-DDSM (The Cancer Imaging Archive)",
   "totalCases": 3,
-  "totalImages": 12,
+  "totalImages": 10,
   "formats": [
     "PNG (.png)"
   ],
@@ -20,7 +21,7 @@
       "id": "DEMO-002",
       "label": "Suspicious Mass Finding",
       "difficulty": "Intermediate",
-      "views": 6,
+      "views": 4,
       "path": "/demo-data/case-2-suspicious/"
     },
     {
@@ -30,5 +31,12 @@
       "views": 2,
       "path": "/demo-data/case-3-calcification/"
     }
-  ]
+  ],
+  "attribution": {
+    "dataset": "CBIS-DDSM",
+    "citation": "Lee RS, Gimenez F, Hoogi A, et al. \"A curated mammography data set for use in computer-aided detection and diagnosis research.\" Scientific Data, 4:170177, 2017.",
+    "doi": "10.1038/sdata.2017.177",
+    "source": "The Cancer Imaging Archive (TCIA)",
+    "license": "TCIA Data Usage Policy — free for research and education"
+  }
 }

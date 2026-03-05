@@ -1,23 +1,20 @@
 """
 TDD Tests for generate_demo_images.py — Synthetic Mammogram Demo Data Generator
 
-Validates that the demo image generation script produces a complete, valid
-package that matches the schema expected by:
-  - DemoDataService (frontend)
-  - validate_demo_package.py (CLI validator)
-  - seed_demo_cases.py (backend seeder)
-
-Test categories:
-  1. Image synthesis quality (dimensions, mode, uniqueness)
-  2. Package structure (directories, files, JSON schemas)
-  3. Manifest & case-info contract compliance
-  4. ZIP package integrity
-  5. Reproducibility (deterministic seeds)
+⚠️  DEPRECATED: These tests validate the old synthetic image generator.
+    Demo images are now sourced from real CBIS-DDSM data via fetch_demo_cbis_ddsm.py.
+    These tests are skipped by default. Remove this file in a future cleanup pass.
 
 Usage:
-    pytest tests/test_generate_demo_images.py -v
-    pytest tests/test_generate_demo_images.py -v -k "test_manifest"
+    pytest tests/test_generate_demo_images.py -v  # all skipped
 """
+
+import pytest
+
+pytestmark = pytest.mark.skip(
+    reason="Deprecated: synthetic demo images replaced by real CBIS-DDSM data. "
+    "See scripts/fetch_demo_cbis_ddsm.py"
+)
 
 import json
 import os

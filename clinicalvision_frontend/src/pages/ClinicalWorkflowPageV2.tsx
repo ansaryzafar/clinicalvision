@@ -79,8 +79,8 @@ import { DigitalSignatureStep } from '../components/workflow/DigitalSignatureSte
 import { WorkflowAnalysisSuite } from '../components/workflow/WorkflowAnalysisSuite';
 import { ImageVerificationStep } from '../components/workflow/ImageVerificationStep';
 import { useDemoData } from '../hooks/useDemoData';
-import type { DemoCaseInfo } from '../services/demoDataService';
-import { CloudDownload } from '@mui/icons-material';
+import { useLoadDemoCase } from '../hooks/useLoadDemoCase';
+import DemoCasePicker from '../components/demo/DemoCasePicker';
 
 // ============================================================================
 // LUNIT DESIGN TOKENS — Inline for self-contained page styling
@@ -279,6 +279,14 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const prevStepRef = useRef<ClinicalWorkflowStep | null>(null);
   const location = useLocation();
+
+  // ── Demo data hooks ──────────────────────────────────────────────────
+  const { cases: demoCases, isLoading: demoLoading } = useDemoData();
+  const { loadDemoCase, isLoading: demoLoadingCase, error: demoError } = useLoadDemoCase();
+
+  const handleLoadDemoCase = useCallback(async (caseId: string) => {
+    await loadDemoCase(caseId);
+  }, [loadDemoCase]);
 
   // ── Load archived analysis data or clear stale case ────────────────
   useEffect(() => {
@@ -757,7 +765,7 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
                 Begin New Case
               </Button>
 
-              {/* Demo Data Prompt */}
+              {/* Demo Data — Load real CBIS-DDSM cases directly into workflow */}
               <Box
                 sx={{
                   mt: 4,
@@ -765,50 +773,52 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
                   borderTop: `1px solid ${alpha(LUNIT.lightest, 0.8)}`,
                 }}
               >
+                {demoError && (
+                  <Alert severity="error" sx={{ mb: 2, borderRadius: 2 }}>
+                    {demoError}
+                  </Alert>
+                )}
+                {demoLoadingCase ? (
+                  <Box sx={{ textAlign: 'center', py: 2 }}>
+                    <LinearProgress
+                      sx={{
+                        height: 3,
+                        borderRadius: 2,
+                        mb: 2,
+                        backgroundColor: LUNIT.lightest,
+                        '& .MuiLinearProgress-bar': {
+                          background: `linear-gradient(90deg, ${LUNIT.teal}, ${LUNIT.tealDark})`,
+                        },
+                      }}
+                    />
+                    <Typography
+                      sx={{
+                        fontFamily: LUNIT.fontBody,
+                        fontSize: '0.85rem',
+                        color: LUNIT.midGray,
+                      }}
+                    >
+                      Loading demo case — populating patient info, clinical history, and images…
+                    </Typography>
+                  </Box>
+                ) : (
+                  <DemoCasePicker
+                    cases={demoCases}
+                    onSelect={handleLoadDemoCase}
+                    loading={demoLoading}
+                    compact
+                  />
+                )}
                 <Typography
                   sx={{
                     fontFamily: LUNIT.fontBody,
-                    fontSize: '0.85rem',
-                    color: LUNIT.midGray,
-                    mb: 2,
+                    fontSize: '0.72rem',
+                    color: alpha(LUNIT.midGray, 0.6),
+                    mt: 1.5,
+                    fontStyle: 'italic',
                   }}
                 >
-                  New to ClinicalVision? Try with sample data:
-                </Typography>
-                <Button
-                  component="a"
-                  href="/demo-data/ClinicalVision_Demo_Package.zip"
-                  download
-                  startIcon={<CloudDownload />}
-                  variant="outlined"
-                  size="small"
-                  sx={{
-                    fontFamily: LUNIT.fontBody,
-                    fontWeight: 500,
-                    fontSize: '0.85rem',
-                    borderRadius: '100px',
-                    borderColor: alpha(LUNIT.teal, 0.4),
-                    color: LUNIT.teal,
-                    textTransform: 'none',
-                    px: 3,
-                    py: 0.75,
-                    '&:hover': {
-                      borderColor: LUNIT.teal,
-                      bgcolor: alpha(LUNIT.teal, 0.05),
-                    },
-                  }}
-                >
-                  Download Demo Data (3 Cases, 12 Images)
-                </Button>
-                <Typography
-                  sx={{
-                    fontFamily: LUNIT.fontBody,
-                    fontSize: '0.75rem',
-                    color: alpha(LUNIT.midGray, 0.7),
-                    mt: 1,
-                  }}
-                >
-                  Includes patient info, clinical history, and mammogram images
+                  Real CBIS-DDSM mammogram images · TCIA open-access data
                 </Typography>
               </Box>
             </Paper>

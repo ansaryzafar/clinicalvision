@@ -2,86 +2,49 @@
 
 ## What's Included
 
-3 curated mammogram cases (12 images total) for testing the complete
-ClinicalVision clinical workflow, including AI analysis with:
+3 curated mammogram cases (10 images total) sourced from the **CBIS-DDSM**
+dataset (The Cancer Imaging Archive) for testing the complete ClinicalVision
+clinical workflow.
 
-- **MC Dropout** uncertainty quantification
-- **GradCAM++** attention heatmaps
-- **BI-RADS** assessment suggestions
-- **Suspicious region** detection
+These are **real de-identified mammogram images**, not synthetic data.
+
+## How to Use
+
+### Quick Start (Recommended)
+1. Log in to ClinicalVision
+2. On the workflow page, click **"Load Demo Case"**
+3. Select a case — patient info and images load automatically
+4. Proceed through the 10-step clinical workflow
+
+### Manual Upload
+1. Download this package
+2. Start a new case in the workflow
+3. Enter patient info from `case-info.json`
+4. Upload PNG images from the case folder
 
 ## Cases
 
-| Case | ID | Difficulty | Views | Expected Outcome |
-|------|-----|-----------|-------|-----------------|
-| Normal Screening | DEMO-001 | Easy | 4 | BI-RADS 1-2 (Benign) |
-| Suspicious Mass | DEMO-002 | Intermediate | 6 | BI-RADS 4-5 (Suspicious) |
-| Calcification Follow-up | DEMO-003 | Advanced | 2 | BI-RADS 4B-4C (Calcification) |
+| Case | ID | Difficulty | Views | Source Patient | Expected BI-RADS |
+|------|-----|-----------|-------|---------------|-----------------|
+| Normal Screening | DEMO-001 | Easy | 4 | P_00021 (BENIGN) | 1-2 |
+| Suspicious Mass | DEMO-002 | Intermediate | 4 | P_00092 (MALIGNANT) | 4-5 |
+| Calcification | DEMO-003 | Advanced | 2 | P_00012 (MALIGNANT) | 4B-4C |
 
-## Quick Start
+## AI Features to Test
 
-### Step 1: Create an Account
-Navigate to your ClinicalVision instance and register.
-
-### Step 2: Start New Analysis
-Click **"New Analysis"** from the dashboard, or use the
-**"Load Demo Case"** button for one-click setup.
-
-### Step 3: Enter Patient Information
-Each case folder contains a `case-info.json` with patient demographics:
-
-**Case 1 — Jane A. Thompson**
-- MRN: DEMO-001
-- DOB: 1968-03-15
-- Indication: Routine annual screening
-
-**Case 2 — Maria R. Chen**
-- MRN: DEMO-002
-- DOB: 1975-09-22
-- Indication: Palpable mass, right breast
-
-**Case 3 — Sarah L. Williams**
-- MRN: DEMO-003
-- DOB: 1982-11-08
-- Indication: Calcifications on prior screening
-
-### Step 4: Upload Images
-Drag and drop the PNG files from the case folder.
-View types and laterality are auto-detected from filenames.
-
-### Step 5: Run AI Analysis
-Click **"Analyze"** — the AI model processes each image with:
-- 3-model DenseNet-121 ensemble
-- 10 MC Dropout forward passes per model (30 total)
-- GradCAM++ attention mapping
-- Suspicious region detection
-
-### Step 6: Review Results
-- View prediction confidence and uncertainty
-- Examine GradCAM++ heatmap overlays
-- Review detected suspicious regions
-- Open the full Analysis Suite for detailed XAI visualization
-
-### Step 7: Complete Workflow
-Assign BI-RADS, generate report, finalize, and sign.
-
-## Test Scenarios
-
-| Scenario | Case | What to Test |
-|----------|------|-------------|
-| Happy path (4-view standard) | Case 1 | Full workflow with normal result |
-| Diagnostic workup with additional views | Case 2 | SPOT + MAG views, higher BI-RADS |
-| Partial views (incomplete set) | Case 3 | Missing-view warning, targeted study |
-| Batch analysis performance | All | Process multiple images, check timing |
-| GradCAM++ heatmap quality | Case 2 | Attention should highlight mass region |
-| MC Dropout uncertainty | Case 3 | High uncertainty expected for calcifications |
+- **MC Dropout** uncertainty quantification (30 forward passes)
+- **GradCAM++** attention heatmaps
+- **BI-RADS** assessment suggestions
+- **Suspicious region** detection with bounding boxes
 
 ## Attribution
 
-These are synthetic demo images generated for ClinicalVision workflow testing.
-Image synthesis inspired by mammographic appearance characteristics.
-For research with real clinical data, refer to the CBIS-DDSM dataset:
+Images sourced from the CBIS-DDSM dataset:
 
-> Lee RS, Gimenez F, Hoogi A, et al. "A curated mammography data set for use
-> in computer-aided detection and diagnosis research." Scientific Data, 2017.
+> Lee RS, Gimenez F, Hoogi A, Miyake KK, Goben M, Rubin DL.
+> "A curated mammography data set for use in computer-aided detection
+> and diagnosis research." Scientific Data, 4:170177, 2017.
 > DOI: 10.1038/sdata.2017.177
+
+Original data from The Cancer Imaging Archive (TCIA).
+Licensed under TCIA Data Usage Policy — free for research and education.

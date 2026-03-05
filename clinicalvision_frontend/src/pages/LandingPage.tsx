@@ -3211,7 +3211,7 @@ const LandingPage: React.FC = () => {
                 lineHeight: 1.7,
               }}
             >
-              Download curated mammogram cases and test the full clinical workflow —
+              Download real CBIS-DDSM mammogram cases and test the full clinical workflow —
               AI analysis, MC Dropout uncertainty, GradCAM++ heatmaps, and BI-RADS assessment.
             </Typography>
           </Box>
@@ -3314,11 +3314,11 @@ const LandingPage: React.FC = () => {
               <Typography
                 sx={{ color: lunitColors.darkGrey, fontSize: '14px', mb: 2, lineHeight: 1.6 }}
               >
-                Maria R. Chen — Palpable mass, diagnostic workup. 4 standard + 2 additional views (SPOT, MAG).
+                Maria R. Chen — Palpable mass, diagnostic workup. 4-view standard set (RCC, LCC, RMLO, LMLO).
               </Typography>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: lunitColors.grey }}>
                 <ViewsIcon sx={{ fontSize: 16 }} />
-                <Typography sx={{ fontSize: '13px' }}>6 views</Typography>
+                <Typography sx={{ fontSize: '13px' }}>4 views</Typography>
                 <Typography sx={{ fontSize: '13px', ml: 'auto', color: '#ff9800', fontWeight: 600 }}>
                   BI-RADS 4-5
                 </Typography>
@@ -3412,7 +3412,7 @@ const LandingPage: React.FC = () => {
                 mx: 'auto',
               }}
             >
-              Includes 12 mammogram images, patient demographics, clinical history,
+              Includes 10 mammogram images, patient demographics, clinical history,
               and step-by-step testing instructions.
             </Typography>
           </Box>
