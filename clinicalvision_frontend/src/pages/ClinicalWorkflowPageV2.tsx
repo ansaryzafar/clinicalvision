@@ -487,7 +487,7 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
           return (
             <BiRadsAssessmentStep
               clinicalCase={currentCase}
-              suggestedBiRads={currentCase.assessment?.overallCategory}
+              suggestedBiRads={currentCase.aiSuggestedBiRads}
               onAssessmentChange={handleAssessmentChange}
               onComplete={handleAdvance}
               onBack={goBackPrev}

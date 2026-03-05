@@ -31,6 +31,7 @@ import {
   ClinicalCaseProvider,
   useClinicalCase,
   ClinicalCaseContextValue,
+  __resetCaseStore,
 } from '../ClinicalCaseContext';
 
 // ============================================================================
@@ -106,6 +107,15 @@ function renderWithProvider(userId: string = TEST_USER_ID) {
 
 describe('ClinicalCaseContext', () => {
   
+  // Clean up persisted state between tests to ensure isolation
+  beforeEach(() => {
+    __resetCaseStore();
+  });
+
+  afterEach(() => {
+    __resetCaseStore();
+  });
+
   describe('Provider', () => {
     
     it('should render children without errors', () => {

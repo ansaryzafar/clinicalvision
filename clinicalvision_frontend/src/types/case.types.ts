@@ -1058,6 +1058,10 @@ export interface ClinicalCase {
   /** Consolidated findings across views */
   consolidatedFindings: ConsolidatedFinding[];
   
+  // AI Suggestion (computed by calculateSuggestedBiRads from model inference)
+  /** AI-suggested BI-RADS category based on analysis results */
+  aiSuggestedBiRads?: BiRadsCategory;
+  
   // Assessment
   /** BI-RADS assessment */
   assessment?: BiRadsAssessment;

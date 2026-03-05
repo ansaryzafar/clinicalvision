@@ -44,6 +44,7 @@ import {
 
 import { useClinicalCase } from '../../contexts/ClinicalCaseContext';
 import { ClinicalWorkflowStep } from '../../types/case.types';
+import { useNavigate } from 'react-router-dom';
 
 // ============================================================================
 // LUNIT DESIGN TOKENS
@@ -99,7 +100,10 @@ export const DigitalSignatureStep: React.FC = () => {
     signReport,
     finalizeCase,
     goBackToStep,
+    clearCurrentCase,
   } = useClinicalCase();
+
+  const navigate = useNavigate();
 
   // ── Local state ────────────────────────────────────────────────────────
   const [typedName, setTypedName] = useState('');
@@ -445,6 +449,54 @@ export const DigitalSignatureStep: React.FC = () => {
           </Button>
         )}
       </Stack>
+
+      {/* ── Post-sign actions ─────────────────────────────────────────── */}
+      {isSigned && (
+        <Paper
+          variant="outlined"
+          sx={{
+            p: 2,
+            mt: 3,
+            borderRadius: 2,
+            borderColor: alpha(LUNIT.teal, 0.18),
+            backgroundColor: alpha(LUNIT.teal, 0.04),
+            textAlign: 'center',
+          }}
+        >
+          <Typography
+            variant="body2"
+            sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray, mb: 2 }}
+          >
+            This case has been signed and finalized. It is saved and can be
+            reviewed from the Cases dashboard at any time.
+          </Typography>
+          <Stack direction="row" spacing={2} justifyContent="center">
+            <Button
+              variant="outlined"
+              onClick={() => navigate('/cases')}
+              sx={{ fontFamily: LUNIT.fontBody, textTransform: 'none', borderRadius: 2 }}
+            >
+              View All Cases
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => {
+                clearCurrentCase();
+                navigate('/workflow');
+              }}
+              sx={{
+                fontFamily: LUNIT.fontBody,
+                textTransform: 'none',
+                borderRadius: 2,
+                backgroundColor: LUNIT.teal,
+                '&:hover': { backgroundColor: alpha(LUNIT.teal, 0.85) },
+              }}
+            >
+              Start New Case
+            </Button>
+          </Stack>
+        </Paper>
+      )}
     </Box>
   );
 };

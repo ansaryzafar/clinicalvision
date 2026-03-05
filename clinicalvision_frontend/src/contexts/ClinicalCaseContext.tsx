@@ -143,6 +143,9 @@ export interface ClinicalCaseContextValue {
   pendingCount: number;
   retrySync: () => Promise<void>;
   
+  // Case listing (persisted cases)
+  getAllCases: () => ClinicalCase[];
+  
   // Error handling
   clearError: () => void;
 }
@@ -179,8 +182,77 @@ function createContextError(message: string, code?: ErrorCode): ContextError {
   return error;
 }
 
-// In-memory case storage for demo (would be replaced with actual persistence)
+// ============================================================================
+// LOCALSTORAGE PERSISTENCE
+// ============================================================================
+
+/** localStorage key for all cases */
+const CASE_STORE_KEY = 'clinicalvision_cases';
+/** localStorage key for the currently-active case ID */
+const CURRENT_CASE_KEY = 'clinicalvision_current_case_id';
+
+/**
+ * Serialise the in-memory caseStore → localStorage.
+ * Images are stripped (they contain Blob data that cannot be serialised);
+ * everything else (patient info, workflow state, audit trail, assessment,
+ * report, analysis results, findings) is persisted.
+ */
+function persistCaseStore(): void {
+  try {
+    const serialisable: Record<string, ClinicalCase> = {};
+    caseStore.forEach((c, id) => {
+      // Strip non-serialisable fields (File/Blob references in images)
+      serialisable[id] = {
+        ...c,
+        images: c.images.map((img) => ({ ...img, file: undefined as any })),
+      };
+    });
+    localStorage.setItem(CASE_STORE_KEY, JSON.stringify(serialisable));
+  } catch (err) {
+    console.warn('[ClinicalCaseContext] Failed to persist case store:', err);
+  }
+}
+
+/**
+ * Load persisted cases from localStorage → caseStore Map.
+ * Called once at module initialisation.
+ */
+function hydrateFromLocalStorage(): void {
+  try {
+    const raw = localStorage.getItem(CASE_STORE_KEY);
+    if (!raw) return;
+    const parsed: Record<string, ClinicalCase> = JSON.parse(raw);
+    Object.entries(parsed).forEach(([id, c]) => {
+      caseStore.set(id, c);
+    });
+  } catch (err) {
+    console.warn('[ClinicalCaseContext] Failed to hydrate case store:', err);
+  }
+}
+
+/** Persist the active case ID so refreshing picks up where the user left off */
+function persistCurrentCaseId(id: string | null): void {
+  try {
+    if (id) {
+      localStorage.setItem(CURRENT_CASE_KEY, id);
+    } else {
+      localStorage.removeItem(CURRENT_CASE_KEY);
+    }
+  } catch { /* best-effort */ }
+}
+
+/** Retrieve the last-active case ID after a page refresh */
+function getPersistedCurrentCaseId(): string | null {
+  try {
+    return localStorage.getItem(CURRENT_CASE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+// In-memory case storage (hydrated from localStorage on startup)
 const caseStore = new Map<string, ClinicalCase>();
+hydrateFromLocalStorage();
 
 /**
  * Reset the case store for test isolation
@@ -188,6 +260,10 @@ const caseStore = new Map<string, ClinicalCase>();
  */
 export function __resetCaseStore(): void {
   caseStore.clear();
+  try {
+    localStorage.removeItem(CASE_STORE_KEY);
+    localStorage.removeItem(CURRENT_CASE_KEY);
+  } catch { /* no-op in environments without localStorage */ }
 }
 
 /**
@@ -364,10 +440,36 @@ export const ClinicalCaseProvider: React.FC<ClinicalCaseProviderProps> = ({
     };
   }, [syncService]);
 
+  // ============================================================================
+  // LOCAL PERSISTENCE (survive page refreshes)
+  // ============================================================================
+
+  // Hydrate currentCase from localStorage on first mount
+  useEffect(() => {
+    const savedId = getPersistedCurrentCaseId();
+    if (savedId && caseStore.has(savedId) && !currentCase) {
+      setCurrentCase(caseStore.get(savedId)!);
+    }
+    // Run only once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Auto-persist whenever currentCase changes
+  useEffect(() => {
+    persistCurrentCaseId(currentCase?.id ?? null);
+    // Also persist the full caseStore (includes this and all previous cases)
+    persistCaseStore();
+  }, [currentCase]);
+
   /** Retry all failed sync operations */
   const retrySync = useCallback(async () => {
     await syncService.retryAll();
   }, [syncService]);
+
+  /** Return all cases from the persistent store */
+  const getAllCases = useCallback((): ClinicalCase[] => {
+    return Array.from(caseStore.values());
+  }, []);
 
   // ============================================================================
   // CASE OPERATIONS
@@ -917,6 +1019,8 @@ export const ClinicalCaseProvider: React.FC<ClinicalCaseProviderProps> = ({
         ...currentCase,
         analysisResults: results,
         consolidatedFindings,
+        // Persist the AI-suggested BI-RADS so BiRadsAssessmentStep can display it
+        aiSuggestedBiRads: suggestedBiRads ?? currentCase.aiSuggestedBiRads,
         // Mark BATCH_AI_ANALYSIS as completed if not already
         workflow: {
           ...currentCase.workflow,
@@ -1318,6 +1422,9 @@ export const ClinicalCaseProvider: React.FC<ClinicalCaseProviderProps> = ({
       pendingCount,
       retrySync,
       
+      // Case listing
+      getAllCases,
+      
       // Error handling
       clearError,
     }),
@@ -1350,6 +1457,7 @@ export const ClinicalCaseProvider: React.FC<ClinicalCaseProviderProps> = ({
       syncStatus,
       pendingCount,
       retrySync,
+      getAllCases,
       clearError,
     ]
   );

@@ -17,6 +17,12 @@ jest.mock('../../../contexts/ClinicalCaseContext', () => ({
   useClinicalCase: jest.fn(),
 }));
 
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
+
 import { useClinicalCase } from '../../../contexts/ClinicalCaseContext';
 import { DigitalSignatureStep } from '../DigitalSignatureStep';
 import {
@@ -102,6 +108,7 @@ function setupMock(caseOverrides?: Partial<ClinicalCase>) {
   const mockSignReport = jest.fn().mockReturnValue({ success: true, data: {} });
   const mockFinalizeCase = jest.fn().mockResolvedValue({ success: true, data: {} });
   const mockGoBackToStep = jest.fn();
+  const mockClearCurrentCase = jest.fn();
 
   const clinicalCase = createClinicalCase(caseOverrides);
 
@@ -113,9 +120,10 @@ function setupMock(caseOverrides?: Partial<ClinicalCase>) {
     signReport: mockSignReport,
     finalizeCase: mockFinalizeCase,
     goBackToStep: mockGoBackToStep,
+    clearCurrentCase: mockClearCurrentCase,
   });
 
-  return { mockSignReport, mockFinalizeCase, mockGoBackToStep, clinicalCase };
+  return { mockSignReport, mockFinalizeCase, mockGoBackToStep, mockClearCurrentCase, clinicalCase };
 }
 
 // ============================================================================
@@ -125,6 +133,7 @@ function setupMock(caseOverrides?: Partial<ClinicalCase>) {
 describe('DigitalSignatureStep', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockNavigate.mockClear();
     // Mock crypto.subtle for SHA-256
     const mockDigest = jest.fn().mockImplementation(async () => {
       const buffer = new ArrayBuffer(32);
@@ -436,5 +445,76 @@ describe('DigitalSignatureStep — LUNIT design compliance', () => {
     }
     const cssText = allCssRules.join(' ').toLowerCase();
     expect(cssText).toContain('clashgrotesk');
+  });
+});
+
+// ============================================================================
+// POST-SIGN NAVIGATION TESTS
+// ============================================================================
+
+describe('DigitalSignatureStep post-sign actions', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockNavigate.mockClear();
+  });
+
+  function setupSignedMock() {
+    const mockClearCurrentCase = jest.fn();
+    const clinicalCase = createClinicalCase({
+      report: { ...createReport(), status: 'signed' },
+      workflow: {
+        currentStep: ClinicalWorkflowStep.DIGITAL_SIGNATURE,
+        completedSteps: [],
+        status: 'finalized',
+        startedAt: '2026-01-01T00:00:00.000Z',
+        lastModifiedAt: '2026-01-01T11:00:00.000Z',
+        isLocked: true,
+      },
+      audit: {
+        createdBy: 'dr-johnson',
+        createdAt: '2026-01-01T00:00:00.000Z',
+        modifications: [],
+        signedBy: 'Dr. Alice Johnson',
+        signedAt: '2026-01-01T11:00:00.000Z',
+        signatureHash: 'abc123def456',
+      },
+    });
+    mockUseClinicalCase.mockReturnValue({
+      currentCase: clinicalCase,
+      isLoading: false,
+      error: null,
+      clearError: jest.fn(),
+      signReport: jest.fn(),
+      finalizeCase: jest.fn().mockResolvedValue({ success: true }),
+      goBackToStep: jest.fn(),
+      clearCurrentCase: mockClearCurrentCase,
+    });
+    return { mockClearCurrentCase, clinicalCase };
+  }
+
+  it('shows post-sign actions after case is signed', () => {
+    setupSignedMock();
+    render(<DigitalSignatureStep />);
+
+    expect(screen.getByText(/signed and finalized/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /View All Cases/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Start New Case/i })).toBeInTheDocument();
+  });
+
+  it('navigates to /cases when "View All Cases" is clicked', () => {
+    setupSignedMock();
+    render(<DigitalSignatureStep />);
+
+    fireEvent.click(screen.getByRole('button', { name: /View All Cases/i }));
+    expect(mockNavigate).toHaveBeenCalledWith('/cases');
+  });
+
+  it('clears case and navigates to /workflow when "Start New Case" is clicked', () => {
+    const { mockClearCurrentCase } = setupSignedMock();
+    render(<DigitalSignatureStep />);
+
+    fireEvent.click(screen.getByRole('button', { name: /Start New Case/i }));
+    expect(mockClearCurrentCase).toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledWith('/workflow');
   });
 });
