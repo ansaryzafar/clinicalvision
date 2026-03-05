@@ -69,6 +69,10 @@ import {
   SyncStatus,
   SyncOperation,
 } from '../services/BackendSyncService';
+import {
+  syncCaseToSessionService,
+  syncAllCasesToSessionService,
+} from '../services/caseSessionBridge';
 
 // ============================================================================
 // CONTEXT TYPES
@@ -208,6 +212,12 @@ function persistCaseStore(): void {
       };
     });
     localStorage.setItem(CASE_STORE_KEY, JSON.stringify(serialisable));
+
+    // Bridge: sync every case to clinicalSessionService so CasesDashboard
+    // and PatientRecords (which read from clinicalvision_sessions) can see them
+    caseStore.forEach((c) => {
+      syncCaseToSessionService(c);
+    });
   } catch (err) {
     console.warn('[ClinicalCaseContext] Failed to persist case store:', err);
   }
@@ -222,9 +232,16 @@ function hydrateFromLocalStorage(): void {
     const raw = localStorage.getItem(CASE_STORE_KEY);
     if (!raw) return;
     const parsed: Record<string, ClinicalCase> = JSON.parse(raw);
+    const cases: ClinicalCase[] = [];
     Object.entries(parsed).forEach(([id, c]) => {
       caseStore.set(id, c);
+      cases.push(c);
     });
+    // Bridge: ensure clinicalSessionService (CasesDashboard data source)
+    // has all cases that were persisted in the ClinicalCaseContext store
+    if (cases.length > 0) {
+      syncAllCasesToSessionService(cases);
+    }
   } catch (err) {
     console.warn('[ClinicalCaseContext] Failed to hydrate case store:', err);
   }
