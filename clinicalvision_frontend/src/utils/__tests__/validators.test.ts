@@ -96,11 +96,11 @@ describe('validatePatientInfo', () => {
     });
     
     it('should accept MRN with various valid formats', () => {
-      const validMRNs = ['MRN12', 'ABC12345', '12345678901234567890', 'a1b2c'];
+      const validMRNs = ['MRN12', 'ABC12345', '12345678901234567890', 'a1b2c', 'DEMO-001', 'MRN_123', 'P.00021'];
       
       validMRNs.forEach(mrn => {
         const result = validatePatientInfo(createValidPatientInfo({ mrn }));
-        // MRN must be 5-20 alphanumeric
+        // MRN must be 5-20 chars, start/end alphanumeric
         if (mrn.length >= 5 && mrn.length <= 20) {
           expect(result.errors.find(e => e.field === 'mrn')).toBeUndefined();
         }
@@ -214,6 +214,47 @@ describe('validatePatientInfo', () => {
     
     it('should fail for MRN with special characters', () => {
       const patient = createValidPatientInfo({ mrn: 'MRN@123!' });
+      const result = validatePatientInfo(patient);
+      
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContainEqual(
+        expect.objectContaining({ field: 'mrn', code: 'INVALID_FORMAT' })
+      );
+    });
+    
+    it('should accept MRN with hyphens', () => {
+      const patient = createValidPatientInfo({ mrn: 'DEMO-001' });
+      const result = validatePatientInfo(patient);
+      
+      expect(result.errors.find(e => e.field === 'mrn')).toBeUndefined();
+    });
+    
+    it('should accept MRN with underscores', () => {
+      const patient = createValidPatientInfo({ mrn: 'MRN_12345' });
+      const result = validatePatientInfo(patient);
+      
+      expect(result.errors.find(e => e.field === 'mrn')).toBeUndefined();
+    });
+    
+    it('should accept MRN with periods', () => {
+      const patient = createValidPatientInfo({ mrn: 'PAT.12345' });
+      const result = validatePatientInfo(patient);
+      
+      expect(result.errors.find(e => e.field === 'mrn')).toBeUndefined();
+    });
+    
+    it('should reject MRN starting with hyphen', () => {
+      const patient = createValidPatientInfo({ mrn: '-MRN12345' });
+      const result = validatePatientInfo(patient);
+      
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContainEqual(
+        expect.objectContaining({ field: 'mrn', code: 'INVALID_FORMAT' })
+      );
+    });
+    
+    it('should reject MRN ending with hyphen', () => {
+      const patient = createValidPatientInfo({ mrn: 'MRN12345-' });
       const result = validatePatientInfo(patient);
       
       expect(result.isValid).toBe(false);
@@ -885,11 +926,16 @@ describe('Validation Patterns', () => {
       expect(MRN_PATTERN.test('MRN12345')).toBe(true);
       expect(MRN_PATTERN.test('12345')).toBe(true);
       expect(MRN_PATTERN.test('ABCDE')).toBe(true);
+      expect(MRN_PATTERN.test('DEMO-001')).toBe(true);
+      expect(MRN_PATTERN.test('MRN_12345')).toBe(true);
+      expect(MRN_PATTERN.test('PAT.12345')).toBe(true);
     });
     
     it('should reject invalid MRNs', () => {
       expect(MRN_PATTERN.test('MRN')).toBe(false); // Too short
       expect(MRN_PATTERN.test('MRN@123')).toBe(false); // Special char
+      expect(MRN_PATTERN.test('-MRN1')).toBe(false); // Leading hyphen
+      expect(MRN_PATTERN.test('MRN1-')).toBe(false); // Trailing hyphen
     });
   });
   

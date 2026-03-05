@@ -26,8 +26,9 @@ import {
 // VALIDATION CONSTANTS
 // ============================================================================
 
-/** MRN pattern: alphanumeric, 5-20 characters */
-export const MRN_PATTERN = /^[A-Za-z0-9]{5,20}$/;
+/** MRN pattern: alphanumeric with hyphens/underscores/periods, 5-20 characters.
+ *  Must start and end with a letter or digit. */
+export const MRN_PATTERN = /^[A-Za-z0-9][A-Za-z0-9\-_.]{3,18}[A-Za-z0-9]$/;
 
 /** Name pattern: letters, spaces, hyphens, apostrophes */
 export const NAME_PATTERN = /^[A-Za-z\s\-']{1,100}$/;
@@ -234,7 +235,7 @@ export function validatePatientInfo(
     addError(
       result,
       'mrn',
-      'MRN must be 5-20 alphanumeric characters',
+      'MRN must be 5-20 characters (letters, digits, hyphens, underscores, or periods)',
       'INVALID_FORMAT'
     );
   } else if (containsXSS(patient.mrn!)) {

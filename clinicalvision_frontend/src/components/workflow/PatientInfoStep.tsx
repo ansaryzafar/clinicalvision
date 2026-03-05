@@ -364,12 +364,12 @@ export const PatientInfoStep: React.FC = () => {
               fullWidth
               required
               label="Medical Record Number (MRN)"
-              placeholder="e.g. MRN12345"
+              placeholder="e.g. MRN-12345"
               value={formData.mrn || ''}
               onChange={handleFieldChange('mrn')}
               onBlur={handleBlur('mrn')}
               error={!!getFieldError('mrn')}
-              helperText={getFieldError('mrn') || 'Alphanumeric, 5-20 characters'}
+              helperText={getFieldError('mrn') || 'Letters, digits, hyphens — 5-20 characters'}
               slotProps={{
                 input: {
                   sx: { fontFamily: 'monospace' },
