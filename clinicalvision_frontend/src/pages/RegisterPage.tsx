@@ -111,17 +111,17 @@ const FEATURE_HIGHLIGHTS = [
   {
     icon: <Speed sx={{ fontSize: 22 }} />,
     title: 'Real-Time AI Analysis',
-    desc: 'Get diagnostic insights in under 30 seconds with our state-of-the-art deep learning models.',
+    desc: 'Receive rapid diagnostic insights powered by state-of-the-art deep learning models.',
   },
   {
     icon: <Security sx={{ fontSize: 22 }} />,
     title: 'Enterprise-Grade Security',
-    desc: 'HIPAA & GDPR compliant with end-to-end encryption and SOC 2 Type II certification.',
+    desc: 'Built with end-to-end encryption and robust compliance frameworks for clinical environments.',
   },
   {
     icon: <AutoAwesome sx={{ fontSize: 22 }} />,
-    title: '97.5% Detection Accuracy',
-    desc: 'Validated on 50,000+ mammography studies across diverse patient populations.',
+    title: 'Clinically Validated Accuracy',
+    desc: 'Rigorously tested across diverse mammography datasets and patient populations.',
   },
 ];
 
@@ -693,8 +693,7 @@ export const RegisterPage: React.FC = () => {
               height: { md: 52, lg: 60 },
               width: 'auto',
               mb: 5,
-              filter: 'brightness(0) invert(1)',
-              opacity: 0.95,
+              filter: 'drop-shadow(0 2px 8px rgba(0, 201, 234, 0.25))',
             }}
           />
 
@@ -773,7 +772,7 @@ export const RegisterPage: React.FC = () => {
               color: alpha(lunitColors.white, 0.45),
               lineHeight: 1.6,
             }}>
-              Join 2,500+ radiologists and oncologists already using ClinicalVision AI.
+              Built for radiologists and clinical teams advancing diagnostic excellence.
             </Typography>
           </Box>
         </Box>

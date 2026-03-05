@@ -37,10 +37,10 @@ import { lunitColors } from '../styles/lunitDesignSystem';
 
 /** Value propositions shown on the brand panel */
 const VALUE_PROPS = [
-  { text: '97.5% Detection Sensitivity', sub: 'Industry-leading accuracy for early detection' },
-  { text: 'FDA 510(k) Cleared', sub: 'Regulatory-grade AI diagnostic platform' },
-  { text: 'HIPAA & GDPR Compliant', sub: 'Enterprise security & privacy by design' },
-  { text: '50,000+ Studies Analyzed', sub: 'Trusted by leading healthcare institutions' },
+  { text: 'High Detection Sensitivity', sub: 'Industry-leading accuracy for early detection' },
+  { text: 'Regulatory-Grade Platform', sub: 'Built to meet clinical compliance standards' },
+  { text: 'Privacy & Security First', sub: 'Enterprise-grade data protection by design' },
+  { text: 'Clinically Validated', sub: 'Trusted by leading healthcare institutions' },
 ];
 
 export const LoginPage: React.FC = () => {
@@ -184,8 +184,7 @@ export const LoginPage: React.FC = () => {
               height: { md: 56, lg: 64 },
               width: 'auto',
               mb: 5,
-              filter: 'brightness(0) invert(1)',
-              opacity: 0.95,
+              filter: 'drop-shadow(0 2px 8px rgba(0, 201, 234, 0.25))',
             }}
           />
 
@@ -255,7 +254,7 @@ export const LoginPage: React.FC = () => {
               color: alpha(lunitColors.white, 0.45),
               lineHeight: 1.6,
             }}>
-              Trusted by radiologists and oncologists at leading healthcare institutions worldwide.
+              Designed for healthcare professionals seeking smarter diagnostic workflows.
             </Typography>
           </Box>
         </Box>
