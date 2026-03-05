@@ -73,7 +73,6 @@ import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../routes/paths';
 import { clinicalSessionService } from '../services/clinicalSession.service';
 import { AnalysisSession, WorkflowStep, WorkflowMode } from '../types/clinical.types';
-import { useLegacyWorkflow } from '../workflow-v3';
 import { professionalColors } from '../theme/professionalColors';
 import { useTheme } from '@mui/material/styles';
 import { Warning, Psychology, TrendingUp, Assessment as AssessmentIcon } from '@mui/icons-material';
@@ -82,7 +81,6 @@ import { getCompletionPercentage as getDerivedCompletionPercentage, getCompleted
 export const PatientRecords: React.FC = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { loadSession } = useLegacyWorkflow();
   
   const [sessions, setSessions] = useState<AnalysisSession[]>([]);
   const [filteredSessions, setFilteredSessions] = useState<AnalysisSession[]>([]);
@@ -149,17 +147,9 @@ export const PatientRecords: React.FC = () => {
   };
 
   const handleResumeSession = (sessionId: string) => {
-    loadSession(sessionId);
-    // Navigate based on session status - completed cases go to workflow, in-progress to workstation
-    const session = sessions.find(s => s.sessionId === sessionId);
-    // Use setTimeout to ensure state update is committed before navigation
-    setTimeout(() => {
-      if (session?.workflow.status === 'completed' || session?.workflow.status === 'finalized') {
-        navigate(ROUTES.WORKFLOW); // Completed cases - view in clinical workflow
-      } else {
-        navigate(ROUTES.WORKFLOW); // In-progress - continue in workflow
-      }
-    }, 0);
+    // Navigate to workflow with resumeCaseId — the workflow page will call
+    // loadCase() from ClinicalCaseContext to restore the full case state.
+    navigate(ROUTES.WORKFLOW, { state: { resumeCaseId: sessionId } });
   };
 
   const handleViewDetails = (session: AnalysisSession) => {
@@ -169,21 +159,13 @@ export const PatientRecords: React.FC = () => {
   };
 
   const handleOpenInWorkflow = (sessionId: string) => {
-    loadSession(sessionId);
-    // Use setTimeout to ensure state update is committed before navigation
-    setTimeout(() => {
-      navigate(ROUTES.WORKFLOW);
-      setDetailsDialogOpen(false);
-    }, 0);
+    navigate(ROUTES.WORKFLOW, { state: { resumeCaseId: sessionId } });
+    setDetailsDialogOpen(false);
   };
 
   const handleContinueAnalysis = (sessionId: string) => {
-    loadSession(sessionId);
-    // Use setTimeout to ensure state update is committed before navigation
-    setTimeout(() => {
-      navigate(ROUTES.WORKFLOW);
-      setDetailsDialogOpen(false);
-    }, 0);
+    navigate(ROUTES.WORKFLOW, { state: { resumeCaseId: sessionId } });
+    setDetailsDialogOpen(false);
   };
 
   const handleDuplicateSession = (sessionId: string) => {
@@ -240,8 +222,9 @@ export const PatientRecords: React.FC = () => {
   };
 
   const getStatusChip = (status: string) => {
-    const configs: Record<string, { color: 'success' | 'warning' | 'error' | 'default'; icon: React.ReactNode; label: string }> = {
+    const configs: Record<string, { color: 'success' | 'warning' | 'error' | 'default' | 'info'; icon: React.ReactNode; label: string }> = {
       completed: { color: 'success', icon: <CheckCircle sx={{ fontSize: 16 }} />, label: 'Completed' },
+      finalized: { color: 'info', icon: <CheckCircle sx={{ fontSize: 16 }} />, label: 'Finalized' },
       'in-progress': { color: 'warning', icon: <HourglassTop sx={{ fontSize: 16 }} />, label: 'In Progress' },
       pending: { color: 'default', icon: <HourglassEmpty sx={{ fontSize: 16 }} />, label: 'Pending' },
       error: { color: 'error', icon: <PriorityHigh sx={{ fontSize: 16 }} />, label: 'Error' },

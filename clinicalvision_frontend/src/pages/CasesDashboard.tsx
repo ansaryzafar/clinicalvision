@@ -68,7 +68,7 @@ import { useTheme } from '@mui/material/styles';
 export const CasesDashboard: React.FC = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { loadSession, createNewSession } = useLegacyWorkflow();
+  const { createNewSession } = useLegacyWorkflow();
   
   const [sessions, setSessions] = useState<AnalysisSession[]>([]);
   const [filteredSessions, setFilteredSessions] = useState<AnalysisSession[]>([]);
@@ -170,8 +170,9 @@ export const CasesDashboard: React.FC = () => {
   };
 
   const handleViewSession = (sessionId: string) => {
-    loadSession(sessionId);
-    navigate(ROUTES.WORKFLOW);
+    // Navigate to workflow with resumeCaseId — the workflow page will call
+    // loadCase() from ClinicalCaseContext to restore the full case state.
+    navigate(ROUTES.WORKFLOW, { state: { resumeCaseId: sessionId } });
   };
 
   const handleDeleteClick = (sessionId: string) => {

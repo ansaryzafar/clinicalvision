@@ -262,6 +262,7 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
     error,
     clearError,
     createCase,
+    loadCase,
     advanceWorkflow,
     goBackToStep,
     updateAssessment,
@@ -280,6 +281,10 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
   const prevStepRef = useRef<ClinicalWorkflowStep | null>(null);
   const location = useLocation();
 
+  // Track whether the page was opened in resume-mode so the cleanup
+  // effect knows NOT to wipe the case on unmount.
+  const isResumedRef = useRef(false);
+
   // ── Demo data hooks ──────────────────────────────────────────────────
   const { cases: demoCases, isLoading: demoLoading } = useDemoData();
   const { loadDemoCase, isLoading: demoLoadingCase, error: demoError } = useLoadDemoCase();
@@ -288,7 +293,23 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
     await loadDemoCase(caseId);
   }, [loadDemoCase]);
 
-  // ── Load archived analysis data or clear stale case ────────────────
+  // ── Resume an existing case from dashboard navigation ──────────────
+  useEffect(() => {
+    const resumeId = location.state?.resumeCaseId as string | undefined;
+    if (resumeId) {
+      isResumedRef.current = true;
+      loadCase(resumeId).then((result) => {
+        if (!result.success) {
+          console.error('[ClinicalWorkflowPageV2] Failed to resume case:', resumeId);
+          isResumedRef.current = false;
+        }
+      });
+      // Clear the navigation state so a browser refresh doesn't re-trigger
+      window.history.replaceState({}, document.title);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Load archived analysis data ────────────────────────────────────
   useEffect(() => {
     if (location.state?.fromArchive) {
       clearCurrentCase();
@@ -330,10 +351,15 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── Cleanup on unmount — prevent stale case persisting ─────────────
+  // ── Cleanup on unmount — only clear if NOT a resumed case ──────────
+  // Resumed cases should persist so the user can navigate away and come
+  // back without losing their work.  Fresh (new) cases are cleared to
+  // avoid stale state accumulation.
   useEffect(() => {
     return () => {
-      clearCurrentCase();
+      if (!isResumedRef.current) {
+        clearCurrentCase();
+      }
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

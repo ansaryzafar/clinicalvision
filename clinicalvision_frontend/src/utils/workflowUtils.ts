@@ -92,9 +92,21 @@ export function getCompletedSteps(session: AnalysisSession | null): WorkflowStep
 
 /**
  * Calculate completion percentage based on visible steps
+ *
+ * IMPORTANT: Terminal statuses ('finalized' | 'completed') short-circuit to
+ * 100%.  A finalized case IS 100% complete by definition — the radiologist
+ * signed off.  Without this guard, bridged sessions whose `measurements`
+ * array is empty would show 86% (6 / 7 clinical steps) even though the
+ * case was fully completed and locked.
  */
 export function getCompletionPercentage(session: AnalysisSession | null, mode: WorkflowMode): number {
   if (!session) return 0;
+
+  // Terminal states are definitionally 100% — no need to count steps
+  const status = session.workflow?.status;
+  if (status === 'finalized' || status === 'completed') {
+    return 100;
+  }
 
   const visibleSteps = getVisibleSteps(mode);
   const completedVisible = visibleSteps.filter(s => isStepActuallyCompleted(session, s.step));
