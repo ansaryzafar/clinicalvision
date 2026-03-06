@@ -180,21 +180,11 @@ def create_report(
     **Permissions:** CREATE_REPORT
     """
     try:
-        # TODO: Get actual user ID from authentication
-        # For now, using first radiologist from database
-        from app.db.models import User
-        author = service.db.query(User).filter(User.role == "radiologist").first()
-        if not author:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="No radiologist user found in system"
-            )
-        
-        report = service.create_report(report_data, author.id)
+        report = service.create_report(report_data, current_user.id)
         
         logger.info(
             f"Created report {report.report_number} for study {report.study_id} "
-            f"by user {author.id}"
+            f"by user {current_user.id}"
         )
         
         return report

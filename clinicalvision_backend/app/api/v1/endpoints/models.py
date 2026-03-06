@@ -289,6 +289,7 @@ def list_models(
     is_active: Optional[bool] = Query(None, description="Filter by active status"),
     skip: int = Query(0, ge=0, description="Pagination offset"),
     limit: int = Query(100, ge=1, le=1000, description="Max results"),
+    current_user: User = Depends(get_current_active_user),
     service: ModelVersionService = Depends(get_model_service)
 ) -> ModelVersionListResponse:
     """

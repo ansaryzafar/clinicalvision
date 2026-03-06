@@ -169,5 +169,4 @@ exec uvicorn main:app \
     --workers "$WORKERS" \
     --log-level "$LOG_LEVEL" \
     --timeout-keep-alive 120 \
-    --limit-concurrency 100 \
-    --reload
+    --limit-concurrency 100

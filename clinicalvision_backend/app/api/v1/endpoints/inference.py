@@ -3,7 +3,7 @@ Inference/Analysis API Endpoints - Version 1
 Production-grade AI inference endpoints with authentication
 """
 
-from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Query, Body
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Query, Body, Request
 from fastapi.responses import Response
 from sqlalchemy.orm import Session
 from typing import List, Optional
@@ -19,6 +19,7 @@ from app.db.models.user import User
 from app.db.models.image import Image as ImageModel
 from app.db.models.analysis import Analysis
 from app.core.dependencies import get_current_active_user, RoleChecker
+from app.core.rate_limit import limiter, get_rate_limit
 from app.schemas.inference import (
     InferenceRequest,
     InferenceResponse,
@@ -75,7 +76,9 @@ require_radiologist = RoleChecker(["admin", "radiologist", "technician"])
     status_code=status.HTTP_200_OK,
     summary="Run AI inference on single mammogram image"
 )
+@limiter.limit(get_rate_limit("inference"))
 async def predict_image(
+    request: Request,
     file: UploadFile = File(..., description="Mammogram image file (JPEG, PNG, DICOM)"),
     save_result: bool = Query(False, description="Save prediction to database"),
     model_version: Optional[str] = Query(None, description="Specific model version to use"),
@@ -204,7 +207,9 @@ async def predict_image(
     status_code=status.HTTP_200_OK,
     summary="Run tile-based AI inference on full-size mammogram"
 )
+@limiter.limit(get_rate_limit("inference"))
 async def predict_with_tiles(
+    request: Request,
     file: UploadFile = File(..., description="Mammogram image file (any resolution)"),
     mode: str = Query("attention_guided", description="Analysis mode: global_only, attention_guided, full_coverage"),
     tile_size: int = Query(224, ge=64, le=512, description="Tile size in pixels"),
@@ -405,7 +410,9 @@ async def predict_with_tiles(
     status_code=status.HTTP_200_OK,
     summary="Run inference on image from storage"
 )
+@limiter.limit(get_rate_limit("inference"))
 async def predict_from_storage(
+    request: Request,
     image_id: int,
     save_result: bool = Query(True, description="Save prediction to database"),
     model_version: Optional[str] = Query(None, description="Specific model version to use"),
@@ -492,8 +499,10 @@ async def predict_from_storage(
     status_code=status.HTTP_200_OK,
     summary="Run inference on bilateral mammogram study (4 views)"
 )
+@limiter.limit(get_rate_limit("inference"))
 async def predict_bilateral(
-    request: BilateralInferenceRequest,
+    request: Request,
+    bilateral_request: BilateralInferenceRequest = Body(...),  # renamed to avoid conflict with Request
     model_version: Optional[str] = Query(None, description="Specific model version to use"),
     db: Session = Depends(get_db),
     current_user: User = Depends(require_radiologist)
@@ -529,7 +538,7 @@ async def predict_bilateral(
         image_arrays = {}
         image_records = {}
         
-        for view_name, image_id in request.image_ids.items():
+        for view_name, image_id in bilateral_request.image_ids.items():
             # Get image from database
             image_record = db.query(ImageModel).filter(ImageModel.id == image_id).first()
             
@@ -577,7 +586,7 @@ async def predict_bilateral(
             right_cc_array=image_arrays["right_cc"],
             left_mlo_array=image_arrays["left_mlo"],
             right_mlo_array=image_arrays["right_mlo"],
-            image_ids=request.image_ids,
+            image_ids=bilateral_request.image_ids,
             db=db,
             model_version=model_version
         )
@@ -755,7 +764,9 @@ def get_inference_statistics(
     status_code=status.HTTP_200_OK,
     summary="Generate GradCAM explanation for mammogram"
 )
+@limiter.limit(get_rate_limit("inference"))
 async def generate_gradcam(
+    request: Request,
     file: UploadFile = File(..., description="Mammogram image file"),
     method: str = Query("gradcam++", description="Method: gradcam, gradcam++, integrated_gradients"),
     output_format: str = Query("heatmap", description="Format: heatmap, image, overlay"),
@@ -1365,7 +1376,10 @@ def generate_narrative_from_analysis(
     status_code=status.HTTP_200_OK,
     summary="Generate LIME explanation for mammogram"
 )
+@limiter.limit(get_rate_limit("inference"))
 async def generate_lime_explanation(
+    request: Request,
+    response: Response,
     file: UploadFile = File(..., description="Mammogram image file"),
     n_segments: int = Query(50, ge=10, le=200, description="Number of superpixels"),
     n_samples: int = Query(100, ge=50, le=500, description="Number of perturbed samples"),
@@ -1524,7 +1538,10 @@ async def generate_lime_explanation(
     status_code=status.HTTP_200_OK,
     summary="Generate SHAP explanation for mammogram"
 )
+@limiter.limit(get_rate_limit("inference"))
 async def generate_shap_explanation(
+    request: Request,
+    response: Response,
     file: UploadFile = File(..., description="Mammogram image file"),
     method: str = Query("gradient", description="SHAP method: deep, gradient, partition"),
     n_samples: int = Query(50, ge=20, le=200, description="Number of samples for GradientSHAP"),
@@ -1697,7 +1714,10 @@ async def generate_shap_explanation(
     status_code=status.HTTP_200_OK,
     summary="Compare multiple XAI methods on same image"
 )
+@limiter.limit(get_rate_limit("inference"))
 async def compare_xai_methods(
+    request: Request,
+    response: Response,
     file: UploadFile = File(..., description="Mammogram image file"),
     methods: str = Query(
         "gradcam++,lime,shap",

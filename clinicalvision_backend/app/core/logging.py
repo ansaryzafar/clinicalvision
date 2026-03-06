@@ -5,6 +5,7 @@ Provides structured logging for production environments
 
 import logging
 import sys
+from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from app.core.config import settings
 
@@ -37,8 +38,13 @@ def setup_logging() -> logging.Logger:
     )
     console_handler.setFormatter(console_format)
     
-    # File handler for persistent logs
-    file_handler = logging.FileHandler(log_dir / "app.log")
+    # Rotating file handler for persistent logs with automatic rotation
+    file_handler = RotatingFileHandler(
+        log_dir / "app.log",
+        maxBytes=10_000_000,  # 10 MB per file
+        backupCount=5,        # Keep 5 backup files
+        encoding="utf-8"
+    )
     file_handler.setLevel(logging.INFO)
     file_format = logging.Formatter(
         "%(asctime)s - %(name)s - %(levelname)s - %(funcName)s:%(lineno)d - %(message)s"

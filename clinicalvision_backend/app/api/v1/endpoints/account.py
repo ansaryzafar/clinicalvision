@@ -14,6 +14,7 @@ from app.db.session import get_db
 from app.db.models.user import User
 from app.services.email_service import EmailService, get_email_service
 from app.core.security import get_password_hash, verify_password
+from app.core.dependencies import get_current_active_user
 
 logger = logging.getLogger(__name__)
 
@@ -205,23 +206,16 @@ def verify_email(
 
 @router.get("/verification-status")
 def check_verification_status(
-    email: EmailStr = Query(..., description="Email address to check"),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """
-    Check if an email address is verified.
+    Check if the authenticated user's email is verified.
     
     This endpoint is useful for the frontend to check status after verification.
     """
-    user = db.query(User).filter(User.email == email).first()
-    
-    if not user:
-        # Don't reveal whether email exists
-        return {"email_verified": False, "user_exists": False}
-    
     return {
-        "email_verified": user.email_verified,
-        "user_exists": True
+        "email_verified": current_user.email_verified,
     }
 
 
@@ -400,26 +394,18 @@ def change_password(
 
 @router.get("/security-status")
 def get_security_status(
-    email: EmailStr = Query(..., description="Email address to check"),
+    current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """
-    Get account security status.
+    Get account security status for the authenticated user.
     
     Returns information about account security settings.
     """
-    user = db.query(User).filter(User.email == email).first()
-    
-    if not user:
-        raise HTTPException(
-            status_code=404,
-            detail="User not found"
-        )
-    
     return {
-        "email_verified": user.email_verified,
-        "two_factor_enabled": user.two_factor_enabled if hasattr(user, 'two_factor_enabled') else False,
-        "is_active": user.is_active,
-        "last_login": user.last_login.isoformat() if user.last_login else None,
-        "account_created": user.created_at.isoformat() if user.created_at else None
+        "email_verified": current_user.email_verified,
+        "two_factor_enabled": current_user.two_factor_enabled if hasattr(current_user, 'two_factor_enabled') else False,
+        "is_active": current_user.is_active,
+        "last_login": current_user.last_login.isoformat() if current_user.last_login else None,
+        "account_created": current_user.created_at.isoformat() if current_user.created_at else None
     }

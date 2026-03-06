@@ -59,8 +59,8 @@ app = FastAPI(
         "Production-grade API for AI-powered breast cancer detection. "
         "Provides classification, uncertainty quantification, and explainable AI outputs."
     ),
-    docs_url="/docs",
-    redoc_url="/redoc",
+    docs_url="/docs" if settings.DEBUG or settings.ENVIRONMENT != "production" else None,
+    redoc_url="/redoc" if settings.DEBUG or settings.ENVIRONMENT != "production" else None,
     lifespan=lifespan,
     # OpenAPI Security Documentation
     swagger_ui_parameters={
