@@ -23,7 +23,8 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { PageLayout, PageSection, CTASection } from '../components/layout/PageLayout';
-import { lunitColors, lunitTypography, lunitShadows, lunitRadius } from '../styles/lunitDesignSystem';
+import { ScrollReveal } from '../hooks/useScrollReveal';
+import { lunitColors, lunitTypography, lunitShadows, lunitRadius, lunitGradients } from '../styles/lunitDesignSystem';
 
 // Core pillars of the platform
 const pillars = [
@@ -113,27 +114,23 @@ const AboutPage: React.FC = () => {
       {/* Hero Section - Elegant and Aspirational */}
       <Box
         sx={{
-          bgcolor: lunitColors.darkerGray,
+          background: lunitGradients.pageBannerBg,
           minHeight: '80vh',
           display: 'flex',
           alignItems: 'center',
-          pt: { xs: 12, md: 16 },
-          pb: { xs: 10, md: 14 },
+          pt: { xs: '80px', md: '120px' },
+          pb: { xs: '60px', md: '100px' },
           position: 'relative',
           overflow: 'hidden',
         }}
       >
-        {/* Subtle gradient accent */}
+        {/* Gradient overlay */}
         <Box
           sx={{
             position: 'absolute',
-            top: '20%',
-            right: '10%',
-            width: '40%',
-            height: '60%',
-            background: `radial-gradient(ellipse at center, ${alpha(lunitColors.teal, 0.08)} 0%, transparent 70%)`,
+            inset: 0,
+            background: lunitGradients.pageBannerOverlay,
             pointerEvents: 'none',
-            filter: 'blur(60px)',
           }}
         />
         
@@ -292,6 +289,7 @@ const AboutPage: React.FC = () => {
       </PageSection>
 
       {/* Philosophy Section - Dark */}
+      <ScrollReveal>
       <Box sx={{ bgcolor: lunitColors.darkerGray, py: { xs: 8, md: 12 } }}>
         <Box sx={{ maxWidth: 1100, mx: 'auto', px: { xs: 3, md: 6 } }}>
           <Typography
@@ -368,6 +366,7 @@ const AboutPage: React.FC = () => {
           </Grid>
         </Box>
       </Box>
+      </ScrollReveal>
 
       {/* Performance Hint Section - Subtle */}
       <PageSection paddingY="large" background="light">
@@ -577,6 +576,7 @@ const AboutPage: React.FC = () => {
       </PageSection>
 
       {/* Closing Statement */}
+      <ScrollReveal>
       <Box sx={{ bgcolor: lunitColors.darkerGray, py: { xs: 8, md: 10 } }}>
         <Box sx={{ maxWidth: 700, mx: 'auto', px: { xs: 3, md: 6 }, textAlign: 'center' }}>
           <Typography
@@ -606,6 +606,7 @@ const AboutPage: React.FC = () => {
           </Typography>
         </Box>
       </Box>
+      </ScrollReveal>
 
       {/* CTA Section */}
       <CTASection

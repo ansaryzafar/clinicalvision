@@ -11,6 +11,7 @@ import {
   TrendingUp,
 } from '@mui/icons-material';
 import { PageLayout, PageSection, CTASection } from '../components/layout/PageLayout';
+import { ScrollReveal } from '../hooks/useScrollReveal';
 import { lunitColors, lunitTypography, lunitShadows, lunitRadius, lunitGradients } from '../styles/lunitDesignSystem';
 
 // Subtle pulse animation for highlighted features
@@ -75,9 +76,9 @@ const FeaturesPage: React.FC = () => {
       {/* Enhanced Hero with dark theme */}
       <Box
         sx={{
-          bgcolor: lunitColors.darkerGray,
-          pt: { xs: 14, md: 18 },
-          pb: { xs: 8, md: 12 },
+          background: lunitGradients.pageBannerBg,
+          pt: { xs: '80px', md: '120px' },
+          pb: { xs: '60px', md: '100px' },
           position: 'relative',
           overflow: 'hidden',
         }}
@@ -86,11 +87,8 @@ const FeaturesPage: React.FC = () => {
         <Box
           sx={{
             position: 'absolute',
-            top: 0,
-            right: 0,
-            width: '60%',
-            height: '100%',
-            background: lunitGradients.heroDarkOverlay,
+            inset: 0,
+            background: lunitGradients.pageBannerOverlay,
             pointerEvents: 'none',
           }}
         />
@@ -140,6 +138,7 @@ const FeaturesPage: React.FC = () => {
       </Box>
 
       {/* Stats Section with separators */}
+      <ScrollReveal>
       <Box 
         sx={{ 
           bgcolor: lunitColors.lightestGray, 
@@ -199,6 +198,7 @@ const FeaturesPage: React.FC = () => {
           </Grid>
         </Box>
       </Box>
+      </ScrollReveal>
 
       {/* Features Grid */}
       <PageSection>

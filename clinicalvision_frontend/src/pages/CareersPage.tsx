@@ -16,6 +16,7 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { PageLayout, PageSection, CTASection } from '../components/layout/PageLayout';
+import { ScrollReveal } from '../hooks/useScrollReveal';
 import { ROUTES } from '../routes/paths';
 import { 
   lunitColors, 
@@ -97,12 +98,12 @@ const CareersPage: React.FC = () => {
       {/* Hero - Lunit Style */}
       <Box
         sx={{
-          bgcolor: lunitColors.darkerGray,
+          background: lunitGradients.pageBannerBg,
           minHeight: '70vh',
           display: 'flex',
           alignItems: 'center',
-          pt: { xs: 12, md: 16 },
-          pb: { xs: 8, md: 12 },
+          pt: { xs: '80px', md: '120px' },
+          pb: { xs: '60px', md: '100px' },
           position: 'relative',
           overflow: 'hidden',
         }}
@@ -111,22 +112,8 @@ const CareersPage: React.FC = () => {
         <Box
           sx={{
             position: 'absolute',
-            top: 0,
-            right: 0,
-            width: '60%',
-            height: '100%',
-            background: `radial-gradient(ellipse at 80% 20%, ${alpha(lunitColors.teal, 0.12)} 0%, transparent 50%)`,
-            pointerEvents: 'none',
-          }}
-        />
-        <Box
-          sx={{
-            position: 'absolute',
-            bottom: 0,
-            left: '30%',
-            width: '50%',
-            height: '50%',
-            background: `radial-gradient(ellipse at 50% 100%, ${alpha(lunitColors.green, 0.08)} 0%, transparent 60%)`,
+            inset: 0,
+            background: lunitGradients.pageBannerOverlay,
             pointerEvents: 'none',
           }}
         />
@@ -314,6 +301,7 @@ const CareersPage: React.FC = () => {
       </PageSection>
 
       {/* Culture Pillars - Dark Gradient Cards */}
+      <ScrollReveal>
       <Box 
         sx={{ 
           bgcolor: lunitColors.darkerGray, 
@@ -439,8 +427,10 @@ const CareersPage: React.FC = () => {
           </Grid>
         </Box>
       </Box>
+      </ScrollReveal>
 
       {/* Team Interview / Testimonials Section */}
+      <ScrollReveal>
       <Box sx={{ bgcolor: lunitColors.lightestGray, py: { xs: 8, md: 12 } }}>
         <Box sx={{ maxWidth: 1200, mx: 'auto', px: { xs: 3, md: 6 } }}>
           <Typography
@@ -596,6 +586,7 @@ const CareersPage: React.FC = () => {
           </Grid>
         </Box>
       </Box>
+      </ScrollReveal>
 
       {/* Benefits Section */}
       <PageSection paddingY="large">
@@ -688,6 +679,7 @@ const CareersPage: React.FC = () => {
       </PageSection>
 
       {/* Partner Hospitals - Scrolling Logos */}
+      <ScrollReveal>
       <Box 
         sx={{ 
           py: { xs: 6, md: 8 },
@@ -755,6 +747,7 @@ const CareersPage: React.FC = () => {
           ))}
         </Box>
       </Box>
+      </ScrollReveal>
 
       {/* CTA */}
       <CTASection

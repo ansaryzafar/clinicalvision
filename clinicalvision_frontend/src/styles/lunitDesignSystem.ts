@@ -246,6 +246,15 @@ export const lunitGradients = {
     radial-gradient(ellipse at 80% 20%, rgba(0, 201, 234, 0.15) 0%, transparent 50%),
     radial-gradient(ellipse at 20% 80%, rgba(86, 193, 77, 0.08) 0%, transparent 40%)
   `,
+
+  // ── Standardised page banner (dark) ──
+  // Base gradient: darkerGray → deep teal → tealDarker
+  pageBannerBg: `linear-gradient(155deg, ${lunitColors.darkerGray} 0%, #0d2f2f 55%, ${lunitColors.tealDarker} 100%)`,
+  // Overlay glows (two layers)
+  pageBannerOverlay: `
+    radial-gradient(ellipse at 80% 15%, rgba(0, 201, 234, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 15% 85%, rgba(86, 193, 77, 0.07) 0%, transparent 45%)
+  `,
   
   // Dark card gradient with hover reveal
   cardDarkGradient: `linear-gradient(135deg, ${lunitColors.darkerGray} 0%, #1a2626 100%)`,

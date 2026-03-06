@@ -71,9 +71,9 @@ const PricingPage: React.FC = () => {
       {/* Enhanced Hero */}
       <Box
         sx={{
-          bgcolor: lunitColors.darkerGray,
-          pt: { xs: 14, md: 18 },
-          pb: { xs: 8, md: 12 },
+          background: lunitGradients.pageBannerBg,
+          pt: { xs: '80px', md: '120px' },
+          pb: { xs: '60px', md: '100px' },
           position: 'relative',
           overflow: 'hidden',
         }}
@@ -82,11 +82,8 @@ const PricingPage: React.FC = () => {
         <Box
           sx={{
             position: 'absolute',
-            top: 0,
-            right: 0,
-            width: '60%',
-            height: '100%',
-            background: lunitGradients.heroDarkOverlay,
+            inset: 0,
+            background: lunitGradients.pageBannerOverlay,
             pointerEvents: 'none',
           }}
         />

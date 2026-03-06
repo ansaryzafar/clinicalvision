@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Typography, Button, Grid, TextField, alpha, Collapse, Alert } from '@mui/material';
 import { Email, Phone, LocationOn, Send, Add, Remove, CheckCircle } from '@mui/icons-material';
 import { PageLayout, PageSection, CTASection } from '../components/layout/PageLayout';
-import { lunitColors, lunitTypography, lunitRadius, lunitShadows } from '../styles/lunitDesignSystem';
+import { lunitColors, lunitTypography, lunitRadius, lunitShadows, lunitGradients } from '../styles/lunitDesignSystem';
 import { api } from '../services/api';
 
 const contactMethods = [
@@ -84,9 +84,9 @@ const ContactPage: React.FC = () => {
       {/* Enhanced Hero */}
       <Box
         sx={{
-          bgcolor: lunitColors.darkerGray,
-          pt: { xs: 14, md: 18 },
-          pb: { xs: 8, md: 12 },
+          background: lunitGradients.pageBannerBg,
+          pt: { xs: '80px', md: '120px' },
+          pb: { xs: '60px', md: '100px' },
           position: 'relative',
           overflow: 'hidden',
         }}
@@ -95,22 +95,8 @@ const ContactPage: React.FC = () => {
         <Box
           sx={{
             position: 'absolute',
-            top: 0,
-            right: 0,
-            width: '60%',
-            height: '100%',
-            background: `radial-gradient(ellipse at 80% 20%, rgba(0, 201, 234, 0.12) 0%, transparent 50%)`,
-            pointerEvents: 'none',
-          }}
-        />
-        <Box
-          sx={{
-            position: 'absolute',
-            bottom: 0,
-            left: '20%',
-            width: '40%',
-            height: '40%',
-            background: `radial-gradient(ellipse at 50% 100%, rgba(86, 193, 77, 0.06) 0%, transparent 60%)`,
+            inset: 0,
+            background: lunitGradients.pageBannerOverlay,
             pointerEvents: 'none',
           }}
         />

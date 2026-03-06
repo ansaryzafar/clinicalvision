@@ -19,7 +19,6 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../routes/paths';
 import {
-  Assessment,
   LinkedIn,
   Twitter,
   GitHub,
@@ -33,6 +32,7 @@ import {
   lunitGradients,
   lunitSpacing,
 } from '../../styles/lunitDesignSystem';
+import { useScrollReveal } from '../../hooks/useScrollReveal';
 
 // Footer Link Data
 const footerLinks = {
@@ -526,46 +526,12 @@ export const PageFooter: React.FC = () => {
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: { xs: '40px', md: '60px' } }}>
           {/* Brand Section */}
           <Box sx={{ flex: '0 0 33%' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
-              <Box
-                sx={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: '10px',
-                  background: `linear-gradient(135deg, ${lunitColors.teal} 0%, ${lunitColors.tealDarker} 100%)`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: `0 4px 12px ${alpha(lunitColors.teal, 0.3)}`,
-                }}
-              >
-                <Assessment sx={{ color: lunitColors.black, fontSize: 26 }} />
-              </Box>
-              <Box>
-                <Typography
-                  sx={{
-                    fontFamily: lunitTypography.fontFamilyHeading,
-                    fontWeight: lunitTypography.fontWeightMedium,
-                    fontSize: '18px',
-                    lineHeight: 1.2,
-                    color: lunitColors.darkerGray,
-                  }}
-                >
-                  ClinicalVision
-                </Typography>
-                <Typography
-                  sx={{
-                    color: lunitColors.darkGrey,
-                    fontSize: '11px',
-                    letterSpacing: '0.08em',
-                    textTransform: 'uppercase',
-                    fontWeight: 500,
-                  }}
-                >
-                  AI Platform
-                </Typography>
-              </Box>
-            </Box>
+            <Box
+              component="img"
+              src="/images/clinicalvision-logo.svg?v=11"
+              alt="ClinicalVision AI"
+              sx={{ height: 36, width: 'auto', mb: 3, display: 'block' }}
+            />
             <Typography
               sx={{
                 color: lunitColors.darkGrey,
@@ -692,11 +658,14 @@ export const PageHero: React.FC<PageHeroProps> = ({
   size = 'default',
   children,
 }) => {
-  const paddingTop = size === 'small' 
-    ? { xs: '60px', md: '80px' } 
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
+  const paddingTop = size === 'small'
+    ? { xs: '60px', md: '80px' }
     : { xs: '80px', md: '120px' };
-  const paddingBottom = size === 'small' 
-    ? { xs: '40px', md: '60px' } 
+  const paddingBottom = size === 'small'
+    ? { xs: '40px', md: '60px' }
     : { xs: '60px', md: '100px' };
 
   return (
@@ -704,27 +673,43 @@ export const PageHero: React.FC<PageHeroProps> = ({
       sx={{
         pt: paddingTop,
         pb: paddingBottom,
-        bgcolor: dark ? lunitColors.darkerGray : lunitColors.white,
+        background: dark ? lunitGradients.pageBannerBg : lunitColors.white,
         position: 'relative',
         overflow: 'hidden',
       }}
     >
-      {/* Accent gradient */}
-      <Box
-        sx={{
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          width: '50%',
-          height: '100%',
-          background: dark 
-            ? `radial-gradient(ellipse at 100% 0%, ${alpha(lunitColors.teal, 0.15)} 0%, transparent 60%)`
-            : lunitGradients.heroAccent,
-          pointerEvents: 'none',
-        }}
-      />
+      {/* Gradient overlays */}
+      {dark ? (
+        <Box
+          sx={{
+            position: 'absolute',
+            inset: 0,
+            background: lunitGradients.pageBannerOverlay,
+            pointerEvents: 'none',
+          }}
+        />
+      ) : (
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            width: '50%',
+            height: '100%',
+            background: lunitGradients.heroAccent,
+            pointerEvents: 'none',
+          }}
+        />
+      )}
       <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
-        <Box sx={{ maxWidth: '800px' }}>
+        <Box
+          sx={{
+            maxWidth: '800px',
+            opacity: mounted ? 1 : 0,
+            transform: mounted ? 'translateY(0)' : 'translateY(30px)',
+            transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
+          }}
+        >
           {label && (
             <Typography
               sx={{
@@ -744,8 +729,8 @@ export const PageHero: React.FC<PageHeroProps> = ({
             variant="h1"
             sx={{
               fontFamily: lunitTypography.fontFamilyHeading,
-              fontSize: size === 'small' 
-                ? 'clamp(32px, 5vw, 48px)' 
+              fontSize: size === 'small'
+                ? 'clamp(32px, 5vw, 48px)'
                 : 'clamp(40px, 6vw, 64px)',
               fontWeight: lunitTypography.fontWeightLight,
               lineHeight: 1.1,
@@ -762,7 +747,7 @@ export const PageHero: React.FC<PageHeroProps> = ({
                 fontSize: 'clamp(16px, 2vw, 20px)',
                 fontWeight: lunitTypography.fontWeightLight,
                 lineHeight: 1.8,
-                color: dark ? lunitColors.grey : lunitColors.text,
+                color: dark ? alpha(lunitColors.white, 0.8) : lunitColors.text,
                 maxWidth: '600px',
               }}
             >
@@ -788,6 +773,8 @@ export const PageSection: React.FC<PageSectionProps> = ({
   background = 'white',
   paddingY = 'default',
 }) => {
+  const { ref, isVisible } = useScrollReveal(0.1);
+
   const bgColors = {
     white: lunitColors.white,
     light: lunitColors.lightestGray,
@@ -802,9 +789,13 @@ export const PageSection: React.FC<PageSectionProps> = ({
 
   return (
     <Box
+      ref={ref}
       sx={{
         py: padding[paddingY],
         bgcolor: bgColors[background],
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
+        transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
       }}
     >
       <Container maxWidth="lg">
@@ -831,14 +822,19 @@ export const CTASection: React.FC<CTASectionProps> = ({
   variant = 'light',
 }) => {
   const navigate = useNavigate();
+  const { ref, isVisible } = useScrollReveal(0.15);
   const isDark = variant === 'dark';
 
   return (
     <Box
+      ref={ref}
       sx={{
         py: { xs: '60px', md: '80px' },
         bgcolor: isDark ? lunitColors.darkerGray : lunitColors.lightestGray,
         textAlign: 'center',
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
+        transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
       }}
     >
       <Container maxWidth="md">
