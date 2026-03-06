@@ -105,7 +105,7 @@ def get_model_service(db: Session = Depends(get_db)) -> ModelVersionService:
         500: {"model": ErrorResponse, "description": "Internal server error"}
     }
 )
-async def register_model(
+def register_model(
     model_data: ModelVersionCreate,
     current_user: User = Depends(require_admin),
     service: ModelVersionService = Depends(get_model_service)
@@ -164,7 +164,7 @@ async def register_model(
         500: {"model": ErrorResponse, "description": "Internal server error"}
     }
 )
-async def get_active_model(
+def get_active_model(
     current_user: User = Depends(get_current_active_user),
     service: ModelVersionService = Depends(get_model_service)
 ) -> ModelVersionResponse:
@@ -219,7 +219,7 @@ async def get_active_model(
         500: {"model": ErrorResponse, "description": "Internal server error"}
     }
 )
-async def get_model_by_id(
+def get_model_by_id(
     model_id: UUID,
     current_user: User = Depends(get_current_active_user),
     service: ModelVersionService = Depends(get_model_service)
@@ -283,7 +283,7 @@ async def get_model_by_id(
         500: {"model": ErrorResponse, "description": "Internal server error"}
     }
 )
-async def list_models(
+def list_models(
     status: Optional[ModelStatusEnum] = Query(None, description="Filter by status"),
     algorithm_type: Optional[AlgorithmTypeEnum] = Query(None, description="Filter by algorithm type"),
     is_active: Optional[bool] = Query(None, description="Filter by active status"),
@@ -359,7 +359,7 @@ async def list_models(
         500: {"model": ErrorResponse, "description": "Internal server error"}
     }
 )
-async def deploy_model(
+def deploy_model(
     model_id: UUID,
     deployment_request: ModelDeploymentRequest,
     current_user: User = Depends(require_admin),
@@ -436,7 +436,7 @@ async def deploy_model(
         500: {"model": ErrorResponse, "description": "Internal server error"}
     }
 )
-async def get_performance_trend(
+def get_performance_trend(
     model_id: UUID,
     days: int = Query(30, ge=1, le=365, description="Days to look back"),
     current_user: User = Depends(get_current_active_user),
@@ -535,7 +535,7 @@ async def get_performance_trend(
         500: {"model": ErrorResponse, "description": "Internal server error"}
     }
 )
-async def check_model_drift(
+def check_model_drift(
     model_id: UUID,
     current_user: User = Depends(require_radiologist_or_admin),
     service: ModelVersionService = Depends(get_model_service)
@@ -608,7 +608,7 @@ async def check_model_drift(
         500: {"model": ErrorResponse, "description": "Internal server error"}
     }
 )
-async def compare_models(
+def compare_models(
     comparison_request: ModelComparisonRequest,
     current_user: User = Depends(get_current_active_user),
     service: ModelVersionService = Depends(get_model_service)
@@ -682,7 +682,7 @@ async def compare_models(
         500: {"model": ErrorResponse, "description": "Internal server error"}
     }
 )
-async def deprecate_model(
+def deprecate_model(
     model_id: UUID,
     reason: Optional[str] = Query(None, description="Deprecation reason"),
     current_user: User = Depends(require_admin),
@@ -756,7 +756,7 @@ async def deprecate_model(
         500: {"model": ErrorResponse, "description": "Internal server error"}
     }
 )
-async def rollback_model(
+def rollback_model(
     model_id: UUID,
     target_model_id: UUID = Query(..., description="Target model UUID to roll back to"),
     current_user: User = Depends(require_admin),
@@ -825,7 +825,7 @@ async def rollback_model(
         500: {"model": ErrorResponse, "description": "Internal server error"}
     }
 )
-async def get_model_statistics(
+def get_model_statistics(
     current_user: User = Depends(get_current_active_user),
     service: ModelVersionService = Depends(get_model_service)
 ) -> ModelStatistics:

@@ -169,7 +169,7 @@ async def upload_image(
     summary="List Images",
     description="Retrieve paginated list of images with filtering",
 )
-async def list_images(
+def list_images(
     patient_id: Optional[str] = Query(None, description="Filter by patient ID"),
     study_instance_uid: Optional[str] = Query(None, description="Filter by study UID"),
     modality: Optional[str] = Query(None, description="Filter by modality"),
@@ -284,7 +284,7 @@ async def list_images(
     summary="Get Image Details",
     description="Retrieve detailed information about a specific image",
 )
-async def get_image(
+def get_image(
     image_id: UUID,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
@@ -304,7 +304,7 @@ async def get_image(
     summary="Generate Download URL",
     description="Generate a presigned URL for downloading an image",
 )
-async def generate_download_url(
+def generate_download_url(
     image_id: UUID,
     expiry_hours: int = Query(24, ge=1, le=168, description="URL expiry in hours (max 7 days)"),
     db: Session = Depends(get_db),
@@ -336,7 +336,7 @@ async def generate_download_url(
     description="Download the actual image file",
     response_class=FileResponse,
 )
-async def download_image(
+def download_image(
     image_id: UUID,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
@@ -380,7 +380,7 @@ async def download_image(
     summary="Update Image Metadata",
     description="Update image metadata and properties",
 )
-async def update_image(
+def update_image(
     image_id: UUID,
     update_data: ImageUpdate,
     db: Session = Depends(get_db),
@@ -497,7 +497,7 @@ async def archive_image(
     summary="Get Storage Statistics",
     description="Retrieve storage usage statistics",
 )
-async def get_storage_statistics(
+def get_storage_statistics(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):
@@ -518,7 +518,7 @@ async def get_storage_statistics(
     summary="Verify File Integrity",
     description="Verify file integrity using stored hash",
 )
-async def verify_file_integrity(
+def verify_file_integrity(
     image_id: UUID,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
@@ -556,7 +556,7 @@ chunk_uploads = {}
     summary="Initialize Chunked Upload",
     description="Initialize chunked upload for large files",
 )
-async def init_chunked_upload(
+def init_chunked_upload(
     request: ChunkUploadInitRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(RoleChecker(["admin", "radiologist", "technician"])),

@@ -66,7 +66,7 @@ def get_real_or_demo_dashboard(db: Session) -> FairnessDashboardResponse:
     summary="Get Fairness Dashboard",
     description="Returns fairness monitoring dashboard. Uses real prediction data when available, falls back to demonstration data when the database lacks sufficient predictions or ground truth labels."
 )
-async def get_dashboard(
+def get_dashboard(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ) -> FairnessDashboardResponse:
@@ -100,7 +100,7 @@ async def get_dashboard(
     summary="Get Fairness Alerts",
     description="Returns active fairness alerts with optional filtering."
 )
-async def get_alerts(
+def get_alerts(
     severity: Optional[AlertSeverity] = Query(None, description="Filter by severity"),
     acknowledged: Optional[bool] = Query(None, description="Filter by acknowledgment status"),
     skip: int = Query(0, ge=0, description="Number of records to skip"),
@@ -133,7 +133,7 @@ async def get_alerts(
     summary="Acknowledge Alert",
     description="Mark a fairness alert as acknowledged."
 )
-async def acknowledge_alert(
+def acknowledge_alert(
     alert_id: str,
     current_user: User = Depends(get_current_active_user)
 ) -> dict:

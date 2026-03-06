@@ -680,7 +680,7 @@ async def get_inference_history(
     status_code=status.HTTP_200_OK,
     summary="Get inference statistics"
 )
-async def get_inference_statistics(
+def get_inference_statistics(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_radiologist)
 ):
@@ -935,7 +935,7 @@ async def generate_gradcam(
     response_class=Response,
     summary="Get GradCAM heatmap image for existing analysis"
 )
-async def get_gradcam_image(
+def get_gradcam_image(
     analysis_id: int,
     colormap: str = Query("jet", description="Colormap: jet, viridis, hot, plasma"),
     db: Session = Depends(get_db),
@@ -1012,7 +1012,7 @@ async def get_gradcam_image(
     status_code=status.HTTP_200_OK,
     summary="Health check for inference service"
 )
-async def health_check():
+def health_check():
     """
     **Health check endpoint for inference service**
     
@@ -1060,7 +1060,7 @@ async def health_check():
     status_code=status.HTTP_200_OK,
     summary="Validate XAI explanation quality"
 )
-async def validate_xai_explanation(
+def validate_xai_explanation(
     request: XAIValidationRequest = Body(...),
     current_user: User = Depends(require_radiologist)
 ):
@@ -1145,7 +1145,7 @@ async def validate_xai_explanation(
     status_code=status.HTTP_200_OK,
     summary="Quick attention quality check"
 )
-async def check_attention_quality(
+def check_attention_quality(
     request: AttentionQualityRequest = Body(...),
     current_user: User = Depends(require_radiologist)
 ):
@@ -1204,7 +1204,7 @@ async def check_attention_quality(
     status_code=status.HTTP_200_OK,
     summary="Generate clinical narrative explanation"
 )
-async def generate_clinical_narrative(
+def generate_clinical_narrative(
     request: ClinicalNarrativeRequest = Body(...),
     current_user: User = Depends(require_radiologist)
 ):
@@ -1289,7 +1289,7 @@ async def generate_clinical_narrative(
     status_code=status.HTTP_200_OK,
     summary="Generate narrative from existing analysis"
 )
-async def generate_narrative_from_analysis(
+def generate_narrative_from_analysis(
     analysis_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(require_radiologist)

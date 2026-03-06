@@ -118,7 +118,7 @@ def handle_service_exception(e: Exception) -> HTTPException:
     description="Check if the reports API is operational",
     tags=["Health"]
 )
-async def health_check():
+def health_check():
     """Health check endpoint"""
     return {
         "status": "healthy",
@@ -168,7 +168,7 @@ async def health_check():
         }
     }
 )
-async def create_report(
+def create_report(
     report_data: ReportCreate,
     request: Request,
     current_user: User = Depends(require_radiologist_or_admin),
@@ -221,7 +221,7 @@ async def create_report(
         200: {"description": "Report retrieved successfully"}
     }
 )
-async def get_report(
+def get_report(
     report_id: UUID,
     current_user: User = Depends(get_current_active_user),
     service: ClinicalReportsService = Depends(get_reports_service)
@@ -277,7 +277,7 @@ async def get_report(
         }
     }
 )
-async def list_reports(
+def list_reports(
     status: Optional[ReportStatusEnum] = Query(None, description="Filter by report status"),
     birads: Optional[BIRADSCategoryEnum] = Query(None, description="Filter by BI-RADS category"),
     critical_only: bool = Query(False, description="Show only critical findings"),
@@ -336,7 +336,7 @@ async def list_reports(
         403: {"description": "Cannot modify signed report"}
     }
 )
-async def update_report(
+def update_report(
     report_id: UUID,
     update_data: ReportUpdate,
     current_user: User = Depends(require_radiologist_or_admin),
@@ -389,7 +389,7 @@ async def update_report(
         400: {"description": "Invalid transition"}
     }
 )
-async def transition_report_workflow(
+def transition_report_workflow(
     report_id: UUID,
     transition_data: WorkflowTransition,
     request: Request,
@@ -451,7 +451,7 @@ async def transition_report_workflow(
         403: {"description": "Original report not signed"}
     }
 )
-async def create_amendment(
+def create_amendment(
     report_id: UUID,
     amendment_data: ReportAmendment,
     current_user: User = Depends(require_radiologist_or_admin),
@@ -515,7 +515,7 @@ async def create_amendment(
         }
     }
 )
-async def get_workflow_history(
+def get_workflow_history(
     report_id: UUID,
     current_user: User = Depends(get_current_active_user),
     service: ClinicalReportsService = Depends(get_reports_service)
@@ -560,7 +560,7 @@ async def get_workflow_history(
         200: {"description": "Critical findings retrieved"}
     }
 )
-async def get_critical_findings(
+def get_critical_findings(
     skip: int = Query(0, ge=0, description="Number of records to skip"),
     limit: int = Query(20, ge=1, le=100, description="Maximum records to return"),
     current_user: User = Depends(get_current_active_user),
@@ -624,7 +624,7 @@ async def get_critical_findings(
         }
     }
 )
-async def get_statistics(
+def get_statistics(
     current_user: User = Depends(get_current_active_user),
     service: ClinicalReportsService = Depends(get_reports_service)
 ):

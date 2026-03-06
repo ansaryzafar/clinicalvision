@@ -97,7 +97,7 @@ class AccountResponse(BaseModel):
 # ==================== Email Verification Endpoints ====================
 
 @router.post("/request-verification", response_model=AccountResponse)
-async def request_verification_email(
+def request_verification_email(
     request: RequestVerificationEmail,
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
@@ -149,7 +149,7 @@ async def request_verification_email(
 
 
 @router.post("/verify-email", response_model=AccountResponse)
-async def verify_email(
+def verify_email(
     request: VerifyEmailRequest,
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
@@ -204,7 +204,7 @@ async def verify_email(
 
 
 @router.get("/verification-status")
-async def check_verification_status(
+def check_verification_status(
     email: EmailStr = Query(..., description="Email address to check"),
     db: Session = Depends(get_db)
 ):
@@ -228,7 +228,7 @@ async def check_verification_status(
 # ==================== Password Reset Endpoints ====================
 
 @router.post("/request-password-reset", response_model=AccountResponse)
-async def request_password_reset(
+def request_password_reset(
     request: RequestPasswordReset,
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
@@ -281,7 +281,7 @@ async def request_password_reset(
 
 
 @router.post("/reset-password", response_model=AccountResponse)
-async def reset_password(
+def reset_password(
     request: ResetPasswordRequest,
     db: Session = Depends(get_db),
     email_service: EmailService = Depends(get_email_service)
@@ -332,7 +332,7 @@ async def reset_password(
 
 
 @router.get("/validate-reset-token")
-async def validate_reset_token(
+def validate_reset_token(
     token: str = Query(..., description="Reset token to validate"),
     email_service: EmailService = Depends(get_email_service)
 ):
@@ -360,7 +360,7 @@ async def validate_reset_token(
 # ==================== Password Change (Authenticated) ====================
 
 @router.post("/change-password", response_model=AccountResponse)
-async def change_password(
+def change_password(
     request: ChangePasswordRequest,
     db: Session = Depends(get_db),
     # In production, add: current_user: User = Depends(get_current_active_user)
@@ -399,7 +399,7 @@ async def change_password(
 # ==================== Account Security ====================
 
 @router.get("/security-status")
-async def get_security_status(
+def get_security_status(
     email: EmailStr = Query(..., description="Email address to check"),
     db: Session = Depends(get_db)
 ):

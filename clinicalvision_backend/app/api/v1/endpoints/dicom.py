@@ -90,7 +90,7 @@ def get_dicom_service(db: Session = Depends(get_db)) -> DICOMMetadataService:
         500: {"model": ErrorResponse, "description": "Internal server error"}
     }
 )
-async def upload_dicom_file(
+def upload_dicom_file(
     image_id: UUID = Query(..., description="UUID of the associated image record"),
     file: UploadFile = File(..., description="DICOM file (.dcm)"),
     current_user: User = Depends(RoleChecker(["admin", "radiologist", "technician"])),
@@ -173,7 +173,7 @@ async def upload_dicom_file(
         500: {"model": ErrorResponse, "description": "Internal server error"}
     }
 )
-async def get_dicom_metadata(
+def get_dicom_metadata(
     image_id: UUID,
     current_user: User = Depends(get_current_active_user),
     service: DICOMMetadataService = Depends(get_dicom_service)
@@ -235,7 +235,7 @@ async def get_dicom_metadata(
         500: {"model": ErrorResponse, "description": "Internal server error"}
     }
 )
-async def get_dicom_summary(
+def get_dicom_summary(
     image_id: UUID,
     current_user: User = Depends(get_current_active_user),
     service: DICOMMetadataService = Depends(get_dicom_service)
@@ -298,7 +298,7 @@ async def get_dicom_summary(
         500: {"model": ErrorResponse, "description": "Internal server error"}
     }
 )
-async def query_dicom_metadata(
+def query_dicom_metadata(
     manufacturer: Optional[str] = Query(None, description="Filter by manufacturer (partial match)"),
     view_position: Optional[str] = Query(None, description="Filter by view position (CC, MLO, etc.)"),
     laterality: Optional[str] = Query(None, description="Filter by laterality (L, R)"),
@@ -381,7 +381,7 @@ async def query_dicom_metadata(
         500: {"model": ErrorResponse, "description": "Internal server error"}
     }
 )
-async def anonymize_dicom_metadata(
+def anonymize_dicom_metadata(
     image_id: UUID,
     request: DICOMAnonymizationRequest,
     current_user: User = Depends(RoleChecker(["admin"])),
@@ -449,7 +449,7 @@ async def anonymize_dicom_metadata(
         500: {"model": ErrorResponse, "description": "Internal server error"}
     }
 )
-async def get_dicom_statistics(
+def get_dicom_statistics(
     current_user: User = Depends(get_current_active_user),
     service: DICOMMetadataService = Depends(get_dicom_service)
 ) -> DICOMStatistics:
@@ -499,7 +499,7 @@ async def get_dicom_statistics(
         500: {"description": "Service is unhealthy"}
     }
 )
-async def health_check(
+def health_check(
     service: DICOMMetadataService = Depends(get_dicom_service)
 ):
     """

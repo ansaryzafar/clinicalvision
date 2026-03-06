@@ -18,6 +18,8 @@ engine = create_engine(
     pool_pre_ping=True,  # Enable connection health checks
     pool_size=10,  # Connection pool size
     max_overflow=20,  # Max connections beyond pool_size
+    pool_recycle=1800,  # Recycle stale connections after 30 minutes
+    pool_timeout=30,  # Fail after 30s if no connection available
     echo=settings.DEBUG,  # Log SQL queries in debug mode
 )
 
@@ -45,7 +47,6 @@ def get_db() -> Generator[Session, None, None]:
     db = SessionLocal()
     try:
         yield db
-        db.commit()
     except Exception:
         db.rollback()
         raise
@@ -66,7 +67,6 @@ def get_db_context() -> Generator[Session, None, None]:
     db = SessionLocal()
     try:
         yield db
-        db.commit()
     except Exception as e:
         db.rollback()
         logger.error(f"Database error: {e}")
