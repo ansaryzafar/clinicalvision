@@ -44,6 +44,15 @@ export const ROUTES = {
   TERMS: '/terms',
   SECURITY: '/security',
   COMPLIANCE: '/compliance',
+  TECHNOLOGY: '/technology',
+  PARTNERS: '/partners',
+  EVENTS: '/events',
+
+  // ── Solutions (cancer-type pages) ───────────────────────────────────────
+  SOLUTION_BREAST_CANCER: '/solutions/breast-cancer',
+  SOLUTION_LUNG_CANCER: '/solutions/lung-cancer',
+  SOLUTION_PROSTATE_CANCER: '/solutions/prostate-cancer',
+  SOLUTION_COLORECTAL_CANCER: '/solutions/colorectal-cancer',
 
   // ── Public Clinical ─────────────────────────────────────────────────────
   DIAGNOSTIC_VIEWER: '/diagnostic-viewer',

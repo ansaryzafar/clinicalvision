@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Typography,
@@ -15,6 +15,11 @@ import {
   ListItemButton,
   ListItemText,
   Divider,
+  Popper,
+  Paper,
+  Fade,
+  Chip,
+  ClickAwayListener,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../routes/paths';
@@ -25,34 +30,39 @@ import {
   KeyboardArrowDown,
   Menu as MenuIcon,
   ArrowForward,
+  FiberManualRecord,
+  NotificationsActive,
 } from '@mui/icons-material';
 import {
   lunitColors,
   lunitTypography,
   lunitGradients,
   lunitSpacing,
+  lunitShadows,
 } from '../../styles/lunitDesignSystem';
+import { lunitRadius } from '../../styles/lunitDesignSystem';
 import { useScrollReveal } from '../../hooks/useScrollReveal';
 
 // Footer Link Data
 const footerLinks = {
-  product: [
-    { label: 'Features', path: ROUTES.FEATURES },
-    { label: 'Pricing', path: ROUTES.PRICING },
-    { label: 'Demo', path: ROUTES.DEMO },
-    { label: 'API', path: ROUTES.API },
+  solutions: [
+    { label: 'Breast Cancer Detection', path: ROUTES.SOLUTION_BREAST_CANCER },
+    { label: 'AI Analysis Platform', path: ROUTES.FEATURES },
+    { label: 'Pricing & Plans', path: ROUTES.PRICING },
+    { label: 'Request a Demo', path: ROUTES.DEMO },
   ],
   company: [
-    { label: 'About', path: ROUTES.ABOUT },
+    { label: 'About ClinicalVision', path: ROUTES.ABOUT },
     { label: 'Careers', path: ROUTES.CAREERS },
-    { label: 'Research', path: ROUTES.RESEARCH },
-    { label: 'Contact', path: ROUTES.CONTACT },
+    { label: 'Partners', path: ROUTES.PARTNERS },
+    { label: 'Events', path: ROUTES.EVENTS },
+    { label: 'Contact Us', path: ROUTES.CONTACT },
   ],
   resources: [
     { label: 'Documentation', path: ROUTES.DOCUMENTATION },
-    { label: 'Blog', path: ROUTES.BLOG },
-    { label: 'Support', path: ROUTES.SUPPORT },
-    { label: 'Status', path: ROUTES.STATUS },
+    { label: 'Developer API', path: ROUTES.API },
+    { label: 'Blog & Insights', path: ROUTES.BLOG },
+    { label: 'Support Center', path: ROUTES.SUPPORT },
   ],
   legal: [
     { label: 'Privacy', path: ROUTES.PRIVACY },
@@ -62,37 +72,88 @@ const footerLinks = {
   ],
 };
 
-// Navigation items — matching LandingPage structure exactly
-const navItems = [
+// ── Solutions mega-dropdown data ──────────────────────────────────────────
+const solutionsClinicalItems = [
   {
-    label: 'Products',
-    hasDropdown: true,
-    children: [
-      { label: 'Features', path: ROUTES.FEATURES },
-      { label: 'Pricing', path: ROUTES.PRICING },
-      { label: 'Demo', path: ROUTES.DEMO },
-      { label: 'API', path: ROUTES.API },
-    ],
+    label: 'Breast Cancer Detection',
+    description: 'AI-powered mammography analysis',
+    path: ROUTES.SOLUTION_BREAST_CANCER,
+    status: 'live' as const,
+    icon: '🔬',
   },
-  { label: 'Technology', hasDropdown: false, path: ROUTES.FEATURES },
   {
-    label: 'About',
-    hasDropdown: true,
+    label: 'Lung Cancer Detection',
+    description: 'Thoracic imaging AI',
+    path: ROUTES.SOLUTION_LUNG_CANCER,
+    status: 'coming' as const,
+    icon: '🫁',
+  },
+  {
+    label: 'Prostate Cancer Detection',
+    description: 'Histopathology grading AI',
+    path: ROUTES.SOLUTION_PROSTATE_CANCER,
+    status: 'coming' as const,
+    icon: '🔎',
+  },
+  {
+    label: 'Colorectal Cancer Detection',
+    description: 'Colorectal pathology AI',
+    path: ROUTES.SOLUTION_COLORECTAL_CANCER,
+    status: 'coming' as const,
+    icon: '🧬',
+  },
+];
+
+const solutionsPlatformItems = [
+  {
+    label: 'AI Analysis Platform',
+    description: 'End-to-end clinical workflow',
+    path: ROUTES.FEATURES,
+  },
+  {
+    label: 'Pricing & Plans',
+    description: 'Transparent pricing',
+    path: ROUTES.PRICING,
+  },
+];
+
+// ── Standard dropdown data ───────────────────────────────────────────────
+type NavChild = { label: string; description?: string; path: string };
+type NavItem =
+  | { label: string; type: 'solutions' }
+  | { label: string; type: 'dropdown'; children: NavChild[] }
+  | { label: string; type: 'link'; path: string };
+
+const navItems: NavItem[] = [
+  { label: 'Solutions', type: 'solutions' },
+  {
+    label: 'Technology',
+    type: 'dropdown',
     children: [
-      { label: 'About Us', path: ROUTES.ABOUT },
-      { label: 'Careers', path: ROUTES.CAREERS },
-      { label: 'Research', path: ROUTES.RESEARCH },
-      { label: 'Contact', path: ROUTES.CONTACT },
+      { label: 'AI Models & Architecture', description: 'Core technology deep-dive', path: ROUTES.TECHNOLOGY },
+      { label: 'Research & Publications', description: 'Peer-reviewed work', path: ROUTES.RESEARCH },
+      { label: 'Security & Compliance', description: 'Trust & regulatory', path: ROUTES.SECURITY },
     ],
   },
   {
     label: 'Resources',
-    hasDropdown: true,
+    type: 'dropdown',
     children: [
-      { label: 'Documentation', path: ROUTES.DOCUMENTATION },
-      { label: 'Blog', path: ROUTES.BLOG },
-      { label: 'Support', path: ROUTES.SUPPORT },
-      { label: 'System Status', path: ROUTES.STATUS },
+      { label: 'Documentation', description: 'Guides & references', path: ROUTES.DOCUMENTATION },
+      { label: 'Developer API', description: 'Integration tools', path: ROUTES.API },
+      { label: 'Blog & Insights', description: 'Thought leadership', path: ROUTES.BLOG },
+      { label: 'Support Center', description: 'Help & FAQs', path: ROUTES.SUPPORT },
+    ],
+  },
+  {
+    label: 'Company',
+    type: 'dropdown',
+    children: [
+      { label: 'About ClinicalVision', description: 'Our mission & team', path: ROUTES.ABOUT },
+      { label: 'Careers', description: 'Join us', path: ROUTES.CAREERS },
+      { label: 'Partners', description: 'Collaborate with us', path: ROUTES.PARTNERS },
+      { label: 'Events', description: 'Conferences & webinars', path: ROUTES.EVENTS },
+      { label: 'Contact Us', description: 'Get in touch', path: ROUTES.CONTACT },
     ],
   },
 ];
@@ -185,7 +246,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ variant = 'light' }) => 
             />
           </Box>
 
-          {/* Main Navigation — 4 items with dropdowns, matching LandingPage */}
+          {/* Main Navigation — Solutions mega-dropdown + 3 standard dropdowns */}
           <Stack
             direction="row"
             spacing={0}
@@ -196,15 +257,22 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ variant = 'light' }) => 
               <React.Fragment key={item.label}>
                 <Button
                   onClick={(e) => {
-                    if (item.hasDropdown && item.children) {
-                      handleNavOpen(item.label, e.currentTarget);
-                    } else if (item.path) {
+                    if (item.type === 'link') {
                       navigate(item.path);
+                    } else {
+                      handleNavOpen(item.label, e.currentTarget);
                     }
                   }}
                   endIcon={
-                    item.hasDropdown ? (
-                      <KeyboardArrowDown sx={{ fontSize: '18px !important', ml: -0.5 }} />
+                    item.type !== 'link' ? (
+                      <KeyboardArrowDown
+                        sx={{
+                          fontSize: '18px !important',
+                          ml: -0.5,
+                          transition: 'transform 0.2s ease',
+                          transform: Boolean(menuAnchors[item.label]) ? 'rotate(180deg)' : 'none',
+                        }}
+                      />
                     ) : undefined
                   }
                   sx={{
@@ -226,7 +294,185 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ variant = 'light' }) => 
                 >
                   {item.label}
                 </Button>
-                {item.hasDropdown && item.children && (
+
+                {/* ── Solutions mega-dropdown ─────────────────────────── */}
+                {item.type === 'solutions' && (
+                  <Popper
+                    open={Boolean(menuAnchors[item.label])}
+                    anchorEl={menuAnchors[item.label] || null}
+                    placement="bottom-start"
+                    transition
+                    disablePortal={false}
+                    sx={{ zIndex: 1200 }}
+                  >
+                    {({ TransitionProps }) => (
+                      <ClickAwayListener onClickAway={() => handleNavClose(item.label)}>
+                        <Fade {...TransitionProps} timeout={200}>
+                          <Paper
+                            elevation={0}
+                            sx={{
+                              mt: 1.5,
+                              borderRadius: lunitRadius.lg,
+                              border: `1px solid ${alpha(lunitColors.lightGray, 0.5)}`,
+                              boxShadow: lunitShadows.card,
+                              overflow: 'hidden',
+                              display: 'flex',
+                              minWidth: 560,
+                            }}
+                          >
+                            {/* Left column — Clinical AI */}
+                            <Box sx={{ flex: 1, p: 3, borderRight: `1px solid ${alpha(lunitColors.lightGray, 0.4)}` }}>
+                              <Typography
+                                sx={{
+                                  fontFamily: '"Lexend", sans-serif',
+                                  fontSize: '11px',
+                                  fontWeight: 700,
+                                  textTransform: 'uppercase',
+                                  letterSpacing: '0.1em',
+                                  color: lunitColors.grey,
+                                  mb: 2,
+                                }}
+                              >
+                                Clinical AI
+                              </Typography>
+                              <Stack spacing={0.5}>
+                                {solutionsClinicalItems.map((sol) => (
+                                  <Box
+                                    key={sol.label}
+                                    onClick={() => { navigate(sol.path); handleNavClose(item.label); }}
+                                    sx={{
+                                      display: 'flex',
+                                      alignItems: 'flex-start',
+                                      gap: 1.5,
+                                      px: 1.5,
+                                      py: 1.25,
+                                      borderRadius: lunitRadius.sm,
+                                      cursor: 'pointer',
+                                      transition: 'all 0.2s ease',
+                                      '&:hover': { bgcolor: alpha(lunitColors.teal, 0.06) },
+                                    }}
+                                  >
+                                    <Typography sx={{ fontSize: '20px', lineHeight: 1.4, mt: '1px' }}>{sol.icon}</Typography>
+                                    <Box sx={{ flex: 1 }}>
+                                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.25 }}>
+                                        <Typography
+                                          sx={{
+                                            fontFamily: '"Lexend", sans-serif',
+                                            fontSize: '14px',
+                                            fontWeight: 500,
+                                            color: lunitColors.text,
+                                          }}
+                                        >
+                                          {sol.label}
+                                        </Typography>
+                                        {sol.status === 'live' ? (
+                                          <Chip
+                                            icon={<FiberManualRecord sx={{ fontSize: '8px !important' }} />}
+                                            label="Live"
+                                            size="small"
+                                            sx={{
+                                              height: 20,
+                                              fontSize: '10px',
+                                              fontWeight: 700,
+                                              fontFamily: '"Lexend", sans-serif',
+                                              bgcolor: alpha('#22C55E', 0.1),
+                                              color: '#16A34A',
+                                              '& .MuiChip-icon': { color: '#22C55E', ml: '4px' },
+                                            }}
+                                          />
+                                        ) : (
+                                          <Chip
+                                            label="Coming Soon"
+                                            size="small"
+                                            sx={{
+                                              height: 20,
+                                              fontSize: '10px',
+                                              fontWeight: 700,
+                                              fontFamily: '"Lexend", sans-serif',
+                                              bgcolor: alpha('#F97316', 0.1),
+                                              color: '#EA580C',
+                                            }}
+                                          />
+                                        )}
+                                      </Box>
+                                      <Typography
+                                        sx={{
+                                          fontFamily: '"Lexend", sans-serif',
+                                          fontSize: '12px',
+                                          color: lunitColors.grey,
+                                          lineHeight: 1.4,
+                                        }}
+                                      >
+                                        {sol.description}
+                                      </Typography>
+                                    </Box>
+                                  </Box>
+                                ))}
+                              </Stack>
+                            </Box>
+
+                            {/* Right column — Platform */}
+                            <Box sx={{ width: 220, p: 3, bgcolor: alpha(lunitColors.lightestGray, 0.4) }}>
+                              <Typography
+                                sx={{
+                                  fontFamily: '"Lexend", sans-serif',
+                                  fontSize: '11px',
+                                  fontWeight: 700,
+                                  textTransform: 'uppercase',
+                                  letterSpacing: '0.1em',
+                                  color: lunitColors.grey,
+                                  mb: 2,
+                                }}
+                              >
+                                Platform
+                              </Typography>
+                              <Stack spacing={0.5}>
+                                {solutionsPlatformItems.map((pItem) => (
+                                  <Box
+                                    key={pItem.label}
+                                    onClick={() => { navigate(pItem.path); handleNavClose(item.label); }}
+                                    sx={{
+                                      px: 1.5,
+                                      py: 1.25,
+                                      borderRadius: lunitRadius.sm,
+                                      cursor: 'pointer',
+                                      transition: 'all 0.2s ease',
+                                      '&:hover': { bgcolor: alpha(lunitColors.teal, 0.08) },
+                                    }}
+                                  >
+                                    <Typography
+                                      sx={{
+                                        fontFamily: '"Lexend", sans-serif',
+                                        fontSize: '14px',
+                                        fontWeight: 500,
+                                        color: lunitColors.text,
+                                        mb: 0.25,
+                                      }}
+                                    >
+                                      {pItem.label}
+                                    </Typography>
+                                    <Typography
+                                      sx={{
+                                        fontFamily: '"Lexend", sans-serif',
+                                        fontSize: '12px',
+                                        color: lunitColors.grey,
+                                      }}
+                                    >
+                                      {pItem.description}
+                                    </Typography>
+                                  </Box>
+                                ))}
+                              </Stack>
+                            </Box>
+                          </Paper>
+                        </Fade>
+                      </ClickAwayListener>
+                    )}
+                  </Popper>
+                )}
+
+                {/* ── Standard dropdowns (Technology / Resources / Company) */}
+                {item.type === 'dropdown' && (
                   <Menu
                     anchorEl={menuAnchors[item.label] || null}
                     open={Boolean(menuAnchors[item.label])}
@@ -237,10 +483,11 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ variant = 'light' }) => 
                       paper: {
                         sx: {
                           mt: 1,
-                          minWidth: 200,
-                          borderRadius: '12px',
-                          boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+                          minWidth: 240,
+                          borderRadius: lunitRadius.lg,
+                          boxShadow: lunitShadows.card,
                           border: `1px solid ${alpha(lunitColors.lightGray, 0.5)}`,
+                          py: 1,
                         },
                       },
                     }}
@@ -253,20 +500,38 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ variant = 'light' }) => 
                           handleNavClose(item.label);
                         }}
                         sx={{
-                          fontFamily: '"Lexend", sans-serif',
-                          fontSize: '14px',
-                          fontWeight: 400,
                           py: 1.5,
                           px: 2.5,
-                          color: lunitColors.text,
                           transition: 'all 0.2s ease',
                           '&:hover': {
-                            bgcolor: alpha(lunitColors.teal, 0.08),
-                            color: lunitColors.tealDarker,
+                            bgcolor: alpha(lunitColors.teal, 0.06),
                           },
                         }}
                       >
-                        {child.label}
+                        <Box>
+                          <Typography
+                            sx={{
+                              fontFamily: '"Lexend", sans-serif',
+                              fontSize: '14px',
+                              fontWeight: 500,
+                              color: lunitColors.text,
+                            }}
+                          >
+                            {child.label}
+                          </Typography>
+                          {child.description && (
+                            <Typography
+                              sx={{
+                                fontFamily: '"Lexend", sans-serif',
+                                fontSize: '12px',
+                                color: lunitColors.grey,
+                                mt: 0.25,
+                              }}
+                            >
+                              {child.description}
+                            </Typography>
+                          )}
+                        </Box>
                       </MenuItem>
                     ))}
                   </Menu>
@@ -275,7 +540,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ variant = 'light' }) => 
             ))}
           </Stack>
 
-          {/* Right Actions — Sign In + Get Started + Mobile Hamburger */}
+          {/* Right Actions — Login + Request a Demo + Mobile Hamburger */}
           <Stack direction="row" spacing={1} alignItems="center">
             <IconButton
               onClick={() => setMobileDrawerOpen(true)}
@@ -304,11 +569,11 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ variant = 'light' }) => 
                   '&:hover': { bgcolor: alpha(lunitColors.lightestGray, 0.7) },
                 }}
               >
-                Sign In
+                Login
               </Button>
               <Button
                 variant="contained"
-                onClick={() => navigate(ROUTES.REGISTER)}
+                onClick={() => navigate(ROUTES.DEMO)}
                 sx={{
                   borderRadius: '100px',
                   textTransform: 'none',
@@ -328,7 +593,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ variant = 'light' }) => 
                   },
                 }}
               >
-                Get Started
+                Request a Demo
               </Button>
             </Box>
           </Stack>
@@ -349,68 +614,99 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ variant = 'light' }) => 
         </IconButton>
       </Box>
       <List>
-        {navItems.map((item) => (
+        {/* Solutions section */}
+        <ListItem sx={{ px: 3, py: 0.5 }}>
+          <Typography
+            sx={{
+              fontFamily: '"Lexend", sans-serif',
+              fontSize: '12px',
+              fontWeight: 600,
+              color: lunitColors.grey,
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+            }}
+          >
+            Solutions
+          </Typography>
+        </ListItem>
+        {solutionsClinicalItems.map((sol) => (
+          <ListItemButton
+            key={sol.label}
+            onClick={() => { navigate(sol.path); setMobileDrawerOpen(false); }}
+            sx={{ px: 4, py: 1.5, '&:hover': { bgcolor: alpha(lunitColors.teal, 0.06) } }}
+          >
+            <ListItemText
+              primary={
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <span>{sol.label}</span>
+                  {sol.status === 'live' ? (
+                    <Chip label="Live" size="small" sx={{ height: 18, fontSize: '9px', fontWeight: 700, fontFamily: '"Lexend", sans-serif', bgcolor: alpha('#22C55E', 0.1), color: '#16A34A' }} />
+                  ) : (
+                    <Chip label="Soon" size="small" sx={{ height: 18, fontSize: '9px', fontWeight: 700, fontFamily: '"Lexend", sans-serif', bgcolor: alpha('#F97316', 0.1), color: '#EA580C' }} />
+                  )}
+                </Box>
+              }
+              primaryTypographyProps={{
+                fontFamily: '"Lexend", sans-serif',
+                fontSize: '15px',
+                fontWeight: 400,
+                color: lunitColors.text,
+              }}
+            />
+          </ListItemButton>
+        ))}
+        {solutionsPlatformItems.map((pItem) => (
+          <ListItemButton
+            key={pItem.label}
+            onClick={() => { navigate(pItem.path); setMobileDrawerOpen(false); }}
+            sx={{ px: 4, py: 1.5, '&:hover': { bgcolor: alpha(lunitColors.teal, 0.06) } }}
+          >
+            <ListItemText
+              primary={pItem.label}
+              primaryTypographyProps={{ fontFamily: '"Lexend", sans-serif', fontSize: '15px', fontWeight: 400, color: lunitColors.text }}
+            />
+          </ListItemButton>
+        ))}
+        <Divider sx={{ my: 1 }} />
+
+        {/* Standard dropdown sections (Technology / Resources / Company) */}
+        {navItems.filter((item): item is Extract<NavItem, { type: 'dropdown' }> => item.type === 'dropdown').map((item) => (
           <React.Fragment key={item.label}>
-            {item.hasDropdown && item.children ? (
-              <>
-                <ListItem sx={{ px: 3, py: 0.5 }}>
-                  <Typography
-                    sx={{
-                      fontFamily: '"Lexend", sans-serif',
-                      fontSize: '12px',
-                      fontWeight: 600,
-                      color: lunitColors.grey,
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.08em',
-                    }}
-                  >
-                    {item.label}
-                  </Typography>
-                </ListItem>
-                {item.children.map((child) => (
-                  <ListItemButton
-                    key={child.label}
-                    onClick={() => {
-                      navigate(child.path);
-                      setMobileDrawerOpen(false);
-                    }}
-                    sx={{ px: 4, py: 1.5, '&:hover': { bgcolor: alpha(lunitColors.teal, 0.06) } }}
-                  >
-                    <ListItemText
-                      primary={child.label}
-                      primaryTypographyProps={{
-                        fontFamily: '"Lexend", sans-serif',
-                        fontSize: '15px',
-                        fontWeight: 400,
-                        color: lunitColors.text,
-                      }}
-                    />
-                  </ListItemButton>
-                ))}
-                <Divider sx={{ my: 1 }} />
-              </>
-            ) : (
-              <ListItemButton
-                onClick={() => {
-                  if (item.path) navigate(item.path);
-                  setMobileDrawerOpen(false);
+            <ListItem sx={{ px: 3, py: 0.5 }}>
+              <Typography
+                sx={{
+                  fontFamily: '"Lexend", sans-serif',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  color: lunitColors.grey,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em',
                 }}
-                sx={{ px: 3, py: 1.5, '&:hover': { bgcolor: alpha(lunitColors.teal, 0.06) } }}
+              >
+                {item.label}
+              </Typography>
+            </ListItem>
+            {item.children.map((child) => (
+              <ListItemButton
+                key={child.label}
+                onClick={() => { navigate(child.path); setMobileDrawerOpen(false); }}
+                sx={{ px: 4, py: 1.5, '&:hover': { bgcolor: alpha(lunitColors.teal, 0.06) } }}
               >
                 <ListItemText
-                  primary={item.label}
+                  primary={child.label}
                   primaryTypographyProps={{
                     fontFamily: '"Lexend", sans-serif',
                     fontSize: '15px',
-                    fontWeight: 500,
+                    fontWeight: 400,
                     color: lunitColors.text,
                   }}
                 />
               </ListItemButton>
-            )}
+            ))}
+            <Divider sx={{ my: 1 }} />
           </React.Fragment>
         ))}
-        <Divider sx={{ my: 1 }} />
+
         <Box sx={{ px: 3, py: 2, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
           <Button
             fullWidth
@@ -426,12 +722,12 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ variant = 'light' }) => 
               '&:hover': { borderColor: lunitColors.teal, color: lunitColors.tealDarker },
             }}
           >
-            Sign In
+            Login
           </Button>
           <Button
             fullWidth
             variant="contained"
-            onClick={() => { navigate(ROUTES.REGISTER); setMobileDrawerOpen(false); }}
+            onClick={() => { navigate(ROUTES.DEMO); setMobileDrawerOpen(false); }}
             sx={{
               borderRadius: '100px',
               textTransform: 'none',
@@ -442,7 +738,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ variant = 'light' }) => 
               '&:hover': { bgcolor: lunitColors.teal, color: lunitColors.black },
             }}
           >
-            Get Started
+            Request a Demo
           </Button>
         </Box>
       </List>
@@ -547,7 +843,7 @@ export const PageFooter: React.FC = () => {
           </Box>
 
           {/* Link Sections */}
-          <FooterLinkSection title="Product" links={footerLinks.product} />
+          <FooterLinkSection title="Solutions" links={footerLinks.solutions} />
           <FooterLinkSection title="Company" links={footerLinks.company} />
           <FooterLinkSection title="Resources" links={footerLinks.resources} />
           <FooterLinkSection title="Legal" links={footerLinks.legal} />

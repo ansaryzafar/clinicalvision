@@ -60,6 +60,13 @@ const FairnessDashboard = React.lazy(() => import('../pages/FairnessDashboard'))
 const AnalysisArchive = React.lazy(() => import('../pages/AnalysisArchive').then(m => ({ default: m.AnalysisArchive })));
 const ImageAnalysisPage = React.lazy(() => import('../pages/ImageAnalysisPage'));
 
+// New pages — technology, partners, events, solutions
+const TechnologyPage = React.lazy(() => import('../pages/TechnologyPage'));
+const PartnersPage = React.lazy(() => import('../pages/PartnersPage'));
+const EventsPage = React.lazy(() => import('../pages/EventsPage'));
+const BreastCancerSolutionPage = React.lazy(() => import('../pages/solutions/BreastCancerSolutionPage'));
+const ComingSoonSolutionPage = React.lazy(() => import('../pages/solutions/ComingSoonSolutionPage'));
+
 // =============================================================================
 // Route Config Interface
 // =============================================================================
@@ -107,6 +114,13 @@ export const routeConfig: RouteEntry[] = [
   { path: ROUTES.TERMS,           component: TermsPage,         auth: false, layout: false },
   { path: ROUTES.SECURITY,        component: SecurityPage,      auth: false, layout: false },
   { path: ROUTES.COMPLIANCE,      component: CompliancePage,    auth: false, layout: false },
+
+  // ── Public: New pages (technology, partners, events, solutions) ─────────
+  { path: ROUTES.TECHNOLOGY,             component: TechnologyPage,            auth: false, layout: false },
+  { path: ROUTES.PARTNERS,              component: PartnersPage,              auth: false, layout: false },
+  { path: ROUTES.EVENTS,                component: EventsPage,                auth: false, layout: false },
+  { path: ROUTES.SOLUTION_BREAST_CANCER, component: BreastCancerSolutionPage, auth: false, layout: false },
+  { path: '/solutions/:cancerType',      component: ComingSoonSolutionPage,   auth: false, layout: false },
 
   // ── Public: Clinical Demo ───────────────────────────────────────────────
   { path: ROUTES.DIAGNOSTIC_VIEWER, component: DiagnosticViewer, auth: false, layout: false },
