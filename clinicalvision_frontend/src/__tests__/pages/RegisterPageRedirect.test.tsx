@@ -67,8 +67,9 @@ describe('RegisterPage — redirect query param', () => {
     // This test simply verifies the component renders without error
     // when a redirect param is present in the URL.
     render(<RegisterPage />);
-    // The register page should still be showing
-    expect(screen.getByText(/create.*account|register|sign.*up/i)).toBeInTheDocument();
+    // The register page should still be showing (multiple elements may match)
+    const matches = screen.getAllByText(/create.*account|register|sign.*up/i);
+    expect(matches.length).toBeGreaterThan(0);
   });
 
   it('navigates to the redirect URL after successful registration', async () => {

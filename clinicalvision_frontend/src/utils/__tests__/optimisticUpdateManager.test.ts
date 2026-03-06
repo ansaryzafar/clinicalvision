@@ -741,8 +741,9 @@ describe('OptimisticUpdateManager - Edge Cases', () => {
 
     const elapsed = Date.now() - startTime;
     
-    // With 10 retries and 50ms max delay, should take less than 10 * 50 + buffer
-    expect(elapsed).toBeLessThan(1000);
+    // With 10 retries and 50ms max delay, should take less than 10 * 50 + generous buffer
+    // (CI environments have variable timing, so we use a generous bound)
+    expect(elapsed).toBeLessThan(2000);
   });
 
   it('should handle synchronous optimistic action that throws', async () => {

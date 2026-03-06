@@ -66,7 +66,7 @@ describe('PageHeader — Brand Logo (R2)', () => {
     );
 
     // Should have the brand logo image
-    const logo = screen.getByAltText('ClinicalVision');
+    const logo = screen.getByAltText('ClinicalVision AI Logo');
     expect(logo).toBeInTheDocument();
     expect(logo).toHaveAttribute('src', expect.stringContaining('/images/clinicalvision-logo.svg'));
   });
@@ -90,7 +90,7 @@ describe('PageHeader — Brand Logo (R2)', () => {
       </TestWrapper>
     );
 
-    const logo = screen.getByAltText('ClinicalVision');
+    const logo = screen.getByAltText('ClinicalVision AI Logo');
     expect(logo).toBeInTheDocument();
   });
 });
