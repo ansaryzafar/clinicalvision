@@ -112,7 +112,7 @@ const ApiPage: React.FC = () => {
                   border: `1px solid ${alpha(lunitColors.darkerGray, 0.08)}`,
                   transition: 'all 0.3s ease',
                   '&:hover': {
-                    boxShadow: lunitShadows.card,
+                    boxShadow: lunitShadows.cardHoverTeal,
                     borderColor: 'transparent',
                   },
                 }}

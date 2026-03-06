@@ -193,8 +193,7 @@ const DocumentationPage: React.FC = () => {
                   border: `1px solid ${alpha(lunitColors.darkerGray, 0.08)}`,
                   transition: 'all 0.3s ease',
                   '&:hover': {
-                    borderColor: lunitColors.teal,
-                    boxShadow: lunitShadows.card,
+                    boxShadow: lunitShadows.cardHoverTeal,
                   },
                 }}
               >
@@ -342,7 +341,7 @@ const DocumentationPage: React.FC = () => {
                   cursor: 'default',
                   transition: 'all 0.3s ease',
                   '&:hover': {
-                    boxShadow: lunitShadows.card,
+                    boxShadow: lunitShadows.cardHoverTeal,
                     '& .arrow': {
                       transform: 'translateX(4px)',
                       color: lunitColors.teal,

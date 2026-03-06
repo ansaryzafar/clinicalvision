@@ -158,8 +158,7 @@ const SupportPage: React.FC = () => {
                   flexDirection: 'column',
                   transition: 'all 0.3s ease',
                   '&:hover': {
-                    borderColor: lunitColors.teal,
-                    boxShadow: lunitShadows.card,
+                    boxShadow: lunitShadows.cardHoverTeal,
                   },
                 }}
               >

@@ -218,7 +218,7 @@ const PricingPage: React.FC = () => {
                   '&:hover': {
                     boxShadow: plan.highlighted 
                       ? '0 20px 60px rgba(0, 201, 234, 0.2)' 
-                      : lunitShadows.cardHover,
+                      : lunitShadows.cardHoverTeal,
                     transform: 'translateY(-8px)',
                   },
                 }}

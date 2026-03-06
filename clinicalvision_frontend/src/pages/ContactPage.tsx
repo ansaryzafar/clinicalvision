@@ -160,7 +160,7 @@ const ContactPage: React.FC = () => {
                   bgcolor: lunitColors.white,
                   transition: 'all 0.3s ease',
                   '&:hover': {
-                    boxShadow: lunitShadows.cardHover,
+                    boxShadow: lunitShadows.cardHoverTeal,
                   },
                 }}
               >

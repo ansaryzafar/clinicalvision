@@ -241,12 +241,8 @@ const FeaturesPage: React.FC = () => {
                   transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
                   position: 'relative',
                   overflow: 'hidden',
-                  // Highlight first two features
-                  ...(idx < 2 && {
-                    borderTop: `3px solid ${lunitColors.teal}`,
-                  }),
                   '&:hover': {
-                    boxShadow: lunitShadows.cardHover,
+                    boxShadow: lunitShadows.cardHoverTeal,
                     borderColor: 'transparent',
                     transform: 'translateY(-6px)',
                     '& .feature-icon': {

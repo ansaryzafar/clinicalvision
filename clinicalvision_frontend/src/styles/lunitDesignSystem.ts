@@ -124,6 +124,8 @@ export const lunitShadows = {
   heavy: '0 8px 16px rgba(35, 50, 50, 0.2)',
   card: '0 4px 20px rgba(35, 50, 50, 0.08)',
   cardHover: '0 10px 40px rgba(35, 50, 50, 0.15)',
+  // Teal-accented card hover: upward teal glow + soft depth shadow
+  cardHoverTeal: '0 -3px 0 0 #00C9EA, 0 10px 40px rgba(0, 201, 234, 0.18)',
 };
 
 // ============================================
@@ -248,12 +250,12 @@ export const lunitGradients = {
   `,
 
   // ── Standardised page banner (dark) ──
-  // Base gradient: darkerGray → deep teal → tealDarker
-  pageBannerBg: `linear-gradient(155deg, ${lunitColors.darkerGray} 0%, #0d2f2f 55%, ${lunitColors.tealDarker} 100%)`,
+  // Base gradient: smooth dark-to-teal, left→right with subtle downward angle
+  pageBannerBg: `linear-gradient(135deg, ${lunitColors.darkerGray} 0%, #0e3333 40%, #0c4040 65%, ${lunitColors.tealDarker} 100%)`,
   // Overlay glows (two layers)
   pageBannerOverlay: `
-    radial-gradient(ellipse at 80% 15%, rgba(0, 201, 234, 0.18) 0%, transparent 55%),
-    radial-gradient(ellipse at 15% 85%, rgba(86, 193, 77, 0.07) 0%, transparent 45%)
+    radial-gradient(ellipse at 75% 20%, rgba(0, 201, 234, 0.16) 0%, transparent 50%),
+    radial-gradient(ellipse at 25% 90%, rgba(0, 201, 234, 0.06) 0%, transparent 45%)
   `,
   
   // Dark card gradient with hover reveal

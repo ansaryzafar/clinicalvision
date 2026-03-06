@@ -232,7 +232,7 @@ const ResearchPage: React.FC = () => {
                 bgcolor: lunitColors.white,
                 transition: 'all 0.3s ease',
                 '&:hover': {
-                  boxShadow: lunitShadows.card,
+                  boxShadow: lunitShadows.cardHoverTeal,
                 },
               }}
             >

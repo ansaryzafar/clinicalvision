@@ -134,7 +134,7 @@ const BlogPage: React.FC = () => {
             cursor: 'pointer',
             transition: 'all 0.3s ease',
             '&:hover': {
-              boxShadow: lunitShadows.cardHover,
+              boxShadow: lunitShadows.cardHoverTeal,
               '& .arrow': {
                 transform: 'translateX(4px)',
               },
@@ -257,7 +257,7 @@ const BlogPage: React.FC = () => {
                   transition: 'all 0.3s ease',
                   '&:hover': {
                     borderColor: 'transparent',
-                    boxShadow: lunitShadows.cardHover,
+                    boxShadow: lunitShadows.cardHoverTeal,
                     '& .arrow': {
                       transform: 'translateX(4px)',
                       color: lunitColors.teal,

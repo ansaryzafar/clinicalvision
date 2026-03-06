@@ -239,9 +239,8 @@ const AboutPage: React.FC = () => {
                   transition: 'all 0.4s ease',
                   border: `1px solid ${alpha(lunitColors.darkerGray, 0.06)}`,
                   '&:hover': {
-                    boxShadow: lunitShadows.card,
+                    boxShadow: lunitShadows.cardHoverTeal,
                     transform: 'translateY(-6px)',
-                    borderColor: alpha(lunitColors.teal, 0.15),
                   },
                 }}
               >
@@ -529,7 +528,7 @@ const AboutPage: React.FC = () => {
                   transition: 'all 0.3s ease',
                   '&:hover': {
                     bgcolor: lunitColors.white,
-                    boxShadow: lunitShadows.card,
+                    boxShadow: lunitShadows.cardHoverTeal,
                   },
                 }}
               >

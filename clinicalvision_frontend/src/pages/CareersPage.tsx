@@ -207,9 +207,8 @@ const CareersPage: React.FC = () => {
                   transition: 'all 0.3s ease',
                 },
                 '&:hover': {
-                  borderColor: lunitColors.teal,
                   bgcolor: alpha(lunitColors.teal, 0.02),
-                  boxShadow: lunitShadows.light,
+                  boxShadow: lunitShadows.cardHoverTeal,
                   transform: 'translateX(4px)',
                   '&::before': {
                     bgcolor: lunitColors.teal,
@@ -629,8 +628,7 @@ const CareersPage: React.FC = () => {
                   border: `1px solid ${alpha(lunitColors.darkerGray, 0.08)}`,
                   transition: 'all 0.3s ease',
                   '&:hover': {
-                    borderColor: lunitColors.teal,
-                    boxShadow: lunitShadows.card,
+                    boxShadow: lunitShadows.cardHoverTeal,
                     transform: 'translateY(-4px)',
                   },
                 }}
