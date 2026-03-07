@@ -14,6 +14,11 @@ client = TestClient(app)
 class TestRateLimiting:
     """Test rate limiting on critical endpoints"""
     
+    def setup_method(self):
+        """Reset login attempt tracker before each test to avoid cross-test interference."""
+        from app.services.auth_service import _login_tracker
+        _login_tracker.reset()
+
     def test_login_rate_limit(self):
         """Should rate limit login attempts (5 per minute)"""
         login_data = {

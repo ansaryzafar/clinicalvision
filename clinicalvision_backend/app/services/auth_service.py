@@ -69,6 +69,76 @@ class UnauthorizedException(AuthenticationException):
     pass
 
 
+class AccountLockedException(AuthenticationException):
+    """Raised when account is temporarily locked due to too many failed login attempts"""
+    pass
+
+
+# ==================== Login Attempt Tracker ====================
+
+class LoginAttemptTracker:
+    """
+    In-memory tracker for failed login attempts.
+
+    After ``MAX_ATTEMPTS`` consecutive failures within the
+    ``LOCKOUT_DURATION`` window the account is temporarily locked.
+
+    Thread-safe for single-process use; for multi-worker deployments
+    swap the dict for a Redis backend.
+    """
+
+    MAX_ATTEMPTS: int = 5
+    LOCKOUT_DURATION: int = 15  # minutes
+
+    def __init__(self) -> None:
+        # {email: {"count": int, "first_failure": datetime, "locked_until": datetime | None}}
+        self._login_attempts: dict = {}
+
+    def reset(self, email: str | None = None) -> None:
+        """Clear tracking state.  If *email* is given, clear that entry only."""
+        if email:
+            self._login_attempts.pop(email, None)
+        else:
+            self._login_attempts.clear()
+
+    def is_locked(self, email: str) -> bool:
+        """Return True if the account is currently locked out."""
+        entry = self._login_attempts.get(email)
+        if entry and entry.get("locked_until"):
+            if datetime.now(timezone.utc) < entry["locked_until"]:
+                return True
+            # Lockout expired — clear it
+            self._login_attempts.pop(email, None)
+        return False
+
+    def record_failure(self, email: str) -> None:
+        """Record a failed login attempt; lock account if threshold exceeded."""
+        now = datetime.now(timezone.utc)
+        entry = self._login_attempts.get(email)
+
+        if entry is None:
+            self._login_attempts[email] = {"count": 1, "first_failure": now, "locked_until": None}
+            return
+
+        entry["count"] += 1
+
+        if entry["count"] >= self.MAX_ATTEMPTS:
+            from datetime import timedelta
+            entry["locked_until"] = now + timedelta(minutes=self.LOCKOUT_DURATION)
+            logger.warning(
+                "Account locked due to %d failed login attempts: %s",
+                entry["count"], email,
+            )
+
+    def record_success(self, email: str) -> None:
+        """Clear failed-attempt counter on successful login."""
+        self._login_attempts.pop(email, None)
+
+
+# Module-level singleton
+_login_tracker = LoginAttemptTracker()
+
+
 # ==================== Authentication Service ====================
 
 class AuthService:
@@ -184,18 +254,29 @@ class AuthService:
             Tuple[User, TokenResponse]: Authenticated user and tokens
             
         Raises:
+            AccountLockedException: If account is temporarily locked out
             InvalidCredentialsException: If credentials are invalid
             InactiveUserException: If user account is inactive
         """
+        # --- Lockout check ---
+        if _login_tracker.is_locked(request.email):
+            logger.warning(f"Login blocked: Account locked - {request.email}")
+            raise AccountLockedException(
+                "Account temporarily locked due to too many failed login attempts. "
+                f"Please try again in {_login_tracker.LOCKOUT_DURATION} minutes."
+            )
+
         # Find user by email
         user = self.db.query(User).filter(User.email == request.email).first()
         
         if not user:
+            _login_tracker.record_failure(request.email)
             logger.warning(f"Login failed: User not found - {request.email}")
             raise InvalidCredentialsException("Invalid email or password")
         
         # Verify password
         if not verify_password(request.password, user.hashed_password):
+            _login_tracker.record_failure(request.email)
             logger.warning(f"Login failed: Invalid password - {request.email}")
             raise InvalidCredentialsException("Invalid email or password")
         
@@ -204,6 +285,9 @@ class AuthService:
             logger.warning(f"Login failed: User inactive - {request.email}")
             raise InactiveUserException("User account is inactive")
         
+        # --- Successful login: reset tracker ---
+        _login_tracker.record_success(request.email)
+
         # Update last login
         user.last_login = datetime.now(timezone.utc).isoformat()
         self.db.commit()

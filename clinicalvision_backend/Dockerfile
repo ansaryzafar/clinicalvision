@@ -1,18 +1,40 @@
-FROM python:3.10-slim
+# ============================================================
+# Stage 1: Builder — install Python dependencies
+# ============================================================
+FROM python:3.10-slim AS builder
 
-# Set working directory
-WORKDIR /app
+WORKDIR /build
 
-# Install system dependencies
+# Install build-time system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies into a virtual-env so they can be
+# copied cleanly into the runtime stage
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+
+# ============================================================
+# Stage 2: Runtime — lean production image
+# ============================================================
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Only runtime system libs — no compiler toolchain
+RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements and install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy pre-built virtual-env from builder stage
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy application code
 COPY . .
@@ -32,5 +54,5 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/health/live || exit 1
 
-# Run application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run application with gunicorn (production process manager)
+CMD ["gunicorn", "main:app", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000", "--workers", "4"]

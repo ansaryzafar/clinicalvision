@@ -19,7 +19,8 @@ from app.services.auth_service import (
     UserNotFoundException,
     InactiveUserException,
     InvalidTokenException,
-    TokenExpiredException
+    TokenExpiredException,
+    AccountLockedException,
 )
 from app.schemas.auth import (
     LoginRequest,
@@ -142,6 +143,12 @@ def login(
         logger.info(f"User logged in: {request_obj.email}")
         return login_response
         
+    except AccountLockedException as e:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=str(e),
+        )
+
     except InvalidCredentialsException:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

@@ -21,6 +21,7 @@ from app.core.config import settings
 from app.core.logging import logger
 from app.core.rate_limit import limiter, rate_limit_exceeded_handler
 from app.middleware.security_headers import SecurityHeadersMiddleware
+from app.middleware.correlation_id import CorrelationIdMiddleware
 from app.monitoring.metrics import PrometheusMiddleware, get_metrics
 from app.api.routes import health, analysis, feedback
 from app.api.v1.api import api_router
@@ -124,6 +125,9 @@ app.openapi = custom_openapi
 # Add rate limiting
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)
+
+# Add request correlation IDs (outermost middleware — runs first)
+app.add_middleware(CorrelationIdMiddleware)
 
 # Add Prometheus metrics collection
 app.add_middleware(PrometheusMiddleware)
