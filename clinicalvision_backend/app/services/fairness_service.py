@@ -258,12 +258,14 @@ class FairnessService:
     def get_alerts(
         self,
         severity: AlertSeverity = None,
-        acknowledged: bool = None
+        acknowledged: bool = None,
+        skip: int = 0,
+        limit: int = 50,
     ) -> List[FairnessAlert]:
         """
-        Get fairness alerts with optional filtering.
+        Get fairness alerts with optional filtering and pagination.
         
-        Returns instantly from pre-computed data.
+        Pagination is applied after filtering to return consistent results.
         """
         alerts = self._alerts
         
@@ -273,7 +275,7 @@ class FairnessService:
         if acknowledged is not None:
             alerts = [a for a in alerts if a.acknowledged == acknowledged]
         
-        return alerts
+        return alerts[skip:skip + limit]
     
     def acknowledge_alert(self, alert_id: str) -> bool:
         """Mark an alert as acknowledged."""

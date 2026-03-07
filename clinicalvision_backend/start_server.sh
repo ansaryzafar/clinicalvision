@@ -162,11 +162,13 @@ echo "Starting ClinicalVision Backend Server..."
 echo "=========================================="
 echo ""
 
-# Start uvicorn with proper configuration
-exec uvicorn main:app \
-    --host "$HOST" \
-    --port "$PORT" \
+# Start gunicorn with UvicornWorker for production-grade process management
+exec gunicorn main:app \
+    -k uvicorn.workers.UvicornWorker \
+    --bind "$HOST:$PORT" \
     --workers "$WORKERS" \
+    --max-requests 10000 \
+    --max-requests-jitter 1000 \
+    --timeout 120 \
     --log-level "$LOG_LEVEL" \
-    --timeout-keep-alive 120 \
-    --limit-concurrency 100
+    --keep-alive 120

@@ -75,12 +75,14 @@ async def upload_image(
         ImageUploadResponse with stored image details
     """
     try:
-        # Create temporary file for validation
+        # Create temporary file for validation — stream in chunks to avoid
+        # loading the entire file (up to 500 MB) into memory at once.
         temp_path = storage_service.base_path / "temp" / f"validate_{file.filename}"
         
+        CHUNK_SIZE = 8192  # 8 KB chunks
         with open(temp_path, "wb") as buffer:
-            content = await file.read()
-            buffer.write(content)
+            while chunk := await file.read(CHUNK_SIZE):
+                buffer.write(chunk)
         
         # Reset file pointer for storage service
         await file.seek(0)

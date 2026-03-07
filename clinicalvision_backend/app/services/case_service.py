@@ -246,6 +246,35 @@ class CaseService:
     # Nested resources
     # ------------------------------------------------------------------
 
+    def list_case_images(
+        self, case_id: UUID, skip: int = 0, limit: int = 100
+    ) -> List[CaseImage]:
+        """Return paginated images for a case using SQL offset/limit."""
+        # Verify case exists (raises CaseNotFoundException if not)
+        self._get_case(case_id)
+        return (
+            self.db.query(CaseImage)
+            .filter(CaseImage.case_id == case_id)
+            .order_by(CaseImage.created_at.desc())
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+
+    def list_case_findings(
+        self, case_id: UUID, skip: int = 0, limit: int = 100
+    ) -> List[CaseFinding]:
+        """Return paginated findings for a case using SQL offset/limit."""
+        self._get_case(case_id)
+        return (
+            self.db.query(CaseFinding)
+            .filter(CaseFinding.case_id == case_id)
+            .order_by(CaseFinding.created_at.desc())
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+
     def add_image_to_case(
         self, case_id: UUID, image_data: Dict[str, Any]
     ) -> CaseImage:

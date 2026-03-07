@@ -256,8 +256,7 @@ def list_case_images(
     """Get all images attached to a clinical case with pagination."""
     try:
         service = get_case_service(db)
-        case = service.get_case(case_id)
-        return case.images[skip:skip + limit]
+        return service.list_case_images(case_id, skip=skip, limit=limit)
     except Exception as e:
         raise _handle_case_exception(e)
 
@@ -301,8 +300,7 @@ def list_case_findings(
     """Get all findings attached to a clinical case with pagination."""
     try:
         service = get_case_service(db)
-        case = service.get_case(case_id)
-        return case.findings[skip:skip + limit]
+        return service.list_case_findings(case_id, skip=skip, limit=limit)
     except Exception as e:
         raise _handle_case_exception(e)
 

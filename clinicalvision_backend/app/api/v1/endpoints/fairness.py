@@ -121,8 +121,11 @@ def get_alerts(
     """
     try:
         service = get_fairness_service()
-        alerts = service.get_alerts(severity=severity, acknowledged=acknowledged)
-        return alerts[skip:skip + limit]
+        alerts = service.get_alerts(
+            severity=severity, acknowledged=acknowledged,
+            skip=skip, limit=limit,
+        )
+        return alerts
     except Exception as e:
         logger.error(f"Alerts error: {e}")
         raise HTTPException(status_code=500, detail="Failed to load alerts")
