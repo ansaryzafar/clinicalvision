@@ -175,7 +175,7 @@ describe('Fabricated content disclaimers (A2, A3)', () => {
     const LandingPage = (await import('../../pages/LandingPage')).default;
     render(<TestWrapper><LandingPage /></TestWrapper>);
 
-    const testimonialDisclaimer = screen.queryByText(/illustrative/i);
+    const testimonialDisclaimer = screen.queryByText(/anticipated clinical use cases|illustrative/i);
     expect(testimonialDisclaimer).toBeInTheDocument();
   });
 

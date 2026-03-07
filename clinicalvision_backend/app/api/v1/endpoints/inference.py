@@ -79,6 +79,7 @@ require_radiologist = RoleChecker(["admin", "radiologist", "technician"])
 @limiter.limit(get_rate_limit("inference"))
 async def predict_image(
     request: Request,
+    response: Response,
     file: UploadFile = File(..., description="Mammogram image file (JPEG, PNG, DICOM)"),
     save_result: bool = Query(False, description="Save prediction to database"),
     model_version: Optional[str] = Query(None, description="Specific model version to use"),
@@ -210,6 +211,7 @@ async def predict_image(
 @limiter.limit(get_rate_limit("inference"))
 async def predict_with_tiles(
     request: Request,
+    response: Response,
     file: UploadFile = File(..., description="Mammogram image file (any resolution)"),
     mode: str = Query("attention_guided", description="Analysis mode: global_only, attention_guided, full_coverage"),
     tile_size: int = Query(224, ge=64, le=512, description="Tile size in pixels"),
@@ -413,6 +415,7 @@ async def predict_with_tiles(
 @limiter.limit(get_rate_limit("inference"))
 async def predict_from_storage(
     request: Request,
+    response: Response,
     image_id: int,
     save_result: bool = Query(True, description="Save prediction to database"),
     model_version: Optional[str] = Query(None, description="Specific model version to use"),
@@ -502,6 +505,7 @@ async def predict_from_storage(
 @limiter.limit(get_rate_limit("inference"))
 async def predict_bilateral(
     request: Request,
+    response: Response,
     bilateral_request: BilateralInferenceRequest = Body(...),  # renamed to avoid conflict with Request
     model_version: Optional[str] = Query(None, description="Specific model version to use"),
     db: Session = Depends(get_db),
@@ -767,6 +771,7 @@ def get_inference_statistics(
 @limiter.limit(get_rate_limit("inference"))
 async def generate_gradcam(
     request: Request,
+    response: Response,
     file: UploadFile = File(..., description="Mammogram image file"),
     method: str = Query("gradcam++", description="Method: gradcam, gradcam++, integrated_gradients"),
     output_format: str = Query("heatmap", description="Format: heatmap, image, overlay"),

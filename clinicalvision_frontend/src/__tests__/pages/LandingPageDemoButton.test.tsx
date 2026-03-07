@@ -2,8 +2,8 @@
  * TDD — "Try Demo" Button & Registration Redirect Tests
  *
  * Tests:
- *  1. LandingPage renders a "Try Demo" button in the hero section
- *  2. Clicking "Try Demo" navigates to /register?redirect=/workflow
+ *  1. LandingPage renders a "Request a Demo" button in the hero section
+ *  2. Clicking "Request a Demo" navigates to /demo
  *  3. RegisterPage reads the ?redirect param and navigates there after registration
  *  4. User tier defaults to 'demo' for new users
  */
@@ -69,17 +69,17 @@ describe('LandingPage — Try Demo button', () => {
     mockNavigate.mockClear();
   });
 
-  it('renders a "Try Demo" button in the hero section', () => {
+  it('renders a "Request a Demo" button in the hero section', () => {
     render(<LandingPage />);
-    const demoBtn = screen.getByRole('button', { name: /try demo/i });
-    expect(demoBtn).toBeInTheDocument();
+    const demoBtn = screen.getAllByRole('button', { name: /request a demo/i });
+    expect(demoBtn.length).toBeGreaterThan(0);
   });
 
-  it('navigates to /register?redirect=/workflow when "Try Demo" is clicked', () => {
+  it('navigates to /demo when "Request a Demo" is clicked', () => {
     render(<LandingPage />);
-    const demoBtn = screen.getByRole('button', { name: /try demo/i });
-    fireEvent.click(demoBtn);
-    expect(mockNavigate).toHaveBeenCalledWith('/register?redirect=/workflow');
+    const demoBtns = screen.getAllByRole('button', { name: /request a demo/i });
+    fireEvent.click(demoBtns[0]);
+    expect(mockNavigate).toHaveBeenCalledWith('/demo');
   });
 
   it('renders a "Sign In" button for returning users', () => {

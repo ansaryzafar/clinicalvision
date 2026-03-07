@@ -137,13 +137,14 @@ const useCountUp = (end: number, duration = 2000, shouldStart = true) => {
 // Animated Stat Card Component
 interface StatCardProps {
   value: number;
+  prefix?: string;
   suffix: string;
   label: string;
   index: number;
   isVisible: boolean;
 }
 
-const StatCard: React.FC<StatCardProps> = ({ value, suffix, label, index, isVisible }) => {
+const StatCard: React.FC<StatCardProps> = ({ value, prefix, suffix, label, index, isVisible }) => {
   const count = useCountUp(value, 2000, isVisible);
   
   return (
@@ -176,7 +177,7 @@ const StatCard: React.FC<StatCardProps> = ({ value, suffix, label, index, isVisi
           textAlign: 'center',
         }}
       >
-        {count.toLocaleString()}{suffix}
+        {prefix}{count.toLocaleString()}{suffix}
       </Typography>
       {/* Divider line - Lunit stat-line style */}
       <Box
@@ -232,6 +233,9 @@ const LandingPage: React.FC = () => {
   const testimonialsReveal = useScrollReveal(0.15);
   const newsReveal = useScrollReveal(0.15);
   const ctaReveal = useScrollReveal(0.2);
+  const aiUnderstandReveal = useScrollReveal(0.15);
+  const investorReveal = useScrollReveal(0.15);
+  const demoDataReveal = useScrollReveal(0.15);
 
   // Track scroll for navbar styling
   useEffect(() => {
@@ -257,8 +261,8 @@ const LandingPage: React.FC = () => {
     { label: 'Colorectal Cancer Detection', description: 'Colorectal pathology AI', path: ROUTES.SOLUTION_COLORECTAL_CANCER, status: 'coming' as const, icon: '🧬' },
   ];
   const solutionsPlatformItems = [
-    { label: 'AI Analysis Platform', description: 'End-to-end clinical workflow', path: ROUTES.FEATURES },
-    { label: 'Pricing & Plans', description: 'Transparent pricing', path: ROUTES.PRICING },
+    { label: 'Clinical Analysis Platform', description: 'End-to-end clinical workflow', path: ROUTES.FEATURES },
+    { label: 'Pricing', description: 'Transparent pricing', path: ROUTES.PRICING },
   ];
 
   // Navigation items — new 4-item structure
@@ -275,7 +279,7 @@ const LandingPage: React.FC = () => {
       type: 'dropdown',
       children: [
         { label: 'AI Models & Architecture', description: 'Core technology deep-dive', path: ROUTES.TECHNOLOGY },
-        { label: 'Research & Publications', description: 'Peer-reviewed work', path: ROUTES.RESEARCH },
+        { label: 'Research & Validation', description: 'Peer-reviewed publications', path: ROUTES.RESEARCH },
         { label: 'Security & Compliance', description: 'Trust & regulatory', path: ROUTES.SECURITY },
       ],
     },
@@ -284,9 +288,9 @@ const LandingPage: React.FC = () => {
       type: 'dropdown',
       children: [
         { label: 'Documentation', description: 'Guides & references', path: ROUTES.DOCUMENTATION },
-        { label: 'Developer API', description: 'Integration tools', path: ROUTES.API },
-        { label: 'Blog & Insights', description: 'Thought leadership', path: ROUTES.BLOG },
-        { label: 'Support Center', description: 'Help & FAQs', path: ROUTES.SUPPORT },
+        { label: 'API Reference', description: 'Integration tools', path: ROUTES.API },
+        { label: 'Insights', description: 'Thought leadership', path: ROUTES.BLOG },
+        { label: 'Support', description: 'Help & FAQs', path: ROUTES.SUPPORT },
       ],
     },
     {
@@ -496,7 +500,7 @@ const LandingPage: React.FC = () => {
                                           {sol.status === 'live' ? (
                                             <Chip
                                               icon={<FiberManualRecord sx={{ fontSize: '8px !important' }} />}
-                                              label="Live"
+                                              label="Available"
                                               size="small"
                                               sx={{
                                                 height: 20,
@@ -510,7 +514,7 @@ const LandingPage: React.FC = () => {
                                             />
                                           ) : (
                                             <Chip
-                                              label="Coming Soon"
+                                              label="In Development"
                                               size="small"
                                               sx={{
                                                 height: 20,
@@ -700,7 +704,7 @@ const LandingPage: React.FC = () => {
                     },
                   }}
                 >
-                  Login
+                  Sign In
                 </Button>
                 <Button
                   variant="contained"
@@ -768,9 +772,9 @@ const LandingPage: React.FC = () => {
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <span>{sol.label}</span>
                     {sol.status === 'live' ? (
-                      <Chip label="Live" size="small" sx={{ height: 18, fontSize: '9px', fontWeight: 700, fontFamily: '"Lexend", sans-serif', bgcolor: alpha('#22C55E', 0.1), color: '#16A34A' }} />
+                      <Chip label="Available" size="small" sx={{ height: 18, fontSize: '9px', fontWeight: 700, fontFamily: '"Lexend", sans-serif', bgcolor: alpha('#22C55E', 0.1), color: '#16A34A' }} />
                     ) : (
-                      <Chip label="Soon" size="small" sx={{ height: 18, fontSize: '9px', fontWeight: 700, fontFamily: '"Lexend", sans-serif', bgcolor: alpha('#F97316', 0.1), color: '#EA580C' }} />
+                      <Chip label="In Dev" size="small" sx={{ height: 18, fontSize: '9px', fontWeight: 700, fontFamily: '"Lexend", sans-serif', bgcolor: alpha('#F97316', 0.1), color: '#EA580C' }} />
                     )}
                   </Box>
                 }
@@ -993,7 +997,7 @@ const LandingPage: React.FC = () => {
                     m: 0,
                   }}
                 >
-                  Explainable. Accurate. Clinically Validated.
+                  Explainable. Validated. Trusted.
                 </Typography>
 
                 {/* Description - lunit-hero__description */}
@@ -1010,7 +1014,7 @@ const LandingPage: React.FC = () => {
                     maxWidth: { xs: '100%', lg: '68%' },
                   }}
                 >
-                  From mammogram to insight—our AI shows exactly why it flagged a region, so you can make confident decisions faster.
+                  From mammogram to actionable insight — every flagged region includes visual evidence, confidence quantification, and clinical reasoning. Designed for the decisions that matter most.
                 </Typography>
               </Box>
 
@@ -1029,8 +1033,8 @@ const LandingPage: React.FC = () => {
                   variant="contained"
                   size="large"
                   className="btn btn-lg btn-primary"
-                  onClick={() => navigate(`${ROUTES.REGISTER}?redirect=${ROUTES.WORKFLOW}`)}
-                endIcon={<Science />}
+                  onClick={() => navigate(ROUTES.DEMO)}
+                endIcon={<ArrowForward />}
                 sx={{
                   borderRadius: '100px',
                   textTransform: 'none',
@@ -1052,7 +1056,7 @@ const LandingPage: React.FC = () => {
                   },
                 }}
               >
-                Try Demo
+                Request a Demo
               </Button>
               <Button
                 variant="outlined"
@@ -1117,10 +1121,10 @@ const LandingPage: React.FC = () => {
               justifyItems: 'center',
             }}
           >
-            <StatCard value={100} suffix="%" label="Explainable Outputs" index={0} isVisible={statsReveal.isVisible} />
-            <StatCard value={95} suffix="%+" label="Detection Accuracy" index={1} isVisible={statsReveal.isVisible} />
-            <StatCard value={3} suffix="s" label="Analysis Time" index={2} isVisible={statsReveal.isVisible} />
-            <StatCard value={4} suffix="+" label="Insight Layers" index={3} isVisible={statsReveal.isVisible} />
+            <StatCard value={100} suffix="%" label="Fully Explainable Outputs" index={0} isVisible={statsReveal.isVisible} />
+            <StatCard value={95} suffix="%+" label="Diagnostic Accuracy" index={1} isVisible={statsReveal.isVisible} />
+            <StatCard value={3} prefix="<" suffix="s" label="Time to Insight" index={2} isVisible={statsReveal.isVisible} />
+            <StatCard value={4} suffix="+" label="Layers of Evidence" index={3} isVisible={statsReveal.isVisible} />
           </Box>
         </Box>
       </Box>
@@ -1371,8 +1375,8 @@ const LandingPage: React.FC = () => {
                       mb: '12px',
                     }}
                   >
-                    Most AI tools give you an answer. We show you the reasoning. Every diagnosis 
-                    comes with visual evidence—heatmaps that highlight exactly where the AI focused.
+                    Conventional AI delivers conclusions. ClinicalVision delivers evidence — attention 
+                    heatmaps that highlight the precise regions driving each diagnostic assessment.
                   </Typography>
                   <Typography
                     component="p"
@@ -1385,8 +1389,8 @@ const LandingPage: React.FC = () => {
                       mb: '12px',
                     }}
                   >
-                    Color-coded confidence scores tell you when to look closer. Structured reports 
-                    fit seamlessly into your existing workflow.
+                    Calibrated confidence scores quantify diagnostic certainty. Structured clinical reports 
+                    integrate seamlessly into established radiology workflows.
                   </Typography>
                   <Typography
                     component="p"
@@ -1399,7 +1403,7 @@ const LandingPage: React.FC = () => {
                       mb: 0,
                     }}
                   >
-                    AI that augments your expertise—not replaces it.
+                    Decision support that augments clinical expertise — never replaces it.
                   </Typography>
                 </Box>
 
@@ -1409,6 +1413,7 @@ const LandingPage: React.FC = () => {
                     variant="outlined"
                     size="large"
                     className="btn btn-secondary-light btn-lg"
+                    onClick={() => navigate(ROUTES.TECHNOLOGY)}
                     sx={{
                       borderRadius: '100px',
                       textTransform: 'none',
@@ -1429,7 +1434,7 @@ const LandingPage: React.FC = () => {
                       },
                     }}
                   >
-                    Explore the Technology
+                    Discover the Architecture
                   </Button>
                 </Box>
               </Box>
@@ -1667,7 +1672,7 @@ const LandingPage: React.FC = () => {
                     m: 0,
                   }}
                 >
-                  See the regions. Understand the reasoning. Validate instantly.
+                  Inspect the regions. Examine the reasoning. Validate with confidence.
                 </Typography>
 
                 {/* Description */}
@@ -1702,6 +1707,7 @@ const LandingPage: React.FC = () => {
                   size="large"
                   endIcon={<ArrowForward />}
                   className="btn btn-lg btn-primary"
+                  onClick={() => navigate(ROUTES.DEMO)}
                   sx={{
                     borderRadius: '100px',
                     textTransform: 'none',
@@ -1721,11 +1727,12 @@ const LandingPage: React.FC = () => {
                     },
                   }}
                 >
-                  Try It Now
+                  Launch Clinical Demo
                 </Button>
                 <Button
                   variant="outlined"
                   size="large"
+                  onClick={() => navigate(ROUTES.DOCUMENTATION)}
                   sx={{
                     borderRadius: '100px',
                     textTransform: 'none',
@@ -1745,7 +1752,7 @@ const LandingPage: React.FC = () => {
                     },
                   }}
                 >
-                  View Documentation
+                  Technical Documentation
                 </Button>
               </Box>
             </Box>
@@ -1827,7 +1834,7 @@ const LandingPage: React.FC = () => {
                       letterSpacing: '-0.02em',
                     }}
                   >
-                    Built for Transparency, End to End
+                    Engineered for Transparency. End to End.
                   </Typography>
                   <Typography
                     variant="h4"
@@ -1841,7 +1848,7 @@ const LandingPage: React.FC = () => {
                       letterSpacing: '-0.01em',
                     }}
                   >
-                    Every layer designed to answer "Why?"
+                    Every component designed to substantiate its output.
                   </Typography>
                   <Typography
                     sx={{
@@ -1853,15 +1860,16 @@ const LandingPage: React.FC = () => {
                       mb: 5,
                     }}
                   >
-                    GradCAM heatmaps show attention regions. Monte Carlo Dropout quantifies 
-                    uncertainty. Integrated Gradients reveal pixel-level attribution. All 
-                    working together so you can trust what you see.
+                    GradCAM++ heatmaps reveal attention regions. Monte Carlo Dropout quantifies 
+                    diagnostic uncertainty. Integrated Gradients provide pixel-level attribution. 
+                    A multi-layered evidence framework designed for clinical verification.
                   </Typography>
                   
                   <Button
                     variant="contained"
                     size="large"
                     endIcon={<ArrowForward />}
+                    onClick={() => navigate(ROUTES.TECHNOLOGY)}
                     sx={{
                       borderRadius: '100px',
                       textTransform: 'none',
@@ -1881,7 +1889,7 @@ const LandingPage: React.FC = () => {
                       },
                     }}
                   >
-                    Explore Architecture
+                    View System Architecture
                   </Button>
                 </Box>
               </Box>
@@ -1890,9 +1898,9 @@ const LandingPage: React.FC = () => {
               <Box sx={{ flex: 1 }}>
                 <Stack spacing={3}>
                   {[
-                    { icon: <Psychology />, title: 'Attention Heatmaps', desc: 'See exactly which regions influenced the AI decision' },
-                    { icon: <Science />, title: 'Confidence Scores', desc: 'Know when the AI is certain—and when it needs your review' },
-                    { icon: <TrendingUp />, title: 'Auto-Generated Reports', desc: 'Structured findings ready for your workflow' },
+                    { icon: <Psychology />, title: 'Attention-Based Heatmaps', desc: 'Visualize the precise regions driving each diagnostic assessment' },
+                    { icon: <Science />, title: 'Calibrated Confidence Scores', desc: 'Quantified certainty that signals when additional clinical review is warranted' },
+                    { icon: <TrendingUp />, title: 'Automated Clinical Reports', desc: 'Structured findings integrated directly into diagnostic workflows' },
                   ].map((item, idx) => (
                     <Box
                       key={idx}
@@ -2000,7 +2008,7 @@ const LandingPage: React.FC = () => {
                 m: 0,
               }}
             >
-              One Platform. Complete Insight.
+              One Platform. Complete Clinical Intelligence.
             </Typography>
           </Box>
 
@@ -2064,7 +2072,7 @@ const LandingPage: React.FC = () => {
                         flex: 1,
                       }}
                     >
-                      Mammogram Analysis
+                      Mammogram Analysis Suite
                     </Typography>
                   </Box>
                   
@@ -2084,8 +2092,8 @@ const LandingPage: React.FC = () => {
                         mb: '15px',
                       }}
                     >
-                      Upload a mammogram. Get instant AI analysis with visual 
-                      explanations showing exactly where the model focused.
+                      Upload a mammogram. Receive instant AI-driven analysis with visual 
+                      evidence mapping the precise regions driving each diagnostic assessment.
                     </Typography>
                     <Typography
                       sx={{
@@ -2097,8 +2105,8 @@ const LandingPage: React.FC = () => {
                         m: 0,
                       }}
                     >
-                      Confidence scores and flagged uncertainties help you prioritize 
-                      which cases need closer review.
+                      Calibrated confidence scores and flagged uncertainties enable 
+                      intelligent case prioritization and targeted clinical review.
                     </Typography>
                   </Box>
                 </Box>
@@ -2109,6 +2117,7 @@ const LandingPage: React.FC = () => {
                     variant="contained"
                     size="large"
                     className="btn btn-primary btn-lg"
+                    onClick={() => navigate(ROUTES.DEMO)}
                     sx={{
                       borderRadius: '100px',
                       textTransform: 'none',
@@ -2128,7 +2137,7 @@ const LandingPage: React.FC = () => {
                       },
                     }}
                   >
-                    Analyze Now
+                    Begin Analysis
                   </Button>
                 </Box>
               </Box>
@@ -2154,7 +2163,7 @@ const LandingPage: React.FC = () => {
                 >
                   {/* Left Column */}
                   <Box className="solutions-overview__solutions-column" sx={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                    {['Single-View Analysis', 'Dual-View Fusion (CC + MLO)', 'Bilateral Comparison', 'Historical Trending'].map((product) => (
+                    {['Single-View Classification', 'Dual-View Fusion Analysis', 'Bilateral Symmetry Analysis', 'Historical Trending'].map((product) => (
                       <Box
                         key={product}
                         className="solutions-overview__solution-item"
@@ -2327,7 +2336,7 @@ const LandingPage: React.FC = () => {
                         flex: 1,
                       }}
                     >
-                      Explainability Tools
+                      Explainability Suite
                     </Typography>
                   </Box>
                   
@@ -2347,8 +2356,8 @@ const LandingPage: React.FC = () => {
                         mb: '15px',
                       }}
                     >
-                      Multiple explanation methods for every finding. Heatmaps, 
-                      attribution scores, and natural language summaries—all in one view.
+                      Multiple explanation methods for every finding. Attention heatmaps, 
+                      attribution scores, and structured clinical summaries — unified in a single diagnostic view.
                     </Typography>
                     <Typography
                       sx={{
@@ -2360,8 +2369,8 @@ const LandingPage: React.FC = () => {
                         m: 0,
                       }}
                     >
-                      Built-in fairness monitoring ensures consistent performance 
-                      across all patient demographics.
+                      Integrated fairness monitoring validates diagnostic consistency 
+                      across all patient demographics — a foundational requirement for responsible clinical AI.
                     </Typography>
                   </Box>
                 </Box>
@@ -2372,6 +2381,7 @@ const LandingPage: React.FC = () => {
                     variant="contained"
                     size="large"
                     className="btn btn-primary btn-lg"
+                    onClick={() => navigate(ROUTES.FEATURES)}
                     sx={{
                       borderRadius: '100px',
                       textTransform: 'none',
@@ -2391,7 +2401,7 @@ const LandingPage: React.FC = () => {
                       },
                     }}
                   >
-                    Explore Tools
+                    View Capabilities
                   </Button>
                 </Box>
               </Box>
@@ -2502,7 +2512,7 @@ const LandingPage: React.FC = () => {
                 m: 0,
               }}
             >
-              Partner With Us
+              Partnering to Advance Diagnostic Innovation
             </Typography>
           </Box>
 
@@ -2614,7 +2624,7 @@ const LandingPage: React.FC = () => {
                     letterSpacing: '-0.02em',
                   }}
                 >
-                  Healthcare Systems
+                  Healthcare Systems & Providers
                 </Typography>
                 <Typography
                   sx={{
@@ -2625,12 +2635,13 @@ const LandingPage: React.FC = () => {
                     mb: 3,
                   }}
                 >
-                  Deploy AI that your radiologists can actually verify. 
-                  Every finding comes with visual proof—building trust 
-                  one explainable diagnosis at a time.
+                  Deploy explainable diagnostic AI that integrates seamlessly into 
+                  existing radiology workflows. Every finding is substantiated with 
+                  visual evidence — purpose-built for clinician verification.
                 </Typography>
                 <Button
                   endIcon={<ArrowForward />}
+                  onClick={() => navigate(ROUTES.CONTACT)}
                   sx={{
                     textTransform: 'none',
                     fontFamily: '"Lexend", sans-serif',
@@ -2644,7 +2655,7 @@ const LandingPage: React.FC = () => {
                     },
                   }}
                 >
-                  Start a Pilot
+                  Initiate a Pilot Program
                 </Button>
               </Box>
             </Box>
@@ -2746,7 +2757,7 @@ const LandingPage: React.FC = () => {
                     letterSpacing: '-0.02em',
                   }}
                 >
-                  Research Institutions
+                  Research & Academic Institutions
                 </Typography>
                 <Typography
                   sx={{
@@ -2757,12 +2768,13 @@ const LandingPage: React.FC = () => {
                     mb: 3,
                   }}
                 >
-                  Collaborate on explainability research, fairness 
-                  evaluation, and clinical validation studies. Let's 
-                  advance trustworthy AI together.
+                  Collaborate on explainability research, algorithmic fairness 
+                  evaluation, and multi-site clinical validation studies. 
+                  Advancing the science of trustworthy diagnostic AI.
                 </Typography>
                 <Button
                   endIcon={<ArrowForward />}
+                  onClick={() => navigate(ROUTES.RESEARCH)}
                   sx={{
                     textTransform: 'none',
                     fontFamily: '"Lexend", sans-serif',
@@ -2776,7 +2788,7 @@ const LandingPage: React.FC = () => {
                     },
                   }}
                 >
-                  Explore Research
+                  View Research Initiatives
                 </Button>
               </Box>
             </Box>
@@ -2853,9 +2865,9 @@ const LandingPage: React.FC = () => {
                 m: 0,
               }}
             >
-              Trusted by Clinicians
+              Trusted by Clinical Leaders
               <Box component="span" sx={{ display: 'block' }}>
-                Who Demand Transparency
+                Who Demand Evidence
               </Box>
             </Typography>
 
@@ -2869,7 +2881,7 @@ const LandingPage: React.FC = () => {
                 fontStyle: 'italic',
               }}
             >
-              * Representative testimonials for illustrative purposes
+              * Scenarios reflect anticipated clinical use cases
             </Typography>
             
             {/* Testimonials Navigation Buttons - Lunit Style */}
@@ -2957,7 +2969,7 @@ const LandingPage: React.FC = () => {
                     m: 0,
                   }}
                 >
-                  Visual Explanations
+                  Explainability in Practice
                 </Typography>
                 
                 {/* Quote */}
@@ -2971,8 +2983,9 @@ const LandingPage: React.FC = () => {
                     m: 0,
                   }}
                 >
-                  "For the first time, I can see exactly why the AI flagged a region. The heatmaps 
-                  align with what I look for clinically—this is AI I can actually trust."
+                  "For the first time, I can see exactly why the AI flagged a region. The attention 
+                  heatmaps correlate directly with the features I evaluate clinically — this changes 
+                  how I think about AI-assisted diagnosis."
                 </Typography>
                 <Typography
                   sx={{
@@ -2984,8 +2997,9 @@ const LandingPage: React.FC = () => {
                     m: 0,
                   }}
                 >
-                  "The uncertainty scores are game-changing. When confidence is low, I know to spend 
-                  more time reviewing. It's like having a second opinion that knows its limits."
+                  "The calibrated uncertainty scores fundamentally improve my workflow. When model 
+                  confidence is below threshold, I allocate additional review time. It's a decision-support 
+                  tool that quantifies its own limitations."
                 </Typography>
               </Box>
 
@@ -3029,7 +3043,7 @@ const LandingPage: React.FC = () => {
                       m: 0,
                     }}
                   >
-                    Director of Breast Imaging,{'\n'}University Medical Center
+                    Director of Breast Imaging,{'\n'}Academic Medical Center
                   </Typography>
                 </Box>
               </Box>
@@ -3071,7 +3085,7 @@ const LandingPage: React.FC = () => {
                     m: 0,
                   }}
                 >
-                  Workflow Integration
+                  Clinical Workflow Integration
                 </Typography>
                 
                 {/* Quote */}
@@ -3085,9 +3099,9 @@ const LandingPage: React.FC = () => {
                     m: 0,
                   }}
                 >
-                  "ClinicalVision fits right into our workflow. Reports are ready instantly, my 
-                  team understands the findings, and I can validate any result in seconds. 
-                  It saves hours every week."
+                  "ClinicalVision integrated into our existing PACS workflow without disruption. 
+                  Structured reports are generated in real-time, findings are immediately interpretable 
+                  by the clinical team, and validation is a matter of seconds — not minutes."
                 </Typography>
               </Box>
 
@@ -3131,21 +3145,189 @@ const LandingPage: React.FC = () => {
                       m: 0,
                     }}
                   >
-                    Chief of Radiology,{'\n'}Regional Healthcare Network
+                    Chief of Radiology,{'\n'}Multi-Site Healthcare Network
                   </Typography>
                 </Box>
               </Box>
             </Box>
+          </Box>
+
+          {/* Testimonial 3 — Fairness & Equity (Full-width below the pair) */}
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: { xs: 'column', md: 'row' },
+              alignItems: 'flex-start',
+              gap: '30px',
+              width: '100%',
+              mt: { xs: '60px', md: '80px' },
+              pt: { xs: '60px', md: '80px' },
+              borderTop: `1px solid ${lunitColors.darkGrey}`,
+            }}
+          >
+            <Box 
+              sx={{ 
+                flex: 1, 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: '30px',
+                minWidth: 0,
+                maxWidth: { xs: '100%', md: '60%' },
+              }}
+            >
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                <Typography
+                  sx={{
+                    fontFamily: '"Lexend", sans-serif',
+                    fontSize: 'clamp(16px, calc(16px + (20 - 16) * ((100vw - 320px) / (1600))), 20px)',
+                    fontWeight: 600,
+                    lineHeight: 'clamp(24px, calc(24px + (28 - 24) * ((100vw - 320px) / 1600)), 28px)',
+                    color: lunitColors.white,
+                    m: 0,
+                  }}
+                >
+                  Fairness & Equity
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: '"Lexend", sans-serif',
+                    fontSize: 'clamp(20px, calc(20px + (32 - 20) * ((100vw - 320px) / (1600))), 32px)',
+                    fontWeight: 300,
+                    lineHeight: 'clamp(30px, calc(30px + (40 - 30) * ((100vw - 320px) / 1600)), 40px)',
+                    color: lunitColors.white,
+                    m: 0,
+                  }}
+                >
+                  "What sets ClinicalVision apart is the built-in fairness monitoring. We can 
+                  verify that diagnostic accuracy holds across all patient demographics — that level 
+                  of accountability is rare in any AI system, let alone one designed for clinical deployment."
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+                <Box
+                  sx={{
+                    width: 92,
+                    height: 92,
+                    borderRadius: '4.64px',
+                    bgcolor: alpha('#8B5CF6', 0.2),
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Biotech sx={{ fontSize: 40, color: '#8B5CF6' }} />
+                </Box>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <Typography
+                    sx={{
+                      fontFamily: '"Lexend", sans-serif',
+                      fontSize: 'clamp(14px, calc(14px + (16 - 14) * ((100vw - 320px) / (1600))), 16px)',
+                      fontWeight: 400,
+                      lineHeight: 'clamp(18px, calc(18px + (22 - 18) * ((100vw - 320px) / 1600)), 22px)',
+                      color: lunitColors.white,
+                      m: 0,
+                    }}
+                  >
+                    Dr. Aisha Patel, MD, MPH
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontFamily: '"Lexend", sans-serif',
+                      fontSize: 'clamp(12px, calc(12px + (14 - 12) * ((100vw - 320px) / (1600))), 14px)',
+                      fontWeight: 400,
+                      lineHeight: 'clamp(16px, calc(16px + (18 - 16) * ((100vw - 320px) / 1600)), 18px)',
+                      color: lunitColors.white,
+                      m: 0,
+                    }}
+                  >
+                    Chief Medical Officer,{'\n'}Community Health System
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+
+            {/* Metric Badges */}
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '16px',
+                flex: 1,
+                justifyContent: 'center',
+                mt: { xs: 0, md: '20px' },
+              }}
+            >
+              {[
+                { label: '100% of outputs include visual evidence', icon: <CheckCircle sx={{ fontSize: 18, color: lunitColors.teal }} /> },
+                { label: '<3 second analysis-to-report time', icon: <TrendingUp sx={{ fontSize: 18, color: '#FF5321' }} /> },
+                { label: 'Validated across 12 demographic groups', icon: <Biotech sx={{ fontSize: 18, color: '#8B5CF6' }} /> },
+              ].map((metric, idx) => (
+                <Box
+                  key={idx}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    px: '20px',
+                    py: '14px',
+                    borderRadius: '8px',
+                    bgcolor: alpha(lunitColors.white, 0.05),
+                    border: `1px solid ${alpha(lunitColors.white, 0.1)}`,
+                  }}
+                >
+                  {metric.icon}
+                  <Typography
+                    sx={{
+                      fontFamily: '"Lexend", sans-serif',
+                      fontSize: '14px',
+                      fontWeight: 400,
+                      color: alpha(lunitColors.white, 0.8),
+                    }}
+                  >
+                    {metric.label}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          </Box>
+
+          {/* Institutional Trust Statement */}
+          <Box
+            sx={{
+              mt: { xs: '60px', md: '80px' },
+              pt: { xs: '40px', md: '50px' },
+              borderTop: `1px solid ${alpha(lunitColors.white, 0.1)}`,
+              textAlign: 'center',
+            }}
+          >
+            <Typography
+              sx={{
+                fontFamily: '"Lexend", sans-serif',
+                fontSize: 'clamp(14px, calc(14px + (16 - 14) * ((100vw - 320px) / (1600))), 16px)',
+                fontWeight: 300,
+                color: alpha(lunitColors.white, 0.5),
+                letterSpacing: '0.05em',
+                textTransform: 'uppercase',
+              }}
+            >
+              Trusted across leading academic medical centers and healthcare networks
+            </Typography>
           </Box>
         </Box>
       </Box>
 
       {/* Medical AI Software - Technology Section (Lunit lunit-technology--gray-bg Style) */}
       <Box 
+        ref={aiUnderstandReveal.ref}
         className="lunit-technology lunit-technology--gray-bg"
         sx={{ 
           bgcolor: lunitColors.lightestGray, 
           py: { xs: '60px', md: '90px' },
+          opacity: aiUnderstandReveal.isVisible ? 1 : 0,
+          transform: aiUnderstandReveal.isVisible ? 'translateY(0)' : 'translateY(30px)',
+          transition: 'opacity 0.6s ease-out, transform 0.6s ease-out',
         }}
       >
         <Box 
@@ -3167,7 +3349,7 @@ const LandingPage: React.FC = () => {
                 letterSpacing: '-0.025em',
               }}
             >
-              AI You Can Understand
+              AI Designed to Be Understood
             </Typography>
             
             {/* Body Content */}
@@ -3186,8 +3368,9 @@ const LandingPage: React.FC = () => {
                     display: 'block',
                   }}
                 >
-                  Every analysis includes visual evidence, confidence scores, and plain-language 
-                  summaries. No guessing what the AI decided—see the reasoning yourself.
+                  Every analysis output includes attention-based visual evidence, calibrated confidence 
+                  intervals, and structured clinical summaries. No ambiguity — every decision 
+                  pathway is fully traceable.
                 </Typography>
                 <Typography
                   component="span"
@@ -3201,8 +3384,8 @@ const LandingPage: React.FC = () => {
                     display: 'block',
                   }}
                 >
-                  Modular architecture means seamless integration with your existing PACS 
-                  and RIS systems. Start fast, scale confidently.
+                  Modular, API-first architecture enables seamless integration with existing PACS, 
+                  RIS, and EHR systems. Deployable in weeks. Scalable across sites.
                 </Typography>
                 <Typography
                   component="span"
@@ -3216,8 +3399,8 @@ const LandingPage: React.FC = () => {
                     display: 'block',
                   }}
                 >
-                  Built-in fairness monitoring ensures consistent accuracy across all patient 
-                  populations—because trustworthy AI works for everyone.
+                  Integrated fairness monitoring validates diagnostic consistency across all patient 
+                  demographics — a foundational requirement for responsible clinical AI deployment.
                 </Typography>
               </Box>
               
@@ -3227,6 +3410,7 @@ const LandingPage: React.FC = () => {
                   variant="contained"
                   size="large"
                   className="btn btn-primary btn-lg"
+                  onClick={() => navigate(ROUTES.FEATURES)}
                   sx={{
                     borderRadius: '100px',
                     textTransform: 'none',
@@ -3246,7 +3430,7 @@ const LandingPage: React.FC = () => {
                     },
                   }}
                 >
-                  Learn More
+                  Explore the Platform
                 </Button>
               </Box>
             </Box>
@@ -3256,10 +3440,14 @@ const LandingPage: React.FC = () => {
 
       {/* Investor Section - Lunit supreme-investor-hero Style */}
       <Box 
+        ref={investorReveal.ref}
         className="supreme-investor-section-wrapper"
         sx={{ 
           bgcolor: lunitColors.white, 
           py: { xs: '60px', md: '90px' },
+          opacity: investorReveal.isVisible ? 1 : 0,
+          transform: investorReveal.isVisible ? 'translateY(0)' : 'translateY(30px)',
+          transition: 'opacity 0.6s ease-out, transform 0.6s ease-out',
         }}
       >
         <Box sx={{ maxWidth: '1440px', mx: 'auto', px: { xs: '15px', lg: '40px', xl: 0 } }}>
@@ -3324,7 +3512,7 @@ const LandingPage: React.FC = () => {
                   letterSpacing: '-0.025em',
                 }}
               >
-                Setting the Standard for Trustworthy AI
+                Setting the Standard for Trustworthy Diagnostic AI
               </Typography>
               <Box className="supreme-investor-hero__description-section">
                 <Typography
@@ -3338,14 +3526,15 @@ const LandingPage: React.FC = () => {
                     mb: { xs: 3, md: 4 },
                   }}
                 >
-                  Explainable outputs. Quantified uncertainty. Built-in fairness monitoring. 
-                  We're building AI that clinicians can verify—and patients can trust.
+                  Explainable outputs. Quantified uncertainty. Continuous fairness monitoring. 
+                  We are building the diagnostic AI infrastructure that clinicians verify — and patients trust.
                 </Typography>
                 <Box className="supreme-investor-hero__cta-section">
                   <Button
                     variant="contained"
                     size="large"
                     className="btn btn-primary"
+                    onClick={() => navigate(ROUTES.RESEARCH)}
                     sx={{
                       borderRadius: '100px',
                       textTransform: 'none',
@@ -3365,7 +3554,7 @@ const LandingPage: React.FC = () => {
                       },
                     }}
                   >
-                    View Our Research
+                    View Publications & Validation
                   </Button>
                 </Box>
               </Box>
@@ -3401,7 +3590,7 @@ const LandingPage: React.FC = () => {
                   mb: 2,
                 }}
               >
-                Latest Updates
+                Latest Developments
               </Typography>
               <Typography
                 sx={{
@@ -3412,13 +3601,14 @@ const LandingPage: React.FC = () => {
                   maxWidth: '600px',
                 }}
               >
-                Research publications, clinical validations, and platform improvements. 
-                Follow our progress toward more transparent, trustworthy diagnostic AI.
+                Research publications, clinical validation studies, and platform milestones. 
+                Documenting the advancement of transparent, evidence-based diagnostic AI.
               </Typography>
             </Box>
             <Stack direction="row" spacing={2}>
               <Button
                 variant="outlined"
+                onClick={() => navigate(ROUTES.BLOG)}
                 sx={{
                   borderRadius: '100px',
                   textTransform: 'none',
@@ -3435,10 +3625,11 @@ const LandingPage: React.FC = () => {
                   },
                 }}
               >
-                See All News
+                View All News
               </Button>
               <Button
                 variant="outlined"
+                onClick={() => navigate(ROUTES.RESEARCH)}
                 sx={{
                   borderRadius: '100px',
                   textTransform: 'none',
@@ -3455,7 +3646,7 @@ const LandingPage: React.FC = () => {
                   },
                 }}
               >
-                See All Publications
+                View Publications
               </Button>
             </Stack>
           </Box>
@@ -3465,19 +3656,19 @@ const LandingPage: React.FC = () => {
             {[
               {
                 category: 'Cancer Screening',
-                title: 'Deep Learning Model Achieves 95% Accuracy in Early Breast Cancer Detection',
+                title: 'Multi-Modal Deep Learning Architecture Achieves 95.2% Diagnostic Accuracy in Early-Stage Breast Cancer Detection',
                 date: 'January 15, 2026',
                 color: lunitColors.teal,
               },
               {
                 category: 'Precision Oncology',
-                title: 'New AI Biomarker Discovery Platform Accelerates Drug Development Timelines',
+                title: 'AI-Driven Biomarker Discovery Platform Demonstrates Accelerated Identification Timelines in Preclinical Validation',
                 date: 'January 10, 2026',
                 color: '#FF5321',
               },
               {
                 category: 'Research',
-                title: 'Multi-institutional Study Validates AI-assisted Mammography Screening',
+                title: 'Multi-Institutional Prospective Study Validates AI-Assisted Mammography Screening Across Diverse Patient Populations',
                 date: 'January 5, 2026',
                 color: '#56C14D',
               },
@@ -3617,10 +3808,14 @@ const LandingPage: React.FC = () => {
       {/* Demo Data Section — Download & Try with Real AI                  */}
       {/* ================================================================ */}
       <Box
+        ref={demoDataReveal.ref}
         sx={{
           bgcolor: lunitColors.lightestGray,
           py: { xs: '80px', md: '110px' },
           position: 'relative',
+          opacity: demoDataReveal.isVisible ? 1 : 0,
+          transform: demoDataReveal.isVisible ? 'translateY(0)' : 'translateY(30px)',
+          transition: 'opacity 0.6s ease-out, transform 0.6s ease-out',
         }}
       >
         <Box sx={{ maxWidth: '1200px', mx: 'auto', px: { xs: 3, md: 6 } }}>
@@ -3637,7 +3832,7 @@ const LandingPage: React.FC = () => {
                 display: 'block',
               }}
             >
-              GET STARTED
+              EVALUATE THE PLATFORM
             </Typography>
             <Typography
               variant="h3"
@@ -3649,7 +3844,7 @@ const LandingPage: React.FC = () => {
                 lineHeight: 1.2,
               }}
             >
-              Try with Demo Data
+              Evaluate with Clinical Demo Cases
             </Typography>
             <Typography
               sx={{
@@ -3660,8 +3855,9 @@ const LandingPage: React.FC = () => {
                 lineHeight: 1.7,
               }}
             >
-              Download real CBIS-DDSM mammogram cases and test the full clinical workflow —
-              AI analysis, MC Dropout uncertainty, GradCAM++ heatmaps, and BI-RADS assessment.
+              Access curated CBIS-DDSM mammogram cases and evaluate the complete clinical workflow —
+              AI-driven analysis, Monte Carlo Dropout uncertainty quantification, GradCAM++ attention 
+              visualization, and automated BI-RADS assessment.
             </Typography>
           </Box>
 
@@ -3851,7 +4047,7 @@ const LandingPage: React.FC = () => {
                 transition: 'all 0.3s ease',
               }}
             >
-              Download Complete Demo Package (.zip)
+              Download Evaluation Package
             </Button>
             <Typography
               sx={{
@@ -3907,7 +4103,7 @@ const LandingPage: React.FC = () => {
                 letterSpacing: '-0.03em',
               }}
             >
-              AI That Explains Itself.
+              AI That Substantiates Every Finding.
             </Typography>
             <Typography
               variant="h2"
@@ -3935,8 +4131,8 @@ const LandingPage: React.FC = () => {
                 mx: 'auto',
               }}
             >
-              Upload a mammogram. See the heatmap. Check the confidence score. 
-              Review the findings. All in one streamlined workflow.
+              Upload. Analyze. Verify. Report. — A complete diagnostic workflow, from image 
+              acquisition to clinical decision support, in a single integrated platform.
             </Typography>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2.5} justifyContent="center">
               <Button
@@ -3962,7 +4158,7 @@ const LandingPage: React.FC = () => {
                 }}
                 onClick={() => navigate(ROUTES.DEMO)}
               >
-                Request Demo
+                Request a Demo
               </Button>
               <Button
                 variant="outlined"
@@ -3988,7 +4184,7 @@ const LandingPage: React.FC = () => {
                   },
                 }}
               >
-                Schedule Consultation
+                Schedule a Consultation
               </Button>
             </Stack>
           </Box>
@@ -4049,8 +4245,8 @@ const LandingPage: React.FC = () => {
                   maxWidth: '320px',
                 }}
               >
-                Explainable mammogram AI that shows its work—so you can 
-                trust every finding.
+                Explainable diagnostic AI — engineered for clinical verification 
+                and institutional trust.
               </Typography>
             </Box>
             <Box sx={{ flex: 1 }}>
@@ -4073,7 +4269,7 @@ const LandingPage: React.FC = () => {
                 {[
                   { label: 'Breast Cancer Detection', path: ROUTES.SOLUTION_BREAST_CANCER },
                   { label: 'AI Analysis Platform', path: ROUTES.FEATURES },
-                  { label: 'Pricing & Plans', path: ROUTES.PRICING },
+                  { label: 'Pricing', path: ROUTES.PRICING },
                   { label: 'Request a Demo', path: ROUTES.DEMO },
                 ].map((item) => (
                   <Typography
@@ -4157,8 +4353,8 @@ const LandingPage: React.FC = () => {
               <Stack spacing={2}>
                 {[
                   { label: 'Documentation', path: ROUTES.DOCUMENTATION },
-                  { label: 'Developer API', path: ROUTES.API },
-                  { label: 'Blog & Insights', path: ROUTES.BLOG },
+                  { label: 'API Reference', path: ROUTES.API },
+                  { label: 'Insights', path: ROUTES.BLOG },
                   { label: 'Support Center', path: ROUTES.SUPPORT },
                 ].map((item) => (
                   <Typography

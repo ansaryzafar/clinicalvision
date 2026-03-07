@@ -2,8 +2,8 @@
  * Dead Elements Fixes — TDD Tests
  *
  * Verifies fixes for audit findings:
- *  B1: "Request Demo" CTA navigates to /demo
- *  B2: "Schedule Consultation" CTA navigates to /contact
+ *  B1: "Request a Demo" CTA navigates to /demo
+ *  B2: "Schedule a Consultation" CTA navigates to /contact
  *  C1: /cases appears in ModernMainLayout sidebar
  *  C2: /analysis-suite appears in ModernMainLayout sidebar
  *  B9: ContextualHelp confidence link points to valid route
@@ -101,7 +101,7 @@ describe('LandingPage CTA buttons', () => {
     mockNavigate.mockClear();
   });
 
-  it('B1: "Request Demo" button should have an onClick handler', async () => {
+  it('B1: "Request a Demo" button should have an onClick handler', async () => {
     const LandingPage = (await import('../../pages/LandingPage')).default;
     
     render(
@@ -110,8 +110,8 @@ describe('LandingPage CTA buttons', () => {
       </TestWrapper>
     );
     
-    // Find all "Request Demo" buttons — at least one should be clickable
-    const demoButtons = screen.getAllByRole('button', { name: /request demo/i });
+    // Find all "Request a Demo" buttons — at least one should be clickable
+    const demoButtons = screen.getAllByRole('button', { name: /request a demo/i });
     expect(demoButtons.length).toBeGreaterThan(0);
     
     // Click the last one (the CTA section one)
@@ -121,7 +121,7 @@ describe('LandingPage CTA buttons', () => {
     expect(mockNavigate).toHaveBeenCalledWith(ROUTES.DEMO);
   });
 
-  it('B2: "Schedule Consultation" button should have an onClick handler', async () => {
+  it('B2: "Schedule a Consultation" button should have an onClick handler', async () => {
     const LandingPage = (await import('../../pages/LandingPage')).default;
     
     render(
@@ -130,7 +130,7 @@ describe('LandingPage CTA buttons', () => {
       </TestWrapper>
     );
     
-    const consultButtons = screen.getAllByRole('button', { name: /schedule consultation/i });
+    const consultButtons = screen.getAllByRole('button', { name: /schedule a consultation/i });
     expect(consultButtons.length).toBeGreaterThan(0);
     
     fireEvent.click(consultButtons[consultButtons.length - 1]);
