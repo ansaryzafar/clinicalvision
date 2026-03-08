@@ -37,6 +37,22 @@ import {
   CheckCircleOutline,
   WarningAmber,
   FiberManualRecord,
+  BiotechOutlined,
+  AirOutlined,
+  SearchOutlined,
+  ScienceOutlined,
+  ArchitectureOutlined,
+  MenuBookOutlined,
+  SecurityOutlined,
+  DescriptionOutlined,
+  CodeOutlined,
+  ArticleOutlined,
+  SupportAgentOutlined,
+  BusinessOutlined,
+  WorkOutlineOutlined,
+  HandshakeOutlined,
+  EventOutlined,
+  ContactMailOutlined,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES, DEFAULT_AUTH_REDIRECT } from '../routes/paths';
@@ -161,9 +177,23 @@ const StatCard: React.FC<StatCardProps> = ({ value, prefix, suffix, label, index
         opacity: isVisible ? 1 : 0,
         transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
         transition: `opacity 0.6s ease-out ${index * 0.1}s, transform 0.6s ease-out ${index * 0.1}s`,
+        cursor: 'default',
+        '@media (hover: hover)': {
+          '&:hover': {
+            transform: isVisible ? 'translateY(-4px)' : 'translateY(20px)',
+            '& .stat-number': {
+              color: '#00C9EA',
+            },
+            '& .stat-divider::after': {
+              left: '-10%',
+              right: '-10%',
+            },
+          },
+        },
       }}
     >
       <Typography
+        className="stat-number"
         variant="h2"
         sx={{
           fontFamily: '"ClashGrotesk", system-ui, sans-serif',
@@ -175,12 +205,14 @@ const StatCard: React.FC<StatCardProps> = ({ value, prefix, suffix, label, index
           letterSpacing: '-0.02em',
           width: '100%',
           textAlign: 'center',
+          transition: 'color 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
         }}
       >
         {prefix}{count.toLocaleString()}{suffix}
       </Typography>
       {/* Divider line - Lunit stat-line style */}
       <Box
+        className="stat-divider"
         sx={{
           height: 0,
           position: 'relative',
@@ -194,6 +226,7 @@ const StatCard: React.FC<StatCardProps> = ({ value, prefix, suffix, label, index
             top: '-1px',
             bgcolor: lunitColors.grey,
             height: '1.2px',
+            transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
           },
         }}
       />
@@ -255,10 +288,10 @@ const LandingPage: React.FC = () => {
 
   // ── Solutions mega-dropdown data ──────────────────────────────────────
   const solutionsClinicalItems = [
-    { label: 'Breast Cancer Detection', description: 'AI-powered mammography analysis', path: ROUTES.SOLUTION_BREAST_CANCER, status: 'live' as const, icon: '🔬' },
-    { label: 'Lung Cancer Detection', description: 'Thoracic imaging AI', path: ROUTES.SOLUTION_LUNG_CANCER, status: 'coming' as const, icon: '🫁' },
-    { label: 'Prostate Cancer Detection', description: 'Histopathology grading AI', path: ROUTES.SOLUTION_PROSTATE_CANCER, status: 'coming' as const, icon: '🔎' },
-    { label: 'Colorectal Cancer Detection', description: 'Colorectal pathology AI', path: ROUTES.SOLUTION_COLORECTAL_CANCER, status: 'coming' as const, icon: '🧬' },
+    { label: 'Breast Cancer Detection', description: 'AI-powered mammography analysis', path: ROUTES.SOLUTION_BREAST_CANCER, status: 'live' as const, icon: <BiotechOutlined sx={{ fontSize: 22, color: lunitColors.teal }} /> },
+    { label: 'Lung Cancer Detection', description: 'Thoracic imaging AI', path: ROUTES.SOLUTION_LUNG_CANCER, status: 'coming' as const, icon: <AirOutlined sx={{ fontSize: 22, color: lunitColors.grey }} /> },
+    { label: 'Prostate Cancer Detection', description: 'Histopathology grading AI', path: ROUTES.SOLUTION_PROSTATE_CANCER, status: 'coming' as const, icon: <SearchOutlined sx={{ fontSize: 22, color: lunitColors.grey }} /> },
+    { label: 'Colorectal Cancer Detection', description: 'Colorectal pathology AI', path: ROUTES.SOLUTION_COLORECTAL_CANCER, status: 'coming' as const, icon: <ScienceOutlined sx={{ fontSize: 22, color: lunitColors.grey }} /> },
   ];
   const solutionsPlatformItems = [
     { label: 'Clinical Analysis Platform', description: 'End-to-end clinical workflow', path: ROUTES.FEATURES },
@@ -266,7 +299,7 @@ const LandingPage: React.FC = () => {
   ];
 
   // Navigation items — new 4-item structure
-  type NavChild = { label: string; description?: string; path: string };
+  type NavChild = { label: string; description?: string; path: string; icon?: React.ReactNode };
   type NavItem =
     | { label: string; type: 'solutions' }
     | { label: string; type: 'dropdown'; children: NavChild[] }
@@ -278,37 +311,44 @@ const LandingPage: React.FC = () => {
       label: 'Technology',
       type: 'dropdown',
       children: [
-        { label: 'AI Models & Architecture', description: 'Core technology deep-dive', path: ROUTES.TECHNOLOGY },
-        { label: 'Research & Validation', description: 'Peer-reviewed publications', path: ROUTES.RESEARCH },
-        { label: 'Security & Compliance', description: 'Trust & regulatory', path: ROUTES.SECURITY },
+        { label: 'AI Models & Architecture', description: 'Core technology deep-dive', path: ROUTES.TECHNOLOGY, icon: <ArchitectureOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
+        { label: 'Research & Validation', description: 'Peer-reviewed publications', path: ROUTES.RESEARCH, icon: <ScienceOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
+        { label: 'Security & Compliance', description: 'Trust & regulatory', path: ROUTES.SECURITY, icon: <SecurityOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
       ],
     },
     {
       label: 'Resources',
       type: 'dropdown',
       children: [
-        { label: 'Documentation', description: 'Guides & references', path: ROUTES.DOCUMENTATION },
-        { label: 'API Reference', description: 'Integration tools', path: ROUTES.API },
-        { label: 'Insights', description: 'Thought leadership', path: ROUTES.BLOG },
-        { label: 'Support', description: 'Help & FAQs', path: ROUTES.SUPPORT },
+        { label: 'Documentation', description: 'Guides & references', path: ROUTES.DOCUMENTATION, icon: <DescriptionOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
+        { label: 'API Reference', description: 'Integration tools', path: ROUTES.API, icon: <CodeOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
+        { label: 'Insights', description: 'Thought leadership', path: ROUTES.BLOG, icon: <ArticleOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
+        { label: 'Support', description: 'Help & FAQs', path: ROUTES.SUPPORT, icon: <SupportAgentOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
       ],
     },
     {
       label: 'Company',
       type: 'dropdown',
       children: [
-        { label: 'About ClinicalVision', description: 'Our mission & team', path: ROUTES.ABOUT },
-        { label: 'Careers', description: 'Join us', path: ROUTES.CAREERS },
-        { label: 'Partners', description: 'Collaborate with us', path: ROUTES.PARTNERS },
-        { label: 'Events', description: 'Conferences & webinars', path: ROUTES.EVENTS },
-        { label: 'Contact Us', description: 'Get in touch', path: ROUTES.CONTACT },
+        { label: 'About ClinicalVision', description: 'Our mission & team', path: ROUTES.ABOUT, icon: <BusinessOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
+        { label: 'Careers', description: 'Join us', path: ROUTES.CAREERS, icon: <WorkOutlineOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
+        { label: 'Partners', description: 'Collaborate with us', path: ROUTES.PARTNERS, icon: <HandshakeOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
+        { label: 'Events', description: 'Conferences & webinars', path: ROUTES.EVENTS, icon: <EventOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
+        { label: 'Contact Us', description: 'Get in touch', path: ROUTES.CONTACT, icon: <ContactMailOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
       ],
     },
   ];
 
-  // Dropdown menu state (keyed by nav label)
+  // Dropdown menu state (keyed by nav label) — mutual exclusion: only one open at a time
   const [menuAnchors, setMenuAnchors] = useState<Record<string, HTMLElement | null>>({});
-  const handleNavOpen = (label: string, el: HTMLElement) => setMenuAnchors(prev => ({ ...prev, [label]: el }));
+  const handleNavOpen = (label: string, el: HTMLElement) => {
+    // Close all other dropdowns, open only this one
+    setMenuAnchors(prev => {
+      const reset: Record<string, HTMLElement | null> = {};
+      Object.keys(prev).forEach(k => { reset[k] = null; });
+      return { ...reset, [label]: el };
+    });
+  };
   const handleNavClose = (label: string) => setMenuAnchors(prev => ({ ...prev, [label]: null }));
 
   // Mobile drawer state
@@ -388,6 +428,8 @@ const LandingPage: React.FC = () => {
               {navItems.map((item) => (
                 <React.Fragment key={item.label}>
                   <Button
+                    aria-haspopup={item.type !== 'link' ? 'true' : undefined}
+                    aria-expanded={item.type !== 'link' ? Boolean(menuAnchors[item.label]) : undefined}
                     onClick={(e) => {
                       if (item.type === 'link') {
                         navigate(item.path);
@@ -446,12 +488,14 @@ const LandingPage: React.FC = () => {
                                 mt: 1.5,
                                 borderRadius: '16px',
                                 border: `1px solid ${alpha(lunitColors.lightGray, 0.5)}`,
-                                boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+                                boxShadow: '0 20px 60px rgba(35, 50, 50, 0.12), 0 4px 20px rgba(35, 50, 50, 0.06)',
                                 overflow: 'hidden',
                                 display: 'flex',
+                                flexDirection: 'column',
                                 minWidth: 560,
                               }}
                             >
+                            <Box sx={{ display: 'flex' }}>
                               {/* Left column — Clinical AI */}
                               <Box sx={{ flex: 1, p: 3, borderRight: `1px solid ${alpha(lunitColors.lightGray, 0.4)}` }}>
                                 <Typography
@@ -468,7 +512,7 @@ const LandingPage: React.FC = () => {
                                   Clinical AI
                                 </Typography>
                                 <Stack spacing={0.5}>
-                                  {solutionsClinicalItems.map((sol) => (
+                                  {solutionsClinicalItems.map((sol, solIdx) => (
                                     <Box
                                       key={sol.label}
                                       onClick={() => { navigate(sol.path); handleNavClose(item.label); }}
@@ -481,10 +525,19 @@ const LandingPage: React.FC = () => {
                                         borderRadius: '8px',
                                         cursor: 'pointer',
                                         transition: 'all 0.2s ease',
-                                        '&:hover': { bgcolor: alpha(lunitColors.teal, 0.06) },
+                                        animation: `itemSlideIn 0.2s ease-out ${solIdx * 0.04}s both`,
+                                        '@keyframes itemSlideIn': {
+                                          '0%': { opacity: 0, transform: 'translateX(-8px)' },
+                                          '100%': { opacity: 1, transform: 'translateX(0)' },
+                                        },
+                                        '&:hover': {
+                                          bgcolor: alpha(lunitColors.teal, 0.06),
+                                          transform: 'translateX(4px)',
+                                          '& .dropdown-chevron': { opacity: 1 },
+                                        },
                                       }}
                                     >
-                                      <Typography sx={{ fontSize: '20px', lineHeight: 1.4, mt: '1px' }}>{sol.icon}</Typography>
+                                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mt: '2px', minWidth: 24 }}>{sol.icon}</Box>
                                       <Box sx={{ flex: 1 }}>
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.25 }}>
                                           <Typography
@@ -499,7 +552,7 @@ const LandingPage: React.FC = () => {
                                           </Typography>
                                           {sol.status === 'live' ? (
                                             <Chip
-                                              icon={<FiberManualRecord sx={{ fontSize: '8px !important' }} />}
+                                              icon={<FiberManualRecord sx={{ fontSize: '8px !important', animation: 'statusPulse 2s ease-in-out infinite', '@keyframes statusPulse': { '0%, 100%': { opacity: 1 }, '50%': { opacity: 0.4 } } }} />}
                                               label="Available"
                                               size="small"
                                               sx={{
@@ -538,6 +591,7 @@ const LandingPage: React.FC = () => {
                                           {sol.description}
                                         </Typography>
                                       </Box>
+                                      <ChevronRight className="dropdown-chevron" sx={{ fontSize: 16, color: lunitColors.grey, opacity: 0, transition: 'opacity 0.2s ease', mt: '4px' }} />
                                     </Box>
                                   ))}
                                 </Stack>
@@ -569,7 +623,10 @@ const LandingPage: React.FC = () => {
                                         borderRadius: '8px',
                                         cursor: 'pointer',
                                         transition: 'all 0.2s ease',
-                                        '&:hover': { bgcolor: alpha(lunitColors.teal, 0.08) },
+                                        '&:hover': {
+                                          bgcolor: alpha(lunitColors.teal, 0.08),
+                                          transform: 'translateX(4px)',
+                                        },
                                       }}
                                     >
                                       <Typography
@@ -596,6 +653,29 @@ const LandingPage: React.FC = () => {
                                   ))}
                                 </Stack>
                               </Box>
+                            </Box>
+                            {/* Promotional footer bar */}
+                            <Box
+                              onClick={() => { navigate(ROUTES.DEMO); handleNavClose(item.label); }}
+                              sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                px: 3,
+                                py: 1.5,
+                                borderTop: `1px solid ${alpha(lunitColors.lightGray, 0.5)}`,
+                                bgcolor: alpha(lunitColors.teal, 0.04),
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                '&:hover': {
+                                  bgcolor: alpha(lunitColors.teal, 0.08),
+                                },
+                              }}
+                            >
+                              <Typography sx={{ fontFamily: '"Lexend", sans-serif', fontSize: '13px', fontWeight: 500, color: lunitColors.tealDarker }}>
+                                Request a personalized demo →
+                              </Typography>
+                            </Box>
                             </Paper>
                           </Fade>
                         </ClickAwayListener>
@@ -617,14 +697,14 @@ const LandingPage: React.FC = () => {
                             mt: 1,
                             minWidth: 240,
                             borderRadius: '16px',
-                            boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+                            boxShadow: '0 20px 60px rgba(35, 50, 50, 0.12), 0 4px 20px rgba(35, 50, 50, 0.06)',
                             border: `1px solid ${alpha(lunitColors.lightGray, 0.5)}`,
                             py: 1,
                           },
                         },
                       }}
                     >
-                      {item.children.map((child) => (
+                      {item.children.map((child, childIdx) => (
                         <MenuItem
                           key={child.label}
                           onClick={() => {
@@ -634,13 +714,26 @@ const LandingPage: React.FC = () => {
                           sx={{
                             py: 1.5,
                             px: 2.5,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1.5,
                             transition: 'all 0.2s ease',
+                            animation: `itemSlideIn 0.2s ease-out ${childIdx * 0.04}s both`,
+                            '@keyframes itemSlideIn': {
+                              '0%': { opacity: 0, transform: 'translateX(-8px)' },
+                              '100%': { opacity: 1, transform: 'translateX(0)' },
+                            },
                             '&:hover': {
                               bgcolor: alpha(lunitColors.teal, 0.06),
+                              transform: 'translateX(4px)',
+                              '& .dropdown-chevron': { opacity: 1 },
                             },
                           }}
                         >
-                          <Box>
+                          {child.icon && (
+                            <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 24 }}>{child.icon}</Box>
+                          )}
+                          <Box sx={{ flex: 1 }}>
                             <Typography
                               sx={{
                                 fontFamily: '"Lexend", sans-serif',
@@ -664,6 +757,7 @@ const LandingPage: React.FC = () => {
                               </Typography>
                             )}
                           </Box>
+                          <ChevronRight className="dropdown-chevron" sx={{ fontSize: 16, color: lunitColors.grey, opacity: 0, transition: 'opacity 0.2s ease' }} />
                         </MenuItem>
                       ))}
                     </Menu>
@@ -694,13 +788,24 @@ const LandingPage: React.FC = () => {
                     color: lunitColors.text,
                     fontFamily: '"Lexend", sans-serif',
                     fontSize: '15px',
-                    fontWeight: 500,
+                    fontWeight: 600,
                     px: 2.5,
                     py: 1,
                     borderRadius: '8px',
                     letterSpacing: '0.01em',
+                    transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
                     '&:hover': { 
                       bgcolor: alpha(lunitColors.lightestGray, 0.7),
+                      transform: 'translateY(-2px)',
+                    },
+                    '&:active': {
+                      transform: 'translateY(0px) scale(0.98)',
+                      transition: 'all 0.1s ease',
+                    },
+                    '&:focus-visible': {
+                      outline: '2px solid #00C9EA',
+                      outlineOffset: '3px',
+                      boxShadow: '0 0 0 4px rgba(0, 201, 234, 0.15)',
                     },
                   }}
                 >
@@ -713,18 +818,28 @@ const LandingPage: React.FC = () => {
                     borderRadius: '100px',
                     textTransform: 'none',
                     fontFamily: '"Lexend", sans-serif',
-                    fontWeight: 500,
+                    fontWeight: 600,
                     fontSize: '15px',
                     px: 3.5,
                     py: 1.25,
                     bgcolor: lunitColors.black,
                     color: lunitColors.white,
                     boxShadow: 'none',
-                    transition: 'all 0.4s ease-in-out',
+                    transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
                     '&:hover': {
                       bgcolor: lunitColors.teal,
                       color: lunitColors.black,
-                      boxShadow: '0 4px 16px rgba(0, 201, 234, 0.4)',
+                      boxShadow: '0 6px 20px rgba(0, 201, 234, 0.3)',
+                      transform: 'translateY(-2px)',
+                    },
+                    '&:active': {
+                      transform: 'translateY(0px) scale(0.98)',
+                      transition: 'all 0.1s ease',
+                    },
+                    '&:focus-visible': {
+                      outline: '2px solid #00C9EA',
+                      outlineOffset: '3px',
+                      boxShadow: '0 0 0 4px rgba(0, 201, 234, 0.15)',
                     },
                   }}
                 >
@@ -735,6 +850,27 @@ const LandingPage: React.FC = () => {
           </Box>
         </Box>
       </Box>
+
+      {/* Backdrop overlay when dropdown is open */}
+      {Object.values(menuAnchors).some(Boolean) && (
+        <Box
+          onClick={() => {
+            setMenuAnchors(prev => {
+              const reset: Record<string, HTMLElement | null> = {};
+              Object.keys(prev).forEach(k => { reset[k] = null; });
+              return reset;
+            });
+          }}
+          sx={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 1099,
+            bgcolor: 'rgba(0, 0, 0, 0.03)',
+            backdropFilter: 'blur(2px)',
+            transition: 'opacity 0.2s ease',
+          }}
+        />
+      )}
 
       {/* Mobile Navigation Drawer */}
       <Drawer
@@ -827,8 +963,11 @@ const LandingPage: React.FC = () => {
               onClick={() => { navigate(ROUTES.LOGIN); setMobileDrawerOpen(false); }}
               sx={{
                 borderRadius: '100px', textTransform: 'none', fontFamily: '"Lexend", sans-serif',
-                fontWeight: 500, borderColor: lunitColors.lightGray, color: lunitColors.text,
-                '&:hover': { borderColor: lunitColors.teal, color: lunitColors.tealDarker },
+                fontWeight: 600, borderColor: lunitColors.lightGray, color: lunitColors.text,
+                transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+                '&:hover': { borderColor: lunitColors.teal, color: lunitColors.tealDarker, transform: 'translateY(-2px)' },
+                '&:active': { transform: 'translateY(0px) scale(0.98)', transition: 'all 0.1s ease' },
+                '&:focus-visible': { outline: '2px solid #00C9EA', outlineOffset: '3px', boxShadow: '0 0 0 4px rgba(0, 201, 234, 0.15)' },
               }}
             >
               Login
@@ -839,8 +978,11 @@ const LandingPage: React.FC = () => {
               onClick={() => { navigate(ROUTES.DEMO); setMobileDrawerOpen(false); }}
               sx={{
                 borderRadius: '100px', textTransform: 'none', fontFamily: '"Lexend", sans-serif',
-                fontWeight: 500, bgcolor: lunitColors.black, color: lunitColors.white,
-                '&:hover': { bgcolor: lunitColors.teal, color: lunitColors.black },
+                fontWeight: 600, bgcolor: lunitColors.black, color: lunitColors.white,
+                transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+                '&:hover': { bgcolor: lunitColors.teal, color: lunitColors.black, transform: 'translateY(-2px)' },
+                '&:active': { transform: 'translateY(0px) scale(0.98)', transition: 'all 0.1s ease' },
+                '&:focus-visible': { outline: '2px solid #00C9EA', outlineOffset: '3px', boxShadow: '0 0 0 4px rgba(0, 201, 234, 0.15)' },
               }}
             >
               Request a Demo
@@ -1039,7 +1181,7 @@ const LandingPage: React.FC = () => {
                   borderRadius: '100px',
                   textTransform: 'none',
                   fontFamily: '"Lexend", sans-serif',
-                  fontWeight: 500,
+                  fontWeight: 600,
                   fontSize: 'clamp(16px, calc(16px + (20 - 16) * ((100vw - 320px) / (1600))), 20px)',
                   lineHeight: 'clamp(20px, calc(20px + (24 - 20) * ((100vw - 320px) / 1600)), 24px)',
                   px: '30px',
@@ -1048,11 +1190,23 @@ const LandingPage: React.FC = () => {
                   color: lunitColors.white,
                   boxShadow: 'none',
                   gap: '10px',
-                  transition: 'all 0.4s ease-in-out',
+                  transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+                  '& .MuiButton-endIcon': { transition: 'transform 0.3s ease' },
                   '&:hover': {
                     bgcolor: lunitColors.teal,
                     color: lunitColors.black,
-                    boxShadow: 'none',
+                    boxShadow: '0 6px 20px rgba(0, 201, 234, 0.3)',
+                    transform: 'translateY(-2px)',
+                    '& .MuiButton-endIcon': { transform: 'translateX(4px)' },
+                  },
+                  '&:active': {
+                    transform: 'translateY(0px) scale(0.98)',
+                    transition: 'all 0.1s ease',
+                  },
+                  '&:focus-visible': {
+                    outline: '2px solid #00C9EA',
+                    outlineOffset: '3px',
+                    boxShadow: '0 0 0 4px rgba(0, 201, 234, 0.15)',
                   },
                 }}
               >
@@ -1067,7 +1221,7 @@ const LandingPage: React.FC = () => {
                   borderRadius: '100px',
                   textTransform: 'none',
                   fontFamily: '"Lexend", sans-serif',
-                  fontWeight: 500,
+                  fontWeight: 600,
                   fontSize: 'clamp(16px, calc(16px + (20 - 16) * ((100vw - 320px) / (1600))), 20px)',
                   lineHeight: 'clamp(20px, calc(20px + (24 - 20) * ((100vw - 320px) / 1600)), 24px)',
                   px: '30px',
@@ -1076,11 +1230,25 @@ const LandingPage: React.FC = () => {
                   borderWidth: '1px',
                   color: lunitColors.black,
                   gap: '10px',
-                  transition: 'all 0.4s ease-in-out',
+                  transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+                  '& .MuiButton-endIcon': { transition: 'transform 0.3s ease' },
                   '&:hover': {
                     borderColor: lunitColors.teal,
-                    bgcolor: 'transparent',
+                    bgcolor: 'rgba(0, 201, 234, 0.04)',
                     borderWidth: '1px',
+                    color: lunitColors.teal,
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 4px 16px rgba(0, 201, 234, 0.12)',
+                    '& .MuiButton-endIcon': { transform: 'translateX(4px)' },
+                  },
+                  '&:active': {
+                    transform: 'translateY(0px) scale(0.98)',
+                    transition: 'all 0.1s ease',
+                  },
+                  '&:focus-visible': {
+                    outline: '2px solid #00C9EA',
+                    outlineOffset: '3px',
+                    boxShadow: '0 0 0 4px rgba(0, 201, 234, 0.15)',
                   },
                 }}
               >
@@ -1418,7 +1586,7 @@ const LandingPage: React.FC = () => {
                       borderRadius: '100px',
                       textTransform: 'none',
                       fontFamily: '"Lexend", sans-serif',
-                      fontWeight: 500,
+                      fontWeight: 600,
                       fontSize: '16px',
                       px: { xs: '24px', md: '32px' },
                       py: { xs: '8px', md: '12px' },
@@ -1426,11 +1594,22 @@ const LandingPage: React.FC = () => {
                       color: lunitColors.white,
                       bgcolor: 'transparent',
                       boxShadow: 'none',
-                      transition: 'all 0.3s ease-in-out',
+                      transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
                       '&:hover': {
                         bgcolor: lunitColors.white,
                         color: lunitColors.black,
                         borderColor: lunitColors.white,
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 6px 20px rgba(255, 255, 255, 0.2)',
+                      },
+                      '&:active': {
+                        transform: 'translateY(0px) scale(0.98)',
+                        transition: 'all 0.1s ease',
+                      },
+                      '&:focus-visible': {
+                        outline: '2px solid #00C9EA',
+                        outlineOffset: '3px',
+                        boxShadow: '0 0 0 4px rgba(0, 201, 234, 0.15)',
                       },
                     }}
                   >
@@ -1712,18 +1891,30 @@ const LandingPage: React.FC = () => {
                     borderRadius: '100px',
                     textTransform: 'none',
                     fontFamily: '"Lexend", sans-serif',
-                    fontWeight: 500,
+                    fontWeight: 600,
                     fontSize: '16px',
                     px: 4,
                     py: 1.5,
                     bgcolor: lunitColors.black,
                     color: lunitColors.white,
                     boxShadow: 'none',
-                    transition: 'all 0.4s ease-in-out',
+                    transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+                    '& .MuiButton-endIcon': { transition: 'transform 0.3s ease' },
                     '&:hover': {
                       bgcolor: lunitColors.teal,
                       color: lunitColors.black,
-                      boxShadow: 'none',
+                      boxShadow: '0 6px 20px rgba(0, 201, 234, 0.3)',
+                      transform: 'translateY(-2px)',
+                      '& .MuiButton-endIcon': { transform: 'translateX(4px)' },
+                    },
+                    '&:active': {
+                      transform: 'translateY(0px) scale(0.98)',
+                      transition: 'all 0.1s ease',
+                    },
+                    '&:focus-visible': {
+                      outline: '2px solid #00C9EA',
+                      outlineOffset: '3px',
+                      boxShadow: '0 0 0 4px rgba(0, 201, 234, 0.15)',
                     },
                   }}
                 >
@@ -1737,18 +1928,30 @@ const LandingPage: React.FC = () => {
                     borderRadius: '100px',
                     textTransform: 'none',
                     fontFamily: '"Lexend", sans-serif',
-                    fontWeight: 500,
+                    fontWeight: 600,
                     fontSize: '16px',
                     px: 4,
                     py: 1.5,
                     borderColor: lunitColors.black,
                     borderWidth: '1.5px',
                     color: lunitColors.black,
-                    transition: 'all 0.4s ease-in-out',
+                    transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
                     '&:hover': {
-                      borderColor: lunitColors.black,
-                      bgcolor: alpha(lunitColors.black, 0.05),
+                      borderColor: lunitColors.teal,
+                      bgcolor: 'rgba(0, 201, 234, 0.04)',
                       borderWidth: '1.5px',
+                      color: lunitColors.teal,
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 4px 16px rgba(0, 201, 234, 0.12)',
+                    },
+                    '&:active': {
+                      transform: 'translateY(0px) scale(0.98)',
+                      transition: 'all 0.1s ease',
+                    },
+                    '&:focus-visible': {
+                      outline: '2px solid #00C9EA',
+                      outlineOffset: '3px',
+                      boxShadow: '0 0 0 4px rgba(0, 201, 234, 0.15)',
                     },
                   }}
                 >
@@ -1874,18 +2077,30 @@ const LandingPage: React.FC = () => {
                       borderRadius: '100px',
                       textTransform: 'none',
                       fontFamily: '"Lexend", sans-serif',
-                      fontWeight: 500,
+                      fontWeight: 600,
                       fontSize: '15px',
                       px: 4,
                       py: 1.5,
                       bgcolor: lunitColors.teal,
                       color: lunitColors.black,
                       boxShadow: 'none',
-                      transition: 'all 0.4s ease-in-out',
+                      transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+                      '& .MuiButton-endIcon': { transition: 'transform 0.3s ease' },
                       '&:hover': {
                         bgcolor: lunitColors.white,
                         color: lunitColors.black,
                         boxShadow: '0 6px 24px rgba(0, 201, 234, 0.4)',
+                        transform: 'translateY(-2px)',
+                        '& .MuiButton-endIcon': { transform: 'translateX(4px)' },
+                      },
+                      '&:active': {
+                        transform: 'translateY(0px) scale(0.98)',
+                        transition: 'all 0.1s ease',
+                      },
+                      '&:focus-visible': {
+                        outline: '2px solid #00C9EA',
+                        outlineOffset: '3px',
+                        boxShadow: '0 0 0 4px rgba(0, 201, 234, 0.15)',
                       },
                     }}
                   >
@@ -1911,11 +2126,12 @@ const LandingPage: React.FC = () => {
                         backdropFilter: 'blur(10px)',
                         border: `1px solid ${alpha(lunitColors.white, 0.1)}`,
                         borderTop: `2px solid ${lunitColors.teal}`,
-                        transition: 'all 0.3s ease',
+                        transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
                         '&:hover': {
                           bgcolor: alpha(lunitColors.white, 0.1),
                           borderColor: alpha(lunitColors.teal, 0.5),
                           transform: 'translateX(8px)',
+                          boxShadow: '0 -3px 0 0 #00C9EA',
                         },
                       }}
                     >
@@ -2122,18 +2338,28 @@ const LandingPage: React.FC = () => {
                       borderRadius: '100px',
                       textTransform: 'none',
                       fontFamily: '"Lexend", sans-serif',
-                      fontWeight: 500,
+                      fontWeight: 600,
                       fontSize: 'clamp(16px, calc(16px + (20 - 16) * ((100vw - 320px) / (1600))), 20px)',
                       px: '30px',
                       py: '9px',
                       bgcolor: lunitColors.black,
                       color: lunitColors.white,
                       boxShadow: 'none',
-                      transition: 'all 0.4s ease-in-out',
+                      transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
                       '&:hover': {
                         bgcolor: lunitColors.teal,
                         color: lunitColors.black,
-                        boxShadow: 'none',
+                        boxShadow: '0 6px 20px rgba(0, 201, 234, 0.3)',
+                        transform: 'translateY(-2px)',
+                      },
+                      '&:active': {
+                        transform: 'translateY(0px) scale(0.98)',
+                        transition: 'all 0.1s ease',
+                      },
+                      '&:focus-visible': {
+                        outline: '2px solid #00C9EA',
+                        outlineOffset: '3px',
+                        boxShadow: '0 0 0 4px rgba(0, 201, 234, 0.15)',
                       },
                     }}
                   >
@@ -2386,18 +2612,28 @@ const LandingPage: React.FC = () => {
                       borderRadius: '100px',
                       textTransform: 'none',
                       fontFamily: '"Lexend", sans-serif',
-                      fontWeight: 500,
+                      fontWeight: 600,
                       fontSize: 'clamp(16px, calc(16px + (20 - 16) * ((100vw - 320px) / (1600))), 20px)',
                       px: '30px',
                       py: '9px',
                       bgcolor: lunitColors.black,
                       color: lunitColors.white,
                       boxShadow: 'none',
-                      transition: 'all 0.4s ease-in-out',
+                      transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
                       '&:hover': {
                         bgcolor: lunitColors.teal,
                         color: lunitColors.black,
-                        boxShadow: 'none',
+                        boxShadow: '0 6px 20px rgba(0, 201, 234, 0.3)',
+                        transform: 'translateY(-2px)',
+                      },
+                      '&:active': {
+                        transform: 'translateY(0px) scale(0.98)',
+                        transition: 'all 0.1s ease',
+                      },
+                      '&:focus-visible': {
+                        outline: '2px solid #00C9EA',
+                        outlineOffset: '3px',
+                        boxShadow: '0 0 0 4px rgba(0, 201, 234, 0.15)',
                       },
                     }}
                   >
@@ -2543,14 +2779,19 @@ const LandingPage: React.FC = () => {
                 borderRadius: { xs: '20px', md: '30px' },
                 flexShrink: 0,
                 cursor: 'pointer',
-                transition: 'transform 0.5s ease, box-shadow 0.5s ease',
-                '&:hover': {
-                  '& .partner-card-bg': {
-                    transform: 'scale(1.2)',
-                  },
-                  '& .partner-gradient-hover': {
-                    opacity: 1,
-                    transform: 'scale(1.02)',
+                transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+                '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
+                '@media (hover: hover)': {
+                  '&:hover': {
+                    transform: 'translateY(-6px)',
+                    boxShadow: '0 -3px 0 0 #00C9EA, 0 10px 40px rgba(0, 201, 234, 0.18)',
+                    '& .partner-card-bg': {
+                      transform: 'scale(1.15)',
+                    },
+                    '& .partner-gradient-hover': {
+                      opacity: 1,
+                      transform: 'scale(1.02)',
+                    },
                   },
                 },
               }}
@@ -2645,13 +2886,27 @@ const LandingPage: React.FC = () => {
                   sx={{
                     textTransform: 'none',
                     fontFamily: '"Lexend", sans-serif',
-                    fontWeight: 500,
+                    fontWeight: 600,
                     fontSize: '15px',
                     color: lunitColors.white,
                     p: 0,
+                    borderRadius: '8px',
+                    position: 'relative',
+                    transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+                    '& .MuiButton-endIcon': { transition: 'transform 0.3s ease' },
                     '&:hover': {
                       bgcolor: 'transparent',
                       color: lunitColors.teal,
+                      '& .MuiButton-endIcon': { transform: 'translateX(4px)' },
+                    },
+                    '&:active': {
+                      transform: 'translateY(0px) scale(0.98)',
+                      transition: 'all 0.1s ease',
+                    },
+                    '&:focus-visible': {
+                      outline: '2px solid #00C9EA',
+                      outlineOffset: '3px',
+                      boxShadow: '0 0 0 4px rgba(0, 201, 234, 0.15)',
                     },
                   }}
                 >
@@ -2676,14 +2931,19 @@ const LandingPage: React.FC = () => {
                 borderRadius: { xs: '20px', md: '30px' },
                 flexShrink: 0,
                 cursor: 'pointer',
-                transition: 'transform 0.5s ease, box-shadow 0.5s ease',
-                '&:hover': {
-                  '& .partner-card-bg-2': {
-                    transform: 'scale(1.2)',
-                  },
-                  '& .partner-gradient-hover-2': {
-                    opacity: 1,
-                    transform: 'scale(1.02)',
+                transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+                '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
+                '@media (hover: hover)': {
+                  '&:hover': {
+                    transform: 'translateY(-6px)',
+                    boxShadow: '0 -3px 0 0 #00C9EA, 0 10px 40px rgba(0, 201, 234, 0.18)',
+                    '& .partner-card-bg-2': {
+                      transform: 'scale(1.15)',
+                    },
+                    '& .partner-gradient-hover-2': {
+                      opacity: 1,
+                      transform: 'scale(1.02)',
+                    },
                   },
                 },
               }}
@@ -2778,13 +3038,27 @@ const LandingPage: React.FC = () => {
                   sx={{
                     textTransform: 'none',
                     fontFamily: '"Lexend", sans-serif',
-                    fontWeight: 500,
+                    fontWeight: 600,
                     fontSize: '15px',
                     color: lunitColors.white,
                     p: 0,
+                    borderRadius: '8px',
+                    position: 'relative',
+                    transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+                    '& .MuiButton-endIcon': { transition: 'transform 0.3s ease' },
                     '&:hover': {
                       bgcolor: 'transparent',
                       color: lunitColors.teal,
+                      '& .MuiButton-endIcon': { transform: 'translateX(4px)' },
+                    },
+                    '&:active': {
+                      transform: 'translateY(0px) scale(0.98)',
+                      transition: 'all 0.1s ease',
+                    },
+                    '&:focus-visible': {
+                      outline: '2px solid #00C9EA',
+                      outlineOffset: '3px',
+                      boxShadow: '0 0 0 4px rgba(0, 201, 234, 0.15)',
                     },
                   }}
                 >
@@ -3275,6 +3549,13 @@ const LandingPage: React.FC = () => {
                     borderRadius: '8px',
                     bgcolor: alpha(lunitColors.white, 0.05),
                     border: `1px solid ${alpha(lunitColors.white, 0.1)}`,
+                    transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+                    '&:hover': {
+                      transform: 'scale(1.03)',
+                      boxShadow: '0 4px 16px rgba(0, 201, 234, 0.12)',
+                      borderColor: alpha(lunitColors.teal, 0.3),
+                      bgcolor: alpha(lunitColors.white, 0.08),
+                    },
                   }}
                 >
                   {metric.icon}
@@ -3415,18 +3696,28 @@ const LandingPage: React.FC = () => {
                     borderRadius: '100px',
                     textTransform: 'none',
                     fontFamily: '"Lexend", sans-serif',
-                    fontWeight: 500,
+                    fontWeight: 600,
                     fontSize: 'clamp(16px, calc(16px + (20 - 16) * ((100vw - 320px) / (1600))), 20px)',
                     px: '30px',
                     py: '9px',
                     bgcolor: lunitColors.black,
                     color: lunitColors.white,
                     boxShadow: 'none',
-                    transition: 'all 0.4s ease-in-out',
+                    transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
                     '&:hover': {
                       bgcolor: lunitColors.teal,
                       color: lunitColors.black,
-                      boxShadow: 'none',
+                      boxShadow: '0 6px 20px rgba(0, 201, 234, 0.3)',
+                      transform: 'translateY(-2px)',
+                    },
+                    '&:active': {
+                      transform: 'translateY(0px) scale(0.98)',
+                      transition: 'all 0.1s ease',
+                    },
+                    '&:focus-visible': {
+                      outline: '2px solid #00C9EA',
+                      outlineOffset: '3px',
+                      boxShadow: '0 0 0 4px rgba(0, 201, 234, 0.15)',
                     },
                   }}
                 >
@@ -3539,18 +3830,28 @@ const LandingPage: React.FC = () => {
                       borderRadius: '100px',
                       textTransform: 'none',
                       fontFamily: '"Lexend", sans-serif',
-                      fontWeight: 500,
+                      fontWeight: 600,
                       fontSize: 'clamp(16px, calc(16px + (20 - 16) * ((100vw - 320px) / (1600))), 20px)',
                       px: '30px',
                       py: '9px',
                       bgcolor: lunitColors.black,
                       color: lunitColors.white,
                       boxShadow: 'none',
-                      transition: 'all 0.4s ease-in-out',
+                      transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
                       '&:hover': {
                         bgcolor: lunitColors.teal,
                         color: lunitColors.black,
-                        boxShadow: 'none',
+                        boxShadow: '0 6px 20px rgba(0, 201, 234, 0.3)',
+                        transform: 'translateY(-2px)',
+                      },
+                      '&:active': {
+                        transform: 'translateY(0px) scale(0.98)',
+                        transition: 'all 0.1s ease',
+                      },
+                      '&:focus-visible': {
+                        outline: '2px solid #00C9EA',
+                        outlineOffset: '3px',
+                        boxShadow: '0 0 0 4px rgba(0, 201, 234, 0.15)',
                       },
                     }}
                   >
@@ -3613,15 +3914,28 @@ const LandingPage: React.FC = () => {
                   borderRadius: '100px',
                   textTransform: 'none',
                   fontFamily: '"Lexend", sans-serif',
-                  fontWeight: 500,
+                  fontWeight: 600,
                   fontSize: '15px',
                   px: 3,
                   py: 1,
                   borderColor: lunitColors.text,
                   color: lunitColors.text,
+                  transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
                   '&:hover': {
                     borderColor: lunitColors.teal,
                     bgcolor: alpha(lunitColors.teal, 0.05),
+                    color: lunitColors.teal,
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 4px 16px rgba(0, 201, 234, 0.12)',
+                  },
+                  '&:active': {
+                    transform: 'translateY(0px) scale(0.98)',
+                    transition: 'all 0.1s ease',
+                  },
+                  '&:focus-visible': {
+                    outline: '2px solid #00C9EA',
+                    outlineOffset: '3px',
+                    boxShadow: '0 0 0 4px rgba(0, 201, 234, 0.15)',
                   },
                 }}
               >
@@ -3634,15 +3948,28 @@ const LandingPage: React.FC = () => {
                   borderRadius: '100px',
                   textTransform: 'none',
                   fontFamily: '"Lexend", sans-serif',
-                  fontWeight: 500,
+                  fontWeight: 600,
                   fontSize: '15px',
                   px: 3,
                   py: 1,
                   borderColor: lunitColors.text,
                   color: lunitColors.text,
+                  transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
                   '&:hover': {
                     borderColor: lunitColors.teal,
                     bgcolor: alpha(lunitColors.teal, 0.05),
+                    color: lunitColors.teal,
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 4px 16px rgba(0, 201, 234, 0.12)',
+                  },
+                  '&:active': {
+                    transform: 'translateY(0px) scale(0.98)',
+                    transition: 'all 0.1s ease',
+                  },
+                  '&:focus-visible': {
+                    outline: '2px solid #00C9EA',
+                    outlineOffset: '3px',
+                    boxShadow: '0 0 0 4px rgba(0, 201, 234, 0.15)',
                   },
                 }}
               >
@@ -3680,11 +4007,15 @@ const LandingPage: React.FC = () => {
                     borderRadius: '20px',
                     overflow: 'hidden',
                     cursor: 'pointer',
-                    transition: 'transform 0.6s ease-in-out',
-                    '&:hover': {
-                      transform: 'scale(1.02)',
-                      '& .news-gradient': {
-                        opacity: 1,
+                    transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+                    '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
+                    '@media (hover: hover)': {
+                      '&:hover': {
+                        transform: 'translateY(-6px)',
+                        boxShadow: '0 -3px 0 0 #00C9EA, 0 10px 40px rgba(0, 201, 234, 0.18)',
+                        '& .news-gradient': {
+                          opacity: 1,
+                        },
                       },
                     },
                   }}
@@ -3878,11 +4209,14 @@ const LandingPage: React.FC = () => {
                 p: { xs: 3, md: 3.5 },
                 border: '1px solid',
                 borderColor: alpha(lunitColors.teal, 0.12),
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  borderColor: lunitColors.teal,
-                  boxShadow: `0 8px 32px ${alpha(lunitColors.teal, 0.12)}`,
-                  transform: 'translateY(-4px)',
+                transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+                '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
+                '@media (hover: hover)': {
+                  '&:hover': {
+                    borderColor: alpha(lunitColors.teal, 0.3),
+                    boxShadow: '0 -3px 0 0 #00C9EA, 0 10px 40px rgba(0, 201, 234, 0.18)',
+                    transform: 'translateY(-6px)',
+                  },
                 },
               }}
             >
@@ -3928,11 +4262,14 @@ const LandingPage: React.FC = () => {
                 p: { xs: 3, md: 3.5 },
                 border: '1px solid',
                 borderColor: alpha('#ff9800', 0.2),
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  borderColor: '#ff9800',
-                  boxShadow: `0 8px 32px ${alpha('#ff9800', 0.12)}`,
-                  transform: 'translateY(-4px)',
+                transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+                '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
+                '@media (hover: hover)': {
+                  '&:hover': {
+                    borderColor: alpha('#ff9800', 0.3),
+                    boxShadow: '0 -3px 0 0 #FF9800, 0 10px 40px rgba(255, 152, 0, 0.15)',
+                    transform: 'translateY(-6px)',
+                  },
                 },
               }}
             >
@@ -3978,11 +4315,14 @@ const LandingPage: React.FC = () => {
                 p: { xs: 3, md: 3.5 },
                 border: '1px solid',
                 borderColor: alpha('#f44336', 0.15),
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  borderColor: '#f44336',
-                  boxShadow: `0 8px 32px ${alpha('#f44336', 0.12)}`,
-                  transform: 'translateY(-4px)',
+                transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+                '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
+                '@media (hover: hover)': {
+                  '&:hover': {
+                    borderColor: alpha('#f44336', 0.3),
+                    boxShadow: '0 -3px 0 0 #F44336, 0 10px 40px rgba(244, 67, 54, 0.15)',
+                    transform: 'translateY(-6px)',
+                  },
                 },
               }}
             >
@@ -4036,15 +4376,24 @@ const LandingPage: React.FC = () => {
                 fontSize: '16px',
                 px: 5,
                 py: 1.8,
-                borderRadius: '12px',
+                borderRadius: '100px',
                 textTransform: 'none',
                 mb: 2,
+                transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
                 '&:hover': {
                   bgcolor: lunitColors.tealDarker,
                   transform: 'translateY(-2px)',
                   boxShadow: `0 6px 24px ${alpha(lunitColors.teal, 0.35)}`,
                 },
-                transition: 'all 0.3s ease',
+                '&:active': {
+                  transform: 'translateY(0px) scale(0.98)',
+                  transition: 'all 0.1s ease',
+                },
+                '&:focus-visible': {
+                  outline: '2px solid #00C9EA',
+                  outlineOffset: '3px',
+                  boxShadow: '0 0 0 4px rgba(0, 201, 234, 0.15)',
+                },
               }}
             >
               Download Evaluation Package
@@ -4143,17 +4492,29 @@ const LandingPage: React.FC = () => {
                   borderRadius: '100px',
                   textTransform: 'none',
                   fontFamily: '"Lexend", sans-serif',
-                  fontWeight: 500,
+                  fontWeight: 600,
                   fontSize: '17px',
                   px: 4.5,
                   py: 1.75,
                   bgcolor: lunitColors.teal,
                   color: lunitColors.black,
                   boxShadow: `0 4px 20px ${alpha(lunitColors.teal, 0.4)}`,
-                  transition: 'all 0.4s ease-in-out',
+                  transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+                  '& .MuiButton-endIcon': { transition: 'transform 0.3s ease' },
                   '&:hover': {
                     bgcolor: lunitColors.white,
                     boxShadow: `0 6px 30px ${alpha(lunitColors.white, 0.3)}`,
+                    transform: 'translateY(-2px)',
+                    '& .MuiButton-endIcon': { transform: 'translateX(4px)' },
+                  },
+                  '&:active': {
+                    transform: 'translateY(0px) scale(0.98)',
+                    transition: 'all 0.1s ease',
+                  },
+                  '&:focus-visible': {
+                    outline: '2px solid #00C9EA',
+                    outlineOffset: '3px',
+                    boxShadow: '0 0 0 4px rgba(0, 201, 234, 0.15)',
                   },
                 }}
                 onClick={() => navigate(ROUTES.DEMO)}
@@ -4168,19 +4529,30 @@ const LandingPage: React.FC = () => {
                   borderRadius: '100px',
                   textTransform: 'none',
                   fontFamily: '"Lexend", sans-serif',
-                  fontWeight: 500,
+                  fontWeight: 600,
                   fontSize: '17px',
                   px: 4.5,
                   py: 1.75,
                   borderColor: lunitColors.white,
                   borderWidth: '1.5px',
                   color: lunitColors.white,
-                  transition: 'all 0.4s ease-in-out',
+                  transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
                   '&:hover': {
                     borderColor: lunitColors.teal,
                     bgcolor: alpha(lunitColors.teal, 0.1),
                     color: lunitColors.teal,
                     borderWidth: '1.5px',
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 4px 16px rgba(0, 201, 234, 0.12)',
+                  },
+                  '&:active': {
+                    transform: 'translateY(0px) scale(0.98)',
+                    transition: 'all 0.1s ease',
+                  },
+                  '&:focus-visible': {
+                    outline: '2px solid #00C9EA',
+                    outlineOffset: '3px',
+                    boxShadow: '0 0 0 4px rgba(0, 201, 234, 0.15)',
                   },
                 }}
               >

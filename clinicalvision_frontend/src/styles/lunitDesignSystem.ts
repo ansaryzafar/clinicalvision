@@ -126,6 +126,15 @@ export const lunitShadows = {
   cardHover: '0 10px 40px rgba(35, 50, 50, 0.15)',
   // Teal-accented card hover: upward teal glow + soft depth shadow
   cardHoverTeal: '0 -3px 0 0 #00C9EA, 0 10px 40px rgba(0, 201, 234, 0.18)',
+  // Color-variant card hover shadows (clinical urgency colors)
+  cardHoverOrange: '0 -3px 0 0 #FF9800, 0 10px 40px rgba(255, 152, 0, 0.15)',
+  cardHoverRed: '0 -3px 0 0 #F44336, 0 10px 40px rgba(244, 67, 54, 0.15)',
+  cardHoverGreen: '0 -3px 0 0 #22C55E, 0 10px 40px rgba(34, 197, 94, 0.15)',
+  // Button hover shadows
+  buttonHoverTeal: '0 6px 20px rgba(0, 201, 234, 0.3)',
+  buttonHoverSubtle: '0 4px 16px rgba(0, 201, 234, 0.12)',
+  // Dropdown menu shadow
+  dropdown: '0 20px 60px rgba(35, 50, 50, 0.12), 0 4px 20px rgba(35, 50, 50, 0.06)',
 };
 
 // ============================================
@@ -200,13 +209,25 @@ export const lunitButtonStyles = {
   // Common Properties
   common: {
     fontFamily: lunitTypography.fontFamilyBody,
-    fontWeight: 500,
+    fontWeight: 600,
     borderRadius: lunitRadius.full,
     textTransform: 'none' as const,
-    transition: 'all 0.4s ease-in-out',
+    transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
     padding: '9px 24px',
     fontSize: '16px',
     lineHeight: 1.5,
+    '&:active': {
+      transform: 'translateY(0px) scale(0.98)',
+      transition: 'all 0.1s ease',
+    },
+    '&:focus-visible': {
+      outline: '2px solid #00C9EA',
+      outlineOffset: '3px',
+      boxShadow: '0 0 0 4px rgba(0, 201, 234, 0.15)',
+    },
+    '& .MuiButton-endIcon': {
+      transition: 'transform 0.3s ease',
+    },
   },
   
   // Size Variants
@@ -389,6 +410,8 @@ export const lunitTransitions = {
   button: 'all 0.4s ease-in-out',
   card: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
   hover: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  // Standardized smooth transition for buttons & cards
+  smooth: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
 };
 
 // ============================================
@@ -418,6 +441,45 @@ export const lunitAnimations = {
     '0%': { boxShadow: '0 0 0 0 rgba(0, 201, 234, 0.4)' },
     '70%': { boxShadow: '0 0 0 10px rgba(0, 201, 234, 0)' },
     '100%': { boxShadow: '0 0 0 0 rgba(0, 201, 234, 0)' },
+  },
+
+  // Dropdown enter animation (spring-like)
+  dropdownEnter: {
+    '0%': { opacity: 0, transform: 'translateY(-8px) scale(0.98)' },
+    '100%': { opacity: 1, transform: 'translateY(0) scale(1)' },
+  },
+
+  // Staggered item slide-in
+  itemSlideIn: {
+    '0%': { opacity: 0, transform: 'translateX(-8px)' },
+    '100%': { opacity: 1, transform: 'translateX(0)' },
+  },
+
+  // Status badge pulse
+  statusPulse: {
+    '0%, 100%': { opacity: 1 },
+    '50%': { opacity: 0.4 },
+  },
+
+  // Icon pulse (subtle scale)
+  iconPulse: {
+    '0%, 100%': { transform: 'scale(1)' },
+    '50%': { transform: 'scale(1.15)' },
+  },
+};
+
+// ============================================
+// STANDARDIZED CARD BASE (unified hover mixin)
+// ============================================
+export const lunitCardBase = {
+  bgcolor: lunitColors.white,
+  borderRadius: lunitRadius['2xl'],
+  border: `1px solid rgba(35, 50, 50, 0.08)`,
+  boxShadow: 'none',
+  transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+  '&:hover': {
+    transform: 'translateY(-6px)',
+    boxShadow: lunitShadows.cardHoverTeal,
   },
 };
 
@@ -865,6 +927,73 @@ export const lunitBreakpoints = {
   xl: 1536,
 };
 
+// ============================================
+// BUTTON VARIANT MIXINS (ready-to-spread)
+// ============================================
+export const lunitButtonPrimary = {
+  ...lunitButtonStyles.common,
+  bgcolor: lunitColors.black,
+  color: lunitColors.white,
+  '&:hover': {
+    bgcolor: lunitColors.teal,
+    color: lunitColors.black,
+    transform: 'translateY(-2px)',
+    boxShadow: lunitShadows.buttonHoverTeal,
+  },
+  '&:active': {
+    transform: 'translateY(0px) scale(0.98)',
+    transition: 'all 0.1s ease',
+  },
+  '&:focus-visible': {
+    outline: '2px solid #00C9EA',
+    outlineOffset: '3px',
+    boxShadow: '0 0 0 4px rgba(0, 201, 234, 0.15)',
+  },
+};
+
+export const lunitButtonOutlined = {
+  ...lunitButtonStyles.common,
+  bgcolor: 'transparent',
+  color: lunitColors.black,
+  border: `1.5px solid ${lunitColors.black}`,
+  '&:hover': {
+    bgcolor: lunitColors.black,
+    color: lunitColors.white,
+    transform: 'translateY(-2px)',
+    boxShadow: lunitShadows.buttonHoverSubtle,
+  },
+  '&:active': {
+    transform: 'translateY(0px) scale(0.98)',
+    transition: 'all 0.1s ease',
+  },
+  '&:focus-visible': {
+    outline: '2px solid #00C9EA',
+    outlineOffset: '3px',
+    boxShadow: '0 0 0 4px rgba(0, 201, 234, 0.15)',
+  },
+};
+
+export const lunitButtonAccent = {
+  ...lunitButtonStyles.common,
+  bgcolor: lunitColors.teal,
+  color: lunitColors.black,
+  '&:hover': {
+    bgcolor: lunitColors.tealDarker,
+    color: lunitColors.white,
+    transform: 'translateY(-2px)',
+    boxShadow: lunitShadows.buttonHoverTeal,
+  },
+  '&:active': {
+    transform: 'translateY(0px) scale(0.98)',
+    transition: 'all 0.1s ease',
+  },
+  '&:focus-visible': {
+    outline: '2px solid #00C9EA',
+    outlineOffset: '3px',
+    boxShadow: '0 0 0 4px rgba(0, 201, 234, 0.15)',
+  },
+};
+
 const lunitDesignSystem = {
   colors: lunitColors,
   typography: lunitTypography,
@@ -872,11 +1001,15 @@ const lunitDesignSystem = {
   shadows: lunitShadows,
   radius: lunitRadius,
   buttonStyles: lunitButtonStyles,
+  buttonPrimary: lunitButtonPrimary,
+  buttonOutlined: lunitButtonOutlined,
+  buttonAccent: lunitButtonAccent,
   gradients: lunitGradients,
   componentStyles: lunitComponentStyles,
   transitions: lunitTransitions,
   animations: lunitAnimations,
   cardStyles: lunitCardStyles,
+  cardBase: lunitCardBase,
   heroStyles: lunitHeroStyles,
   statsStyles: lunitStatsStyles,
   faqStyles: lunitFAQStyles,
