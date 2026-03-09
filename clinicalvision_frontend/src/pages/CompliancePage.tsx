@@ -16,111 +16,111 @@ import { ROUTES } from '../routes/paths';
 
 const regulations = [
   {
-    icon: <LocalHospital sx={{ fontSize: 32 }} />,
-    title: 'HIPAA',
-    region: 'United States',
-    description: 'We maintain full compliance with the Health Insurance Portability and Accountability Act, including Business Associate Agreements (BAAs) with all covered entities.',
-    features: [
-      'Administrative safeguards',
-      'Physical safeguards',
-      'Technical safeguards',
-      'Breach notification procedures',
-      'Regular risk assessments',
-    ],
-  },
-  {
     icon: <Gavel sx={{ fontSize: 32 }} />,
-    title: 'FDA',
-    region: 'United States',
-    description: 'ClinicalVision has received FDA 510(k) clearance as a Class II medical device for computer-aided detection in mammography.',
+    title: 'UK GDPR & DPA 2018',
+    region: 'United Kingdom',
+    description: 'ClinicalVision is fully compliant with the UK General Data Protection Regulation and Data Protection Act 2018, applying enhanced safeguards for special category health data under Article 9.',
     features: [
-      '510(k) clearance (pending)',
-      'Quality Management System',
-      'Design controls',
-      'Post-market surveillance',
-      'Adverse event reporting',
+      'Lawful basis for processing established',
+      'Data subject rights procedures in place',
+      'Data Protection Impact Assessments conducted',
+      'Data Processing Agreements available',
+      'ICO complaint procedures documented',
     ],
   },
   {
-    icon: <Public sx={{ fontSize: 32 }} />,
-    title: 'GDPR',
-    region: 'European Union',
-    description: 'We comply with the General Data Protection Regulation for all EU data subjects, ensuring privacy rights are protected.',
+    icon: <LocalHospital sx={{ fontSize: 32 }} />,
+    title: 'MHRA — UK Medical Device Registration',
+    region: 'United Kingdom',
+    description: 'ClinicalVision is actively preparing for registration with the Medicines and Healthcare products Regulatory Agency (MHRA) as a Software as a Medical Device (SaMD) clinical decision support tool.',
     features: [
-      'Lawful basis for processing',
-      'Data subject rights',
-      'Data Protection Impact Assessments',
-      'Data Processing Agreements',
-      'EU data residency options',
+      'SaMD classification assessment completed',
+      'Quality Management System (ISO 13485 aligned)',
+      'Risk management process (ISO 14971 applied)',
+      'Clinical evaluation programme underway',
+      'Post-market surveillance plan drafted',
     ],
   },
   {
     icon: <Verified sx={{ fontSize: 32 }} />,
-    title: 'CE Mark / MDR',
-    region: 'European Union',
-    description: 'Our software is CE marked under the Medical Device Regulation (MDR 2017/745), enabling distribution throughout the European Economic Area.',
+    title: 'IEC 62304 — Software Lifecycle',
+    region: 'International',
+    description: 'The Platform is developed following IEC 62304:2006+AMD1:2015, the international standard for medical device software lifecycle processes, ensuring traceability from requirements through to validation.',
     features: [
-      'CE marking compliance',
-      'Notified body certification',
-      'Clinical evaluation',
-      'Post-market clinical follow-up',
-      'Unique Device Identification',
+      'Software development lifecycle documented',
+      'Design controls and change management',
+      'Verification and validation procedures',
+      'Software of Unknown Provenance (SOUP) management',
+      'Full audit trails and version control',
+    ],
+  },
+  {
+    icon: <Public sx={{ fontSize: 32 }} />,
+    title: 'Future Regulatory Roadmap',
+    region: 'Global',
+    description: 'Our compliance architecture is designed for regulatory portability. We are building towards EU MDR 2017/745 CE marking and FDA AI/ML-based SaMD guidance as part of our international expansion strategy.',
+    features: [
+      'EU MDR pathway assessment initiated',
+      'FDA Pre-Submission planning',
+      'Clinical evidence generation programme',
+      'NIST AI Risk Management Framework alignment',
+      'Jurisdictional compliance packs in development',
     ],
   },
 ];
 
 const frameworks = [
   {
-    name: 'SOC 2 Type II',
-    description: 'Annual attestation of security, availability, and confidentiality controls',
-    status: 'Certified',
+    name: 'ISO 13485',
+    description: 'Quality management system aligned to medical device requirements',
+    status: 'Aligned',
+  },
+  {
+    name: 'ISO 14971',
+    description: 'Risk management applied throughout the product lifecycle',
+    status: 'Applied',
+  },
+  {
+    name: 'IEC 62304',
+    description: 'Medical device software lifecycle processes followed',
+    status: 'Applied',
   },
   {
     name: 'ISO 27001',
-    description: 'Information security management system certification',
-    status: 'Certified',
-  },
-  {
-    name: 'ISO 13485',
-    description: 'Medical device quality management system',
-    status: 'Certified',
-  },
-  {
-    name: 'HITRUST CSF',
-    description: 'Healthcare information trust framework',
-    status: 'In Progress',
+    description: 'Information security management — certification planned',
+    status: 'Planned',
   },
 ];
 
 const documents = [
   {
-    title: 'BAA Template',
-    description: 'Business Associate Agreement for HIPAA covered entities',
-    type: 'PDF',
-  },
-  {
-    title: 'SOC 2 Report',
-    description: 'Most recent SOC 2 Type II attestation report',
+    title: 'Data Processing Agreement',
+    description: 'UK GDPR-compliant DPA for institutional data controllers',
     type: 'PDF',
   },
   {
     title: 'Security Whitepaper',
-    description: 'Comprehensive overview of our security architecture',
+    description: 'Comprehensive overview of our security architecture and controls',
     type: 'PDF',
   },
   {
-    title: 'DPA Template',
-    description: 'Data Processing Agreement for GDPR compliance',
+    title: 'Privacy Impact Assessment',
+    description: 'Data Protection Impact Assessment for clinical imaging processing',
     type: 'PDF',
   },
   {
-    title: 'FDA 510(k) Summary',
-    description: 'FDA clearance documentation summary',
+    title: 'Clinical Safety Case',
+    description: 'DCB 0129 Clinical Risk Management report for health IT systems',
     type: 'PDF',
   },
   {
-    title: 'CE Declaration',
-    description: 'Declaration of Conformity for CE marking',
+    title: 'AI Model Card',
+    description: 'Model performance, training data provenance, and known limitations',
+    type: 'PDF',
+  },
+  {
+    title: 'Regulatory Roadmap',
+    description: 'MHRA, EU MDR, and FDA pathway timeline and milestones',
     type: 'PDF',
   },
 ];
@@ -279,7 +279,7 @@ const CompliancePage: React.FC = () => {
               mb: 2,
             }}
           >
-            Certifications
+            Standards & Frameworks
           </Typography>
           <Typography
             sx={{
@@ -335,8 +335,8 @@ const CompliancePage: React.FC = () => {
                     px: 2,
                     py: 0.5,
                     borderRadius: lunitRadius.full,
-                    bgcolor: alpha(fw.status === 'Certified' ? lunitColors.green : lunitColors.teal, 0.1),
-                    color: fw.status === 'Certified' ? lunitColors.green : lunitColors.teal,
+                    bgcolor: alpha(fw.status === 'Applied' || fw.status === 'Aligned' ? lunitColors.green : lunitColors.teal, 0.1),
+                    color: fw.status === 'Applied' || fw.status === 'Aligned' ? lunitColors.green : lunitColors.teal,
                     fontFamily: lunitTypography.fontFamilyBody,
                     fontSize: '12px',
                     fontWeight: 600,

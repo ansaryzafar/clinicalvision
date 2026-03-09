@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Typography, Grid, Button, alpha } from '@mui/material';
 import {
   Visibility,
@@ -8,8 +8,14 @@ import {
   Timeline,
   Hub,
   ArrowForward,
+  ImageSearch,
+  CompareArrows,
+  TrendingUp,
+  Description,
+  PinDrop,
+  ViewInAr,
 } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { PageLayout, PageHero, PageSection, CTASection } from '../../components/layout/PageLayout';
 import { ROUTES } from '../../routes/paths';
 import { lunitColors, lunitTypography, lunitRadius, lunitShadows } from '../../styles/lunitDesignSystem';
@@ -81,8 +87,69 @@ const workflowSteps = [
   },
 ];
 
+const analysisFeatures = [
+  {
+    id: 'single-view-classification',
+    icon: <ImageSearch sx={{ fontSize: 28 }} />,
+    title: 'Single-View Classification',
+    description:
+      'AI-powered analysis of individual mammogram views (CC or MLO). Our deep learning model identifies suspicious regions, classifies findings, and produces a structured risk assessment — all from a single uploaded image.',
+  },
+  {
+    id: 'dual-view-fusion',
+    icon: <ViewInAr sx={{ fontSize: 28 }} />,
+    title: 'Dual-View Fusion Analysis',
+    description:
+      'Simultaneously analyses CC and MLO views of the same breast, fusing complementary information to improve detection accuracy. Cross-view correlations reveal findings that single-view approaches may miss.',
+  },
+  {
+    id: 'bilateral-symmetry',
+    icon: <CompareArrows sx={{ fontSize: 28 }} />,
+    title: 'Bilateral Symmetry Analysis',
+    description:
+      'Compares left and right breast mammograms to detect asymmetries that may indicate pathology. Automated side-by-side analysis highlights density differences, architectural distortions, and focal asymmetries.',
+  },
+  {
+    id: 'historical-trending',
+    icon: <TrendingUp sx={{ fontSize: 28 }} />,
+    title: 'Historical Trending',
+    description:
+      'Tracks changes across sequential mammography studies over time. Automatically identifies evolving findings, new calcifications, or density changes — supporting longitudinal monitoring and early detection.',
+  },
+  {
+    id: 'clinical-narratives',
+    icon: <Description sx={{ fontSize: 28 }} />,
+    title: 'Clinical Narratives',
+    description:
+      'Generates structured, BI-RADS-aligned diagnostic reports from AI findings. Each narrative includes finding descriptions, location references, confidence levels, and recommended follow-up — ready for clinical review.',
+  },
+  {
+    id: 'anatomical-mapping',
+    icon: <PinDrop sx={{ fontSize: 28 }} />,
+    title: 'Anatomical Mapping',
+    description:
+      'Precisely localises findings within standardised breast quadrant coordinates. Interactive overlays map detected lesions to anatomical regions, making it easy for clinicians to correlate AI findings with clinical context.',
+  },
+];
+
 const BreastCancerSolutionPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Scroll to hash anchor when arriving from landing page links
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace('#', '');
+      // Small delay to ensure the page has rendered
+      const timer = setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [location.hash]);
 
   return (
     <PageLayout headerVariant="dark">
@@ -351,7 +418,7 @@ const BreastCancerSolutionPage: React.FC = () => {
             {
               title: 'Built for Regulatory Pathways',
               description:
-                'Complete data provenance, model versioning, and audit trails from day one. Designed with FDA 510(k) and CE-marking requirements in mind.',
+                'Complete data provenance, model versioning, and audit trails from day one. Developed following IEC 62304, ISO 14971, and ISO 13485 to support future MHRA, EU MDR, and FDA submissions.',
             },
           ].map((item, idx) => (
             <Grid size={{ xs: 12, sm: 6 }} key={idx}>
@@ -389,6 +456,96 @@ const BreastCancerSolutionPage: React.FC = () => {
                   }}
                 >
                   {item.description}
+                </Typography>
+              </Box>
+            </Grid>
+          ))}
+        </Grid>
+      </PageSection>
+
+      {/* Analysis Features — Anchored cards linked from landing page */}
+      <PageSection background="light">
+        <Box sx={{ textAlign: 'center', mb: 8 }}>
+          <Typography
+            sx={{
+              fontFamily: lunitTypography.fontFamilyBody,
+              fontSize: '14px',
+              fontWeight: 500,
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              color: lunitColors.teal,
+              mb: 2,
+            }}
+          >
+            Analysis Features
+          </Typography>
+          <Typography
+            sx={{
+              fontFamily: lunitTypography.fontFamilyHeading,
+              fontSize: 'clamp(28px, 4vw, 40px)',
+              fontWeight: lunitTypography.fontWeightLight,
+              color: lunitColors.headingColor,
+            }}
+          >
+            Comprehensive Mammogram Analysis Capabilities
+          </Typography>
+        </Box>
+
+        <Grid container spacing={4}>
+          {analysisFeatures.map((feature, idx) => (
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={feature.id}>
+              <Box
+                id={feature.id}
+                sx={{
+                  p: 4,
+                  height: '100%',
+                  borderRadius: lunitRadius['2xl'],
+                  bgcolor: lunitColors.white,
+                  border: `1px solid ${alpha(lunitColors.darkerGray, 0.08)}`,
+                  transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+                  scrollMarginTop: '100px',
+                  '&:hover': {
+                    boxShadow: lunitShadows.cardHoverTeal,
+                    transform: 'translateY(-6px)',
+                  },
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 56,
+                    height: 56,
+                    borderRadius: lunitRadius.lg,
+                    bgcolor: alpha(lunitColors.teal, 0.1),
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: lunitColors.teal,
+                    mb: 3,
+                  }}
+                >
+                  {feature.icon}
+                </Box>
+                <Typography
+                  sx={{
+                    fontFamily: lunitTypography.fontFamilyHeading,
+                    fontSize: '18px',
+                    fontWeight: 500,
+                    color: lunitColors.headingColor,
+                    mb: 1.5,
+                  }}
+                >
+                  {feature.title}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: lunitTypography.fontFamilyBody,
+                    fontSize: '14px',
+                    fontWeight: 300,
+                    color: lunitColors.text,
+                    lineHeight: 1.7,
+                  }}
+                >
+                  {feature.description}
                 </Typography>
               </Box>
             </Grid>

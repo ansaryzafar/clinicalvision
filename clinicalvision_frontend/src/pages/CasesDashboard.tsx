@@ -70,18 +70,35 @@ export const CasesDashboard: React.FC = () => {
   const navigate = useNavigate();
   const { createNewSession } = useLegacyWorkflow();
   
-  const [sessions, setSessions] = useState<AnalysisSession[]>([]);
-  const [filteredSessions, setFilteredSessions] = useState<AnalysisSession[]>([]);
+  // Eager initialization — avoids flash-of-empty-state by loading synchronous
+  // localStorage data before the first paint instead of waiting for useEffect.
+  const [sessions, setSessions] = useState<AnalysisSession[]>(
+    () => {
+      const allSessions = clinicalSessionService.getAllSessions();
+      allSessions.sort(
+        (a: AnalysisSession, b: AnalysisSession) =>
+          new Date(b.metadata.lastModified).getTime() -
+          new Date(a.metadata.lastModified).getTime()
+      );
+      return allSessions;
+    }
+  );
+  const [filteredSessions, setFilteredSessions] = useState<AnalysisSession[]>(
+    () => {
+      const allSessions = clinicalSessionService.getAllSessions();
+      allSessions.sort(
+        (a: AnalysisSession, b: AnalysisSession) =>
+          new Date(b.metadata.lastModified).getTime() -
+          new Date(a.metadata.lastModified).getTime()
+      );
+      return allSessions;
+    }
+  );
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [sortMode, setSortMode] = useState<'recent' | 'priority'>('recent');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [sessionToDelete, setSessionToDelete] = useState<string | null>(null);
-
-  // Load all sessions on mount
-  useEffect(() => {
-    refreshSessions();
-  }, []);
 
   // Helper: Calculate priority score for AI-based worklist sorting
   // Article: "ML-based worklist prioritization by identifying key factors responsible for workflow outcomes"

@@ -31,7 +31,7 @@ const securityFeatures = [
   {
     icon: <Storage sx={{ fontSize: 32 }} />,
     title: 'Secure Infrastructure',
-    description: 'SOC 2 Type II certified data centers with redundancy across multiple regions.',
+    description: 'Hosted on enterprise-grade cloud infrastructure with encryption, access controls, and redundancy.',
   },
   {
     icon: <Policy sx={{ fontSize: 32 }} />,
@@ -47,34 +47,34 @@ const securityFeatures = [
 
 const certifications = [
   {
-    name: 'HIPAA',
-    description: 'Health Insurance Portability and Accountability Act compliant',
-    icon: '🏥',
+    name: 'UK GDPR & DPA 2018',
+    description: 'Compliant with UK data protection legislation for health data',
+    icon: '🇬🇧',
   },
   {
-    name: 'SOC 2 Type II',
-    description: 'Service Organization Control security certification',
-    icon: '🔒',
+    name: 'IEC 62304',
+    description: 'Software development lifecycle following medical device standards',
+    icon: '⚙️',
   },
   {
-    name: 'FDA 510(k)',
-    description: 'FDA cleared medical device software',
-    icon: '✅',
+    name: 'ISO 14971',
+    description: 'Risk management processes applied throughout development',
+    icon: '🛡️',
   },
   {
-    name: 'ISO 27001',
-    description: 'Information security management system certification',
+    name: 'ISO 13485',
+    description: 'Quality management system aligned to medical device requirements',
     icon: '📋',
   },
   {
-    name: 'GDPR',
-    description: 'General Data Protection Regulation compliant',
-    icon: '🇪🇺',
+    name: 'MHRA SaMD Pathway',
+    description: 'Actively preparing for UK medical device registration',
+    icon: '🏥',
   },
   {
-    name: 'CE Mark',
-    description: 'European Conformity for medical devices',
-    icon: '🏛️',
+    name: 'AES-256 & TLS 1.3',
+    description: 'Enterprise-grade encryption for data at rest and in transit',
+    icon: '🔒',
   },
 ];
 
@@ -210,7 +210,7 @@ const SecurityPage: React.FC = () => {
               color: lunitColors.headingColor,
             }}
           >
-            Certifications & Compliance
+            Standards & Compliance
           </Typography>
         </Box>
 

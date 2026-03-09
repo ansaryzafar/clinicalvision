@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Typography, Grid, Button, alpha } from '@mui/material';
 import {
   Psychology,
@@ -9,8 +9,11 @@ import {
   VerifiedUser,
   Hub,
   AutoGraph,
+  Gradient,
+  QueryStats,
+  Balance,
 } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { PageLayout, PageHero, PageSection, CTASection } from '../components/layout/PageLayout';
 import { ROUTES } from '../routes/paths';
 import { lunitColors, lunitTypography, lunitRadius, lunitShadows } from '../styles/lunitDesignSystem';
@@ -69,8 +72,61 @@ const architectureHighlights = [
   },
 ];
 
+const platformCapabilities = [
+  {
+    id: 'explainable-ai',
+    icon: <Visibility sx={{ fontSize: 28 }} />,
+    title: 'Explainable AI',
+    description:
+      'GradCAM attention maps and activation overlays visualise exactly which image regions drive each prediction. Clinicians see the evidence behind every finding — making AI reasoning transparent and verifiable.',
+  },
+  {
+    id: 'uncertainty-quantification',
+    icon: <Psychology sx={{ fontSize: 28 }} />,
+    title: 'Uncertainty Quantification',
+    description:
+      'Monte Carlo dropout produces calibrated confidence intervals on every prediction. Cases with high uncertainty are automatically flagged for priority review, ensuring ambiguous findings receive human attention.',
+  },
+  {
+    id: 'integrated-gradients',
+    icon: <Gradient sx={{ fontSize: 28 }} />,
+    title: 'Integrated Gradients Analysis',
+    description:
+      'Pixel-level attribution maps reveal the contribution of each input region to the model\'s output. Unlike simple saliency maps, integrated gradients satisfy theoretical axioms that guarantee faithful explanations.',
+  },
+  {
+    id: 'calibrated-confidence',
+    icon: <QueryStats sx={{ fontSize: 28 }} />,
+    title: 'Calibrated Confidence Scores',
+    description:
+      'Statistically validated confidence outputs where a stated 90% confidence corresponds to 90% real-world accuracy. Platt scaling and temperature calibration ensure scores clinicians can trust and act upon.',
+  },
+  {
+    id: 'fairness-monitoring',
+    icon: <Balance sx={{ fontSize: 28 }} />,
+    title: 'Fairness Monitoring',
+    description:
+      'Continuous demographic parity tracking across age, ethnicity, and density subgroups. Sensitivity parity, specificity parity, and AUC parity metrics ensure equitable diagnostic performance for all patient populations.',
+  },
+];
+
 const TechnologyPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Scroll to hash anchor when arriving from landing page links
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace('#', '');
+      const timer = setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [location.hash]);
 
   return (
     <PageLayout headerVariant="dark">
@@ -336,9 +392,9 @@ const TechnologyPage: React.FC = () => {
                 'From attending radiologists to residents and referring GPs, our explainability layers are designed to be understandable without requiring AI expertise.',
             },
             {
-              title: 'Regulatory-Ready',
+              title: 'Built for Regulatory Pathways',
               description:
-                'Built with FDA and CE-mark pathways in mind from day one. Full audit trails, data provenance, and model versioning are integral to the platform.',
+                'Developed following IEC 62304 and ISO 14971 from day one. Full audit trails, data provenance, and model versioning support future MHRA, CE, and FDA submissions.',
             },
           ].map((item, idx) => (
             <Grid size={{ xs: 12, sm: 6 }} key={idx}>
@@ -376,6 +432,96 @@ const TechnologyPage: React.FC = () => {
                   }}
                 >
                   {item.description}
+                </Typography>
+              </Box>
+            </Grid>
+          ))}
+        </Grid>
+      </PageSection>
+
+      {/* Platform Capabilities — Anchored cards linked from landing page */}
+      <PageSection>
+        <Box sx={{ textAlign: 'center', mb: 8 }}>
+          <Typography
+            sx={{
+              fontFamily: lunitTypography.fontFamilyBody,
+              fontSize: '14px',
+              fontWeight: 500,
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              color: lunitColors.teal,
+              mb: 2,
+            }}
+          >
+            Platform Capabilities
+          </Typography>
+          <Typography
+            sx={{
+              fontFamily: lunitTypography.fontFamilyHeading,
+              fontSize: 'clamp(28px, 4vw, 40px)',
+              fontWeight: lunitTypography.fontWeightLight,
+              color: lunitColors.headingColor,
+            }}
+          >
+            Explainability & Responsible AI
+          </Typography>
+        </Box>
+
+        <Grid container spacing={4}>
+          {platformCapabilities.map((cap) => (
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={cap.id}>
+              <Box
+                id={cap.id}
+                sx={{
+                  p: 4,
+                  height: '100%',
+                  borderRadius: lunitRadius['2xl'],
+                  bgcolor: lunitColors.white,
+                  border: `1px solid ${alpha(lunitColors.darkerGray, 0.08)}`,
+                  transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+                  scrollMarginTop: '100px',
+                  '&:hover': {
+                    boxShadow: lunitShadows.cardHoverTeal,
+                    transform: 'translateY(-6px)',
+                  },
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 56,
+                    height: 56,
+                    borderRadius: lunitRadius.lg,
+                    bgcolor: alpha(lunitColors.teal, 0.1),
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: lunitColors.teal,
+                    mb: 3,
+                  }}
+                >
+                  {cap.icon}
+                </Box>
+                <Typography
+                  sx={{
+                    fontFamily: lunitTypography.fontFamilyHeading,
+                    fontSize: '18px',
+                    fontWeight: 500,
+                    color: lunitColors.headingColor,
+                    mb: 1.5,
+                  }}
+                >
+                  {cap.title}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: lunitTypography.fontFamilyBody,
+                    fontSize: '14px',
+                    fontWeight: 300,
+                    color: lunitColors.text,
+                    lineHeight: 1.7,
+                  }}
+                >
+                  {cap.description}
                 </Typography>
               </Box>
             </Grid>

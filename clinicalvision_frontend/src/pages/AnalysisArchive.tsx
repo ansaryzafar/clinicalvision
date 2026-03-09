@@ -75,8 +75,10 @@ import { useTheme } from '@mui/material/styles';
 export const AnalysisArchive: React.FC = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const [analyses, setAnalyses] = useState<SavedAnalysis[]>([]);
-  const [filteredAnalyses, setFilteredAnalyses] = useState<SavedAnalysis[]>([]);
+  // Eager initialization — avoids flash-of-empty-state by loading synchronous
+  // localStorage data before the first paint instead of waiting for useEffect.
+  const [analyses, setAnalyses] = useState<SavedAnalysis[]>(() => getAllAnalyses());
+  const [filteredAnalyses, setFilteredAnalyses] = useState<SavedAnalysis[]>(() => getAllAnalyses());
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedAnalysis, setSelectedAnalysis] = useState<SavedAnalysis | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -84,11 +86,6 @@ export const AnalysisArchive: React.FC = () => {
   const [analysisToDelete, setAnalysisToDelete] = useState<string | null>(null);
   const [predictionFilter, setPredictionFilter] = useState<string>('all');
   const [sortOrder, setSortOrder] = useState<string>('newest');
-
-  // Load analyses on mount
-  useEffect(() => {
-    loadAnalyses();
-  }, []);
 
   // Filter and sort analyses
   useEffect(() => {

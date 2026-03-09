@@ -35,7 +35,7 @@ const docCategories = [
     icon: <Security sx={{ fontSize: 32 }} />,
     title: 'Security & Compliance',
     description: 'Security best practices and compliance documentation.',
-    links: ['HIPAA Compliance', 'Data Encryption', 'Access Controls', 'Audit Logging'],
+    links: ['UK GDPR Compliance', 'Data Encryption', 'Access Controls', 'Audit Logging'],
   },
   {
     icon: <MenuBook sx={{ fontSize: 32 }} />,

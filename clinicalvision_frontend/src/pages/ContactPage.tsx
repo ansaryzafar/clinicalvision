@@ -15,40 +15,45 @@ const contactMethods = [
   {
     icon: <Phone sx={{ fontSize: 32 }} />,
     title: 'Call Us',
-    value: '+1 (888) 555-0123',
-    description: 'Mon-Fri, 9am-6pm EST',
+    value: '+44 7729 773519',
+    description: 'Mon-Fri, 9am-6pm GMT',
   },
   {
     icon: <LocationOn sx={{ fontSize: 32 }} />,
     title: 'Visit Us',
-    value: '548 Market Street, Suite 95673',
-    description: 'San Francisco, CA 94104',
+    value: '24 Sandymount Avenue',
+    description: 'Harrow, Middlesex, UK',
   },
 ];
 
 const offices = [
-  { city: 'San Francisco', country: 'United States', type: 'Headquarters' },
-  { city: 'Boston', country: 'United States', type: 'Research' },
-  { city: 'London', country: 'United Kingdom', type: 'Europe' },
-  { city: 'Singapore', country: 'Singapore', type: 'Asia Pacific' },
+  { city: 'Harrow', country: 'United Kingdom', type: 'UK Head Office' },
 ];
 
 const faqs = [
   {
-    question: 'How quickly can we get started with ClinicalVision?',
-    answer: 'Implementation typically takes 2-4 weeks depending on your existing infrastructure. Our team works closely with your IT department to ensure a smooth integration with your PACS and EHR systems.',
+    question: 'What is the typical deployment timeline for an enterprise implementation?',
+    answer: 'Standard deployment completes in 2–4 weeks, including PACS/RIS integration, user provisioning, and clinical validation. Complex multi-site deployments with custom integrations typically require 6–8 weeks. A dedicated implementation engineer is assigned throughout onboarding to ensure zero-disruption go-live.',
   },
   {
-    question: 'What kind of training do you provide?',
-    answer: 'We offer comprehensive onboarding including live training sessions, documentation, and dedicated support. Most radiologists become proficient within the first week of use.',
+    question: 'What training and clinical onboarding programmes are available?',
+    answer: 'We provide structured onboarding including hands-on clinical training sessions, comprehensive documentation, workflow-specific video guides, and sandbox environments for practice. Enterprise customers receive tailored training curricula aligned with their departmental protocols. Most radiologists achieve proficiency within the first week.',
   },
   {
-    question: 'Is ClinicalVision FDA cleared?',
-    answer: 'Yes, ClinicalVision has received FDA 510(k) clearance and CE Mark certification under EU MDR. Our AI meets the highest regulatory standards for clinical use.',
+    question: 'What is ClinicalVision\'s regulatory status?',
+    answer: 'ClinicalVision is developed as a Software as a Medical Device (SaMD) clinical decision support tool following IEC 62304, ISO 14971, and ISO 13485-aligned processes. We are actively preparing for MHRA registration in the UK. Our compliance architecture is designed for regulatory portability to support future EU MDR and FDA submissions. The Platform has not yet received regulatory clearance — contact us for our current regulatory roadmap.',
   },
   {
-    question: 'How does pricing work?',
-    answer: 'We offer flexible pricing based on your volume and needs. Contact our sales team for a customized quote that fits your practice size and workflow requirements.',
+    question: 'How is enterprise and institutional pricing structured?',
+    answer: 'Pricing is tailored to institutional volume, deployment model, and required support tier. We offer annual and multi-year licensing with volume-based pricing, dedicated support options, and optional on-premises or private-cloud deployment. Contact us for a detailed proposal aligned with your institution\'s requirements.',
+  },
+  {
+    question: 'Can ClinicalVision be deployed on-premises or in a private cloud?',
+    answer: 'Yes. In addition to our managed cloud offering, ClinicalVision supports on-premises deployment and private-cloud hosting within your institution\'s infrastructure. This enables full data sovereignty and compliance with institutional data governance policies. Deployment architecture is discussed during the enterprise scoping phase.',
+  },
+  {
+    question: 'What Service Level Agreements are available for enterprise customers?',
+    answer: 'Enterprise SLAs include 99.9%+ uptime guarantees, 1-hour critical-issue response, dedicated account management, scheduled maintenance windows, and service credits for any downtime exceeding agreed thresholds. Custom SLA terms are negotiated as part of each enterprise agreement.',
   },
 ];
 

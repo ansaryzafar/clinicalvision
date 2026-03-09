@@ -38,8 +38,8 @@ const features = [
   },
   {
     icon: <Security sx={{ fontSize: 40 }} />,
-    title: 'HIPAA Compliant',
-    description: 'Enterprise-grade security with end-to-end encryption, audit logging, and full regulatory compliance.',
+    title: 'Clinical-Grade Security',
+    description: 'Enterprise-grade encryption (TLS 1.3, AES-256), comprehensive audit logging, and UK GDPR-compliant data protection.',
   },
   {
     icon: <LocalHospital sx={{ fontSize: 40 }} />,

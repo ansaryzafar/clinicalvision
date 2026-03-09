@@ -45,12 +45,12 @@ const benefits = [
 ];
 
 const openings = [
-  { title: 'Senior Machine Learning Engineer', department: 'AI Research', location: 'Remote / San Francisco', type: 'Full-time' },
-  { title: 'Clinical Product Manager', department: 'Product', location: 'Boston', type: 'Full-time' },
+  { title: 'Senior Machine Learning Engineer', department: 'AI Research', location: 'Remote / London', type: 'Full-time' },
+  { title: 'Clinical Product Manager', department: 'Product', location: 'London', type: 'Full-time' },
   { title: 'Full Stack Engineer', department: 'Engineering', location: 'Remote', type: 'Full-time' },
-  { title: 'Medical Imaging Specialist', department: 'Clinical', location: 'New York', type: 'Full-time' },
+  { title: 'Medical Imaging Specialist', department: 'Clinical', location: 'London', type: 'Full-time' },
   { title: 'DevOps Engineer', department: 'Infrastructure', location: 'Remote', type: 'Full-time' },
-  { title: 'UX Designer', department: 'Design', location: 'San Francisco', type: 'Full-time' },
+  { title: 'UX Designer', department: 'Design', location: 'London', type: 'Full-time' },
 ];
 
 const testimonials = [

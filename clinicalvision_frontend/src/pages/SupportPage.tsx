@@ -32,7 +32,7 @@ const supportChannels = [
     icon: <Phone sx={{ fontSize: 32 }} />,
     title: 'Phone Support',
     description: 'Speak directly with our team',
-    availability: 'Mon-Fri, 9am-6pm EST',
+    availability: 'Mon-Fri, 9am-6pm GMT',
     action: 'Call Now',
   },
   {
@@ -46,28 +46,44 @@ const supportChannels = [
 
 const faqs = [
   {
-    question: 'How do I reset my password?',
-    answer: 'You can reset your password by clicking "Forgot Password" on the login page. Enter your email address and we\'ll send you a secure link to create a new password. For security, the link expires after 24 hours.',
+    question: 'What is ClinicalVision\'s regulatory classification and compliance status?',
+    answer: 'ClinicalVision is developed as a Software as a Medical Device (SaMD) clinical decision support tool following IEC 62304:2006+AMD1:2015, ISO 14971:2019, and ISO 13485:2016-aligned processes. We are actively preparing for MHRA registration in the UK and have designed our compliance architecture for regulatory portability across EU MDR 2017/745 and FDA AI/ML-based SaMD guidance. The Platform has not yet received regulatory clearance from any authority — contact us for our current regulatory roadmap and timeline.',
   },
   {
-    question: 'What image formats does ClinicalVision accept?',
-    answer: 'ClinicalVision accepts DICOM format files, which is the standard for medical imaging. We support mammography studies including both CC (craniocaudal) and MLO (mediolateral oblique) views. JPEG and PNG formats are supported for demonstration purposes only.',
+    question: 'How does the Platform integrate with existing PACS, RIS, and EHR infrastructure?',
+    answer: 'ClinicalVision supports native DICOM ingestion and provides documented REST APIs for integration with Picture Archiving and Communication Systems, Radiology Information Systems, and Electronic Health Record platforms. We support DICOM, HL7 FHIR, and DICOMweb standards. Dedicated integration engineers are assigned during enterprise onboarding to ensure zero-disruption deployment.',
   },
   {
-    question: 'How long does analysis take?',
-    answer: 'Standard analysis completes in under 3 seconds per image. Batch processing of multiple studies may take longer depending on volume. Enterprise customers can access priority processing for time-sensitive cases.',
+    question: 'What encryption and data security measures protect patient information?',
+    answer: 'All data in transit is protected using TLS 1.3 with strong cipher suites. Data at rest is encrypted using AES-256. Infrastructure is hosted on enterprise-grade cloud platforms with role-based access control, multi-factor authentication, network segmentation, intrusion detection, and immutable audit logging. We conduct regular security reviews and are working towards independent penetration testing and formal security attestation as part of our security maturity programme.',
   },
   {
-    question: 'Is my patient data secure?',
-    answer: 'Yes, we employ enterprise-grade security measures including end-to-end encryption (TLS 1.3), at-rest encryption (AES-256), and strict access controls. We are HIPAA compliant and undergo regular third-party security audits.',
+    question: 'Does ClinicalVision use patient data to train its AI models?',
+    answer: 'No. Production models are trained exclusively on publicly available, de-identified datasets. Patient data uploaded by Platform users is never used for model training without explicit institutional consent, a formal Data Processing Agreement, and documented ethical approval. Any opted-in data undergoes full de-identification in accordance with ICO anonymisation guidance.',
   },
   {
-    question: 'Can I integrate ClinicalVision with my PACS?',
-    answer: 'Yes, ClinicalVision integrates with all major PACS vendors. We support DICOM, HL7, and FHIR standards. Our implementation team will work with you to ensure seamless integration with your existing workflow.',
+    question: 'What explainability tools are available for AI-generated predictions?',
+    answer: 'The Platform provides multiple explainability frameworks including Grad-CAM, Grad-CAM++, LIME, SHAP, and Integrated Gradients, enabling clinicians to inspect the evidential basis of each prediction. Uncertainty quantification via Monte Carlo Dropout provides epistemic uncertainty estimates, predictive entropy, and mutual information metrics to flag low-confidence cases for additional review.',
   },
   {
-    question: 'What is your uptime guarantee?',
-    answer: 'We maintain 99.99% uptime with redundant infrastructure across multiple data centers. Enterprise customers receive SLA guarantees with credits for any downtime exceeding guaranteed levels.',
+    question: 'How are AI model updates validated before production deployment?',
+    answer: 'Every model update undergoes rigorous validation against clinical performance benchmarks, demographic bias analysis (demographic parity, equalised odds), and regression testing across held-out test sets. Enterprise customers receive advance notification of material updates with the option to review validation reports, and may schedule deployment windows to align with institutional change-management procedures.',
+  },
+  {
+    question: 'What is the default data retention policy and can it be customised?',
+    answer: 'Patient imaging data and AI analysis outputs are retained for 90 days from analysis by default. Institutional customers may configure extended or reduced retention periods through their service agreement. Upon expiry or account termination, data is securely deleted using NIST SP 800-88 compliant sanitisation methods. A 30-day data export window is provided following any termination.',
+  },
+  {
+    question: 'What AI fairness monitoring and bias mitigation capabilities does the Platform offer?',
+    answer: 'ClinicalVision monitors model performance across demographic groups using demographic parity and equalised odds metrics, aligned with the NIST AI Risk Management Framework and MHRA guidance on AI as a medical device. Fairness dashboards provide real-time visibility into model behaviour across patient subgroups, and bias reports are available on request for institutional governance review.',
+  },
+  {
+    question: 'What are the available support tiers and response time guarantees?',
+    answer: 'Standard support includes email response within 24 hours and access to our knowledge base. Professional tier adds priority queue with 4-hour response during business hours. Enterprise customers receive dedicated account management, 1-hour critical-issue response, 24/7 phone support, and custom SLA terms with uptime guarantees backed by service credits.',
+  },
+  {
+    question: 'How does the Platform handle data subject access and erasure requests under UK GDPR?',
+    answer: 'Data subject access requests (Article 15) and erasure requests (Article 17) are processed in full compliance with UK GDPR. Requests should be directed to legal@clinicalvision.ai. We respond within one calendar month, with provision for a two-month extension for complex requests. Where we act as data processor, requests are coordinated with the institutional data controller per the Data Processing Agreement.',
   },
 ];
 

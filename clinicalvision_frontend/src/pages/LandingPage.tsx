@@ -2168,16 +2168,16 @@ const LandingPage: React.FC = () => {
         </Box>
       </Box>
 
-      {/* Solutions Overview Section - Lunit Exact Design */}
+      {/* Solutions Overview Section - Enhanced Design */}
       <Box 
         ref={aiCareReveal.ref}
         className="solutions-overview-wrapper"
         sx={{ 
           bgcolor: lunitColors.white, 
-          py: { xs: '60px', md: '90px' },
+          py: { xs: '60px', md: '100px' },
           opacity: aiCareReveal.isVisible ? 1 : 0,
           transform: aiCareReveal.isVisible ? 'translateY(0)' : 'translateY(30px)',
-          transition: 'opacity 0.6s ease-out, transform 0.6s ease-out',
+          transition: 'opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
         <Box
@@ -2188,10 +2188,10 @@ const LandingPage: React.FC = () => {
             px: { xs: '15px', lg: '40px', xl: 0 },
           }}
         >
-          {/* Section Header - Left aligned like Lunit */}
+          {/* Section Header */}
           <Box 
             className="solutions-overview__header"
-            sx={{ textAlign: 'left', mb: { xs: '40px', md: '50px' } }}
+            sx={{ textAlign: 'left', mb: { xs: '48px', md: '64px' } }}
           >
             <Typography
               variant="h2"
@@ -2213,7 +2213,7 @@ const LandingPage: React.FC = () => {
           {/* Solutions Content */}
           <Box className="solutions-overview__content" sx={{ display: 'flex', flexDirection: 'column', gap: { xs: '50px', md: '60px' } }}>
             
-            {/* Cancer Screening Section */}
+            {/* ─── Mammogram Analysis Suite ─── */}
             <Box 
               className="solutions-overview__category"
               data-category="cancer-screening"
@@ -2224,7 +2224,7 @@ const LandingPage: React.FC = () => {
                 flexDirection: { xs: 'column', md: 'row' },
               }}
             >
-              {/* Category Main - Icon, Title, Description, CTA */}
+              {/* Category Info Panel */}
               <Box 
                 className="solutions-overview__category-main"
                 sx={{
@@ -2237,7 +2237,6 @@ const LandingPage: React.FC = () => {
                 }}
               >
                 <Box className="solutions-overview__category-info" sx={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                  {/* Header with Icon and Title */}
                   <Box 
                     className="solutions-overview__category-header"
                     sx={{ display: 'flex', alignItems: 'center', gap: '15px' }}
@@ -2252,7 +2251,12 @@ const LandingPage: React.FC = () => {
                         alignItems: 'center',
                         justifyContent: 'center',
                         bgcolor: alpha(lunitColors.teal, 0.1),
-                        borderRadius: '12px',
+                        borderRadius: '16px',
+                        transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                        '&:hover': {
+                          bgcolor: alpha(lunitColors.teal, 0.18),
+                          transform: 'scale(1.05)',
+                        },
                       }}
                     >
                       <Biotech sx={{ color: lunitColors.teal, fontSize: { xs: 28, md: 56 } }} />
@@ -2274,7 +2278,6 @@ const LandingPage: React.FC = () => {
                     </Typography>
                   </Box>
                   
-                  {/* Description */}
                   <Box 
                     className="solutions-overview__category-description"
                     sx={{ maxWidth: { xs: '100%', md: '85%' } }}
@@ -2309,7 +2312,6 @@ const LandingPage: React.FC = () => {
                   </Box>
                 </Box>
                 
-                {/* CTA Button */}
                 <Box className="solutions-overview__category-cta" sx={{ mt: '10px' }}>
                   <Button
                     variant="contained"
@@ -2350,144 +2352,146 @@ const LandingPage: React.FC = () => {
                 </Box>
               </Box>
 
-              {/* Solutions Grid - Two columns */}
+              {/* Solutions Grid — Clickable items with subtitles */}
               <Box 
                 className="solutions-overview__solutions"
                 sx={{
                   flex: 1,
                   display: 'flex',
                   flexDirection: 'column',
-                  pt: { xs: 0, md: '60px' },
+                  pt: { xs: 0, md: '40px' },
                 }}
               >
                 <Box
                   className="solutions-overview__solutions-grid"
                   sx={{
                     display: 'grid',
-                    gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-                    gap: { xs: '20px', md: '50px' },
-                    maxWidth: { xs: '100%', md: '634px' },
+                    gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+                    gap: { xs: '6px', md: '10px' },
+                    maxWidth: { xs: '100%', md: '680px' },
                   }}
                 >
-                  {/* Left Column */}
-                  <Box className="solutions-overview__solutions-column" sx={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                    {['Single-View Classification', 'Dual-View Fusion Analysis', 'Bilateral Symmetry Analysis', 'Historical Trending'].map((product) => (
-                      <Box
-                        key={product}
-                        className="solutions-overview__solution-item"
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '10px',
-                          cursor: 'pointer',
-                          '&:hover .solution-title': {
-                            textDecoration: 'underline',
-                          },
-                          '&:hover .solution-icon circle': {
-                            fill: lunitColors.teal,
-                          },
-                          '&:hover .solution-icon path': {
+                  {([
+                    { title: 'Single-View Classification', subtitle: 'AI-powered single mammogram analysis', route: `${ROUTES.SOLUTION_BREAST_CANCER}#single-view-classification` },
+                    { title: 'GradCAM Attention Maps', subtitle: 'Visual evidence heatmaps', route: `${ROUTES.TECHNOLOGY}#explainable-ai` },
+                    { title: 'Dual-View Fusion Analysis', subtitle: 'CC + MLO combined diagnostic view', route: `${ROUTES.SOLUTION_BREAST_CANCER}#dual-view-fusion` },
+                    { title: 'Uncertainty Metrics', subtitle: 'Calibrated confidence scoring', route: `${ROUTES.TECHNOLOGY}#uncertainty-quantification` },
+                    { title: 'Bilateral Symmetry Analysis', subtitle: 'Left vs right breast comparison', route: `${ROUTES.SOLUTION_BREAST_CANCER}#bilateral-symmetry` },
+                    { title: 'Clinical Narratives', subtitle: 'Structured diagnostic reports', route: `${ROUTES.SOLUTION_BREAST_CANCER}#clinical-narratives` },
+                    { title: 'Historical Trending', subtitle: 'Track changes across prior studies', route: `${ROUTES.SOLUTION_BREAST_CANCER}#historical-trending` },
+                    { title: 'Anatomical Mapping', subtitle: 'Precise lesion localisation', route: `${ROUTES.SOLUTION_BREAST_CANCER}#anatomical-mapping` },
+                  ] as const).map((item, idx) => (
+                    <Box
+                      key={item.title}
+                      className="solutions-overview__solution-item"
+                      onClick={() => navigate(item.route)}
+                      role="link"
+                      tabIndex={0}
+                      onKeyDown={(e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(item.route); } }}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        cursor: 'pointer',
+                        p: { xs: '10px 12px', md: '12px 16px' },
+                        borderRadius: '12px',
+                        transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                        opacity: aiCareReveal.isVisible ? 1 : 0,
+                        transform: aiCareReveal.isVisible ? 'translateY(0)' : 'translateY(16px)',
+                        transitionDelay: aiCareReveal.isVisible ? `${0.15 + idx * 0.06}s` : '0s',
+                        '&:hover': {
+                          bgcolor: alpha(lunitColors.teal, 0.06),
+                          transform: 'translateX(4px)',
+                        },
+                        '&:hover .solution-title': {
+                          color: lunitColors.tealDarker,
+                        },
+                        '&:hover .solution-arrow': {
+                          bgcolor: lunitColors.teal,
+                          transform: 'translateX(3px)',
+                          '& path': {
                             stroke: lunitColors.black,
                           },
-                        }}
-                      >
+                        },
+                        '&:focus-visible': {
+                          outline: `2px solid ${lunitColors.teal}`,
+                          outlineOffset: '2px',
+                        },
+                        '@media (prefers-reduced-motion: reduce)': {
+                          transition: 'none',
+                          transitionDelay: '0s !important',
+                          opacity: '1 !important',
+                          transform: 'none !important',
+                        },
+                      }}
+                    >
+                      <Box sx={{ flex: 1, minWidth: 0 }}>
                         <Typography
                           className="solution-title"
                           sx={{
                             fontFamily: '"Lexend", sans-serif',
-                            fontSize: 'clamp(14px, calc(14px + (18 - 14) * ((100vw - 320px) / (1600))), 18px)',
-                            fontWeight: 500,
-                            lineHeight: 'clamp(20px, calc(20px + (24 - 20) * ((100vw - 320px) / 1600)), 24px)',
-                            color: lunitColors.text,
-                            transition: 'all 0.3s ease',
+                            fontSize: 'clamp(14px, calc(14px + (17 - 14) * ((100vw - 320px) / (1600))), 17px)',
+                            fontWeight: 600,
+                            lineHeight: 1.3,
+                            color: lunitColors.black,
+                            transition: 'color 0.3s ease',
+                            mb: '2px',
                           }}
                         >
-                          {product}
+                          {item.title}
                         </Typography>
-                        <svg
-                          className="solution-icon"
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="23"
-                          height="23"
-                          viewBox="0 0 23 23"
-                          fill="none"
-                          style={{ flexShrink: 0 }}
-                        >
-                          <circle cx="11.5" cy="11.1455" r="11" fill="black" style={{ transition: 'fill 0.3s ease' }} />
-                          <path d="M8.47461 5.37061L14.5246 10.8706L8.47461 16.3706" stroke="white" strokeWidth="2" style={{ transition: 'stroke 0.3s ease' }} />
-                        </svg>
-                      </Box>
-                    ))}
-                  </Box>
-                  
-                  {/* Right Column */}
-                  <Box className="solutions-overview__solutions-column" sx={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                    {['GradCAM Attention Maps', 'Uncertainty Metrics', 'Clinical Narratives', 'Anatomical Mapping'].map((product) => (
-                      <Box
-                        key={product}
-                        className="solutions-overview__solution-item"
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '10px',
-                          cursor: 'pointer',
-                          '&:hover .solution-title': {
-                            textDecoration: 'underline',
-                          },
-                          '&:hover .solution-icon circle': {
-                            fill: lunitColors.teal,
-                          },
-                          '&:hover .solution-icon path': {
-                            stroke: lunitColors.black,
-                          },
-                        }}
-                      >
                         <Typography
-                          className="solution-title"
+                          className="solution-subtitle"
                           sx={{
                             fontFamily: '"Lexend", sans-serif',
-                            fontSize: 'clamp(14px, calc(14px + (18 - 14) * ((100vw - 320px) / (1600))), 18px)',
-                            fontWeight: 500,
-                            lineHeight: 'clamp(20px, calc(20px + (24 - 20) * ((100vw - 320px) / 1600)), 24px)',
-                            color: lunitColors.text,
-                            transition: 'all 0.3s ease',
+                            fontSize: 'clamp(12px, calc(12px + (14 - 12) * ((100vw - 320px) / (1600))), 14px)',
+                            fontWeight: 300,
+                            lineHeight: 1.4,
+                            color: lunitColors.darkGrey,
                           }}
                         >
-                          {product}
+                          {item.subtitle}
                         </Typography>
-                        <svg
-                          className="solution-icon"
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="23"
-                          height="23"
-                          viewBox="0 0 23 23"
-                          fill="none"
-                          style={{ flexShrink: 0 }}
-                        >
-                          <circle cx="11.5" cy="11.1455" r="11" fill="black" style={{ transition: 'fill 0.3s ease' }} />
-                          <path d="M8.47461 5.37061L14.5246 10.8706L8.47461 16.3706" stroke="white" strokeWidth="2" style={{ transition: 'stroke 0.3s ease' }} />
+                      </Box>
+                      <Box
+                        className="solution-arrow"
+                        sx={{
+                          flexShrink: 0,
+                          width: 28,
+                          height: 28,
+                          borderRadius: '50%',
+                          bgcolor: lunitColors.black,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                        }}
+                      >
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M5.25 3.5L8.75 7L5.25 10.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'stroke 0.3s ease' }} />
                         </svg>
                       </Box>
-                    ))}
-                  </Box>
+                    </Box>
+                  ))}
                 </Box>
               </Box>
             </Box>
 
-            {/* Divider Line - Lunit gradient style */}
+            {/* Animated Gradient Divider */}
             <Box className="solutions-overview__divider">
               <Box
                 component="hr"
                 sx={{
                   border: 'none',
                   height: '1px',
-                  background: `linear-gradient(90deg, ${lunitColors.black} 0%, ${lunitColors.white} 99.99%, ${lunitColors.white} 100%)`,
+                  background: `linear-gradient(90deg, ${lunitColors.black} 0%, ${alpha(lunitColors.teal, 0.3)} 50%, transparent 100%)`,
                   m: 0,
+                  opacity: 0.6,
                 }}
               />
             </Box>
 
-            {/* Precision Oncology Section */}
+            {/* ─── Explainability Suite ─── */}
             <Box 
               className="solutions-overview__category"
               data-category="precision-oncology"
@@ -2498,7 +2502,6 @@ const LandingPage: React.FC = () => {
                 flexDirection: { xs: 'column', md: 'row' },
               }}
             >
-              {/* Category Main - Icon, Title, Description, CTA */}
               <Box 
                 className="solutions-overview__category-main"
                 sx={{
@@ -2511,7 +2514,6 @@ const LandingPage: React.FC = () => {
                 }}
               >
                 <Box className="solutions-overview__category-info" sx={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                  {/* Header with Icon and Title */}
                   <Box 
                     className="solutions-overview__category-header"
                     sx={{ display: 'flex', alignItems: 'center', gap: '15px' }}
@@ -2526,7 +2528,12 @@ const LandingPage: React.FC = () => {
                         alignItems: 'center',
                         justifyContent: 'center',
                         bgcolor: alpha('#FF5321', 0.1),
-                        borderRadius: '12px',
+                        borderRadius: '16px',
+                        transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                        '&:hover': {
+                          bgcolor: alpha('#FF5321', 0.18),
+                          transform: 'scale(1.05)',
+                        },
                       }}
                     >
                       <Science sx={{ color: '#FF5321', fontSize: { xs: 28, md: 56 } }} />
@@ -2548,7 +2555,6 @@ const LandingPage: React.FC = () => {
                     </Typography>
                   </Box>
                   
-                  {/* Description */}
                   <Box 
                     className="solutions-overview__category-description"
                     sx={{ maxWidth: { xs: '100%', md: '85%' } }}
@@ -2583,7 +2589,6 @@ const LandingPage: React.FC = () => {
                   </Box>
                 </Box>
                 
-                {/* CTA Button */}
                 <Box className="solutions-overview__category-cta" sx={{ mt: '10px' }}>
                   <Button
                     variant="contained"
@@ -2603,9 +2608,9 @@ const LandingPage: React.FC = () => {
                       boxShadow: 'none',
                       transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
                       '&:hover': {
-                        bgcolor: lunitColors.teal,
-                        color: lunitColors.black,
-                        boxShadow: '0 6px 20px rgba(0, 201, 234, 0.3)',
+                        bgcolor: '#FF5321',
+                        color: lunitColors.white,
+                        boxShadow: '0 6px 20px rgba(255, 83, 33, 0.3)',
                         transform: 'translateY(-2px)',
                       },
                       '&:active': {
@@ -2613,9 +2618,9 @@ const LandingPage: React.FC = () => {
                         transition: 'all 0.1s ease',
                       },
                       '&:focus-visible': {
-                        outline: '2px solid #00C9EA',
+                        outline: '2px solid #FF5321',
                         outlineOffset: '3px',
-                        boxShadow: '0 0 0 4px rgba(0, 201, 234, 0.15)',
+                        boxShadow: '0 0 0 4px rgba(255, 83, 33, 0.15)',
                       },
                     }}
                   >
@@ -2624,67 +2629,110 @@ const LandingPage: React.FC = () => {
                 </Box>
               </Box>
 
-              {/* Solutions - Single column for oncology */}
+              {/* Explainability Solutions — clickable with subtitles */}
               <Box 
                 className="solutions-overview__solutions"
                 sx={{
                   flex: 1,
                   display: 'flex',
                   flexDirection: 'column',
-                  pt: { xs: 0, md: '60px' },
+                  pt: { xs: 0, md: '40px' },
                   maxWidth: { xs: '100%', md: '547px' },
                 }}
               >
-                <Box className="solutions-overview__solutions-single-column" sx={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                  {[
-                    'Integrated Gradients Analysis',
-                    'Calibrated Confidence Scores',
-                    'Fairness Monitoring Dashboard',
-                  ].map((product) => (
+                <Box className="solutions-overview__solutions-single-column" sx={{ display: 'flex', flexDirection: 'column', gap: { xs: '6px', md: '10px' } }}>
+                  {([
+                    { title: 'Integrated Gradients Analysis', subtitle: 'Pixel-level attribution maps', route: `${ROUTES.TECHNOLOGY}#integrated-gradients` },
+                    { title: 'Calibrated Confidence Scores', subtitle: 'Statistically validated outputs', route: `${ROUTES.TECHNOLOGY}#calibrated-confidence` },
+                    { title: 'Fairness Monitoring Dashboard', subtitle: 'Demographic parity tracking', route: `${ROUTES.TECHNOLOGY}#fairness-monitoring` },
+                  ] as const).map((item, idx) => (
                     <Box
-                      key={product}
+                      key={item.title}
                       className="solutions-overview__solution-item"
+                      onClick={() => navigate(item.route)}
+                      role="link"
+                      tabIndex={0}
+                      onKeyDown={(e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(item.route); } }}
                       sx={{
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '10px',
+                        gap: '12px',
                         cursor: 'pointer',
+                        p: { xs: '10px 12px', md: '12px 16px' },
+                        borderRadius: '12px',
+                        transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                        opacity: aiCareReveal.isVisible ? 1 : 0,
+                        transform: aiCareReveal.isVisible ? 'translateY(0)' : 'translateY(16px)',
+                        transitionDelay: aiCareReveal.isVisible ? `${0.2 + idx * 0.08}s` : '0s',
+                        '&:hover': {
+                          bgcolor: alpha('#FF5321', 0.06),
+                          transform: 'translateX(4px)',
+                        },
                         '&:hover .solution-title': {
-                          textDecoration: 'underline',
+                          color: '#FF5321',
                         },
-                        '&:hover .solution-icon circle': {
-                          fill: lunitColors.teal,
+                        '&:hover .solution-arrow': {
+                          bgcolor: '#FF5321',
+                          transform: 'translateX(3px)',
                         },
-                        '&:hover .solution-icon path': {
-                          stroke: lunitColors.black,
+                        '&:focus-visible': {
+                          outline: '2px solid #FF5321',
+                          outlineOffset: '2px',
+                        },
+                        '@media (prefers-reduced-motion: reduce)': {
+                          transition: 'none',
+                          transitionDelay: '0s !important',
+                          opacity: '1 !important',
+                          transform: 'none !important',
                         },
                       }}
                     >
-                      <Typography
-                        className="solution-title"
+                      <Box sx={{ flex: 1, minWidth: 0 }}>
+                        <Typography
+                          className="solution-title"
+                          sx={{
+                            fontFamily: '"Lexend", sans-serif',
+                            fontSize: 'clamp(14px, calc(14px + (17 - 14) * ((100vw - 320px) / (1600))), 17px)',
+                            fontWeight: 600,
+                            lineHeight: 1.3,
+                            color: lunitColors.black,
+                            transition: 'color 0.3s ease',
+                            mb: '2px',
+                          }}
+                        >
+                          {item.title}
+                        </Typography>
+                        <Typography
+                          className="solution-subtitle"
+                          sx={{
+                            fontFamily: '"Lexend", sans-serif',
+                            fontSize: 'clamp(12px, calc(12px + (14 - 12) * ((100vw - 320px) / (1600))), 14px)',
+                            fontWeight: 300,
+                            lineHeight: 1.4,
+                            color: lunitColors.darkGrey,
+                          }}
+                        >
+                          {item.subtitle}
+                        </Typography>
+                      </Box>
+                      <Box
+                        className="solution-arrow"
                         sx={{
-                          fontFamily: '"Lexend", sans-serif',
-                          fontSize: 'clamp(14px, calc(14px + (18 - 14) * ((100vw - 320px) / (1600))), 18px)',
-                          fontWeight: 500,
-                          lineHeight: 'clamp(20px, calc(20px + (24 - 20) * ((100vw - 320px) / 1600)), 24px)',
-                          color: lunitColors.text,
-                          transition: 'all 0.3s ease',
+                          flexShrink: 0,
+                          width: 28,
+                          height: 28,
+                          borderRadius: '50%',
+                          bgcolor: lunitColors.black,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
                         }}
                       >
-                        {product}
-                      </Typography>
-                      <svg
-                        className="solution-icon"
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="23"
-                        height="23"
-                        viewBox="0 0 23 23"
-                        fill="none"
-                        style={{ flexShrink: 0 }}
-                      >
-                        <circle cx="11.5" cy="11.1455" r="11" fill="black" style={{ transition: 'fill 0.3s ease' }} />
-                        <path d="M8.47461 5.37061L14.5246 10.8706L8.47461 16.3706" stroke="white" strokeWidth="2" style={{ transition: 'stroke 0.3s ease' }} />
-                      </svg>
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M5.25 3.5L8.75 7L5.25 10.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'stroke 0.3s ease' }} />
+                        </svg>
+                      </Box>
                     </Box>
                   ))}
                 </Box>

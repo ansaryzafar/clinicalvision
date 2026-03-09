@@ -82,8 +82,14 @@ export const PatientRecords: React.FC = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   
-  const [sessions, setSessions] = useState<AnalysisSession[]>([]);
-  const [filteredSessions, setFilteredSessions] = useState<AnalysisSession[]>([]);
+  // Eager initialization — avoids flash-of-empty-state by loading synchronous
+  // localStorage data before the first paint instead of waiting for useEffect.
+  const [sessions, setSessions] = useState<AnalysisSession[]>(
+    () => clinicalSessionService.getAllSessions()
+  );
+  const [filteredSessions, setFilteredSessions] = useState<AnalysisSession[]>(
+    () => clinicalSessionService.getAllSessions()
+  );
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [findingsFilter, setFindingsFilter] = useState<boolean>(false);
@@ -94,11 +100,6 @@ export const PatientRecords: React.FC = () => {
   const [selectedSession, setSelectedSession] = useState<string | null>(null);
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
   const [detailsSession, setDetailsSession] = useState<AnalysisSession | null>(null);
-
-  // Load sessions on mount
-  useEffect(() => {
-    loadSessions();
-  }, []);
 
   // Filter and sort sessions
   useEffect(() => {
@@ -118,7 +119,14 @@ export const PatientRecords: React.FC = () => {
 
     // Apply status filter
     if (statusFilter !== 'all') {
-      result = result.filter((s) => s.workflow.status === statusFilter);
+      if (statusFilter === 'completed') {
+        // "Completed" includes both completed and finalized sessions
+        result = result.filter(
+          (s) => s.workflow.status === 'completed' || s.workflow.status === 'finalized'
+        );
+      } else {
+        result = result.filter((s) => s.workflow.status === statusFilter);
+      }
     }
 
     // Apply findings filter
@@ -600,6 +608,7 @@ export const PatientRecords: React.FC = () => {
             >
               <MenuItem value="all">All Statuses</MenuItem>
               <MenuItem value="completed">Completed</MenuItem>
+              <MenuItem value="finalized">Finalized</MenuItem>
               <MenuItem value="in-progress">In Progress</MenuItem>
               <MenuItem value="pending">Pending</MenuItem>
             </Select>
