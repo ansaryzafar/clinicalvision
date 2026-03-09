@@ -224,7 +224,49 @@ export async function analyzeMammogramImage(image: MammogramImage): Promise<Imag
   });
 }
 
+/**
+ * Analyzes multiple mammogram images in a single batch request.
+ *
+ * Instead of N individual HTTP calls, sends all files to `/predict-batch`
+ * for server-side concurrent processing. Falls back to sequential calls
+ * if the batch endpoint is unavailable.
+ *
+ * @param images - Array of { imageId, imageUrl } pairs
+ * @returns Promise<ImageAnalysisResult[]> in the same order as input
+ */
+export async function analyzeImageBatch(
+  images: Array<{ imageId: string; imageUrl: string }>
+): Promise<ImageAnalysisResult[]> {
+  // 1. Fetch all blobs in parallel
+  const fileFetches = images.map(async ({ imageId, imageUrl }) => {
+    if (!isValidImageUrl(imageUrl)) {
+      throw new Error(`Invalid imageUrl for ${imageId}`);
+    }
+    const resp = await fetch(imageUrl);
+    if (!resp.ok) throw new Error(`Failed to fetch image ${imageId}`);
+    const blob = await resp.blob();
+    return new File([blob], `${imageId}.png`, { type: blob.type });
+  });
+  const files = await Promise.all(fileFetches);
+
+  // 2. Call batch endpoint
+  try {
+    const batchResp = await api.predictBatch(files, { save_result: true });
+    return batchResp.results.map((r, i) =>
+      transformInferenceResponse(images[i].imageId, r as InferenceResponse)
+    );
+  } catch {
+    // Fallback: sequential single calls if batch endpoint unavailable
+    const results: ImageAnalysisResult[] = [];
+    for (let i = 0; i < images.length; i++) {
+      results.push(await analyzeImage(images[i]));
+    }
+    return results;
+  }
+}
+
 export default {
   analyzeImage,
   analyzeMammogramImage,
+  analyzeImageBatch,
 };

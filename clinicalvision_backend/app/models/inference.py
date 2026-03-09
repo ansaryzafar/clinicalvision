@@ -357,7 +357,7 @@ class RealModelInference(BaseModelInference):
     - Ensemble: 3 models
     
     Uncertainty Quantification:
-    - MC Dropout: 75 forward passes using MCDropout layer (always active)
+    - MC Dropout: 10 batched forward passes using MCDropout layer (always active)
     - MCDropout keeps BatchNorm in inference mode while dropout remains stochastic
     - Calibration: Auto-select best (Temperature/Platt/Isotonic)
     """
@@ -419,7 +419,7 @@ class RealModelInference(BaseModelInference):
             "ensemble": {"size": 3},
             "mc_dropout": {
                 "enabled": True,
-                "n_samples": 30,  # Optimized: 30 samples (10 per model) balances speed vs uncertainty quality
+                "n_samples": 10,  # Optimized: 10 samples with batched inference for fast CPU performance
                 # Note: MC Dropout uses the model's training dropout (0.35) via MCDropout layer
                 # The MCDropout layer is always active regardless of training flag
             },
@@ -519,11 +519,16 @@ class RealModelInference(BaseModelInference):
             self.explainability_service.set_modules(self.tf, self.keras)
             
             self._loaded = True
+            
+            # Warm-up pass: trace the TF graph once so the first real inference
+            # doesn't pay the ~2-3s graph compilation penalty
+            self._warmup(tf)
+            
             logger.info("=" * 50)
             logger.info(f"✅ V12 Production model loaded successfully")
             logger.info(f"   Device: {device_name}")
             logger.info(f"   Ensemble size: {len(self.ensemble_models)}")
-            logger.info(f"   MC Dropout: {self.config['mc_dropout']['n_samples']} samples")
+            logger.info(f"   MC Dropout: {self.config['mc_dropout']['n_samples']} samples (batched)")
             logger.info(f"   Explainability: GradCAM++ enabled")
             logger.info("=" * 50)
             
@@ -734,6 +739,23 @@ class RealModelInference(BaseModelInference):
         self.mc_forward_fn = mc_forward
         logger.debug("Created MC forward function (MCDropout always active, BatchNorm uses moving averages)")
     
+    def _warmup(self, tf):
+        """Run a single warm-up inference to trace the TF computation graph.
+        
+        The first forward pass through a Keras model is significantly slower
+        because TensorFlow traces the graph and compiles operations. Running
+        a dummy pass here moves that cost to startup, so the first real
+        user request doesn't suffer a cold-start penalty.
+        """
+        try:
+            dummy = np.zeros((1, 224, 224, 3), dtype=np.float32)
+            for model_dict in self.ensemble_models:
+                model_dict['mc'](dummy, training=False)
+                model_dict['base'](dummy, training=False)
+            logger.info("✅ Warm-up inference complete (graph traced)")
+        except Exception as e:
+            logger.warning(f"Warm-up failed (non-critical): {e}")
+    
     def _apply_tta(self, image: np.ndarray) -> List[np.ndarray]:
         """
         Apply Test-Time Augmentation (8 augmentations).
@@ -767,6 +789,12 @@ class RealModelInference(BaseModelInference):
         """
         Run MC Dropout inference for uncertainty quantification.
         
+        OPTIMISED: Uses batched forward passes instead of sequential loops.
+        Instead of calling model(x) N times, we create a batch of N identical
+        images and run a single model.predict(batch) call. MCDropout generates
+        independent dropout masks for each sample in the batch dimension,
+        preserving stochasticity while dramatically reducing overhead.
+        
         Args:
             image: Preprocessed image [1, H, W, C]
             
@@ -779,17 +807,30 @@ class RealModelInference(BaseModelInference):
         all_predictions = []
         
         try:
-            # Run MC samples across all ensemble models
+            # Calculate samples per model
+            samples_per_model = max(1, n_samples // len(self.ensemble_models))
+            
             for model_dict in self.ensemble_models:
                 mc_model = model_dict['mc']
                 
-                for _ in range(n_samples // len(self.ensemble_models)):
-                    try:
-                        pred = self.mc_forward_fn(mc_model, image).numpy().flatten()[0]
-                        all_predictions.append(pred)
-                    except Exception as sample_error:
-                        logger.warning(f"MC sample failed: {sample_error}")
-                        continue
+                try:
+                    # BATCHED MC: Repeat the image N times along batch dimension
+                    # MCDropout generates independent masks per batch element
+                    batch = self.tf.repeat(image, samples_per_model, axis=0)
+                    
+                    # Single forward pass for all MC samples of this model
+                    preds = mc_model(batch, training=False).numpy().flatten()
+                    all_predictions.extend(preds.tolist())
+                except Exception as batch_error:
+                    logger.warning(f"Batched MC failed, falling back to sequential: {batch_error}")
+                    # Sequential fallback
+                    for _ in range(samples_per_model):
+                        try:
+                            pred = self.mc_forward_fn(mc_model, image).numpy().flatten()[0]
+                            all_predictions.append(pred)
+                        except Exception as sample_error:
+                            logger.warning(f"MC sample failed: {sample_error}")
+                            continue
             
             if len(all_predictions) == 0:
                 # Fallback: use deterministic prediction if all MC samples failed
@@ -1101,8 +1142,11 @@ class RealModelInference(BaseModelInference):
         if image_array.ndim == 3:
             image_array = np.expand_dims(image_array, axis=0)
         
+        prep_time = time.time()
+        
         # Run MC Dropout inference
         mean_pred, samples, variance, entropy = self._run_mc_dropout(image_array)
+        mc_time = time.time()
         
         # Apply calibration
         calibrated_pred = self._calibrate(mean_pred)
@@ -1130,6 +1174,7 @@ class RealModelInference(BaseModelInference):
         
         # Generate attention map
         attention_map = self._generate_attention_map(image_array)
+        attn_time = time.time()
         
         # Extract suspicious regions
         regions = self._extract_suspicious_regions(attention_map, calibrated_pred)
@@ -1150,9 +1195,14 @@ class RealModelInference(BaseModelInference):
         
         inference_time = (time.time() - start_time) * 1000
         
+        # Detailed per-stage timing for performance monitoring
+        mc_elapsed = (mc_time - prep_time) * 1000
+        attn_elapsed = (attn_time - mc_time) * 1000
         logger.info(
             f"V12 inference: {prediction_label} ({calibrated_pred:.1%}), "
-            f"variance={variance:.4f}, time={inference_time:.1f}ms"
+            f"variance={variance:.4f}, "
+            f"MC={mc_elapsed:.0f}ms, GradCAM={attn_elapsed:.0f}ms, "
+            f"total={inference_time:.0f}ms"
         )
         
         return {

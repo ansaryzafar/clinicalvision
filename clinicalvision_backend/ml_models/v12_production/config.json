@@ -49,11 +49,11 @@
   },
   "mc_dropout": {
     "enabled": true,
-    "n_samples": 30,
+    "n_samples": 10,
     "mc_dropout_rate": 0.65,
     "spatial_dropout_rate": 0.35,
     "use_spatial_dropout": true,
-    "note": "Optimized: 30 samples (10 per model) balances speed vs uncertainty quality"
+    "note": "Optimized: 10 samples with batched inference balances speed (~5-8s CPU) vs uncertainty quality"
   },
   "calibration": {
     "enabled": true,

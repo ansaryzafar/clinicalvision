@@ -73,6 +73,16 @@ import {
   syncCaseToSessionService,
   syncAllCasesToSessionService,
 } from '../services/caseSessionBridge';
+import {
+  debouncedPersist,
+  cancelPersist,
+  flushPersist,
+} from '../utils/debouncedPersistence';
+import {
+  restoreImageUrls,
+  removeImage as removeImageFromStorage,
+  revokeAllUrls,
+} from '../services/imageStorageService';
 
 // ============================================================================
 // CONTEXT TYPES
@@ -462,21 +472,92 @@ export const ClinicalCaseProvider: React.FC<ClinicalCaseProviderProps> = ({
   // ============================================================================
 
   // Hydrate currentCase from localStorage on first mount
+  // AND restore dead blob: URLs from IndexedDB
   useEffect(() => {
     const savedId = getPersistedCurrentCaseId();
     if (savedId && caseStore.has(savedId) && !currentCase) {
-      setCurrentCase(caseStore.get(savedId)!);
+      const savedCase = caseStore.get(savedId)!;
+
+      // Restore blob URLs from IndexedDB for all images.
+      // blob: URLs die on page refresh — IndexedDB stores the raw data.
+      const imageIds = savedCase.images.map((img) => img.id);
+      if (imageIds.length > 0) {
+        restoreImageUrls(imageIds)
+          .then((urlMap) => {
+            if (urlMap.size > 0) {
+              const restoredImages = savedCase.images.map((img) => {
+                const restoredUrl = urlMap.get(img.id);
+                return restoredUrl ? { ...img, localUrl: restoredUrl } : img;
+              });
+              const restoredCase = { ...savedCase, images: restoredImages };
+              caseStore.set(restoredCase.id, restoredCase);
+              setCurrentCase(restoredCase);
+            } else {
+              setCurrentCase(savedCase);
+            }
+          })
+          .catch(() => {
+            // Graceful fallback — load case without working image URLs
+            setCurrentCase(savedCase);
+          });
+      } else {
+        setCurrentCase(savedCase);
+      }
     }
     // Run only once on mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Auto-persist whenever currentCase changes
+  // Auto-persist whenever currentCase changes (DEBOUNCED)
+  // The heavy caseStore serialisation (~100KB with attention maps) is now
+  // debounced to avoid blocking the main thread on rapid state updates
+  // (slider drags, W/L adjustments, etc.).
   useEffect(() => {
     persistCurrentCaseId(currentCase?.id ?? null);
-    // Also persist the full caseStore (includes this and all previous cases)
-    persistCaseStore();
+
+    // Build serialisable snapshot for debounced write
+    const serialisable: Record<string, ClinicalCase> = {};
+    caseStore.forEach((c, id) => {
+      serialisable[id] = {
+        ...c,
+        images: c.images.map((img) => ({ ...img, file: undefined as any })),
+      };
+    });
+
+    // Debounced localStorage write (3s window)
+    debouncedPersist(CASE_STORE_KEY, serialisable);
+
+    // Sync to session service immediately (lightweight — just metadata)
+    caseStore.forEach((c) => {
+      syncCaseToSessionService(c);
+    });
   }, [currentCase]);
+
+  // Flush persistence on unmount + beforeunload
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      // Flush any pending debounced writes before page unload
+      const serialisable: Record<string, ClinicalCase> = {};
+      caseStore.forEach((c, id) => {
+        serialisable[id] = {
+          ...c,
+          images: c.images.map((img) => ({ ...img, file: undefined as any })),
+        };
+      });
+      flushPersist(CASE_STORE_KEY, serialisable);
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    // pagehide is more reliable on mobile Safari (beforeunload may not fire)
+    window.addEventListener('pagehide', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('pagehide', handleBeforeUnload);
+      cancelPersist();
+      // Release blob URL memory (IndexedDB data survives for next session)
+      revokeAllUrls();
+    };
+  }, []);
 
   /** Retry all failed sync operations */
   const retrySync = useCallback(async () => {
@@ -935,6 +1016,9 @@ export const ClinicalCaseProvider: React.FC<ClinicalCaseProviderProps> = ({
         previousValue: imageId,
       };
       
+      // Clean up IndexedDB entry for the removed image (fire-and-forget)
+      removeImageFromStorage(imageId).catch(() => {});
+
       // Create updated case
       const updatedCase: ClinicalCase = {
         ...currentCase,

@@ -3,6 +3,7 @@ AI Inference Service for Breast Cancer Detection
 Handles model loading, caching, inference execution, and result management
 """
 
+import asyncio
 import time
 import uuid
 from datetime import datetime
@@ -91,9 +92,12 @@ class InferenceService:
             if not model.is_loaded():
                 raise ValueError("Model not properly loaded")
             
-            # Run inference
+            # Run inference — offload CPU-bound model.predict() to a thread
+            # so the async event loop stays free for concurrent requests.
+            # Without this, 4 concurrent image requests are serialized because
+            # the synchronous model.predict() blocks the single uvicorn worker.
             logger.debug(f"Running inference on image_id={image_id}")
-            prediction = model.predict(image_array)
+            prediction = await asyncio.to_thread(model.predict, image_array)
             
             # Calculate metrics
             inference_time_ms = (time.time() - inference_start) * 1000
@@ -169,7 +173,7 @@ class InferenceService:
             }
             
             for view_name, array in views.items():
-                pred = model.predict(array)
+                pred = await asyncio.to_thread(model.predict, array)
                 predictions[view_name] = {
                     **pred,
                     "image_id": image_ids.get(view_name),

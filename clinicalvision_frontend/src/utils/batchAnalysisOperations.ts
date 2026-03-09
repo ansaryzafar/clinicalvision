@@ -351,11 +351,44 @@ export async function runBatchAnalysis(
   const results: ImageAnalysisResult[] = [];
   const failedImageIds: string[] = [];
   const warnings: string[] = [...validation.warnings];
-
-  // 3. Process images with concurrency limit
   let completedCount = 0;
   let aborted = false;
 
+  // 3. Try batch endpoint first (single HTTP call, server-side concurrency)
+  //    Falls back to per-image calls if the batch endpoint is unavailable
+  let usedBatchEndpoint = false;
+  try {
+    if (!abortSignal?.aborted) {
+      const apiModule = await import('../services/analysisApi');
+      if (typeof apiModule.analyzeImageBatch === 'function') {
+        const batchInput = case_.images.map((img) => ({
+          imageId: img.id,
+          imageUrl: img.localUrl,
+        }));
+
+        if (onProgress) onProgress(5); // Signal "started"
+
+        const batchResults = await apiModule.analyzeImageBatch(batchInput);
+
+        for (const r of batchResults) {
+          results.push(r);
+          completedCount++;
+          if (onProgress) {
+            onProgress(Math.round((completedCount / totalImages) * 100));
+          }
+        }
+
+        usedBatchEndpoint = true;
+      }
+    }
+  } catch (batchErr) {
+    // Batch endpoint unavailable or failed — fall back to per-image below
+    const msg = batchErr instanceof Error ? batchErr.message : String(batchErr);
+    warnings.push(`Batch endpoint unavailable, using per-image fallback: ${msg}`);
+  }
+
+  // Fallback: process images individually with concurrency limit
+  if (!usedBatchEndpoint) {
   // Process in chunks based on concurrency limit
   for (let i = 0; i < jobs.length; i += concurrencyLimit) {
     // Check for abort
@@ -439,6 +472,7 @@ export async function runBatchAnalysis(
       }
     }
   }
+  } // end fallback
 
   const completedAt = new Date().toISOString();
   const totalProcessingTimeMs = Date.now() - startTime;

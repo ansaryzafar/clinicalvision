@@ -10,6 +10,7 @@ const featuredPost = {
   date: 'March 15, 2026',
   category: 'Industry Insights',
   readTime: '8 min read',
+  image: '/images/blog/featured-ai-mammography.webp',
 };
 
 const posts = [
@@ -19,6 +20,7 @@ const posts = [
     date: 'March 10, 2026',
     category: 'Clinical Education',
     readTime: '6 min read',
+    image: '/images/blog/thumb-birads-categories.webp',
   },
   {
     title: 'ClinicalVision Achieves 97.5% Sensitivity in Multi-Center Study',
@@ -26,6 +28,7 @@ const posts = [
     date: 'March 5, 2026',
     category: 'Research',
     readTime: '5 min read',
+    image: '/images/blog/thumb-sensitivity-study.webp',
   },
   {
     title: 'Integrating AI into Your Radiology Workflow: Best Practices',
@@ -33,6 +36,7 @@ const posts = [
     date: 'February 20, 2026',
     category: 'Implementation',
     readTime: '7 min read',
+    image: '/images/blog/thumb-ai-workflow.webp',
   },
   {
     title: 'The Role of Uncertainty Quantification in Medical AI',
@@ -40,6 +44,7 @@ const posts = [
     date: 'February 15, 2026',
     category: 'Technology',
     readTime: '9 min read',
+    image: '/images/blog/thumb-uncertainty.webp',
   },
   {
     title: 'Patient Perspectives on AI in Cancer Screening',
@@ -47,6 +52,7 @@ const posts = [
     date: 'February 10, 2026',
     category: 'Patient Experience',
     readTime: '5 min read',
+    image: '/images/blog/thumb-patient-perspectives.webp',
   },
   {
     title: 'RSNA 2023: Key Takeaways for AI in Radiology',
@@ -54,6 +60,7 @@ const posts = [
     date: 'February 5, 2026',
     category: 'Events',
     readTime: '6 min read',
+    image: '/images/blog/thumb-rsna-conference.webp',
   },
 ];
 
@@ -146,23 +153,23 @@ const BlogPage: React.FC = () => {
               flex: 1,
               minWidth: { md: '300px' },
               height: { xs: '200px', md: 'auto' },
+              minHeight: { md: '280px' },
               borderRadius: lunitRadius.lg,
-              bgcolor: alpha(lunitColors.teal, 0.2),
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              overflow: 'hidden',
             }}
           >
-            <Typography
+            <Box
+              component="img"
+              src={featuredPost.image}
+              alt={featuredPost.title}
+              loading="lazy"
               sx={{
-                fontFamily: lunitTypography.fontFamilyHeading,
-                fontSize: '48px',
-                fontWeight: 300,
-                color: lunitColors.teal,
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                display: 'block',
               }}
-            >
-              Featured
-            </Typography>
+            />
           </Box>
           <Box sx={{ flex: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
@@ -268,22 +275,21 @@ const BlogPage: React.FC = () => {
                 <Box
                   sx={{
                     height: '140px',
-                    bgcolor: lunitColors.lightestGray,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    overflow: 'hidden',
                   }}
                 >
-                  <Typography
+                  <Box
+                    component="img"
+                    src={post.image}
+                    alt={post.title}
+                    loading="lazy"
                     sx={{
-                      fontFamily: lunitTypography.fontFamilyHeading,
-                      fontSize: '24px',
-                      fontWeight: 300,
-                      color: lunitColors.grey,
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      display: 'block',
                     }}
-                  >
-                    Blog
-                  </Typography>
+                  />
                 </Box>
 
                 <Box sx={{ p: 3 }}>

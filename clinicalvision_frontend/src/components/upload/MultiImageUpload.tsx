@@ -74,6 +74,7 @@ import {
 } from '../../types/case.types';
 
 // Import upload operations
+import { addImage as persistImageBlob } from '../../services/imageStorageService';
 import {
   createMammogramImage,
   canAddMoreImages,
@@ -512,6 +513,9 @@ export const MultiImageUpload: React.FC<MultiImageUploadProps> = ({
           continue;
         }
         
+        // Persist image blob to IndexedDB for cross-session resume (fire-and-forget)
+        persistImageBlob(createResult.data.id, pending.file, pending.file.type).catch(() => {});
+
         // Add to case
         const addResult = addImage(createResult.data);
         

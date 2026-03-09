@@ -894,6 +894,47 @@ class ClinicalVisionAPI {
   }
 
   /**
+   * Run AI prediction on multiple images in a single batch request.
+   *
+   * Sends all files in one multipart POST, avoiding per-image HTTP overhead.
+   * The backend processes them concurrently via asyncio.to_thread so total
+   * wall-clock time is close to a single image rather than N × single.
+   *
+   * @param files - Array of image files
+   * @param options - Prediction options
+   * @returns Array of InferenceResponse objects (same order as input files)
+   */
+  async predictBatch(
+    files: File[],
+    options?: {
+      save_result?: boolean;
+    }
+  ): Promise<{ results: InferenceResponse[]; total_images: number; batch_time_ms: number }> {
+    try {
+      const formData = new FormData();
+      for (const file of files) {
+        formData.append('files', file);
+      }
+
+      const params = new URLSearchParams();
+      if (options?.save_result !== undefined) {
+        params.append('save_result', String(options.save_result));
+      }
+      const queryString = params.toString();
+      const url = `/inference/predict-batch${queryString ? `?${queryString}` : ''}`;
+
+      const response = await client.post(url, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        timeout: 300000, // 5 minutes for batch
+      });
+
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, 'Batch prediction failed');
+    }
+  }
+
+  /**
    * Run AI prediction on stored image
    */
   async predictFromStorage(imageId: string): Promise<InferenceResponse> {

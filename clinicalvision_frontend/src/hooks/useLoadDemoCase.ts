@@ -22,6 +22,7 @@ import {
   mapDemoImagesToUploadSpec,
 } from '../utils/demoDataMapper';
 import { createMammogramImage } from '../utils/imageUploadOperations';
+import { addImage as persistImageBlob } from '../services/imageStorageService';
 
 // ============================================================================
 // Types
@@ -123,6 +124,9 @@ export function useLoadDemoCase(): UseLoadDemoCaseResult {
               );
               continue;
             }
+
+            // Persist image blob to IndexedDB for cross-session resume (fire-and-forget)
+            persistImageBlob(createResult.data.id, file, file.type).catch(() => {});
 
             // Add to case
             addImage(createResult.data);

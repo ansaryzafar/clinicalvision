@@ -124,6 +124,21 @@ const AboutPage: React.FC = () => {
           overflow: 'hidden',
         }}
       >
+        {/* Background team image */}
+        <Box
+          component="img"
+          src="/images/team/team-meeting-glass-wall-1920w.webp"
+          alt=""
+          sx={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            opacity: 0.15,
+            pointerEvents: 'none',
+          }}
+        />
         {/* Gradient overlay */}
         <Box
           sx={{
@@ -366,6 +381,74 @@ const AboutPage: React.FC = () => {
         </Box>
       </Box>
       </ScrollReveal>
+
+      {/* Team Section */}
+      <PageSection paddingY="large">
+        <Typography
+          sx={{
+            fontFamily: lunitTypography.fontFamilyHeading,
+            fontSize: 'clamp(28px, 4vw, 44px)',
+            fontWeight: 200,
+            color: lunitColors.headingColor,
+            textAlign: 'center',
+            mb: 2,
+            letterSpacing: '-0.01em',
+          }}
+        >
+          The people behind the platform
+        </Typography>
+        <Typography
+          sx={{
+            fontFamily: lunitTypography.fontFamilyBody,
+            fontSize: '17px',
+            fontWeight: 300,
+            color: lunitColors.text,
+            textAlign: 'center',
+            maxWidth: 600,
+            mx: 'auto',
+            mb: 8,
+            lineHeight: 1.8,
+          }}
+        >
+          A multidisciplinary team of engineers, researchers, and clinicians united by a shared mission—making AI work for healthcare.
+        </Typography>
+
+        <Grid container spacing={3}>
+          {[
+            { src: '/images/team/team-discussion-closeup-card.webp', alt: 'Close-up team discussion on AI models' },
+            { src: '/images/team/team-collaboration-standing-card.webp', alt: 'Team collaborating around a whiteboard' },
+            { src: '/images/team/team-planning-laptops-card.webp', alt: 'Team planning session with laptops' },
+          ].map((img, idx) => (
+            <Grid size={{ xs: 12, md: 4 }} key={idx}>
+              <Box
+                sx={{
+                  borderRadius: lunitRadius['2xl'],
+                  overflow: 'hidden',
+                  aspectRatio: '3/2',
+                  position: 'relative',
+                  '&:hover img': {
+                    transform: 'scale(1.04)',
+                  },
+                }}
+              >
+                <Box
+                  component="img"
+                  src={img.src}
+                  alt={img.alt}
+                  loading="lazy"
+                  sx={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    display: 'block',
+                    transition: 'transform 0.5s ease',
+                  }}
+                />
+              </Box>
+            </Grid>
+          ))}
+        </Grid>
+      </PageSection>
 
       {/* Performance Hint Section - Subtle */}
       <PageSection paddingY="large" background="light">

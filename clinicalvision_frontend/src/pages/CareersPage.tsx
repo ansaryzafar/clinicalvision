@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Box, Typography, Grid, alpha, Button, keyframes } from '@mui/material';
 import {
   ArrowForward,
-  WorkOutline,
   Public,
   Favorite,
   School,
@@ -108,6 +107,21 @@ const CareersPage: React.FC = () => {
           overflow: 'hidden',
         }}
       >
+        {/* Background team image */}
+        <Box
+          component="img"
+          src="/images/team/team-boardroom-full-1920w.webp"
+          alt=""
+          sx={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            opacity: 0.18,
+            pointerEvents: 'none',
+          }}
+        />
         {/* Background gradient overlay */}
         <Box
           sx={{
@@ -565,19 +579,37 @@ const CareersPage: React.FC = () => {
                   gap: 2,
                 }}
               >
-                {[1, 2, 3, 4].map((_, idx) => (
+                {[
+                  { src: '/images/team/team-discussion-closeup-card.webp', alt: 'Team members in focused discussion' },
+                  { src: '/images/team/team-boardroom-full-card.webp', alt: 'Full team boardroom meeting' },
+                  { src: '/images/team/team-collaboration-standing-card.webp', alt: 'Team collaborating around a whiteboard' },
+                  { src: '/images/team/team-planning-laptops-card.webp', alt: 'Team planning session with laptops' },
+                ].map((img, idx) => (
                   <Box
                     key={idx}
                     sx={{
                       aspectRatio: '1',
                       borderRadius: lunitRadius.lg,
-                      bgcolor: alpha(lunitColors.teal, 0.05 + idx * 0.02),
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
+                      overflow: 'hidden',
+                      position: 'relative',
+                      '&:hover img': {
+                        transform: 'scale(1.05)',
+                      },
                     }}
                   >
-                    <WorkOutline sx={{ fontSize: 40, color: alpha(lunitColors.teal, 0.3) }} />
+                    <Box
+                      component="img"
+                      src={img.src}
+                      alt={img.alt}
+                      loading="lazy"
+                      sx={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        display: 'block',
+                        transition: 'transform 0.4s ease',
+                      }}
+                    />
                   </Box>
                 ))}
               </Box>

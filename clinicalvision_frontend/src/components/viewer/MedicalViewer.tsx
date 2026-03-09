@@ -1,5 +1,7 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import { SuspiciousRegion } from '../../services/api';
+import { useHeatmapCache } from './useHeatmapCache';
+import { applyWindowLevel as applyWindowLevelCached } from './heatmapCache';
 import {
   Box,
   Card,
@@ -107,7 +109,7 @@ interface MedicalViewerProps {
   onHeatmapModeChange?: (mode: 'overlay' | 'heatmap' | 'blend') => void;
 }
 
-export const MedicalViewer: React.FC<MedicalViewerProps> = ({
+const MedicalViewerInner: React.FC<MedicalViewerProps> = ({
   imageFile,
   imageUrl,
   attentionMap,
@@ -121,7 +123,16 @@ export const MedicalViewer: React.FC<MedicalViewerProps> = ({
   onHeatmapModeChange,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const overlayCanvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Cached Window/Level canvas — avoids recomputing pixel-by-pixel every render
+  const wlCacheRef = useRef<{
+    canvas: HTMLCanvasElement | null;
+    width: number;
+    center: number;
+    imgSrc: string;
+  }>({ canvas: null, width: 255, center: 128, imgSrc: '' });
   
   // Image state
   const [image, setImage] = useState<HTMLImageElement | null>(null);
@@ -220,13 +231,23 @@ export const MedicalViewer: React.FC<MedicalViewerProps> = ({
   }, [imageFile, imageUrl]);
 
   /**
-   * Render canvas whenever state changes
+   * Render canvas whenever state changes (EXCLUDING mouse position)
+   * Mouse position is handled by the lightweight overlay canvas
    */
   useEffect(() => {
     if (image && canvasRef.current) {
       renderCanvas();
     }
-  }, [image, zoom, pan, rotation, windowLevel, overlayVisible, overlayOpacity, heatmapMode, attentionMap, suspiciousRegions, measurePoints, gridConfig, currentMousePos]);
+  }, [image, zoom, pan, rotation, windowLevel, overlayVisible, overlayOpacity, heatmapMode, attentionMap, suspiciousRegions, measurePoints, gridConfig]);
+
+  /**
+   * Lightweight overlay render for measurement cursor preview.
+   * This runs on every mouse move during measurement mode,
+   * but only redraws the overlay canvas (not the expensive main canvas).
+   */
+  useEffect(() => {
+    renderOverlay();
+  }, [currentMousePos, measurePoints, zoom, gridConfig]);
 
   /**
    * Fullscreen change listener
@@ -335,6 +356,9 @@ export const MedicalViewer: React.FC<MedicalViewerProps> = ({
 
   /**
    * Main canvas rendering function
+   * 
+   * Performance: Uses cached heatmap and cached W/L canvas to avoid
+   * recomputing expensive pixel operations on every render.
    */
   const renderCanvas = () => {
     const canvas = canvasRef.current;
@@ -366,10 +390,10 @@ export const MedicalViewer: React.FC<MedicalViewerProps> = ({
     const imgWidth = image.width * scale;
     const imgHeight = image.height * scale;
 
-    // Draw image with window/level applied
+    // Draw image with window/level applied (CACHED)
     drawImageWithWindowLevel(ctx, image, -imgWidth / 2, -imgHeight / 2, imgWidth, imgHeight);
 
-    // Draw AI overlay if visible
+    // Draw AI overlay if visible (uses CACHED heatmap canvas)
     if (overlayVisible && attentionMap && attentionMap.length > 0) {
       drawAttentionMap(ctx, attentionMap, imgWidth, imgHeight);
     }
@@ -381,7 +405,7 @@ export const MedicalViewer: React.FC<MedicalViewerProps> = ({
 
     ctx.restore();
 
-    // Draw measurement lines (in screen space)
+    // Draw completed measurement lines (in screen space) — NOT the preview cursor
     if (measurePoints.length > 0) {
       drawMeasurements(ctx);
     }
@@ -393,7 +417,61 @@ export const MedicalViewer: React.FC<MedicalViewerProps> = ({
   };
 
   /**
-   * Draw image with window/level adjustment
+   * Lightweight overlay render — only for measurement cursor preview.
+   * Draws on a separate transparent canvas positioned over the main canvas.
+   * This is the ONLY function triggered by mouse movement during measurement.
+   */
+  const renderOverlay = () => {
+    const canvas = overlayCanvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Clear the overlay
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Only draw if there's a pending measurement point and mouse position
+    if (measurePoints.length % 2 !== 1 || !currentMousePos) return;
+
+    const p = measurePoints[measurePoints.length - 1];
+
+    ctx.save();
+
+    // Preview dashed line from pending point to mouse
+    ctx.strokeStyle = '#ffff00';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+    ctx.lineTo(currentMousePos.x, currentMousePos.y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Preview distance label
+    const dx = currentMousePos.x - p.x;
+    const dy = currentMousePos.y - p.y;
+    const previewDistPx = Math.sqrt(dx * dx + dy * dy);
+    const previewDistMm = (previewDistPx / zoom) / gridConfig.pixelsPerMm;
+
+    const midX = (p.x + currentMousePos.x) / 2;
+    const midY = (p.y + currentMousePos.y) / 2;
+
+    const previewText = `${previewDistPx.toFixed(1)}px (${previewDistMm.toFixed(1)}mm)`;
+    ctx.font = 'bold 12px Arial';
+    ctx.textAlign = 'center';
+
+    const textMetrics = ctx.measureText(previewText);
+    ctx.fillStyle = 'rgba(255, 255, 0, 0.5)';
+    ctx.fillRect(midX - textMetrics.width / 2 - 4, midY - 18, textMetrics.width + 8, 18);
+    ctx.fillStyle = '#ffff00';
+    ctx.fillText(previewText, midX, midY - 5);
+
+    ctx.restore();
+  };
+
+  /**
+   * Draw image with window/level adjustment (CACHED)
+   * Uses applyWindowLevel from heatmapCache.ts — recomputes only when W/L params change.
    */
   const drawImageWithWindowLevel = (
     ctx: CanvasRenderingContext2D,
@@ -403,39 +481,32 @@ export const MedicalViewer: React.FC<MedicalViewerProps> = ({
     width: number,
     height: number
   ) => {
-    // Create temporary canvas for processing
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = img.width;
-    tempCanvas.height = img.height;
-    const tempCtx = tempCanvas.getContext('2d');
-    if (!tempCtx) return;
+    const cache = wlCacheRef.current;
+    const needsRecompute =
+      !cache.canvas ||
+      cache.width !== windowLevel.width ||
+      cache.center !== windowLevel.center ||
+      cache.imgSrc !== img.src;
 
-    // Draw original image
-    tempCtx.drawImage(img, 0, 0);
+    if (needsRecompute) {
+      // Draw original image to a source canvas at full resolution
+      const sourceCanvas = document.createElement('canvas');
+      sourceCanvas.width = img.width;
+      sourceCanvas.height = img.height;
+      const sourceCtx = sourceCanvas.getContext('2d');
+      if (!sourceCtx) return;
+      sourceCtx.drawImage(img, 0, 0);
 
-    // Apply window/level
-    const imageData = tempCtx.getImageData(0, 0, img.width, img.height);
-    const data = imageData.data;
-
-    const windowWidth = windowLevel.width;
-    const windowCenter = windowLevel.center;
-    const lower = windowCenter - windowWidth / 2;
-    const upper = windowCenter + windowWidth / 2;
-
-    for (let i = 0; i < data.length; i += 4) {
-      const value = (data[i] + data[i + 1] + data[i + 2]) / 3;
-      let adjusted = ((value - lower) / (upper - lower)) * 255;
-      adjusted = Math.max(0, Math.min(255, adjusted));
-
-      data[i] = adjusted;
-      data[i + 1] = adjusted;
-      data[i + 2] = adjusted;
+      // Apply W/L via cached utility
+      cache.canvas = applyWindowLevelCached(sourceCanvas, windowLevel.width, windowLevel.center);
+      cache.width = windowLevel.width;
+      cache.center = windowLevel.center;
+      cache.imgSrc = img.src;
     }
 
-    tempCtx.putImageData(imageData, 0, 0);
-
-    // Draw processed image
-    ctx.drawImage(tempCanvas, x, y, width, height);
+    if (cache.canvas) {
+      ctx.drawImage(cache.canvas, x, y, width, height);
+    }
   };
 
   /**
@@ -771,42 +842,12 @@ export const MedicalViewer: React.FC<MedicalViewerProps> = ({
     }
 
     // Draw pending point (first click waiting for second)
+    // NOTE: The preview LINE to currentMousePos is now drawn on the overlay canvas
+    // (renderOverlay) to avoid triggering full main canvas re-renders on mouse move.
     if (measurePoints.length % 2 === 1) {
       const p = measurePoints[measurePoints.length - 1];
       
-      // Draw preview line to current mouse position
-      if (currentMousePos) {
-        ctx.strokeStyle = '#ffff00';
-        ctx.lineWidth = 2;
-        ctx.setLineDash([5, 5]);
-        ctx.beginPath();
-        ctx.moveTo(p.x, p.y);
-        ctx.lineTo(currentMousePos.x, currentMousePos.y);
-        ctx.stroke();
-        ctx.setLineDash([]);
-        
-        // Show preview distance
-        const dx = currentMousePos.x - p.x;
-        const dy = currentMousePos.y - p.y;
-        const previewDistPx = Math.sqrt(dx * dx + dy * dy);
-        const previewDistMm = (previewDistPx / zoom) / gridConfig.pixelsPerMm;
-        
-        const midX = (p.x + currentMousePos.x) / 2;
-        const midY = (p.y + currentMousePos.y) / 2;
-        
-        const previewText = `${previewDistPx.toFixed(1)}px (${previewDistMm.toFixed(1)}mm)`;
-        ctx.font = 'bold 12px Arial';
-        ctx.textAlign = 'center';
-        
-        // Draw preview label
-        const textMetrics = ctx.measureText(previewText);
-        ctx.fillStyle = 'rgba(255, 255, 0, 0.5)';
-        ctx.fillRect(midX - textMetrics.width / 2 - 4, midY - 18, textMetrics.width + 8, 18);
-        ctx.fillStyle = '#ffff00';
-        ctx.fillText(previewText, midX, midY - 5);
-      }
-      
-      // Pulsing effect for pending point
+      // Pulsing effect for pending point (static — doesn't need mouse pos)
       ctx.strokeStyle = '#ffff00';
       ctx.lineWidth = 2;
       ctx.fillStyle = '#ffff00';
@@ -1211,6 +1252,23 @@ export const MedicalViewer: React.FC<MedicalViewerProps> = ({
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseLeave}
+          />
+          {/* Overlay canvas for measurement cursor preview — 
+              positioned absolutely over main canvas so mouse moves 
+              only trigger lightweight overlay re-renders */}
+          <canvas
+            ref={overlayCanvasRef}
+            width={800}
+            height={600}
+            data-testid="overlay-canvas"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              pointerEvents: 'none',
+            }}
           />
 
           {/* Fullscreen GradCAM Legend - Top of screen */}
@@ -1631,5 +1689,9 @@ export const MedicalViewer: React.FC<MedicalViewerProps> = ({
     </Card>
   );
 };
+
+// Wrap with React.memo to prevent unnecessary re-renders from parent
+export const MedicalViewer = React.memo(MedicalViewerInner);
+MedicalViewer.displayName = 'MedicalViewer';
 
 export default MedicalViewer;

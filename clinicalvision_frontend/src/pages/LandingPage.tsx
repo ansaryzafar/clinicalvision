@@ -25,7 +25,6 @@ import {
   CheckCircle,
   Biotech,
   Psychology,
-  LocalHospital,
   Science,
   TrendingUp,
   KeyboardArrowDown,
@@ -1006,10 +1005,15 @@ const LandingPage: React.FC = () => {
           /* Lunit exact padding values from CSS */
           pt: { xs: '119px', sm: '147px', md: '211px', lg: '230px' },
           pb: { xs: '118px', sm: '118px', md: '200px', lg: '275px' },
-          /* Background gradient - replaces missing image */
-          backgroundImage: 'radial-gradient(ellipse at 80% 20%, rgba(0, 201, 234, 0.15) 0%, transparent 50%), radial-gradient(ellipse at 90% 80%, rgba(86, 193, 77, 0.1) 0%, transparent 40%)',
-          backgroundSize: { xs: 'cover', md: 'auto', lg: 'auto' },
-          backgroundPosition: { xs: 'center', md: '100% 30%', lg: '100% 30%' },
+          /* Hero background image with gradient accent overlay */
+          backgroundImage: {
+            xs: `radial-gradient(ellipse at 80% 20%, rgba(0, 201, 234, 0.15) 0%, transparent 50%), radial-gradient(ellipse at 90% 80%, rgba(86, 193, 77, 0.1) 0%, transparent 40%), url('/images/hero/landing-hero-data-eye-640w.webp')`,
+            sm: `radial-gradient(ellipse at 80% 20%, rgba(0, 201, 234, 0.15) 0%, transparent 50%), radial-gradient(ellipse at 90% 80%, rgba(86, 193, 77, 0.1) 0%, transparent 40%), url('/images/hero/landing-hero-data-eye-960w.webp')`,
+            md: `radial-gradient(ellipse at 80% 20%, rgba(0, 201, 234, 0.15) 0%, transparent 50%), radial-gradient(ellipse at 90% 80%, rgba(86, 193, 77, 0.1) 0%, transparent 40%), url('/images/hero/landing-hero-data-eye-1280w.webp')`,
+            lg: `radial-gradient(ellipse at 80% 20%, rgba(0, 201, 234, 0.15) 0%, transparent 50%), radial-gradient(ellipse at 90% 80%, rgba(86, 193, 77, 0.1) 0%, transparent 40%), url('/images/hero/landing-hero-data-eye-1920w.webp')`,
+          },
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
         }}
       >
@@ -1725,76 +1729,54 @@ const LandingPage: React.FC = () => {
                   height: { xs: '350px', md: '480px' },
                   borderRadius: '24px',
                   overflow: 'hidden',
-                  bgcolor: lunitColors.lightestGray,
+                  bgcolor: lunitColors.darkerGray,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   transition: 'all 0.5s ease',
                   '&:hover': {
-                    '& .icon-main': {
-                      transform: 'scale(1.08)',
-                    },
-                    '& .pulse-ring': {
-                      transform: 'scale(1.1)',
-                      opacity: 0.8,
+                    '& .product-img': {
+                      transform: 'scale(1.04)',
                     },
                   },
                 }}
               >
-                {/* Subtle grid */}
+                {/* Product screenshot — AI heatmap analysis */}
+                <Box
+                  component="img"
+                  className="product-img"
+                  src="/images/screenshots/ai-heatmap-analysis-product.webp"
+                  alt="ClinicalVision mammogram analysis with GradCAM++ heatmap overlay showing anatomical quadrant mapping and 78% confidence detection"
+                  loading="lazy"
+                  sx={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    display: 'block',
+                    transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+                  }}
+                />
+                {/* Subtle gradient overlay at bottom for depth */}
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: '40%',
+                    background: 'linear-gradient(to top, rgba(0,0,0,0.3) 0%, transparent 100%)',
+                    pointerEvents: 'none',
+                  }}
+                />
+                {/* Teal accent glow at corners */}
                 <Box
                   sx={{
                     position: 'absolute',
                     inset: 0,
-                    backgroundImage: `
-                      linear-gradient(${alpha(lunitColors.teal, 0.03)} 1px, transparent 1px),
-                      linear-gradient(90deg, ${alpha(lunitColors.teal, 0.03)} 1px, transparent 1px)
-                    `,
-                    backgroundSize: '60px 60px',
+                    background: `radial-gradient(circle at 0% 100%, ${alpha(lunitColors.teal, 0.15)} 0%, transparent 40%)`,
                     pointerEvents: 'none',
                   }}
                 />
-                
-                {/* Pulse rings */}
-                <Box
-                  className="pulse-ring"
-                  sx={{
-                    position: 'absolute',
-                    width: 280,
-                    height: 280,
-                    borderRadius: '50%',
-                    border: `1px solid ${alpha(lunitColors.teal, 0.1)}`,
-                    transition: 'all 0.5s ease',
-                  }}
-                />
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    width: 200,
-                    height: 200,
-                    borderRadius: '50%',
-                    border: `1px solid ${alpha(lunitColors.teal, 0.15)}`,
-                  }}
-                />
-                
-                {/* Center icon */}
-                <Box
-                  className="icon-main"
-                  sx={{
-                    width: 120,
-                    height: 120,
-                    borderRadius: '50%',
-                    bgcolor: alpha(lunitColors.teal, 0.1),
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'transform 0.5s ease',
-                    position: 'relative',
-                    zIndex: 2,
-                  }}
-                >
-                  <Biotech sx={{ fontSize: 56, color: lunitColors.teal }} />
-                </Box>
               </Box>
             </Box>
             
@@ -1985,10 +1967,10 @@ const LandingPage: React.FC = () => {
               minHeight: { xs: 'auto', md: '500px' },
               display: 'flex',
               alignItems: 'center',
-              /* Gradient background - replaces missing image */
-              backgroundImage: 'radial-gradient(ellipse at 90% 80%, rgba(0, 201, 234, 0.2) 0%, transparent 50%), radial-gradient(ellipse at 80% 90%, rgba(86, 193, 77, 0.15) 0%, transparent 40%)',
-              backgroundSize: 'auto 100%',
-              backgroundPosition: 'right bottom',
+              /* Background image with subtle gradient accents */
+              backgroundImage: `radial-gradient(ellipse at 90% 80%, rgba(0, 201, 234, 0.2) 0%, transparent 50%), radial-gradient(ellipse at 80% 90%, rgba(86, 193, 77, 0.15) 0%, transparent 40%), url('/images/sections/technology-plexus-network.webp')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'right center',
               backgroundRepeat: 'no-repeat',
             }}
           >
@@ -2806,7 +2788,7 @@ const LandingPage: React.FC = () => {
                   width: '100%',
                   height: '100%',
                   bgcolor: lunitColors.darkerGray,
-                  backgroundImage: `url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?auto=format&fit=crop&w=1200&q=80')`,
+                  backgroundImage: `url('/images/cards/partner-scientist-microscope.webp')`,
                   backgroundSize: 'cover',
                   backgroundPosition: { xs: '40% 100%', md: 'center' },
                   backgroundRepeat: 'no-repeat',
@@ -2958,7 +2940,7 @@ const LandingPage: React.FC = () => {
                   width: '100%',
                   height: '100%',
                   bgcolor: lunitColors.darkerGray,
-                  backgroundImage: `url('https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=1200&q=80')`,
+                  backgroundImage: `url('/images/cards/partner-pathologist-profile.webp')`,
                   backgroundSize: 'cover',
                   backgroundPosition: { xs: '40% 100%', md: 'center' },
                   backgroundRepeat: 'no-repeat',
@@ -3280,20 +3262,18 @@ const LandingPage: React.FC = () => {
               {/* Author */}
               <Box sx={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
                 <Box
+                  component="img"
+                  src="/images/avatars/testimonial-radiologist.webp"
+                  alt="Dr. Elena Rodriguez"
+                  loading="lazy"
                   sx={{
                     width: 92,
                     height: 92,
                     borderRadius: '4.64px',
-                    bgcolor: alpha(lunitColors.teal, 0.2),
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    overflow: 'hidden',
+                    objectFit: 'cover',
                     flexShrink: 0,
                   }}
-                >
-                  <LocalHospital sx={{ fontSize: 40, color: lunitColors.teal }} />
-                </Box>
+                />
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                   <Typography
                     sx={{
@@ -3382,20 +3362,18 @@ const LandingPage: React.FC = () => {
               {/* Author */}
               <Box sx={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
                 <Box
+                  component="img"
+                  src="/images/avatars/testimonial-clinician.webp"
+                  alt="Dr. Michael Okonkwo"
+                  loading="lazy"
                   sx={{
                     width: 92,
                     height: 92,
                     borderRadius: '4.64px',
-                    bgcolor: alpha('#FF5321', 0.2),
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    overflow: 'hidden',
+                    objectFit: 'cover',
                     flexShrink: 0,
                   }}
-                >
-                  <Science sx={{ fontSize: 40, color: '#FF5321' }} />
-                </Box>
+                />
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                   <Typography
                     sx={{
@@ -3479,20 +3457,18 @@ const LandingPage: React.FC = () => {
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
                 <Box
+                  component="img"
+                  src="/images/avatars/testimonial-researcher.webp"
+                  alt="Dr. Aisha Patel"
+                  loading="lazy"
                   sx={{
                     width: 92,
                     height: 92,
                     borderRadius: '4.64px',
-                    bgcolor: alpha('#8B5CF6', 0.2),
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    overflow: 'hidden',
+                    objectFit: 'cover',
                     flexShrink: 0,
                   }}
-                >
-                  <Biotech sx={{ fontSize: 40, color: '#8B5CF6' }} />
-                </Box>
+                />
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                   <Typography
                     sx={{
@@ -3767,12 +3743,20 @@ const LandingPage: React.FC = () => {
                   overflow: 'hidden',
                   aspectRatio: { xs: '16/9', md: '4/3' },
                   bgcolor: lunitColors.darkerGray,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
                 }}
               >
-                <TrendingUp sx={{ fontSize: { xs: 80, md: 120 }, color: alpha(lunitColors.teal, 0.2) }} />
+                <Box
+                  component="img"
+                  src="/images/sections/technology-ai-chip.webp"
+                  alt="AI technology in healthcare"
+                  loading="lazy"
+                  sx={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    display: 'block',
+                  }}
+                />
                 {/* Gradient overlay */}
                 <Box
                   sx={{
@@ -3986,18 +3970,21 @@ const LandingPage: React.FC = () => {
                 title: 'Multi-Modal Deep Learning Architecture Achieves 95.2% Diagnostic Accuracy in Early-Stage Breast Cancer Detection',
                 date: 'January 15, 2026',
                 color: lunitColors.teal,
+                image: '/images/cards/news-blood-tubes.webp',
               },
               {
                 category: 'Precision Oncology',
                 title: 'AI-Driven Biomarker Discovery Platform Demonstrates Accelerated Identification Timelines in Preclinical Validation',
                 date: 'January 10, 2026',
                 color: '#FF5321',
+                image: '/images/cards/news-cancer-cells.webp',
               },
               {
                 category: 'Research',
                 title: 'Multi-Institutional Prospective Study Validates AI-Assisted Mammography Screening Across Diverse Patient Populations',
                 date: 'January 5, 2026',
                 color: '#56C14D',
+                image: '/images/cards/news-lab-pipetting.webp',
               },
             ].map((news, idx) => (
               <Box sx={{ flex: 1 }} key={idx}>
@@ -4024,39 +4011,32 @@ const LandingPage: React.FC = () => {
                   <Box
                     sx={{
                       height: '240px',
-                      background: `linear-gradient(135deg, ${lunitColors.darkerGray} 0%, ${lunitColors.tealDarker} 100%)`,
                       position: 'relative',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      '& img': {
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <Box
+                      component="img"
+                      src={news.image}
+                      alt={news.category}
+                      loading="lazy"
+                      sx={{
                         width: '100%',
                         height: '100%',
                         objectFit: 'cover',
-                      },
-                    }}
-                  >
-                    {/* Placeholder gradient when no image */}
+                        display: 'block',
+                      }}
+                    />
+                    {/* Color accent overlay */}
                     <Box
                       sx={{
                         position: 'absolute',
                         inset: 0,
-                        background: `radial-gradient(circle at 70% 30%, ${alpha(news.color, 0.4)} 0%, transparent 60%),
-                                     radial-gradient(circle at 30% 70%, ${alpha(lunitColors.teal, 0.3)} 0%, transparent 50%)`,
+                        background: `radial-gradient(circle at 70% 30%, ${alpha(news.color, 0.25)} 0%, transparent 60%),
+                                     radial-gradient(circle at 30% 70%, ${alpha(lunitColors.teal, 0.2)} 0%, transparent 50%)`,
+                        pointerEvents: 'none',
                       }}
                     />
-                    <Typography
-                      sx={{
-                        fontFamily: '"ClashGrotesk", sans-serif',
-                        fontSize: '48px',
-                        fontWeight: 600,
-                        color: alpha(lunitColors.white, 0.15),
-                        position: 'relative',
-                        zIndex: 1,
-                      }}
-                    >
-                      {news.category.charAt(0)}
-                    </Typography>
                   </Box>
                   
                   {/* Content Area - Dark background like Lunit */}

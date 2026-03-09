@@ -203,6 +203,145 @@ async def predict_image(
 
 
 @router.post(
+    "/predict-batch",
+    status_code=status.HTTP_200_OK,
+    summary="Run AI inference on multiple mammogram images in a single request"
+)
+@limiter.limit(get_rate_limit("inference"))
+async def predict_batch(
+    request: Request,
+    response: Response,
+    files: List[UploadFile] = File(..., description="Mammogram image files (up to 8)"),
+    save_result: bool = Query(False, description="Save predictions to database"),
+    model_version: Optional[str] = Query(None, description="Specific model version to use"),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_radiologist)
+):
+    """
+    **Run AI inference on multiple mammogram images at once**
+
+    Processes up to 8 images in a single request, avoiding per-image HTTP
+    overhead and enabling internal parallelism.  Returns a list of
+    InferenceResponse objects, one per input file (same order).
+
+    **Authentication:** Requires Radiologist, Technician, or Admin role
+    """
+    import asyncio
+
+    if len(files) > 8:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Maximum 8 images per batch request"
+        )
+
+    if len(files) == 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="At least one image file is required"
+        )
+
+    batch_start = time.time()
+    inference_service = get_inference_service()
+
+    async def _process_one(file: UploadFile) -> dict:
+        """Process a single image within the batch."""
+        contents = await file.read()
+
+        try:
+            image = Image.open(io.BytesIO(contents))
+        except Exception as e:
+            return {"error": f"Invalid image file ({file.filename}): {str(e)}"}
+
+        try:
+            validate_image(image)
+        except Exception as e:
+            return {"error": f"Image validation failed ({file.filename}): {str(e)}"}
+
+        try:
+            preprocessed, image_metadata = preprocess_mammogram_with_metadata(image)
+        except Exception as e:
+            return {"error": f"Preprocessing failed ({file.filename}): {str(e)}"}
+
+        # Create DB record if saving
+        image_id = None
+        if save_result:
+            try:
+                img_record = ImageModel(
+                    file_path=file.filename or "upload",
+                    file_name=file.filename or "unknown",
+                    file_size_bytes=len(contents),
+                    mime_type=file.content_type or "image/png",
+                    image_width=image_metadata.get("original_width"),
+                    image_height=image_metadata.get("original_height"),
+                    status="analyzed",
+                    is_processed=True,
+                    uploaded_by=current_user.id,
+                    upload_source="inference_api_batch",
+                )
+                db.add(img_record)
+                db.flush()
+                image_id = img_record.id
+            except Exception:
+                image_id = None
+
+        result = await inference_service.predict_single_image(
+            image_array=preprocessed,
+            image_id=image_id,
+            db=db if save_result else None,
+            model_version=model_version,
+            save_result=save_result
+        )
+
+        result['image_metadata'] = image_metadata
+
+        # Transform regions
+        if 'suspicious_regions' in result.get('explanation', {}):
+            scale_x = image_metadata['scale_x']
+            scale_y = image_metadata['scale_y']
+            for region in result['explanation']['suspicious_regions']:
+                if 'bbox' in region:
+                    region['bbox_model'] = region['bbox']
+                    region['bbox_original'] = transform_bbox_to_original(
+                        region['bbox'], scale_x, scale_y
+                    )
+
+        return result
+
+    # Process all images concurrently — asyncio.to_thread in predict_single_image
+    # allows genuine concurrency since TF releases the GIL in C kernels
+    tasks = [_process_one(f) for f in files]
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+
+    # Convert exceptions to error dicts; serialize through InferenceResponse
+    # to convert numpy types to native Python types
+    processed_results = []
+    for i, r in enumerate(results):
+        if isinstance(r, Exception):
+            processed_results.append({"error": str(r), "filename": files[i].filename})
+        elif isinstance(r, dict) and "error" in r:
+            processed_results.append(r)
+        else:
+            try:
+                serialized = InferenceResponse(**r).model_dump(mode="json")
+                processed_results.append(serialized)
+            except Exception as e:
+                logger.warning(f"Batch result serialization error for image {i}: {e}")
+                processed_results.append({"error": str(e), "filename": files[i].filename})
+
+    batch_time = (time.time() - batch_start) * 1000
+    logger.info(
+        f"Batch inference: {len(files)} images, "
+        f"user={current_user.email}, time={batch_time:.0f}ms"
+    )
+
+    return {
+        "results": processed_results,
+        "total_images": len(files),
+        "batch_time_ms": batch_time,
+    }
+
+
+@router.post(
     "/predict-tiles",
     response_model=TileAnalysisResponse,
     status_code=status.HTTP_200_OK,
