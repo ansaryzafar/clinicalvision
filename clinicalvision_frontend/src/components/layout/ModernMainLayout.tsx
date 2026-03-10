@@ -102,16 +102,10 @@ const navigationSections: NavigationSection[] = [
         description: 'Upload & analyze mammogram',
       },
       {
-        title: 'Case Archive',
-        path: ROUTES.ANALYSIS_ARCHIVE,
-        icon: <Folder />,
-        description: 'View saved analyses',
-      },
-      {
-        title: 'Cases',
+        title: 'Active Cases',
         path: ROUTES.CASES,
         icon: <Assignment />,
-        description: 'Case management dashboard',
+        description: 'Cases currently being worked on',
       },
       {
         title: 'Analysis Suite',
@@ -123,7 +117,13 @@ const navigationSections: NavigationSection[] = [
         title: 'Case History',
         path: ROUTES.HISTORY,
         icon: <History />,
-        description: 'Previous sessions',
+        description: 'Completed clinical records',
+      },
+      {
+        title: 'AI Analysis Log',
+        path: ROUTES.ANALYSIS_ARCHIVE,
+        icon: <Folder />,
+        description: 'View saved AI analyses',
       },
     ],
   },

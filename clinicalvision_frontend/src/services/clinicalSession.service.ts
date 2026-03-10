@@ -126,12 +126,78 @@ class ClinicalSessionService {
     return data ? JSON.parse(data) : [];
   }
 
+  // ==========================================================================
+  // STATUS-BASED FILTERING (Phase 2 — Semantic Page Separation)
+  // ==========================================================================
+
+  /** Statuses that represent work-in-progress (shown on CasesDashboard /cases) */
+  static readonly ACTIVE_STATUSES: ReadonlySet<string> = new Set([
+    'pending', 'in-progress', 'paused',
+  ]);
+
+  /** Statuses that represent finished work (shown on PatientRecords /history) */
+  static readonly COMPLETED_STATUSES: ReadonlySet<string> = new Set([
+    'completed', 'reviewed', 'finalized',
+  ]);
+
+  /**
+   * Get only active/in-progress sessions.
+   * These are cases currently being worked on — shown on the Cases page (/cases).
+   * Includes statuses: pending, in-progress, paused.
+   */
+  getActiveSessions(): AnalysisSession[] {
+    return this.getAllSessions().filter(
+      (s) => ClinicalSessionService.ACTIVE_STATUSES.has(s.workflow.status),
+    );
+  }
+
+  /**
+   * Get only completed/finalized sessions.
+   * These are finished clinical records — shown on Case History page (/history).
+   * Includes statuses: completed, reviewed, finalized.
+   */
+  getCompletedSessions(): AnalysisSession[] {
+    return this.getAllSessions().filter(
+      (s) => ClinicalSessionService.COMPLETED_STATUSES.has(s.workflow.status),
+    );
+  }
+
+  /**
+   * Mark a session as "completed", transitioning it from the active pool
+   * (CasesDashboard) to the completed pool (PatientRecords/Case History).
+   *
+   * This is a genuine user action, so timestamps and version ARE updated.
+   */
+  markSessionCompleted(sessionId: string): void {
+    const session = this.getSession(sessionId);
+    if (!session) return;
+
+    session.workflow.status = 'completed';
+    // This is a real status change — use default saveSession (bumps timestamp & version)
+    this.saveSession(session);
+  }
+
   /**
    * Save/update session
+   *
+   * @param session  The session object to persist.
+   * @param options.preserveTimestamp  When `true`, keep the session's existing
+   *        `lastModified` and `version` values untouched.  Use this for
+   *        background sync / hydration operations that should NOT bump
+   *        timestamps (fixes Bug #1 — Timestamp Corruption).
+   *        When `false` or omitted (default), `lastModified` is set to "now"
+   *        and `version` is incremented — appropriate for genuine user edits.
    */
-  saveSession(session: AnalysisSession): void {
-    session.metadata.lastModified = new Date().toISOString();
-    session.metadata.version += 1;
+  saveSession(
+    session: AnalysisSession,
+    options?: { preserveTimestamp?: boolean },
+  ): void {
+    const preserve = options?.preserveTimestamp === true;
+
+    if (!preserve) {
+      session.metadata.lastModified = new Date().toISOString();
+      session.metadata.version += 1;
+    }
 
     const sessions = this.getAllSessions();
     const index = sessions.findIndex(s => s.sessionId === session.sessionId);
@@ -146,7 +212,7 @@ class ClinicalSessionService {
     this.autoSaveState.lastSaved = new Date().toISOString();
     this.autoSaveState.isDirty = false;
 
-    console.log(`✓ Session saved: ${session.sessionId} (v${session.metadata.version})`);
+    console.log(`✓ Session saved: ${session.sessionId} (v${session.metadata.version})${preserve ? ' [timestamp preserved]' : ''}`);
   }
 
   /**

@@ -85,10 +85,10 @@ export const PatientRecords: React.FC = () => {
   // Eager initialization — avoids flash-of-empty-state by loading synchronous
   // localStorage data before the first paint instead of waiting for useEffect.
   const [sessions, setSessions] = useState<AnalysisSession[]>(
-    () => clinicalSessionService.getAllSessions()
+    () => clinicalSessionService.getCompletedSessions()
   );
   const [filteredSessions, setFilteredSessions] = useState<AnalysisSession[]>(
-    () => clinicalSessionService.getAllSessions()
+    () => clinicalSessionService.getCompletedSessions()
   );
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -117,16 +117,9 @@ export const PatientRecords: React.FC = () => {
       );
     }
 
-    // Apply status filter
+    // Apply status filter (completed statuses only: completed, reviewed, finalized)
     if (statusFilter !== 'all') {
-      if (statusFilter === 'completed') {
-        // "Completed" includes both completed and finalized sessions
-        result = result.filter(
-          (s) => s.workflow.status === 'completed' || s.workflow.status === 'finalized'
-        );
-      } else {
-        result = result.filter((s) => s.workflow.status === statusFilter);
-      }
+      result = result.filter((s) => s.workflow.status === statusFilter);
     }
 
     // Apply findings filter
@@ -150,8 +143,8 @@ export const PatientRecords: React.FC = () => {
   }, [sessions, searchQuery, statusFilter, findingsFilter, sortBy]);
 
   const loadSessions = () => {
-    const allSessions = clinicalSessionService.getAllSessions();
-    setSessions(allSessions);
+    const completedSessions = clinicalSessionService.getCompletedSessions();
+    setSessions(completedSessions);
   };
 
   const handleResumeSession = (sessionId: string) => {
@@ -339,11 +332,11 @@ export const PatientRecords: React.FC = () => {
     return getDerivedCompletionPercentage(session, mode);
   };
 
-  // Stats calculation
+  // Stats reflect completed cases only (completed, reviewed, finalized)
   const stats = {
     total: sessions.length,
-    completed: sessions.filter((s) => s.workflow.status === 'completed' || s.workflow.status === 'finalized').length,
-    inProgress: sessions.filter((s) => s.workflow.status === 'in-progress').length,
+    completed: sessions.filter((s) => s.workflow.status === 'completed').length,
+    finalized: sessions.filter((s) => s.workflow.status === 'finalized' || s.workflow.status === 'reviewed').length,
     withFindings: sessions.filter((s) => s.findings && s.findings.length > 0).length,
   };
 
@@ -382,7 +375,7 @@ export const PatientRecords: React.FC = () => {
                     color: 'rgba(255,255,255,0.95)',
                   }}
                 >
-                  View and manage your clinical analysis sessions
+                  Completed and finalized clinical records — active cases are in Active Cases
                 </Typography>
               </Box>
             </Box>
@@ -488,40 +481,42 @@ export const PatientRecords: React.FC = () => {
           </Card>
         </Tooltip>
 
-        {/* In Progress - Toggle filter (additive with findings) */}
-        <Tooltip title={statusFilter === 'in-progress' ? 'Click to remove status filter' : 'Click to show in-progress sessions'} arrow>
+        {/* Finalized/Reviewed - Toggle filter (additive with findings) */}
+        <Tooltip title={statusFilter === 'finalized' ? 'Click to remove status filter' : stats.finalized > 0 ? 'Click to show finalized/reviewed sessions' : 'No finalized sessions'} arrow>
           <Card
             elevation={0}
             onClick={() => {
-              setStatusFilter(statusFilter === 'in-progress' ? 'all' : 'in-progress');
+              if (stats.finalized > 0) {
+                setStatusFilter(statusFilter === 'finalized' ? 'all' : 'finalized');
+              }
               // Don't reset findingsFilter - allow combining filters
             }}
             sx={{
               flex: 1,
-              bgcolor: alpha(professionalColors.clinical.uncertain.main, statusFilter === 'in-progress' ? 0.15 : 0.08),
-              border: `1px solid ${alpha(professionalColors.clinical.uncertain.main, statusFilter === 'in-progress' ? 0.4 : 0.2)}`,
+              bgcolor: alpha(professionalColors.clinical.uncertain.main, statusFilter === 'finalized' ? 0.15 : 0.08),
+              border: `1px solid ${alpha(professionalColors.clinical.uncertain.main, statusFilter === 'finalized' ? 0.4 : 0.2)}`,
               borderRadius: 2,
-              cursor: 'pointer',
+              cursor: stats.finalized > 0 ? 'pointer' : 'default',
               transition: 'all 0.2s ease',
-              '&:hover': {
+              '&:hover': stats.finalized > 0 ? {
                 borderColor: alpha(professionalColors.clinical.uncertain.main, 0.5),
                 transform: 'translateY(-2px)',
                 boxShadow: `0 4px 12px ${alpha(professionalColors.clinical.uncertain.main, 0.15)}`,
-              },
+              } : {},
             }}
           >
             <CardContent sx={{ py: 2, px: 3 }}>
               <Stack direction="row" alignItems="center" spacing={1.5}>
-                <Box sx={{ color: professionalColors.clinical.uncertain.main, display: 'flex' }}><HourglassTop /></Box>
+                <Box sx={{ color: stats.finalized > 0 ? professionalColors.clinical.uncertain.main : 'text.disabled', display: 'flex' }}><CheckCircle /></Box>
                 <Box sx={{ flex: 1 }}>
-                  <Typography variant="h5" fontWeight={700} sx={{ color: professionalColors.clinical.uncertain.main }}>
-                    {stats.inProgress}
+                  <Typography variant="h5" fontWeight={700} sx={{ color: stats.finalized > 0 ? professionalColors.clinical.uncertain.main : 'text.primary' }}>
+                    {stats.finalized}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    In Progress
+                    Finalized
                   </Typography>
                 </Box>
-                {statusFilter === 'in-progress' && (
+                {statusFilter === 'finalized' && (
                   <FilterList sx={{ fontSize: 18, color: professionalColors.clinical.uncertain.main }} />
                 )}
               </Stack>
@@ -609,8 +604,7 @@ export const PatientRecords: React.FC = () => {
               <MenuItem value="all">All Statuses</MenuItem>
               <MenuItem value="completed">Completed</MenuItem>
               <MenuItem value="finalized">Finalized</MenuItem>
-              <MenuItem value="in-progress">In Progress</MenuItem>
-              <MenuItem value="pending">Pending</MenuItem>
+              <MenuItem value="reviewed">Reviewed</MenuItem>
             </Select>
           </FormControl>
           <FormControl size="small" sx={{ minWidth: 150 }}>
@@ -640,11 +634,11 @@ export const PatientRecords: React.FC = () => {
           }}
         >
           <Typography variant="body1" fontWeight={600} sx={{ mb: 0.5 }}>
-            No Sessions Found
+            No Completed Cases Found
           </Typography>
           <Typography variant="body2">
             {sessions.length === 0
-              ? "You haven't started any analysis sessions yet. Go to the Diagnostic Workstation to begin."
+              ? "No cases have been completed yet. Cases appear here once they are marked as completed from Active Cases."
               : 'No sessions match your current filters. Try adjusting your search criteria.'}
           </Typography>
           {sessions.length === 0 && (

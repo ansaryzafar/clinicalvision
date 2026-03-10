@@ -243,11 +243,17 @@ export function clinicalCaseToSession(clinicalCase: ClinicalCase): AnalysisSessi
 /**
  * Sync a single ClinicalCase → clinicalSessionService.
  * Call this whenever a ClinicalCase is persisted to localStorage.
+ *
+ * Uses `preserveTimestamp: true` so that the original case timestamps
+ * (from workflow.lastModifiedAt / audit.lastModifiedAt) survive the
+ * save operation.  Without this, saveSession() would unconditionally
+ * overwrite lastModified with "now", causing all timestamps on the
+ * CasesDashboard and PatientRecords pages to show the same time.
  */
 export function syncCaseToSessionService(clinicalCase: ClinicalCase): void {
   try {
     const session = clinicalCaseToSession(clinicalCase);
-    clinicalSessionService.saveSession(session);
+    clinicalSessionService.saveSession(session, { preserveTimestamp: true });
   } catch (err) {
     console.error('[caseSessionBridge] Failed to sync case → session:', clinicalCase.id, err);
   }

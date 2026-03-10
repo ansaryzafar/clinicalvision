@@ -74,24 +74,24 @@ export const CasesDashboard: React.FC = () => {
   // localStorage data before the first paint instead of waiting for useEffect.
   const [sessions, setSessions] = useState<AnalysisSession[]>(
     () => {
-      const allSessions = clinicalSessionService.getAllSessions();
-      allSessions.sort(
+      const activeSessions = clinicalSessionService.getActiveSessions();
+      activeSessions.sort(
         (a: AnalysisSession, b: AnalysisSession) =>
           new Date(b.metadata.lastModified).getTime() -
           new Date(a.metadata.lastModified).getTime()
       );
-      return allSessions;
+      return activeSessions;
     }
   );
   const [filteredSessions, setFilteredSessions] = useState<AnalysisSession[]>(
     () => {
-      const allSessions = clinicalSessionService.getAllSessions();
-      allSessions.sort(
+      const activeSessions = clinicalSessionService.getActiveSessions();
+      activeSessions.sort(
         (a: AnalysisSession, b: AnalysisSession) =>
           new Date(b.metadata.lastModified).getTime() -
           new Date(a.metadata.lastModified).getTime()
       );
-      return allSessions;
+      return activeSessions;
     }
   );
   const [searchQuery, setSearchQuery] = useState('');
@@ -99,6 +99,8 @@ export const CasesDashboard: React.FC = () => {
   const [sortMode, setSortMode] = useState<'recent' | 'priority'>('recent');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [sessionToDelete, setSessionToDelete] = useState<string | null>(null);
+  const [completeDialogOpen, setCompleteDialogOpen] = useState(false);
+  const [sessionToComplete, setSessionToComplete] = useState<string | null>(null);
 
   // Helper: Calculate priority score for AI-based worklist sorting
   // Article: "ML-based worklist prioritization by identifying key factors responsible for workflow outcomes"
@@ -147,13 +149,9 @@ export const CasesDashboard: React.FC = () => {
       );
     }
     
-    // Apply status filter
+    // Apply status filter (active statuses only: pending, in-progress, paused)
     if (statusFilter !== 'all') {
-      if (statusFilter === 'completed') {
-        result = result.filter((s) => s.workflow.status === 'completed' || s.workflow.status === 'finalized');
-      } else {
-        result = result.filter((s) => s.workflow.status === statusFilter);
-      }
+      result = result.filter((s) => s.workflow.status === statusFilter);
     }
     
     // Apply sort mode
@@ -171,14 +169,14 @@ export const CasesDashboard: React.FC = () => {
   }, [searchQuery, sessions, statusFilter, sortMode]);
 
   const refreshSessions = () => {
-    const allSessions = clinicalSessionService.getAllSessions();
+    const activeSessions = clinicalSessionService.getActiveSessions();
     // Initial sort by last modified (most recent first)
-    allSessions.sort(
+    activeSessions.sort(
       (a: AnalysisSession, b: AnalysisSession) =>
         new Date(b.metadata.lastModified).getTime() -
         new Date(a.metadata.lastModified).getTime()
     );
-    setSessions(allSessions);
+    setSessions(activeSessions);
   };
 
   const handleCreateNew = () => {
@@ -203,6 +201,20 @@ export const CasesDashboard: React.FC = () => {
       refreshSessions();
       setDeleteDialogOpen(false);
       setSessionToDelete(null);
+    }
+  };
+
+  const handleCompleteClick = (sessionId: string) => {
+    setSessionToComplete(sessionId);
+    setCompleteDialogOpen(true);
+  };
+
+  const handleCompleteConfirm = () => {
+    if (sessionToComplete) {
+      clinicalSessionService.markSessionCompleted(sessionToComplete);
+      refreshSessions(); // Refresh removes it from active list
+      setCompleteDialogOpen(false);
+      setSessionToComplete(null);
     }
   };
 
@@ -261,11 +273,12 @@ export const CasesDashboard: React.FC = () => {
   };
 
   // Calculate stats
+  // Stats reflect active cases only (pending, in-progress, paused)
   const stats = {
     total: sessions.length,
-    completed: sessions.filter((s) => s.workflow.status === 'completed' || s.workflow.status === 'finalized').length,
     inProgress: sessions.filter((s) => s.workflow.status === 'in-progress').length,
     pending: sessions.filter((s) => s.workflow.status === 'pending').length,
+    paused: sessions.filter((s) => s.workflow.status === 'paused').length,
   };
 
   return (
@@ -294,7 +307,7 @@ export const CasesDashboard: React.FC = () => {
                     textShadow: '0 1px 2px rgba(0,0,0,0.15)',
                   }}
                 >
-                  Cases Dashboard
+                  Active Cases
                 </Typography>
                 <Typography 
                   variant="body2" 
@@ -303,7 +316,7 @@ export const CasesDashboard: React.FC = () => {
                     color: 'rgba(255,255,255,0.95)',
                   }}
                 >
-                  Manage and track all clinical analysis sessions
+                  Cases currently being worked on — completed cases move to Case History
                 </Typography>
               </Box>
             </Box>
@@ -402,37 +415,37 @@ export const CasesDashboard: React.FC = () => {
           </Card>
         </Tooltip>
 
-        {/* Completed - Click to filter */}
-        <Tooltip title={statusFilter === 'completed' ? 'Showing completed cases' : 'Click to filter completed'} arrow>
+        {/* Paused - Click to filter */}
+        <Tooltip title={statusFilter === 'paused' ? 'Showing paused cases' : stats.paused > 0 ? 'Click to filter paused' : 'No paused cases'} arrow>
           <Card
             elevation={0}
-            onClick={() => setStatusFilter(statusFilter === 'completed' ? 'all' : 'completed')}
+            onClick={() => stats.paused > 0 && setStatusFilter(statusFilter === 'paused' ? 'all' : 'paused')}
             sx={{
               flex: 1,
-              bgcolor: alpha(professionalColors.clinical.normal.main, statusFilter === 'completed' ? 0.15 : 0.08),
-              border: `1px solid ${alpha(professionalColors.clinical.normal.main, statusFilter === 'completed' ? 0.4 : 0.2)}`,
+              bgcolor: alpha(professionalColors.clinical.normal.main, statusFilter === 'paused' ? 0.15 : 0.08),
+              border: `1px solid ${alpha(professionalColors.clinical.normal.main, statusFilter === 'paused' ? 0.4 : 0.2)}`,
               borderRadius: 2,
-              cursor: 'pointer',
+              cursor: stats.paused > 0 ? 'pointer' : 'default',
               transition: 'all 0.2s ease',
-              '&:hover': {
+              '&:hover': stats.paused > 0 ? {
                 borderColor: alpha(professionalColors.clinical.normal.main, 0.5),
                 transform: 'translateY(-2px)',
                 boxShadow: `0 4px 12px ${alpha(professionalColors.clinical.normal.main, 0.15)}`,
-              },
+              } : {},
             }}
           >
             <CardContent sx={{ py: 2, px: 3 }}>
               <Stack direction="row" alignItems="center" spacing={1.5}>
-                <Box sx={{ color: professionalColors.clinical.normal.main, display: 'flex' }}><CheckCircle /></Box>
+                <Box sx={{ color: stats.paused > 0 ? professionalColors.clinical.normal.main : 'text.disabled', display: 'flex' }}><HourglassEmpty /></Box>
                 <Box sx={{ flex: 1 }}>
-                  <Typography variant="h5" fontWeight={700} sx={{ color: professionalColors.clinical.normal.main }}>
-                    {stats.completed}
+                  <Typography variant="h5" fontWeight={700} sx={{ color: stats.paused > 0 ? professionalColors.clinical.normal.main : 'text.primary' }}>
+                    {stats.paused}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    Completed
+                    Paused
                   </Typography>
                 </Box>
-                {statusFilter === 'completed' && (
+                {statusFilter === 'paused' && (
                   <FilterList sx={{ fontSize: 18, color: professionalColors.clinical.normal.main }} />
                 )}
               </Stack>
@@ -570,12 +583,12 @@ export const CasesDashboard: React.FC = () => {
               }}
             >
               <Typography variant="body1" fontWeight={600} sx={{ mb: 0.5 }}>
-                {searchQuery ? 'No Matching Cases' : 'No Cases Yet'}
+                {searchQuery ? 'No Matching Cases' : 'No Active Cases'}
               </Typography>
               <Typography variant="body2">
                 {searchQuery
                   ? 'Try adjusting your search criteria.'
-                  : 'Create a new case to get started with your analysis.'}
+                  : 'No cases are currently being worked on. Completed cases can be found in Case History.'}
               </Typography>
               {!searchQuery && (
                 <Button
@@ -704,6 +717,18 @@ export const CasesDashboard: React.FC = () => {
                             <PlayCircleOutline sx={{ fontSize: 18, color: theme.palette.primary.main }} />
                           </IconButton>
                         </Tooltip>
+                        <Tooltip title="Complete & Send to History">
+                          <IconButton
+                            size="small"
+                            onClick={() => handleCompleteClick(session.sessionId)}
+                            sx={{
+                              bgcolor: alpha(professionalColors.clinical.normal.main, 0.1),
+                              '&:hover': { bgcolor: alpha(professionalColors.clinical.normal.main, 0.2) },
+                            }}
+                          >
+                            <CheckCircle sx={{ fontSize: 18, color: professionalColors.clinical.normal.main }} />
+                          </IconButton>
+                        </Tooltip>
                         <Tooltip title="Export">
                           <IconButton
                             size="small"
@@ -759,6 +784,36 @@ export const CasesDashboard: React.FC = () => {
             startIcon={<Delete />}
           >
             Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Complete & Send to History Confirmation Dialog */}
+      <Dialog
+        open={completeDialogOpen}
+        onClose={() => setCompleteDialogOpen(false)}
+        PaperProps={{
+          sx: {
+            borderRadius: 2,
+            bgcolor: 'background.paper',
+          },
+        }}
+      >
+        <DialogTitle sx={{ fontWeight: 600 }}>Complete & Send to History?</DialogTitle>
+        <DialogContent>
+          <Typography color="text.secondary">
+            This case will be marked as completed and moved to Case History. You can still view it there, but it will no longer appear in Active Cases.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, pt: 1 }}>
+          <Button onClick={() => setCompleteDialogOpen(false)}>Cancel</Button>
+          <Button
+            onClick={handleCompleteConfirm}
+            color="success"
+            variant="contained"
+            startIcon={<CheckCircle />}
+          >
+            Complete
           </Button>
         </DialogActions>
       </Dialog>

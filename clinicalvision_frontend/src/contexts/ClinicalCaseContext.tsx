@@ -223,11 +223,10 @@ function persistCaseStore(): void {
     });
     localStorage.setItem(CASE_STORE_KEY, JSON.stringify(serialisable));
 
-    // Bridge: sync every case to clinicalSessionService so CasesDashboard
-    // and PatientRecords (which read from clinicalvision_sessions) can see them
-    caseStore.forEach((c) => {
-      syncCaseToSessionService(c);
-    });
+    // NOTE: Session service sync is handled separately by the useEffect
+    // that watches currentCase. We do NOT sync ALL cases here because
+    // that would bump timestamps on every case even when only one changed.
+    // See: WORKFLOW_AUDIT_FINDINGS.md — Bug #1 (Timestamp Corruption)
   } catch (err) {
     console.warn('[ClinicalCaseContext] Failed to persist case store:', err);
   }
@@ -527,10 +526,13 @@ export const ClinicalCaseProvider: React.FC<ClinicalCaseProviderProps> = ({
     // Debounced localStorage write (3s window)
     debouncedPersist(CASE_STORE_KEY, serialisable);
 
-    // Sync to session service immediately (lightweight — just metadata)
-    caseStore.forEach((c) => {
-      syncCaseToSessionService(c);
-    });
+    // Sync ONLY the current case to session service (lightweight — just metadata).
+    // Previous implementation synced ALL cases on every state change, which
+    // caused timestamp corruption: editing Case A would bump lastModified
+    // on Cases B, C, D, etc.  See: WORKFLOW_AUDIT_FINDINGS.md — Bug #1
+    if (currentCase) {
+      syncCaseToSessionService(currentCase);
+    }
   }, [currentCase]);
 
   // Flush persistence on unmount + beforeunload

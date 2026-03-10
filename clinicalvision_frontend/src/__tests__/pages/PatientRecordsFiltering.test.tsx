@@ -1,19 +1,17 @@
 /**
  * TDD — PatientRecords (Case History) Filtering Tests
  *
- * Bug: The "Completed" stats card counts both 'completed' and 'finalized'
- * sessions, but clicking it sets statusFilter='completed' which does an
- * exact match — finalized sessions disappear. The status dropdown also
- * lacks 'finalized' as an option.
+ * After Phase 2 semantic separation, PatientRecords only shows completed
+ * sessions (completed, reviewed, finalized) via getCompletedSessions().
  *
  * Tests verify:
- *  1. Clicking "Completed" card shows both completed AND finalized sessions
- *  2. Stats card count matches the number of displayed sessions after click
- *  3. Status dropdown includes "Finalized" option
- *  4. Filtering by "Finalized" shows only finalized sessions
- *  5. Search filter works across all statuses
- *  6. Combined filters (status + findings) work correctly
- *  7. "Total Sessions" card resets all filters
+ *  1. Stats cards show correct counts for completed-only sessions
+ *  2. Clicking "Completed" card filters to completed status only
+ *  3. Status dropdown includes "Completed", "Finalized", "Reviewed"
+ *  4. Search filter works across completed sessions
+ *  5. Combined filters (status + findings) work correctly
+ *  6. "Total Sessions" card resets all filters
+ *  7. Empty state shows correct message
  */
 import React from 'react';
 import { render, screen, fireEvent, within, waitFor } from '@testing-library/react';
@@ -113,8 +111,8 @@ function makeSession(overrides: Partial<AnalysisSession> & { sessionId: string }
   };
 }
 
-/** Test data: 6 sessions with varied statuses */
-const testSessions: AnalysisSession[] = [
+/** Test data: 4 completed sessions (the kind PatientRecords shows) */
+const completedTestSessions: AnalysisSession[] = [
   makeSession({
     sessionId: 'sess-completed-1',
     patientInfo: { patientId: 'PAT-001', name: 'Alice Smith' },
@@ -137,20 +135,10 @@ const testSessions: AnalysisSession[] = [
     workflow: { mode: 'clinical', currentStep: WorkflowStep.REPORT, completedSteps: [], status: 'finalized', startedAt: now, stepHistory: [] },
     findings: [{ findingId: 'f2', findingType: 'calcification', location: { clockPosition: 6, distanceFromNipple: 3 }, status: 'reviewed' }],
   }),
-  makeSession({
-    sessionId: 'sess-inprogress-1',
-    patientInfo: { patientId: 'PAT-005', name: 'Eve Davis' },
-    workflow: { mode: 'quick', currentStep: WorkflowStep.AI_ANALYSIS, completedSteps: [WorkflowStep.UPLOAD], status: 'in-progress', startedAt: now, stepHistory: [] },
-    findings: [{ findingId: 'f3', findingType: 'mass', location: { clockPosition: 9, distanceFromNipple: 4 }, status: 'pending' }],
-  }),
-  makeSession({
-    sessionId: 'sess-pending-1',
-    patientInfo: { patientId: 'PAT-006', name: 'Frank Garcia' },
-    workflow: { mode: 'clinical', currentStep: WorkflowStep.UPLOAD, completedSteps: [], status: 'pending', startedAt: now, stepHistory: [] },
-  }),
 ];
 
-const mockGetAllSessions = jest.fn(() => [...testSessions]);
+const mockGetCompletedSessions = jest.fn(() => [...completedTestSessions]);
+const mockGetAllSessions = jest.fn(() => [...completedTestSessions]);
 const mockDeleteSession = jest.fn();
 const mockExportSession = jest.fn(() => '{}');
 const mockImportSession = jest.fn();
@@ -158,9 +146,12 @@ const mockImportSession = jest.fn();
 jest.mock('../../services/clinicalSession.service', () => ({
   clinicalSessionService: {
     getAllSessions: (...args: any[]) => mockGetAllSessions(...args),
+    getCompletedSessions: (...args: any[]) => mockGetCompletedSessions(...args),
+    getActiveSessions: jest.fn(() => []),
     deleteSession: (...args: any[]) => mockDeleteSession(...args),
     exportSession: (...args: any[]) => mockExportSession(...args),
     importSession: (...args: any[]) => mockImportSession(...args),
+    markSessionCompleted: jest.fn(),
     createSession: jest.fn(),
     getCurrentSession: jest.fn(),
     getSession: jest.fn(),
@@ -214,7 +205,8 @@ function renderPatientRecords() {
 describe('PatientRecords — Filtering', () => {
   beforeEach(() => {
     mockNavigate.mockClear();
-    mockGetAllSessions.mockReturnValue([...testSessions]);
+    mockGetCompletedSessions.mockReturnValue([...completedTestSessions]);
+    mockGetAllSessions.mockReturnValue([...completedTestSessions]);
   });
 
   // --------------------------------------------------------------------------
@@ -231,60 +223,58 @@ describe('PatientRecords — Filtering', () => {
   }
 
   // --------------------------------------------------------------------------
-  // 1. Stats card counts
+  // 1. Stats card counts (completed sessions only)
   // --------------------------------------------------------------------------
   describe('Stats card counts', () => {
-    it('shows total count of all sessions', () => {
+    it('shows total count of completed sessions', () => {
       renderPatientRecords();
       const totalCard = getStatsCard('Total Sessions');
-      expect(within(totalCard).getByText('6')).toBeInTheDocument();
+      expect(within(totalCard).getByText('4')).toBeInTheDocument();
     });
 
-    it('shows combined completed + finalized count in "Completed" card', () => {
+    it('shows completed count (status=completed only)', () => {
       renderPatientRecords();
-      // 2 completed + 2 finalized = 4
+      // 2 sessions with status 'completed'
       const completedCard = getStatsCard('Completed');
-      expect(within(completedCard).getByText('4')).toBeInTheDocument();
+      expect(within(completedCard).getByText('2')).toBeInTheDocument();
     });
 
-    it('shows in-progress count', () => {
+    it('shows finalized count', () => {
       renderPatientRecords();
-      const inProgressCard = getStatsCard('In Progress');
-      expect(within(inProgressCard).getByText('1')).toBeInTheDocument();
+      // 2 sessions with status 'finalized'
+      const finalizedCard = getStatsCard('Finalized');
+      expect(within(finalizedCard).getByText('2')).toBeInTheDocument();
     });
 
     it('shows "With Findings" count correctly', () => {
       renderPatientRecords();
-      // 3 sessions have findings: sess-completed-2, sess-finalized-2, sess-inprogress-1
+      // 2 completed sessions have findings: sess-completed-2, sess-finalized-2
       const findingsCard = getStatsCard('With Findings');
-      expect(within(findingsCard).getByText('3')).toBeInTheDocument();
+      expect(within(findingsCard).getByText('2')).toBeInTheDocument();
     });
   });
 
   // --------------------------------------------------------------------------
-  // 2. Clicking "Completed" card shows both completed AND finalized
+  // 2. Clicking "Completed" card filters to completed-status-only sessions
   // --------------------------------------------------------------------------
   describe('Completed stats card filtering', () => {
-    it('clicking "Completed" card shows completed AND finalized sessions', () => {
+    it('clicking "Completed" card shows only completed sessions (not finalized)', () => {
       renderPatientRecords();
 
-      // Before filter: should show all 6 sessions
+      // Before filter: should show all 4 completed/finalized sessions
       expect(screen.getByText('PAT-001')).toBeInTheDocument();
       expect(screen.getByText('PAT-003')).toBeInTheDocument();
-      expect(screen.getByText('PAT-005')).toBeInTheDocument();
 
       // Click the "Completed" stats card
       fireEvent.click(getStatsCard('Completed'));
 
-      // Should show all 4 completed/finalized sessions
+      // Should show only completed sessions
       expect(screen.getByText('PAT-001')).toBeInTheDocument(); // completed
       expect(screen.getByText('PAT-002')).toBeInTheDocument(); // completed
-      expect(screen.getByText('PAT-003')).toBeInTheDocument(); // finalized
-      expect(screen.getByText('PAT-004')).toBeInTheDocument(); // finalized
 
-      // Should NOT show in-progress or pending
-      expect(screen.queryByText('PAT-005')).not.toBeInTheDocument();
-      expect(screen.queryByText('PAT-006')).not.toBeInTheDocument();
+      // Should NOT show finalized
+      expect(screen.queryByText('PAT-003')).not.toBeInTheDocument();
+      expect(screen.queryByText('PAT-004')).not.toBeInTheDocument();
     });
 
     it('clicking "Completed" card again resets filter to all', () => {
@@ -292,12 +282,12 @@ describe('PatientRecords — Filtering', () => {
 
       // Click to activate
       fireEvent.click(getStatsCard('Completed'));
-      expect(screen.queryByText('PAT-005')).not.toBeInTheDocument();
+      expect(screen.queryByText('PAT-003')).not.toBeInTheDocument();
 
       // Click again to deactivate (toggle)
       fireEvent.click(getStatsCard('Completed'));
-      expect(screen.getByText('PAT-005')).toBeInTheDocument();
-      expect(screen.getByText('PAT-006')).toBeInTheDocument();
+      expect(screen.getByText('PAT-003')).toBeInTheDocument();
+      expect(screen.getByText('PAT-004')).toBeInTheDocument();
     });
   });
 
@@ -306,15 +296,13 @@ describe('PatientRecords — Filtering', () => {
   // --------------------------------------------------------------------------
   function openStatusDropdown() {
     // MUI Select renders the trigger as a div with role="combobox"
-    // We find the one whose accessible name includes "Status"
     const comboboxes = screen.getAllByRole('combobox');
     const statusCombobox = comboboxes.find(
       (el) => el.getAttribute('aria-labelledby')?.includes('Status') || 
               el.textContent?.includes('All Statuses') ||
               el.textContent?.includes('Completed') ||
               el.textContent?.includes('Finalized') ||
-              el.textContent?.includes('In Progress') ||
-              el.textContent?.includes('Pending')
+              el.textContent?.includes('Reviewed')
     );
     if (!statusCombobox) throw new Error('Status combobox not found');
     fireEvent.mouseDown(statusCombobox);
@@ -322,7 +310,7 @@ describe('PatientRecords — Filtering', () => {
   }
 
   // --------------------------------------------------------------------------
-  // 3. Status dropdown includes "Finalized" option
+  // 3. Status dropdown includes correct options for completed page
   // --------------------------------------------------------------------------
   describe('Status dropdown', () => {
     it('includes "Finalized" as a selectable option', () => {
@@ -342,28 +330,24 @@ describe('PatientRecords — Filtering', () => {
       expect(screen.getByText('PAT-003')).toBeInTheDocument();
       expect(screen.getByText('PAT-004')).toBeInTheDocument();
 
-      // Should NOT show completed, in-progress, or pending
+      // Should NOT show completed
       expect(screen.queryByText('PAT-001')).not.toBeInTheDocument();
       expect(screen.queryByText('PAT-002')).not.toBeInTheDocument();
-      expect(screen.queryByText('PAT-005')).not.toBeInTheDocument();
-      expect(screen.queryByText('PAT-006')).not.toBeInTheDocument();
     });
 
-    it('selecting "Completed" from dropdown shows completed AND finalized', () => {
+    it('selecting "Completed" from dropdown shows only completed sessions', () => {
       renderPatientRecords();
 
       const listbox = openStatusDropdown();
       fireEvent.click(within(listbox).getByText('Completed'));
 
-      // Should show both completed AND finalized
+      // Should show only completed sessions
       expect(screen.getByText('PAT-001')).toBeInTheDocument();
       expect(screen.getByText('PAT-002')).toBeInTheDocument();
-      expect(screen.getByText('PAT-003')).toBeInTheDocument();
-      expect(screen.getByText('PAT-004')).toBeInTheDocument();
 
-      // Should NOT show in-progress or pending
-      expect(screen.queryByText('PAT-005')).not.toBeInTheDocument();
-      expect(screen.queryByText('PAT-006')).not.toBeInTheDocument();
+      // Should NOT show finalized
+      expect(screen.queryByText('PAT-003')).not.toBeInTheDocument();
+      expect(screen.queryByText('PAT-004')).not.toBeInTheDocument();
     });
   });
 
@@ -395,19 +379,20 @@ describe('PatientRecords — Filtering', () => {
       renderPatientRecords();
 
       const searchInput = screen.getByPlaceholderText(/search by patient/i);
-      fireEvent.change(searchInput, { target: { value: 'sess-pending' } });
+      fireEvent.change(searchInput, { target: { value: 'sess-finalized' } });
 
-      expect(screen.getByText('PAT-006')).toBeInTheDocument();
+      expect(screen.getByText('PAT-003')).toBeInTheDocument();
+      expect(screen.getByText('PAT-004')).toBeInTheDocument();
       expect(screen.queryByText('PAT-001')).not.toBeInTheDocument();
     });
 
-    it('shows "No Sessions Found" message for zero results', () => {
+    it('shows "No Completed Cases Found" message for zero results', () => {
       renderPatientRecords();
 
       const searchInput = screen.getByPlaceholderText(/search by patient/i);
       fireEvent.change(searchInput, { target: { value: 'nonexistentxyz' } });
 
-      expect(screen.getByText('No Sessions Found')).toBeInTheDocument();
+      expect(screen.getByText('No Completed Cases Found')).toBeInTheDocument();
     });
   });
 
@@ -424,16 +409,14 @@ describe('PatientRecords — Filtering', () => {
       // Also click "With Findings"
       fireEvent.click(getStatsCard('With Findings'));
 
-      // Should show only completed/finalized sessions that have findings
+      // Should show only completed sessions that have findings
       // sess-completed-2 (completed, has finding) ✓
-      // sess-finalized-2 (finalized, has finding) ✓
       expect(screen.getByText('PAT-002')).toBeInTheDocument(); // completed + findings
-      expect(screen.getByText('PAT-004')).toBeInTheDocument(); // finalized + findings
 
-      // These have no findings or wrong status
+      // These have no findings or are finalized
       expect(screen.queryByText('PAT-001')).not.toBeInTheDocument(); // completed, no findings
-      expect(screen.queryByText('PAT-003')).not.toBeInTheDocument(); // finalized, no findings
-      expect(screen.queryByText('PAT-005')).not.toBeInTheDocument(); // in-progress
+      expect(screen.queryByText('PAT-003')).not.toBeInTheDocument(); // finalized
+      expect(screen.queryByText('PAT-004')).not.toBeInTheDocument(); // finalized + findings but wrong status filter
     });
 
     it('search + status filter works together', () => {
@@ -468,34 +451,32 @@ describe('PatientRecords — Filtering', () => {
       fireEvent.change(searchInput, { target: { value: 'bob' } });
 
       // Only PAT-002 visible at this point
-      expect(screen.queryByText('PAT-005')).not.toBeInTheDocument();
+      expect(screen.queryByText('PAT-003')).not.toBeInTheDocument();
 
       // Click "Total Sessions" to reset everything
       fireEvent.click(getStatsCard('Total Sessions'));
 
-      // All 6 sessions should be visible again
+      // All 4 completed sessions should be visible again
       expect(screen.getByText('PAT-001')).toBeInTheDocument();
       expect(screen.getByText('PAT-002')).toBeInTheDocument();
       expect(screen.getByText('PAT-003')).toBeInTheDocument();
       expect(screen.getByText('PAT-004')).toBeInTheDocument();
-      expect(screen.getByText('PAT-005')).toBeInTheDocument();
-      expect(screen.getByText('PAT-006')).toBeInTheDocument();
     });
   });
 
   // --------------------------------------------------------------------------
-  // 7. In-progress filter
+  // 7. Finalized filter
   // --------------------------------------------------------------------------
-  describe('In Progress filter', () => {
-    it('clicking "In Progress" card shows only in-progress sessions', () => {
+  describe('Finalized filter', () => {
+    it('clicking "Finalized" card shows only finalized sessions', () => {
       renderPatientRecords();
 
-      fireEvent.click(getStatsCard('In Progress'));
+      fireEvent.click(getStatsCard('Finalized'));
 
-      expect(screen.getByText('PAT-005')).toBeInTheDocument();
+      expect(screen.getByText('PAT-003')).toBeInTheDocument();
+      expect(screen.getByText('PAT-004')).toBeInTheDocument();
       expect(screen.queryByText('PAT-001')).not.toBeInTheDocument();
-      expect(screen.queryByText('PAT-003')).not.toBeInTheDocument();
-      expect(screen.queryByText('PAT-006')).not.toBeInTheDocument();
+      expect(screen.queryByText('PAT-002')).not.toBeInTheDocument();
     });
   });
 });

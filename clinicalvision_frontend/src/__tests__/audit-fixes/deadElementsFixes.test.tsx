@@ -71,8 +71,8 @@ describe('ModernMainLayout sidebar navigation', () => {
       </TestWrapper>
     );
 
-    // The sidebar should contain a "Cases" navigation item
-    const casesItem = screen.getByText(/^Cases$/i);
+    // The sidebar should contain an "Active Cases" navigation item (renamed from "Cases")
+    const casesItem = screen.getByText(/^Active Cases$/i);
     expect(casesItem).toBeInTheDocument();
   });
 
