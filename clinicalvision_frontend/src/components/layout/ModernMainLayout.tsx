@@ -76,6 +76,8 @@ interface NavigationItem {
   icon: React.ReactElement;
   badge?: number;
   description?: string;
+  /** Optional subtle label rendered above this item as a sub-section divider */
+  dividerLabel?: string;
 }
 
 // Organized navigation following Nielsen's "Recognition over Recall" heuristic
@@ -118,6 +120,7 @@ const navigationSections: NavigationSection[] = [
         path: ROUTES.HISTORY,
         icon: <History />,
         description: 'Completed clinical records',
+        dividerLabel: 'Records',
       },
       {
         title: 'AI Analysis Log',
@@ -321,7 +324,27 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
               {section.items.map((item) => {
                 const isActive = location.pathname === item.path;
                 return (
-                  <ListItem key={item.path} disablePadding sx={{ mb: 0.5 }}>
+                  <React.Fragment key={item.path}>
+                    {/* Sub-section divider label (Phase 3.3) */}
+                    {item.dividerLabel && (
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          display: 'block',
+                          px: 1.5,
+                          pt: 1.5,
+                          pb: 0.5,
+                          color: alpha(theme.palette.text.secondary, 0.6),
+                          fontWeight: 600,
+                          fontSize: '0.62rem',
+                          letterSpacing: '0.1em',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        {item.dividerLabel}
+                      </Typography>
+                    )}
+                    <ListItem disablePadding sx={{ mb: 0.5 }}>
                     <Tooltip
                       title={item.description || ''}
                       placement="right"
@@ -405,7 +428,8 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                         )}
                       </ListItemButton>
                     </Tooltip>
-                  </ListItem>
+                    </ListItem>
+                  </React.Fragment>
                 );
               })}
             </List>
