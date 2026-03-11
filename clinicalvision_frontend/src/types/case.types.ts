@@ -1010,8 +1010,11 @@ export interface AuditTrail {
   modifications: AuditEntry[];
   
   // Digital signature
-  /** User who signed the report */
+  /** User who signed the report (user ID) */
   signedBy?: string;
+  
+  /** Display name of the signer (typed name at signing) */
+  signerName?: string;
   
   /** Signature timestamp */
   signedAt?: string;

@@ -144,7 +144,7 @@ export interface ClinicalCaseContextValue {
   updateReport: (report: GeneratedReport) => Result<ClinicalCase, ContextError>;
   generateReport: () => Result<ClinicalCase, ContextError>;
   finalizeReport: () => Result<ClinicalCase, ContextError>;
-  signReport: (signatureHash: string) => Result<ClinicalCase, ContextError>;
+  signReport: (signatureHash: string, signerName?: string) => Result<ClinicalCase, ContextError>;
   
   // Workflow helpers
   getWorkflowProgress: () => number;
@@ -1372,7 +1372,7 @@ export const ClinicalCaseProvider: React.FC<ClinicalCaseProviderProps> = ({
    * Sign the report
    */
   const signReportHandler = useCallback(
-    (signatureHash: string): Result<ClinicalCase, ContextError> => {
+    (signatureHash: string, signerName?: string): Result<ClinicalCase, ContextError> => {
       if (!currentCase) {
         return failure(createContextError('No case loaded', ErrorCode.NO_CASE));
       }
@@ -1421,6 +1421,7 @@ export const ClinicalCaseProvider: React.FC<ClinicalCaseProviderProps> = ({
           lastModifiedBy: userId,
           lastModifiedAt: now,
           signedBy: userId,
+          signerName: signerName || undefined,
           signedAt: now,
           signatureHash: signatureHash || undefined,
           modifications: [...currentCase.audit.modifications, auditEntry],

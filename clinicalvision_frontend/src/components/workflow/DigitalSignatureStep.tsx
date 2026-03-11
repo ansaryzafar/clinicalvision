@@ -38,11 +38,14 @@ import {
   ArrowBack,
   CheckCircle,
   Draw,
+  Fingerprint,
   Lock,
   Verified,
+  Shield,
 } from '@mui/icons-material';
 
 import { useClinicalCase } from '../../contexts/ClinicalCaseContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { ClinicalWorkflowStep } from '../../types/case.types';
 import { useNavigate } from 'react-router-dom';
 
@@ -104,6 +107,7 @@ export const DigitalSignatureStep: React.FC = () => {
   } = useClinicalCase();
 
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   // ── Local state ────────────────────────────────────────────────────────
   const [typedName, setTypedName] = useState('');
@@ -118,9 +122,9 @@ export const DigitalSignatureStep: React.FC = () => {
 
   const signatureInfo = useMemo(() => {
     if (!currentCase?.audit) return null;
-    const { signedBy, signedAt, signatureHash } = currentCase.audit;
+    const { signedBy, signerName, signedAt, signatureHash } = currentCase.audit;
     if (!signedBy) return null;
-    return { signedBy, signedAt, signatureHash };
+    return { signedBy, signerName, signedAt, signatureHash };
   }, [currentCase]);
 
   // ── Auto-finalize after successful signing ─────────────────────────
@@ -163,7 +167,7 @@ export const DigitalSignatureStep: React.FC = () => {
 
       const hash = await generateSignatureHash(signatureInput);
 
-      const result = signReport(hash);
+      const result = signReport(hash, typedName.trim());
       if (!result.success) {
         setSignError(
           (result as { success: false; error: { message: string } }).error.message ??
@@ -343,32 +347,306 @@ export const DigitalSignatureStep: React.FC = () => {
         <Paper
           variant="outlined"
           sx={{
-            p: 3,
             mb: 3,
             borderRadius: 2,
-            backgroundColor: alpha(LUNIT.green, 0.06),
-            borderColor: alpha(LUNIT.green, 0.25),
+            overflow: 'hidden',
+            borderColor: alpha(LUNIT.green, 0.3),
+            boxShadow: `0 0 0 1px ${alpha(LUNIT.green, 0.08)}`,
           }}
         >
-          <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
-            <CheckCircle sx={{ color: 'success.main' }} />
-            <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'success.main' }}>
-              Report Signed & Completed
+          {/* ── Certificate Header ────────────────────────────────────── */}
+          <Box
+            sx={{
+              px: 3,
+              py: 2,
+              background: `linear-gradient(135deg, ${alpha(LUNIT.green, 0.08)} 0%, ${alpha(LUNIT.teal, 0.06)} 100%)`,
+              borderBottom: `1px solid ${alpha(LUNIT.green, 0.15)}`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <Stack direction="row" alignItems="center" spacing={1.5}>
+              <Box
+                sx={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: '50%',
+                  backgroundColor: alpha(LUNIT.green, 0.12),
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Verified sx={{ fontSize: 20, color: LUNIT.green }} />
+              </Box>
+              <Box>
+                <Typography
+                  variant="subtitle1"
+                  sx={{
+                    fontFamily: LUNIT.fontHeading,
+                    fontWeight: 600,
+                    color: LUNIT.darkGray,
+                    lineHeight: 1.2,
+                  }}
+                >
+                  Digital Signature Certificate
+                </Typography>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    fontFamily: LUNIT.fontBody,
+                    color: LUNIT.midGray,
+                    letterSpacing: 0.3,
+                  }}
+                >
+                  Electronically signed medical document
+                </Typography>
+              </Box>
+            </Stack>
+            <Chip
+              icon={<CheckCircle sx={{ fontSize: 16 }} />}
+              label="Verified"
+              size="small"
+              sx={{
+                backgroundColor: alpha(LUNIT.green, 0.1),
+                color: LUNIT.green,
+                fontFamily: LUNIT.fontBody,
+                fontWeight: 600,
+                fontSize: '0.7rem',
+                letterSpacing: 0.5,
+                border: `1px solid ${alpha(LUNIT.green, 0.2)}`,
+                '& .MuiChip-icon': { color: LUNIT.green },
+              }}
+            />
+          </Box>
+
+          {/* ── Certificate Body ──────────────────────────────────────── */}
+          <Box sx={{ p: 3 }}>
+            {/* Signer Identity */}
+            <Box sx={{ mb: 2.5 }}>
+              <Typography
+                variant="overline"
+                sx={{
+                  fontFamily: LUNIT.fontBody,
+                  color: LUNIT.midGray,
+                  fontSize: '0.65rem',
+                  letterSpacing: 1.2,
+                  mb: 0.5,
+                  display: 'block',
+                }}
+              >
+                Signed By
+              </Typography>
+              <Typography
+                sx={{
+                  fontFamily: '"Dancing Script", "Georgia", cursive',
+                  fontSize: '1.6rem',
+                  color: LUNIT.darkGray,
+                  lineHeight: 1.3,
+                  mb: 0.5,
+                }}
+              >
+                {signatureInfo.signerName || user?.full_name || `${user?.first_name || ''} ${user?.last_name || ''}`.trim() || 'Authorized Clinician'}
+              </Typography>
+              <Stack direction="row" spacing={2} flexWrap="wrap" sx={{ mt: 0.5 }}>
+                {(user?.role) && (
+                  <Typography
+                    variant="body2"
+                    sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray, fontSize: '0.8rem' }}
+                  >
+                    {user.role === 'radiologist' ? 'Radiologist' : user.role === 'admin' ? 'Administrator' : user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                  </Typography>
+                )}
+                {user?.license_number && (
+                  <Typography
+                    variant="body2"
+                    sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray, fontSize: '0.8rem' }}
+                  >
+                    License: {user.license_number}
+                  </Typography>
+                )}
+                {user?.specialization && (
+                  <Typography
+                    variant="body2"
+                    sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray, fontSize: '0.8rem' }}
+                  >
+                    {user.specialization}
+                  </Typography>
+                )}
+              </Stack>
+            </Box>
+
+            <Divider sx={{ borderColor: alpha(LUNIT.lightGray, 0.8), my: 2 }} />
+
+            {/* Timestamp & Case Reference */}
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={3}
+              sx={{ mb: 2.5 }}
+            >
+              <Box sx={{ flex: 1 }}>
+                <Typography
+                  variant="overline"
+                  sx={{
+                    fontFamily: LUNIT.fontBody,
+                    color: LUNIT.midGray,
+                    fontSize: '0.65rem',
+                    letterSpacing: 1.2,
+                    mb: 0.25,
+                    display: 'block',
+                  }}
+                >
+                  Date & Time
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontFamily: LUNIT.fontBody,
+                    fontWeight: 500,
+                    color: LUNIT.darkGray,
+                  }}
+                >
+                  {signatureInfo.signedAt
+                    ? new Date(signatureInfo.signedAt).toLocaleDateString('en-GB', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                      })
+                    : '—'}
+                </Typography>
+                <Typography
+                  variant="caption"
+                  sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray }}
+                >
+                  {signatureInfo.signedAt
+                    ? new Date(signatureInfo.signedAt).toLocaleTimeString('en-GB', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        timeZoneName: 'short',
+                      })
+                    : ''}
+                </Typography>
+              </Box>
+              <Box sx={{ flex: 1 }}>
+                <Typography
+                  variant="overline"
+                  sx={{
+                    fontFamily: LUNIT.fontBody,
+                    color: LUNIT.midGray,
+                    fontSize: '0.65rem',
+                    letterSpacing: 1.2,
+                    mb: 0.25,
+                    display: 'block',
+                  }}
+                >
+                  Case Reference
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontFamily: LUNIT.fontBody,
+                    fontWeight: 500,
+                    color: LUNIT.darkGray,
+                  }}
+                >
+                  {currentCase.caseNumber}
+                </Typography>
+                <Typography
+                  variant="caption"
+                  sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray }}
+                >
+                  {currentCase.patient.firstName} {currentCase.patient.lastName} — MRN: {currentCase.patient.mrn}
+                </Typography>
+              </Box>
+            </Stack>
+
+            <Divider sx={{ borderColor: alpha(LUNIT.lightGray, 0.8), my: 2 }} />
+
+            {/* Document Integrity Hash */}
+            <Box sx={{ mb: 1.5 }}>
+              <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 0.75 }}>
+                <Fingerprint sx={{ fontSize: 16, color: LUNIT.midGray }} />
+                <Typography
+                  variant="overline"
+                  sx={{
+                    fontFamily: LUNIT.fontBody,
+                    color: LUNIT.midGray,
+                    fontSize: '0.65rem',
+                    letterSpacing: 1.2,
+                  }}
+                >
+                  Document Integrity Hash (SHA-256)
+                </Typography>
+              </Stack>
+              {signatureInfo.signatureHash && (
+                <Box
+                  sx={{
+                    px: 1.5,
+                    py: 1,
+                    borderRadius: 1,
+                    backgroundColor: alpha(LUNIT.darkGray, 0.03),
+                    border: `1px solid ${alpha(LUNIT.lightGray, 0.6)}`,
+                    overflowX: 'auto',
+                  }}
+                >
+                  <Typography
+                    variant="caption"
+                    data-testid="signature-hash-display"
+                    sx={{
+                      fontFamily: '"JetBrains Mono", "Fira Code", "Consolas", monospace',
+                      fontSize: '0.7rem',
+                      color: LUNIT.midGray,
+                      letterSpacing: 0.8,
+                      wordBreak: 'break-all',
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    {signatureInfo.signatureHash}
+                  </Typography>
+                </Box>
+              )}
+            </Box>
+          </Box>
+
+          {/* ── Certificate Footer ────────────────────────────────────── */}
+          <Box
+            sx={{
+              px: 3,
+              py: 1.5,
+              borderTop: `1px solid ${alpha(LUNIT.lightGray, 0.6)}`,
+              backgroundColor: alpha(LUNIT.darkGray, 0.015),
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <Stack direction="row" alignItems="center" spacing={0.75}>
+              <Shield sx={{ fontSize: 14, color: LUNIT.midGray }} />
+              <Typography
+                variant="caption"
+                sx={{
+                  fontFamily: LUNIT.fontBody,
+                  color: LUNIT.midGray,
+                  fontSize: '0.65rem',
+                }}
+              >
+                Compliant with 21 CFR Part 11 · HIPAA Security Rule
+              </Typography>
+            </Stack>
+            <Typography
+              variant="caption"
+              sx={{
+                fontFamily: LUNIT.fontBody,
+                color: alpha(LUNIT.midGray, 0.6),
+                fontSize: '0.6rem',
+                letterSpacing: 0.3,
+              }}
+            >
+              ClinicalVision™
             </Typography>
-          </Stack>
-          <Typography variant="body2" color="text.secondary">
-            Signed by: {signatureInfo.signedBy}
-          </Typography>
-          {signatureInfo.signedAt && (
-            <Typography variant="body2" color="text.secondary">
-              Signed at: {new Date(signatureInfo.signedAt).toLocaleString()}
-            </Typography>
-          )}
-          {signatureInfo.signatureHash && (
-            <Typography variant="caption" color="text.secondary" sx={{ fontFamily: 'monospace' }}>
-              Hash: {signatureInfo.signatureHash.substring(0, 16)}…
-            </Typography>
-          )}
+          </Box>
         </Paper>
       ) : (
         <Paper

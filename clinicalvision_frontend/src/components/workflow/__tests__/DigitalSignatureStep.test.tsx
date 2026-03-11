@@ -17,6 +17,23 @@ jest.mock('../../../contexts/ClinicalCaseContext', () => ({
   useClinicalCase: jest.fn(),
 }));
 
+const mockAuthUser = {
+  id: 'user-001',
+  email: 'dr.johnson@hospital.org',
+  full_name: 'Dr. Alice Johnson, MD',
+  first_name: 'Alice',
+  last_name: 'Johnson',
+  role: 'radiologist',
+  license_number: 'RAD-2024-1234',
+  specialization: 'Breast Imaging',
+  tier: 'professional',
+  is_active: true,
+};
+
+jest.mock('../../../contexts/AuthContext', () => ({
+  useAuth: () => ({ user: mockAuthUser }),
+}));
+
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -309,12 +326,19 @@ describe('DigitalSignatureStep', () => {
         createdAt: '2026-01-01T00:00:00.000Z',
         modifications: [],
         signedBy: 'dr-johnson',
+        signerName: 'Dr. Alice Johnson, MD',
         signedAt: '2026-01-01T12:00:00.000Z',
-        signatureHash: 'abc123hash',
+        signatureHash: 'abc123hash456def789',
       },
     });
     render(<DigitalSignatureStep />);
-    expect(screen.getByText(/Report Signed & Completed/)).toBeInTheDocument();
+    // Certificate header elements
+    expect(screen.getByText(/Digital Signature Certificate/)).toBeInTheDocument();
+    expect(screen.getByText(/Verified/)).toBeInTheDocument();
+    // Signer name displayed
+    expect(screen.getByText(/Dr. Alice Johnson, MD/)).toBeInTheDocument();
+    // Compliance footer
+    expect(screen.getByText(/21 CFR Part 11/)).toBeInTheDocument();
     // Sign button should not be present
     expect(screen.queryByRole('button', { name: /sign report/i })).not.toBeInTheDocument();
   });
@@ -475,6 +499,7 @@ describe('DigitalSignatureStep post-sign actions', () => {
         createdAt: '2026-01-01T00:00:00.000Z',
         modifications: [],
         signedBy: 'Dr. Alice Johnson',
+        signerName: 'Dr. Alice Johnson',
         signedAt: '2026-01-01T11:00:00.000Z',
         signatureHash: 'abc123def456',
       },
@@ -496,6 +521,7 @@ describe('DigitalSignatureStep post-sign actions', () => {
     setupSignedMock();
     render(<DigitalSignatureStep />);
 
+    expect(screen.getByText(/Digital Signature Certificate/)).toBeInTheDocument();
     expect(screen.getByText(/signed and finalized/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /View All Cases/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Start New Case/i })).toBeInTheDocument();
