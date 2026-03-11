@@ -40,6 +40,8 @@ import {
   Skeleton,
   useTheme,
   Paper,
+  Tabs,
+  Tab,
 } from '@mui/material';
 import {
   FolderOpen,
@@ -59,6 +61,8 @@ import {
   Biotech,
   OpenInNew,
   Autorenew,
+  InsightsOutlined,
+  DashboardOutlined,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../routes/paths';
@@ -68,6 +72,7 @@ import { RiskBadge, RiskLevel } from '../components/shared/RiskIndicator';
 import { clinicalSessionService } from '../services/clinicalSession.service';
 import { AnalysisSession, getRiskLevel, getNumericBirads, getNormalizedConfidence } from '../types/clinical.types';
 import { useLegacyWorkflow } from '../workflow-v3';
+import OverviewTab from '../components/dashboard/tabs/OverviewTab';
 
 // Backend health status type
 interface SystemHealth {
@@ -87,6 +92,7 @@ const ClinicalDashboard: React.FC = () => {
   const { loadSession } = useLegacyWorkflow();
   const [sessions, setSessions] = useState<AnalysisSession[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState(0);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [systemHealth, setSystemHealth] = useState<SystemHealth>({
     aiModel: 'loading',
@@ -414,6 +420,50 @@ const ClinicalDashboard: React.FC = () => {
           </Box>
         </Paper>
 
+        {/* ── Dashboard Tabs ────────────────────────────────────────── */}
+        <Paper
+          elevation={0}
+          sx={{
+            mb: 3,
+            borderRadius: 2,
+            bgcolor: 'background.paper',
+            border: `1px solid ${theme.palette.divider}`,
+          }}
+        >
+          <Tabs
+            value={activeTab}
+            onChange={(_, v) => setActiveTab(v)}
+            aria-label="Dashboard sections"
+            sx={{
+              minHeight: 44,
+              '& .MuiTab-root': {
+                minHeight: 44,
+                textTransform: 'none',
+                fontWeight: 600,
+                fontSize: '0.85rem',
+              },
+              '& .MuiTabs-indicator': {
+                height: 3,
+                borderRadius: '3px 3px 0 0',
+              },
+            }}
+          >
+            <Tab
+              icon={<DashboardOutlined sx={{ fontSize: 18 }} />}
+              iconPosition="start"
+              label="Clinical Overview"
+            />
+            <Tab
+              icon={<InsightsOutlined sx={{ fontSize: 18 }} />}
+              iconPosition="start"
+              label="AI Analytics"
+            />
+          </Tabs>
+        </Paper>
+
+        {/* ── Tab Panel: Clinical Overview (existing content) ──────── */}
+        {activeTab === 0 && (
+        <>
         {/* Statistics Cards - Enhanced with visual weight */}
         <Grid container spacing={2.5} sx={{ mb: 4 }}>
           {stats.map((stat, index) => (
@@ -1022,6 +1072,12 @@ const ClinicalDashboard: React.FC = () => {
             </Stack>
           </Grid>
         </Grid>
+        </>
+        )}
+
+        {/* ── Tab Panel: AI Analytics ─────────────────────────────── */}
+        {activeTab === 1 && <OverviewTab />}
+
       </Container>
     </Box>
   );
