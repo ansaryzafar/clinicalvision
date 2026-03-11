@@ -69,8 +69,135 @@ export interface OverviewMetrics {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
+// Performance Deep Dive metrics (Tab 2)
+// ────────────────────────────────────────────────────────────────────────────
+
+export interface PerformanceKPIs {
+  sensitivity: number;  // True positive rate (0-1)
+  specificity: number;  // True negative rate (0-1)
+  aucRoc: number;       // Area under ROC curve (0-1)
+  ppv: number;          // Positive predictive value (0-1)
+  npv: number;          // Negative predictive value (0-1)
+  f1Score: number;      // Harmonic mean of precision and recall (0-1)
+}
+
+export interface PerformanceKPITrends {
+  sensitivityChange: number;
+  specificityChange: number;
+  aucRocChange: number;
+  ppvChange: number;
+}
+
+export interface ConfidenceBin {
+  binStart: number;   // e.g. 0.0
+  binEnd: number;     // e.g. 0.1
+  count: number;
+  label: string;      // e.g. "0–10%"
+}
+
+export interface UncertaintyScatterPoint {
+  confidence: number;
+  uncertainty: number;
+  riskLevel: string;          // 'low' | 'moderate' | 'high'
+  processingTimeMs: number;
+}
+
+export interface TemporalConfidencePoint {
+  date: string;
+  avgConfidence: number;
+  avgEpistemicUncertainty: number;
+  avgAleatoricUncertainty: number;
+  highUncertaintyCount: number;
+  analysisCount: number;
+}
+
+export interface ConcordanceEntry {
+  category: string;      // BI-RADS category or 'Benign'/'Malignant'
+  aiCount: number;
+  radiologistCount: number;
+  agreementRate: number; // 0-1
+}
+
+export interface PerformanceMetrics {
+  kpis: PerformanceKPIs;
+  kpiTrends: PerformanceKPITrends;
+  confidenceHistogram: ConfidenceBin[];
+  uncertaintyScatter: UncertaintyScatterPoint[];
+  temporalConfidence: TemporalConfidencePoint[];
+  concordanceData: ConcordanceEntry[];
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Model Intelligence metrics (Tab 3)
+// ────────────────────────────────────────────────────────────────────────────
+
+export interface UncertaintyDecompositionPoint {
+  date: string;
+  epistemic: number;  // Model uncertainty
+  aleatoric: number;  // Data uncertainty
+  total: number;      // Combined predictive uncertainty
+}
+
+export interface ModelVersionStats {
+  version: string;
+  accuracy: number;
+  avgConfidence: number;
+  avgLatencyMs: number;
+  totalPredictions: number;
+  aucRoc: number;
+}
+
+export interface HumanReviewRatePoint {
+  date: string;
+  reviewRate: number;  // 0-1
+  totalCases: number;
+  reviewedCases: number;
+}
+
+export interface ReviewTrigger {
+  trigger: string;     // e.g. "High Epistemic Uncertainty"
+  count: number;
+  percentage: number;  // 0-100
+}
+
+export interface ModelIntelligenceMetrics {
+  uncertaintyDecomposition: UncertaintyDecompositionPoint[];
+  modelVersionComparison: ModelVersionStats[];
+  humanReviewRate: HumanReviewRatePoint[];
+  reviewTriggers: ReviewTrigger[];
+}
+
+// ────────────────────────────────────────────────────────────────────────────
 // Empty defaults (safe for rendering components when no data available)
 // ────────────────────────────────────────────────────────────────────────────
+
+export const EMPTY_PERFORMANCE_METRICS: PerformanceMetrics = {
+  kpis: {
+    sensitivity: 0,
+    specificity: 0,
+    aucRoc: 0,
+    ppv: 0,
+    npv: 0,
+    f1Score: 0,
+  },
+  kpiTrends: {
+    sensitivityChange: 0,
+    specificityChange: 0,
+    aucRocChange: 0,
+    ppvChange: 0,
+  },
+  confidenceHistogram: [],
+  uncertaintyScatter: [],
+  temporalConfidence: [],
+  concordanceData: [],
+};
+
+export const EMPTY_MODEL_INTELLIGENCE_METRICS: ModelIntelligenceMetrics = {
+  uncertaintyDecomposition: [],
+  modelVersionComparison: [],
+  humanReviewRate: [],
+  reviewTriggers: [],
+};
 
 export const EMPTY_OVERVIEW_METRICS: OverviewMetrics = {
   kpis: {

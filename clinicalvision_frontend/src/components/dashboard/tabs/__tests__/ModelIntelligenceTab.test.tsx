@@ -1,0 +1,269 @@
+/**
+ * ModelIntelligenceTab — Unit Tests (TDD)
+ *
+ * Tests for the ModelIntelligenceTab component including:
+ *  - Rendering with empty data
+ *  - Rendering with populated data
+ *  - Summary metric derivation (versions, active model, review rate, top trigger)
+ *  - Period selector functionality
+ *  - Loading state
+ *  - Data source chip
+ *  - Chart slots (decomposition, version comparison, review rate, triggers)
+ *
+ * @jest-environment jsdom
+ */
+
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import ModelIntelligenceTab from '../../tabs/ModelIntelligenceTab';
+import type {
+  ModelIntelligenceMetrics,
+  UncertaintyDecompositionPoint,
+  ModelVersionStats,
+  HumanReviewRatePoint,
+  ReviewTrigger,
+} from '../../../../types/metrics.types';
+import { EMPTY_MODEL_INTELLIGENCE_METRICS } from '../../../../types/metrics.types';
+
+// ────────────────────────────────────────────────────────────────────────────
+// Mock recharts
+// ────────────────────────────────────────────────────────────────────────────
+
+jest.mock('recharts', () => {
+  const React = require('react');
+  return {
+    __esModule: true,
+    ResponsiveContainer: ({ children }: any) =>
+      React.createElement('div', { 'data-testid': 'responsive-container' }, children),
+    BarChart: (props: any) =>
+      React.createElement('div', { 'data-testid': 'bar-chart', 'data-length': props.data?.length ?? 0 }, props.children),
+    Bar: (props: any) => React.createElement('div', { 'data-testid': `bar-${props.dataKey || props.name || 'default'}` }),
+    AreaChart: (props: any) =>
+      React.createElement('div', { 'data-testid': 'area-chart', 'data-length': props.data?.length ?? 0 }, props.children),
+    Area: (props: any) => React.createElement('div', { 'data-testid': `area-${props.dataKey}` }),
+    PieChart: (props: any) =>
+      React.createElement('div', { 'data-testid': 'pie-chart' }, props.children),
+    Pie: (props: any) =>
+      React.createElement('div', { 'data-testid': 'pie' }),
+    XAxis: () => React.createElement('div', { 'data-testid': 'x-axis' }),
+    YAxis: () => React.createElement('div', { 'data-testid': 'y-axis' }),
+    CartesianGrid: () => React.createElement('div'),
+    Tooltip: () => React.createElement('div', { 'data-testid': 'tooltip' }),
+    Legend: () => React.createElement('div', { 'data-testid': 'legend' }),
+    ReferenceLine: () => React.createElement('div', { 'data-testid': 'reference-line' }),
+    Cell: () => React.createElement('div'),
+    Line: (props: any) => React.createElement('div', { 'data-testid': `line-${props.dataKey}` }),
+    RadialBarChart: ({ children }: any) =>
+      React.createElement('div', { 'data-testid': 'radial-bar-chart' }, children),
+    RadialBar: () => React.createElement('div', { 'data-testid': 'radial-bar' }),
+    PolarAngleAxis: () => React.createElement('div'),
+  };
+});
+
+// ────────────────────────────────────────────────────────────────────────────
+// Mock the useModelIntelligenceMetrics hook
+// ────────────────────────────────────────────────────────────────────────────
+
+const mockRefresh = jest.fn();
+
+let mockHookReturn: {
+  data: ModelIntelligenceMetrics;
+  isLoading: boolean;
+  error: string | null;
+  dataSource: 'api' | 'local' | null;
+  refresh: () => void;
+  lastUpdated: Date | null;
+};
+
+jest.mock('../../../../hooks/useMetrics', () => ({
+  useModelIntelligenceMetrics: (opts: any) => mockHookReturn,
+}));
+
+// ────────────────────────────────────────────────────────────────────────────
+// Test data
+// ────────────────────────────────────────────────────────────────────────────
+
+const MOCK_DECOMPOSITION: UncertaintyDecompositionPoint[] = [
+  { date: '2024-01-15', epistemicMean: 0.08, aleatoricMean: 0.12, totalUncertainty: 0.20 },
+  { date: '2024-01-16', epistemicMean: 0.07, aleatoricMean: 0.11, totalUncertainty: 0.18 },
+];
+
+const MOCK_VERSIONS: ModelVersionStats[] = [
+  { versionLabel: 'v1.2.0', analysisCount: 200, avgConfidence: 0.82, avgLatencyMs: 310, aucRoc: 0.91 },
+  { versionLabel: 'v1.3.0', analysisCount: 300, avgConfidence: 0.87, avgLatencyMs: 280, aucRoc: 0.95 },
+];
+
+const MOCK_REVIEW_RATE: HumanReviewRatePoint[] = [
+  { date: '2024-01-15', reviewRate: 0.18, totalCases: 50, reviewedCases: 9 },
+  { date: '2024-01-16', reviewRate: 0.22, totalCases: 55, reviewedCases: 12 },
+];
+
+const MOCK_TRIGGERS: ReviewTrigger[] = [
+  { trigger: 'high_epistemic', count: 30, percentage: 42.9 },
+  { trigger: 'low_confidence', count: 25, percentage: 35.7 },
+  { trigger: 'high_entropy', count: 15, percentage: 21.4 },
+];
+
+const MOCK_POPULATED: ModelIntelligenceMetrics = {
+  uncertaintyDecomposition: MOCK_DECOMPOSITION,
+  modelVersionComparison: MOCK_VERSIONS,
+  humanReviewRate: MOCK_REVIEW_RATE,
+  reviewTriggers: MOCK_TRIGGERS,
+};
+
+// ────────────────────────────────────────────────────────────────────────────
+// Helpers
+// ────────────────────────────────────────────────────────────────────────────
+
+const theme = createTheme();
+const wrap = (ui: React.ReactElement) =>
+  render(<ThemeProvider theme={theme}>{ui}</ThemeProvider>);
+
+// ════════════════════════════════════════════════════════════════════════════
+// Tests
+// ════════════════════════════════════════════════════════════════════════════
+
+beforeEach(() => {
+  jest.clearAllMocks();
+  mockHookReturn = {
+    data: EMPTY_MODEL_INTELLIGENCE_METRICS,
+    isLoading: false,
+    error: null,
+    dataSource: null,
+    refresh: mockRefresh,
+    lastUpdated: null,
+  };
+});
+
+describe('ModelIntelligenceTab', () => {
+  // ── Basic rendering ──────────────────────────────────────────────────────
+
+  it('renders the tab container', () => {
+    wrap(<ModelIntelligenceTab />);
+    expect(screen.getByTestId('model-intelligence-tab')).toBeInTheDocument();
+  });
+
+  it('renders the heading', () => {
+    wrap(<ModelIntelligenceTab />);
+    expect(screen.getByText('Model Intelligence')).toBeInTheDocument();
+  });
+
+  // ── Empty state ──────────────────────────────────────────────────────────
+
+  it('shows empty messages when no data is available', () => {
+    wrap(<ModelIntelligenceTab />);
+    expect(screen.getByTestId('empty-decomposition')).toBeInTheDocument();
+    expect(screen.getByTestId('empty-version-comparison')).toBeInTheDocument();
+    expect(screen.getByTestId('empty-review-rate')).toBeInTheDocument();
+    expect(screen.getByTestId('empty-triggers')).toBeInTheDocument();
+  });
+
+  // ── Populated state ──────────────────────────────────────────────────────
+
+  it('renders charts when data is populated', () => {
+    mockHookReturn = {
+      ...mockHookReturn,
+      data: MOCK_POPULATED,
+      dataSource: 'api',
+    };
+    wrap(<ModelIntelligenceTab />);
+
+    // Empty messages should be gone
+    expect(screen.queryByTestId('empty-decomposition')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('empty-version-comparison')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('empty-review-rate')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('empty-triggers')).not.toBeInTheDocument();
+
+    // Chart containers present
+    expect(screen.getAllByTestId('responsive-container').length).toBeGreaterThanOrEqual(3);
+  });
+
+  // ── Summary metrics derivation ──────────────────────────────────────────
+
+  it('derives correct model version count', () => {
+    mockHookReturn = { ...mockHookReturn, data: MOCK_POPULATED, dataSource: 'api' };
+    wrap(<ModelIntelligenceTab />);
+    // GaugeCard with "Model Versions" should show the count "2"
+    expect(screen.getByText('Model Versions')).toBeInTheDocument();
+    expect(screen.getByText('2')).toBeInTheDocument();
+  });
+
+  it('derives the active model version (last entry)', () => {
+    mockHookReturn = { ...mockHookReturn, data: MOCK_POPULATED, dataSource: 'api' };
+    wrap(<ModelIntelligenceTab />);
+    expect(screen.getByTestId('active-model-version')).toHaveTextContent('v1.3.0');
+  });
+
+  it('derives the top review trigger', () => {
+    mockHookReturn = { ...mockHookReturn, data: MOCK_POPULATED, dataSource: 'api' };
+    wrap(<ModelIntelligenceTab />);
+    const triggerElem = screen.getByTestId('top-review-trigger');
+    expect(triggerElem).toHaveTextContent('high epistemic');
+  });
+
+  it('shows fallback for summary metrics when empty', () => {
+    wrap(<ModelIntelligenceTab />);
+    expect(screen.getByTestId('active-model-version')).toHaveTextContent('—');
+    expect(screen.getByTestId('top-review-trigger')).toHaveTextContent('—');
+  });
+
+  // ── Loading state ────────────────────────────────────────────────────────
+
+  it('shows loading spinner when loading', () => {
+    mockHookReturn = { ...mockHookReturn, isLoading: true };
+    wrap(<ModelIntelligenceTab />);
+    expect(screen.getByTestId('intel-metrics-loading')).toBeInTheDocument();
+  });
+
+  it('hides loading spinner when not loading', () => {
+    wrap(<ModelIntelligenceTab />);
+    expect(screen.queryByTestId('intel-metrics-loading')).not.toBeInTheDocument();
+  });
+
+  // ── Data source chip ─────────────────────────────────────────────────────
+
+  it('shows "Live" chip when dataSource is api', () => {
+    mockHookReturn = { ...mockHookReturn, dataSource: 'api' };
+    wrap(<ModelIntelligenceTab />);
+    const chip = screen.getByTestId('intel-data-source-chip');
+    expect(chip).toBeInTheDocument();
+    expect(chip).toHaveTextContent('Live');
+  });
+
+  it('does not show data source chip when dataSource is null', () => {
+    wrap(<ModelIntelligenceTab />);
+    expect(screen.queryByTestId('intel-data-source-chip')).not.toBeInTheDocument();
+  });
+
+  // ── Refresh button ──────────────────────────────────────────────────────
+
+  it('calls refresh when clicking the refresh button', () => {
+    wrap(<ModelIntelligenceTab />);
+    const btn = screen.getByTestId('intel-refresh-metrics');
+    fireEvent.click(btn);
+    expect(mockRefresh).toHaveBeenCalledTimes(1);
+  });
+
+  // ── Period selector ─────────────────────────────────────────────────────
+
+  it('renders all period options', () => {
+    wrap(<ModelIntelligenceTab />);
+    expect(screen.getByText('7 Days')).toBeInTheDocument();
+    // '30 Days' appears in both toggle button AND MetricCard timeRange
+    expect(screen.getAllByText('30 Days').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText('90 Days')).toBeInTheDocument();
+    expect(screen.getByText('All Time')).toBeInTheDocument();
+  });
+
+  // ── MetricCard titles ───────────────────────────────────────────────────
+
+  it('renders chart card titles', () => {
+    wrap(<ModelIntelligenceTab />);
+    expect(screen.getByText('Uncertainty Decomposition Over Time')).toBeInTheDocument();
+    expect(screen.getByText('Model Version Comparison')).toBeInTheDocument();
+    expect(screen.getByText('Human Review Rate Over Time')).toBeInTheDocument();
+    expect(screen.getByText('Review Trigger Breakdown')).toBeInTheDocument();
+  });
+});

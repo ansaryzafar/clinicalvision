@@ -73,6 +73,9 @@ import { clinicalSessionService } from '../services/clinicalSession.service';
 import { AnalysisSession, getRiskLevel, getNumericBirads, getNormalizedConfidence } from '../types/clinical.types';
 import { useLegacyWorkflow } from '../workflow-v3';
 import OverviewTab from '../components/dashboard/tabs/OverviewTab';
+import PerformanceTab from '../components/dashboard/tabs/PerformanceTab';
+import ModelIntelligenceTab from '../components/dashboard/tabs/ModelIntelligenceTab';
+import { DASHBOARD_THEME } from '../components/dashboard/charts/dashboardTheme';
 
 // Backend health status type
 interface SystemHealth {
@@ -93,6 +96,7 @@ const ClinicalDashboard: React.FC = () => {
   const [sessions, setSessions] = useState<AnalysisSession[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(0);
+  const [analyticsSubTab, setAnalyticsSubTab] = useState(0);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [systemHealth, setSystemHealth] = useState<SystemHealth>({
     aiModel: 'loading',
@@ -1076,7 +1080,54 @@ const ClinicalDashboard: React.FC = () => {
         )}
 
         {/* ── Tab Panel: AI Analytics ─────────────────────────────── */}
-        {activeTab === 1 && <OverviewTab />}
+        {activeTab === 1 && (
+          <Box>
+            {/* Analytics Sub-Tabs */}
+            <Paper
+              elevation={0}
+              sx={{
+                mb: 3,
+                borderRadius: 2,
+                bgcolor: DASHBOARD_THEME.cardBackground,
+                border: `1px solid ${DASHBOARD_THEME.cardBorder}`,
+              }}
+            >
+              <Tabs
+                value={analyticsSubTab}
+                onChange={(_, v) => setAnalyticsSubTab(v)}
+                aria-label="Analytics sub-sections"
+                variant="fullWidth"
+                sx={{
+                  minHeight: 40,
+                  '& .MuiTab-root': {
+                    minHeight: 40,
+                    textTransform: 'none',
+                    fontWeight: 500,
+                    fontSize: '0.8rem',
+                    color: DASHBOARD_THEME.neutral,
+                    '&.Mui-selected': {
+                      color: DASHBOARD_THEME.primary,
+                    },
+                  },
+                  '& .MuiTabs-indicator': {
+                    height: 2,
+                    borderRadius: '2px 2px 0 0',
+                    backgroundColor: DASHBOARD_THEME.primary,
+                  },
+                }}
+              >
+                <Tab label="Overview" data-testid="analytics-sub-tab-overview" />
+                <Tab label="Performance" data-testid="analytics-sub-tab-performance" />
+                <Tab label="Model Intelligence" data-testid="analytics-sub-tab-intelligence" />
+              </Tabs>
+            </Paper>
+
+            {/* Analytics Sub-Tab Panels */}
+            {analyticsSubTab === 0 && <OverviewTab />}
+            {analyticsSubTab === 1 && <PerformanceTab />}
+            {analyticsSubTab === 2 && <ModelIntelligenceTab />}
+          </Box>
+        )}
 
       </Container>
     </Box>
