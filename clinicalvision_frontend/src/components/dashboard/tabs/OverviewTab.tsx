@@ -2,7 +2,9 @@
  * OverviewTab — AI Analytics Overview
  *
  * First tab of the AI Analytics section.  Displays KPI gauges
- * and chart placeholders wired to the local metrics aggregator.
+ * and charts powered by the useOverviewMetrics hook:
+ *   1. Tries the backend API (GET /api/v1/analytics/overview)
+ *   2. Falls back to localMetricsAggregator for demo/offline mode
  *
  * Layout (responsive):
  *  Row 1 — 4 radial KPI gauges (xs=6, md=3)
@@ -10,7 +12,7 @@
  *  Row 3 — 3 secondary chart cards (xs=12, md=4)
  */
 
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Grid,
@@ -18,8 +20,15 @@ import {
   ToggleButtonGroup,
   ToggleButton,
   Stack,
+  Chip,
+  IconButton,
+  CircularProgress,
+  Tooltip,
   alpha,
 } from '@mui/material';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import CloudIcon from '@mui/icons-material/Cloud';
+import StorageIcon from '@mui/icons-material/Storage';
 import GaugeCard from '../charts/GaugeCard';
 import MetricCard from '../charts/MetricCard';
 import ConfidenceTrendChart from '../charts/ConfidenceTrendChart';
@@ -28,9 +37,9 @@ import BiRadsBarChart from '../charts/BiRadsBarChart';
 import RiskDistributionChart from '../charts/RiskDistributionChart';
 import LatencyPercentilesChart from '../charts/LatencyPercentilesChart';
 import { DASHBOARD_THEME } from '../charts/dashboardTheme';
-import { aggregateLocalMetrics } from '../../../services/localMetricsAggregator';
+import { useOverviewMetrics } from '../../../hooks/useMetrics';
 import { EMPTY_OVERVIEW_METRICS } from '../../../types/metrics.types';
-import type { MetricsPeriod, OverviewMetrics } from '../../../types/metrics.types';
+import type { MetricsPeriod } from '../../../types/metrics.types';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Period selector labels
@@ -50,14 +59,9 @@ const PERIOD_OPTIONS: { value: MetricsPeriod; label: string }[] = [
 const OverviewTab: React.FC = () => {
   const [period, setPeriod] = useState<MetricsPeriod>('30d');
 
-  // Aggregate metrics from local session store
-  const metrics: OverviewMetrics = useMemo(() => {
-    try {
-      return aggregateLocalMetrics(period);
-    } catch {
-      return EMPTY_OVERVIEW_METRICS;
-    }
-  }, [period]);
+  // Fetch from API with local-aggregator fallback
+  const { data: metrics, isLoading, dataSource, refresh } =
+    useOverviewMetrics({ period });
 
   const kpis = metrics?.kpis ?? EMPTY_OVERVIEW_METRICS.kpis;
   const kpiTrends = metrics?.kpiTrends ?? EMPTY_OVERVIEW_METRICS.kpiTrends;
@@ -116,6 +120,43 @@ const OverviewTab: React.FC = () => {
             </ToggleButton>
           ))}
         </ToggleButtonGroup>
+
+        <Stack direction="row" spacing={1} alignItems="center">
+          {isLoading && (
+            <CircularProgress size={16} sx={{ color: DASHBOARD_THEME.primary }} data-testid="metrics-loading" />
+          )}
+          {dataSource && (
+            <Tooltip title={dataSource === 'api' ? 'Live data from server' : 'Local session data'}>
+              <Chip
+                icon={dataSource === 'api' ? <CloudIcon sx={{ fontSize: 14 }} /> : <StorageIcon sx={{ fontSize: 14 }} />}
+                label={dataSource === 'api' ? 'Live' : 'Local'}
+                size="small"
+                data-testid="data-source-chip"
+                sx={{
+                  height: 22,
+                  fontSize: '0.65rem',
+                  bgcolor: alpha(
+                    dataSource === 'api' ? DASHBOARD_THEME.success : DASHBOARD_THEME.warning,
+                    0.15,
+                  ),
+                  color: dataSource === 'api' ? DASHBOARD_THEME.success : DASHBOARD_THEME.warning,
+                  '& .MuiChip-icon': { color: 'inherit' },
+                }}
+              />
+            </Tooltip>
+          )}
+          <Tooltip title="Refresh metrics">
+            <IconButton
+              size="small"
+              onClick={refresh}
+              disabled={isLoading}
+              data-testid="refresh-metrics"
+              sx={{ color: DASHBOARD_THEME.neutral, '&:hover': { color: DASHBOARD_THEME.primary } }}
+            >
+              <RefreshIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Stack>
       </Stack>
 
       <Grid container spacing={2.5}>
