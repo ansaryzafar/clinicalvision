@@ -30,7 +30,7 @@ import MemoryIcon from '@mui/icons-material/Memory';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import BugReportIcon from '@mui/icons-material/BugReport';
 import QueueIcon from '@mui/icons-material/Queue';
-import { DASHBOARD_THEME } from './dashboardTheme';
+import { useDashboardTheme, type DashboardThemeTokens } from '../../../hooks/useDashboardTheme';
 import type { SystemHealthStatus } from '../../../types/metrics.types';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -42,7 +42,7 @@ export interface SystemHealthBarProps {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** Get colour + icon for a status string */
-function statusIndicator(status: string): {
+function statusIndicator(status: string, dt: DashboardThemeTokens): {
   color: string;
   icon: React.ReactElement;
   label: string;
@@ -50,25 +50,25 @@ function statusIndicator(status: string): {
   switch (status) {
     case 'healthy':
       return {
-        color: DASHBOARD_THEME.success,
+        color: dt.success,
         icon: <CheckCircleIcon sx={{ fontSize: 16 }} />,
         label: 'Healthy',
       };
     case 'degraded':
       return {
-        color: DASHBOARD_THEME.warning,
+        color: dt.warning,
         icon: <WarningIcon sx={{ fontSize: 16 }} />,
         label: 'Degraded',
       };
     case 'unhealthy':
       return {
-        color: DASHBOARD_THEME.danger,
+        color: dt.danger,
         icon: <ErrorIcon sx={{ fontSize: 16 }} />,
         label: 'Unhealthy',
       };
     default:
       return {
-        color: DASHBOARD_THEME.neutral,
+        color: dt.neutral,
         icon: <HelpIcon sx={{ fontSize: 16 }} />,
         label: 'Unknown',
       };
@@ -86,8 +86,9 @@ function formatUptime(seconds: number): string {
 // ────────────────────────────────────────────────────────────────────────────
 
 const SystemHealthBar: React.FC<SystemHealthBarProps> = ({ health }) => {
-  const model = statusIndicator(health.modelStatus);
-  const backend = statusIndicator(health.backendStatus);
+  const dt = useDashboardTheme();
+  const model = statusIndicator(health.modelStatus, dt);
+  const backend = statusIndicator(health.backendStatus, dt);
 
   return (
     <Paper
@@ -95,8 +96,8 @@ const SystemHealthBar: React.FC<SystemHealthBarProps> = ({ health }) => {
       role="status"
       aria-label="System health status"
       sx={{
-        background: DASHBOARD_THEME.cardGradient,
-        border: `1px solid ${DASHBOARD_THEME.cardBorder}`,
+        background: dt.cardGradient,
+        border: `1px solid ${dt.cardBorder}`,
         borderRadius: 2,
         px: 2.5,
         py: 1.5,
@@ -114,8 +115,8 @@ const SystemHealthBar: React.FC<SystemHealthBarProps> = ({ health }) => {
         <Typography
           variant="caption"
           sx={{
-            fontFamily: DASHBOARD_THEME.fontHeading,
-            color: DASHBOARD_THEME.neutral,
+            fontFamily: dt.fontHeading,
+            color: dt.neutral,
             fontWeight: 600,
             textTransform: 'uppercase',
             letterSpacing: 1,
@@ -170,10 +171,10 @@ const SystemHealthBar: React.FC<SystemHealthBarProps> = ({ health }) => {
               height: 24,
               fontSize: '0.7rem',
               bgcolor: alpha(
-                health.gpuAvailable ? DASHBOARD_THEME.success : DASHBOARD_THEME.neutral,
+                health.gpuAvailable ? dt.success : dt.neutral,
                 0.12,
               ),
-              color: health.gpuAvailable ? DASHBOARD_THEME.success : DASHBOARD_THEME.neutral,
+              color: health.gpuAvailable ? dt.success : dt.neutral,
               '& .MuiChip-icon': { color: 'inherit' },
             }}
           />
@@ -182,10 +183,10 @@ const SystemHealthBar: React.FC<SystemHealthBarProps> = ({ health }) => {
         {/* Uptime */}
         <Tooltip title={`Uptime: ${formatUptime(health.uptimeSeconds)}`}>
           <Stack direction="row" spacing={0.5} alignItems="center">
-            <AccessTimeIcon sx={{ fontSize: 14, color: DASHBOARD_THEME.neutral }} />
+            <AccessTimeIcon sx={{ fontSize: 14, color: dt.neutral }} />
             <Typography
               variant="caption"
-              sx={{ color: DASHBOARD_THEME.textSecondary, fontSize: '0.7rem', fontFamily: DASHBOARD_THEME.fontMono }}
+              sx={{ color: dt.textSecondary, fontSize: '0.7rem', fontFamily: dt.fontMono }}
               data-testid="uptime-value"
             >
               {formatUptime(health.uptimeSeconds)}
@@ -199,15 +200,15 @@ const SystemHealthBar: React.FC<SystemHealthBarProps> = ({ health }) => {
             <BugReportIcon
               sx={{
                 fontSize: 14,
-                color: health.errorCount24h > 0 ? DASHBOARD_THEME.danger : DASHBOARD_THEME.neutral,
+                color: health.errorCount24h > 0 ? dt.danger : dt.neutral,
               }}
             />
             <Typography
               variant="caption"
               sx={{
-                color: health.errorCount24h > 0 ? DASHBOARD_THEME.danger : DASHBOARD_THEME.textSecondary,
+                color: health.errorCount24h > 0 ? dt.danger : dt.textSecondary,
                 fontSize: '0.7rem',
-                fontFamily: DASHBOARD_THEME.fontMono,
+                fontFamily: dt.fontMono,
               }}
               data-testid="error-count"
             >
@@ -219,10 +220,10 @@ const SystemHealthBar: React.FC<SystemHealthBarProps> = ({ health }) => {
         {/* Queue depth */}
         <Tooltip title={`${health.queueDepth} pending inference requests`}>
           <Stack direction="row" spacing={0.5} alignItems="center">
-            <QueueIcon sx={{ fontSize: 14, color: DASHBOARD_THEME.neutral }} />
+            <QueueIcon sx={{ fontSize: 14, color: dt.neutral }} />
             <Typography
               variant="caption"
-              sx={{ color: DASHBOARD_THEME.textSecondary, fontSize: '0.7rem', fontFamily: DASHBOARD_THEME.fontMono }}
+              sx={{ color: dt.textSecondary, fontSize: '0.7rem', fontFamily: dt.fontMono }}
               data-testid="queue-depth"
             >
               {health.queueDepth} queued

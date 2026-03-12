@@ -18,7 +18,7 @@ import {
   Stack,
   Divider,
 } from '@mui/material';
-import { DASHBOARD_THEME } from './dashboardTheme';
+import { useDashboardTheme } from '../../../hooks/useDashboardTheme';
 
 // ────────────────────────────────────────────────────────────────────────────
 
@@ -53,6 +53,8 @@ const MetricCard: React.FC<MetricCardProps> = ({
   children,
   height,
 }) => {
+  const dt = useDashboardTheme();
+
   const trendArrow =
     trend?.direction === 'up'
       ? '↑'
@@ -62,26 +64,26 @@ const MetricCard: React.FC<MetricCardProps> = ({
 
   const trendColor =
     trend?.direction === 'up'
-      ? DASHBOARD_THEME.success
+      ? dt.success
       : trend?.direction === 'down'
-        ? DASHBOARD_THEME.danger
-        : DASHBOARD_THEME.neutral;
+        ? dt.danger
+        : dt.neutral;
 
   return (
     <Paper
       elevation={0}
       sx={{
         p: 2,
-        background: DASHBOARD_THEME.cardGradient,
-        border: `1px solid ${DASHBOARD_THEME.cardBorder}`,
+        background: dt.cardGradient,
+        border: `1px solid ${dt.cardBorder}`,
         borderRadius: 2,
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
         transition: 'all 0.2s ease',
         '&:hover': {
-          background: DASHBOARD_THEME.cardGradientHover,
-          borderColor: 'rgba(0, 201, 234, 0.18)',
+          background: dt.cardGradientHover,
+          borderColor: dt.cardBorder,
         },
       }}
     >
@@ -96,8 +98,8 @@ const MetricCard: React.FC<MetricCardProps> = ({
           <Typography
             variant="subtitle2"
             sx={{
-              fontFamily: DASHBOARD_THEME.fontHeading,
-              color: DASHBOARD_THEME.textPrimary,
+              fontFamily: dt.fontHeading,
+              color: dt.textPrimary,
               fontWeight: 600,
               fontSize: '0.85rem',
               letterSpacing: '0.02em',
@@ -109,7 +111,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
           {subtitle && (
             <Typography
               variant="caption"
-              sx={{ color: DASHBOARD_THEME.textMuted, display: 'block', mt: 0.25 }}
+              sx={{ color: dt.textMuted, display: 'block', mt: 0.25 }}
             >
               {subtitle}
             </Typography>
@@ -121,8 +123,8 @@ const MetricCard: React.FC<MetricCardProps> = ({
             <Typography
               variant="h6"
               sx={{
-                fontFamily: DASHBOARD_THEME.fontMono,
-                color: '#FFFFFF',
+                fontFamily: dt.fontMono,
+                color: dt.textPrimary,
                 fontWeight: 700,
                 fontSize: '1.05rem',
               }}
@@ -150,14 +152,14 @@ const MetricCard: React.FC<MetricCardProps> = ({
             sx={{
               height: 20,
               fontSize: '0.68rem',
-              bgcolor: 'rgba(255,255,255,0.08)',
-              color: DASHBOARD_THEME.textMuted,
+              bgcolor: dt.cardBorder,
+              color: dt.textMuted,
             }}
           />
         </Box>
       )}
 
-      <Divider sx={{ borderColor: DASHBOARD_THEME.cardBorder, mb: 1.5 }} />
+      <Divider sx={{ borderColor: dt.cardBorder, mb: 1.5 }} />
 
       {/* ── Chart content slot ──────────────────────────────────── */}
       <Box

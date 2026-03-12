@@ -1,13 +1,11 @@
 /**
- * ReviewTriggersPie — Pie chart showing why cases get flagged
+ * ReviewTriggersPie — Horizontal bar chart showing why cases get flagged
  *
- * Displays a donut chart breaking down the reasons analyses were
- * flagged for human review:
- *  - High epistemic uncertainty
- *  - High aleatoric uncertainty
- *  - Low confidence
- *  - Borderline confidence
- *  - High predictive entropy
+ * Redesigned from pie/donut to horizontal bars for much clearer
+ * categorical comparison. Each bar shows:
+ *  - Trigger name (left-aligned label)
+ *  - Proportional bar with percentage
+ *  - Count on the right
  *
  * Helps prioritise model improvement efforts.
  */
@@ -15,11 +13,13 @@
 import React from 'react';
 import { Box, Typography, Stack } from '@mui/material';
 import {
-  PieChart,
-  Pie,
-  Cell,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
   Tooltip,
   ResponsiveContainer,
+  Cell,
 } from 'recharts';
 import { DASHBOARD_THEME, CHART_TOOLTIP_STYLE } from './dashboardTheme';
 import type { ReviewTrigger } from '../../../types/metrics.types';
@@ -75,76 +75,73 @@ const ReviewTriggersPie: React.FC<ReviewTriggersPieProps> = ({ data }) => {
     );
   }
 
-  const total = data.reduce((sum, d) => sum + d.count, 0);
+  // Sort data by count descending for visual hierarchy
+  const sortedData = [...data].sort((a, b) => b.count - a.count);
+  const total = sortedData.reduce((sum, d) => sum + d.count, 0);
+
+  // Format trigger names for display (replace underscores, capitalize)
+  const chartData = sortedData.map((d, idx) => ({
+    ...d,
+    displayName: d.trigger.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
+    pct: total > 0 ? Math.round((d.count / total) * 100) : 0,
+    color: triggerColor(d.trigger, idx),
+  }));
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <ResponsiveContainer width="100%" height={200}>
-        <PieChart>
-          <Pie
-            data={data}
-            dataKey="count"
-            nameKey="trigger"
-            cx="50%"
-            cy="50%"
-            innerRadius={50}
-            outerRadius={80}
-            paddingAngle={2}
-            strokeWidth={0}
-          >
-            {data.map((entry, idx) => (
-              <Cell
-                key={`trigger-${idx}`}
-                fill={triggerColor(entry.trigger, idx)}
-                fillOpacity={0.85}
-              />
-            ))}
-          </Pie>
+        <BarChart
+          data={chartData}
+          layout="vertical"
+          margin={{ top: 4, right: 40, left: 8, bottom: 4 }}
+          barCategoryGap="20%"
+        >
+          <XAxis
+            type="number"
+            hide
+            domain={[0, Math.max(...chartData.map((d) => d.count)) * 1.15]}
+          />
+          <YAxis
+            type="category"
+            dataKey="displayName"
+            width={120}
+            tick={{
+              fill: DASHBOARD_THEME.textSecondary,
+              fontSize: 11,
+              fontFamily: DASHBOARD_THEME.fontBody,
+            }}
+            axisLine={false}
+            tickLine={false}
+          />
           <Tooltip
             contentStyle={CHART_TOOLTIP_STYLE}
-            formatter={(value: number, name: string) => [
-              `${value} (${total > 0 ? Math.round((value / total) * 100) : 0}%)`,
-              name,
+            cursor={{ fill: 'rgba(255, 255, 255, 0.04)' }}
+            formatter={(value: number, _name: string, props: any) => [
+              `${value} cases (${props?.payload?.pct ?? 0}%)`,
+              'Count',
             ]}
           />
-        </PieChart>
-      </ResponsiveContainer>
-
-      {/* Legend */}
-      <Stack spacing={0.5} sx={{ width: '100%', px: 1 }}>
-        {data.map((entry, idx) => (
-          <Stack
-            key={entry.trigger}
-            direction="row"
-            alignItems="center"
-            spacing={1}
-            sx={{ fontSize: '0.7rem', color: DASHBOARD_THEME.textSecondary }}
+          <Bar
+            dataKey="count"
+            radius={[0, 4, 4, 0]}
+            maxBarSize={20}
+            label={{
+              position: 'right',
+              fill: DASHBOARD_THEME.textMuted,
+              fontSize: 11,
+              fontFamily: DASHBOARD_THEME.fontMono,
+              formatter: (v: number) => {
+                const item = chartData.find((d) => d.count === v);
+                return item ? `${item.pct}%` : '';
+              },
+            }}
           >
-            <Box
-              sx={{
-                width: 8,
-                height: 8,
-                borderRadius: '50%',
-                backgroundColor: triggerColor(entry.trigger, idx),
-                flexShrink: 0,
-              }}
-            />
-            <Typography
-              variant="caption"
-              sx={{ color: DASHBOARD_THEME.textSecondary, flex: 1, fontSize: '0.65rem' }}
-              noWrap
-            >
-              {entry.trigger}
-            </Typography>
-            <Typography
-              variant="caption"
-              sx={{ color: DASHBOARD_THEME.neutral, fontSize: '0.65rem' }}
-            >
-              {entry.percentage.toFixed(0)}%
-            </Typography>
-          </Stack>
-        ))}
-      </Stack>
+            {chartData.map((entry, idx) => (
+              <Cell key={`bar-${idx}`} fill={entry.color} fillOpacity={0.85} />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
     </Box>
   );
 };

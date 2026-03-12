@@ -38,7 +38,7 @@ import ConcordanceChart from '../charts/ConcordanceChart';
 import CalibrationCurve from '../charts/CalibrationCurve';
 import ChartSkeleton from '../charts/ChartSkeleton';
 import ErrorAlert from '../charts/ErrorAlert';
-import { DASHBOARD_THEME } from '../charts/dashboardTheme';
+import { useDashboardTheme } from '../../../hooks/useDashboardTheme';
 import { usePerformanceMetrics } from '../../../hooks/useMetrics';
 import { EMPTY_PERFORMANCE_METRICS } from '../../../types/metrics.types';
 import type { MetricsPeriod } from '../../../types/metrics.types';
@@ -60,6 +60,7 @@ const PERIOD_OPTIONS: { value: MetricsPeriod; label: string }[] = [
 
 const PerformanceTab: React.FC = () => {
   const [period, setPeriod] = useState<MetricsPeriod>('30d');
+  const dt = useDashboardTheme();
 
   const { data: metrics, isLoading, dataSource, refresh, error } =
     usePerformanceMetrics({ period });
@@ -84,11 +85,13 @@ const PerformanceTab: React.FC = () => {
         sx={{ mb: 3 }}
       >
         <Typography
-          variant="subtitle1"
+          variant="h6"
           sx={{
-            fontFamily: DASHBOARD_THEME.fontHeading,
-            color: DASHBOARD_THEME.textPrimary,
-            fontWeight: 600,
+            fontFamily: dt.fontHeading,
+            color: dt.textPrimary,
+            fontWeight: 700,
+            fontSize: '1.1rem',
+            letterSpacing: '-0.01em',
           }}
         >
           Performance Deep Dive
@@ -101,9 +104,9 @@ const PerformanceTab: React.FC = () => {
           size="small"
           aria-label="Time period"
           sx={{
-            bgcolor: 'rgba(255, 255, 255, 0.04)',
+            bgcolor: alpha(dt.cardBackground, 0.5),
             borderRadius: '999px',
-            border: `1px solid ${DASHBOARD_THEME.cardBorder}`,
+            border: `1px solid ${dt.cardBorder}`,
             p: '2px',
             '& .MuiToggleButtonGroup-grouped': {
               border: 'none',
@@ -118,21 +121,22 @@ const PerformanceTab: React.FC = () => {
               value={opt.value}
               sx={{
                 textTransform: 'none',
-                fontSize: '0.75rem',
+                fontSize: '0.78rem',
                 px: 1.5,
                 py: 0.4,
-                color: DASHBOARD_THEME.textMuted,
+                color: dt.textSecondary,
+                fontWeight: 500,
                 transition: 'all 0.2s ease',
                 '&:hover': {
-                  bgcolor: 'rgba(255, 255, 255, 0.06)',
-                  color: DASHBOARD_THEME.textSecondary,
+                  bgcolor: alpha(dt.primary, 0.08),
+                  color: dt.textPrimary,
                 },
                 '&.Mui-selected': {
-                  bgcolor: alpha(DASHBOARD_THEME.primary, 0.18),
-                  color: DASHBOARD_THEME.primary,
-                  fontWeight: 600,
+                  bgcolor: alpha(dt.primary, 0.2),
+                  color: dt.textPrimary,
+                  fontWeight: 700,
                   '&:hover': {
-                    bgcolor: alpha(DASHBOARD_THEME.primary, 0.25),
+                    bgcolor: alpha(dt.primary, 0.28),
                   },
                 },
               }}
@@ -146,7 +150,7 @@ const PerformanceTab: React.FC = () => {
           {isLoading && (
             <CircularProgress
               size={16}
-              sx={{ color: DASHBOARD_THEME.primary }}
+              sx={{ color: dt.primary }}
               data-testid="perf-metrics-loading"
             />
           )}
@@ -165,10 +169,10 @@ const PerformanceTab: React.FC = () => {
                   height: 22,
                   fontSize: '0.65rem',
                   bgcolor: alpha(
-                    dataSource === 'api' ? DASHBOARD_THEME.success : DASHBOARD_THEME.warning,
+                    dataSource === 'api' ? dt.success : dt.warning,
                     0.15,
                   ),
-                  color: dataSource === 'api' ? DASHBOARD_THEME.success : DASHBOARD_THEME.warning,
+                  color: dataSource === 'api' ? dt.success : dt.warning,
                   '& .MuiChip-icon': { color: 'inherit' },
                 }}
               />
@@ -180,7 +184,7 @@ const PerformanceTab: React.FC = () => {
               onClick={refresh}
               disabled={isLoading}
               data-testid="perf-refresh-metrics"
-              sx={{ color: DASHBOARD_THEME.textMuted, '&:hover': { color: DASHBOARD_THEME.primary } }}
+              sx={{ color: dt.textMuted, '&:hover': { color: dt.primary } }}
             >
               <RefreshIcon fontSize="small" />
             </IconButton>
@@ -224,7 +228,7 @@ const PerformanceTab: React.FC = () => {
             value={sensitivityPct}
             maxValue={100}
             unit="%"
-            color={DASHBOARD_THEME.success}
+            color={dt.success}
             trend={trends.sensitivityChange !== 0 ? Math.round(trends.sensitivityChange * 100) : undefined}
           />
         </Grid>
@@ -234,7 +238,7 @@ const PerformanceTab: React.FC = () => {
             value={specificityPct}
             maxValue={100}
             unit="%"
-            color={DASHBOARD_THEME.primary}
+            color={dt.primary}
             trend={trends.specificityChange !== 0 ? Math.round(trends.specificityChange * 100) : undefined}
           />
         </Grid>
@@ -244,7 +248,7 @@ const PerformanceTab: React.FC = () => {
             value={aucPct}
             maxValue={100}
             unit="%"
-            color={DASHBOARD_THEME.secondary}
+            color={dt.secondary}
             trend={trends.aucRocChange !== 0 ? Math.round(trends.aucRocChange * 100) : undefined}
           />
         </Grid>
@@ -254,7 +258,7 @@ const PerformanceTab: React.FC = () => {
             value={ppvPct}
             maxValue={100}
             unit="%"
-            color={DASHBOARD_THEME.quaternary}
+            color={dt.quaternary}
             trend={trends.ppvChange !== 0 ? Math.round(trends.ppvChange * 100) : undefined}
           />
         </Grid>
@@ -272,7 +276,7 @@ const PerformanceTab: React.FC = () => {
             ) : (
               <Typography
                 variant="body2"
-                sx={{ color: DASHBOARD_THEME.neutral, textAlign: 'center' }}
+                sx={{ color: dt.neutral, textAlign: 'center' }}
                 data-testid="empty-histogram"
               >
                 No confidence histogram data yet.
@@ -292,7 +296,7 @@ const PerformanceTab: React.FC = () => {
             ) : (
               <Typography
                 variant="body2"
-                sx={{ color: DASHBOARD_THEME.neutral, textAlign: 'center' }}
+                sx={{ color: dt.neutral, textAlign: 'center' }}
                 data-testid="empty-scatter"
               >
                 No uncertainty scatter data yet.
@@ -314,7 +318,7 @@ const PerformanceTab: React.FC = () => {
             ) : (
               <Typography
                 variant="body2"
-                sx={{ color: DASHBOARD_THEME.neutral, textAlign: 'center' }}
+                sx={{ color: dt.neutral, textAlign: 'center' }}
                 data-testid="empty-temporal"
               >
                 No temporal confidence data yet.
@@ -323,8 +327,8 @@ const PerformanceTab: React.FC = () => {
           </MetricCard>
         </Grid>
 
-        {/* ── Row 4: Concordance (full width) ────────────────────── */}
-        <Grid size={{ xs: 12 }}>
+        {/* ── Row 4: Concordance + Calibration (side by side) ───── */}
+        <Grid size={{ xs: 12, md: 6 }}>
           <MetricCard
             title="AI vs Radiologist Agreement"
             subtitle="Concordance rates by prediction category"
@@ -335,7 +339,7 @@ const PerformanceTab: React.FC = () => {
             ) : (
               <Typography
                 variant="body2"
-                sx={{ color: DASHBOARD_THEME.neutral, textAlign: 'center' }}
+                sx={{ color: dt.neutral, textAlign: 'center' }}
                 data-testid="empty-concordance"
               >
                 No concordance data yet. Radiologist feedback is needed.
@@ -344,7 +348,6 @@ const PerformanceTab: React.FC = () => {
           </MetricCard>
         </Grid>
 
-        {/* ── Row 5: Calibration Curve ───────────────────────────── */}
         <Grid size={{ xs: 12, md: 6 }}>
           <MetricCard
             title="Calibration Curve"
@@ -356,7 +359,7 @@ const PerformanceTab: React.FC = () => {
             ) : (
               <Typography
                 variant="body2"
-                sx={{ color: DASHBOARD_THEME.neutral, textAlign: 'center' }}
+                sx={{ color: dt.neutral, textAlign: 'center' }}
                 data-testid="empty-calibration"
               >
                 No calibration data yet. Requires radiologist feedback.

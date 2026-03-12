@@ -75,7 +75,7 @@ import { useLegacyWorkflow } from '../workflow-v3';
 import OverviewTab from '../components/dashboard/tabs/OverviewTab';
 import PerformanceTab from '../components/dashboard/tabs/PerformanceTab';
 import ModelIntelligenceTab from '../components/dashboard/tabs/ModelIntelligenceTab';
-import { DASHBOARD_THEME } from '../components/dashboard/charts/dashboardTheme';
+import { useDashboardTheme } from '../hooks/useDashboardTheme';
 
 // Backend health status type
 interface SystemHealth {
@@ -90,6 +90,7 @@ interface SystemHealth {
  */
 const ClinicalDashboard: React.FC = () => {
   const theme = useTheme();
+  const dt = useDashboardTheme();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { loadSession } = useLegacyWorkflow();
@@ -429,9 +430,11 @@ const ClinicalDashboard: React.FC = () => {
           elevation={0}
           sx={{
             mb: 3,
-            borderRadius: 2,
-            bgcolor: 'background.paper',
-            border: `1px solid ${theme.palette.divider}`,
+            borderRadius: 2.5,
+            overflow: 'hidden',
+            background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.08)} 0%, ${alpha('#60A5FA', 0.06)} 100%)`,
+            border: `1px solid ${alpha(theme.palette.primary.main, 0.15)}`,
+            backdropFilter: 'blur(8px)',
           }}
         >
           <Tabs
@@ -439,16 +442,30 @@ const ClinicalDashboard: React.FC = () => {
             onChange={(_, v) => setActiveTab(v)}
             aria-label="Dashboard sections"
             sx={{
-              minHeight: 44,
+              minHeight: 52,
+              px: 1,
               '& .MuiTab-root': {
-                minHeight: 44,
+                minHeight: 52,
                 textTransform: 'none',
-                fontWeight: 600,
-                fontSize: '0.85rem',
+                fontWeight: 700,
+                fontSize: '0.95rem',
+                color: alpha(theme.palette.text.primary, 0.7),
+                transition: 'all 0.2s ease',
+                borderRadius: 2,
+                mx: 0.5,
+                '&:hover': {
+                  color: theme.palette.primary.main,
+                  backgroundColor: alpha(theme.palette.primary.main, 0.06),
+                },
+                '&.Mui-selected': {
+                  color: theme.palette.primary.main,
+                  fontWeight: 800,
+                },
               },
               '& .MuiTabs-indicator': {
                 height: 3,
                 borderRadius: '3px 3px 0 0',
+                background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${alpha('#60A5FA', 0.8)})`,
               },
             }}
           >
@@ -1081,7 +1098,15 @@ const ClinicalDashboard: React.FC = () => {
 
         {/* ── Tab Panel: AI Analytics ─────────────────────────────── */}
         {activeTab === 1 && (
-          <Box>
+          <Box
+            sx={{
+              background: dt.pageGradient,
+              borderRadius: 3,
+              p: { xs: 2, md: 3 },
+              mx: -3,
+              px: { xs: 2, md: 3 },
+            }}
+          >
             {/* Analytics Sub-Tabs — Capsule Navigation */}
             <Box
               sx={{
@@ -1093,11 +1118,12 @@ const ClinicalDashboard: React.FC = () => {
               <Box
                 sx={{
                   display: 'inline-flex',
-                  background: 'rgba(15, 16, 34, 0.6)',
-                  border: `1px solid ${DASHBOARD_THEME.cardBorder}`,
+                  background: alpha(dt.cardBackground, 0.7),
+                  border: `1px solid ${alpha(dt.primary, 0.15)}`,
                   borderRadius: '999px',
-                  p: 0.5,
-                  gap: 0.5,
+                  p: 0.75,
+                  gap: 1,
+                  backdropFilter: 'blur(8px)',
                 }}
               >
                 {[
@@ -1113,34 +1139,35 @@ const ClinicalDashboard: React.FC = () => {
                     sx={{
                       all: 'unset',
                       cursor: 'pointer',
-                      px: 2.5,
-                      py: 0.9,
+                      px: 3,
+                      py: 1,
                       borderRadius: '999px',
-                      fontSize: '0.8rem',
-                      fontWeight: analyticsSubTab === tab.idx ? 600 : 500,
-                      fontFamily: DASHBOARD_THEME.fontBody,
+                      fontSize: '0.9rem',
+                      fontWeight: analyticsSubTab === tab.idx ? 700 : 500,
+                      fontFamily: dt.fontBody,
+                      letterSpacing: '-0.01em',
                       color:
                         analyticsSubTab === tab.idx
                           ? '#FFFFFF'
-                          : DASHBOARD_THEME.textMuted,
+                          : dt.textSecondary,
                       background:
                         analyticsSubTab === tab.idx
-                          ? `linear-gradient(135deg, ${DASHBOARD_THEME.primary}, ${alpha(DASHBOARD_THEME.primary, 0.7)})`
+                          ? `linear-gradient(135deg, ${dt.primary}, ${alpha(dt.primary, 0.7)})`
                           : 'transparent',
                       boxShadow:
                         analyticsSubTab === tab.idx
-                          ? `0 2px 12px ${alpha(DASHBOARD_THEME.primary, 0.3)}`
+                          ? `0 2px 16px ${alpha(dt.primary, 0.35)}`
                           : 'none',
                       transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
                       '&:hover': {
                         background:
                           analyticsSubTab === tab.idx
-                            ? `linear-gradient(135deg, ${DASHBOARD_THEME.primary}, ${alpha(DASHBOARD_THEME.primary, 0.7)})`
-                            : alpha(DASHBOARD_THEME.primary, 0.08),
+                            ? `linear-gradient(135deg, ${dt.primary}, ${alpha(dt.primary, 0.7)})`
+                            : alpha(dt.primary, 0.1),
                         color:
                           analyticsSubTab === tab.idx
                             ? '#FFFFFF'
-                            : DASHBOARD_THEME.textSecondary,
+                            : dt.textPrimary,
                       },
                     }}
                   >

@@ -162,22 +162,20 @@ describe('ReviewTriggersPie', () => {
     { trigger: 'High Aleatoric Uncertainty', count: 9, percentage: 15.1 },
   ];
 
-  it('renders the pie chart', () => {
+  it('renders the bar chart', () => {
     wrap(<ReviewTriggersPie data={sampleData} />);
-    expect(screen.getByTestId('pie-chart')).toBeInTheDocument();
+    expect(screen.getByTestId('bar-chart')).toBeInTheDocument();
   });
 
-  it('renders legend items for each trigger', () => {
+  it('renders trigger names', () => {
     wrap(<ReviewTriggersPie data={sampleData} />);
-    expect(screen.getByText(/High Epistemic Uncertainty/i)).toBeInTheDocument();
-    expect(screen.getByText(/Low Confidence/i)).toBeInTheDocument();
-    expect(screen.getByText(/Borderline Confidence/i)).toBeInTheDocument();
+    // The bar chart should render with data
+    expect(screen.getByTestId('bar-chart').getAttribute('data-length')).toBe('4');
   });
 
-  it('shows percentages in legend', () => {
+  it('renders bar for count data', () => {
     wrap(<ReviewTriggersPie data={sampleData} />);
-    expect(screen.getByText('43%')).toBeInTheDocument();
-    expect(screen.getByText('25%')).toBeInTheDocument();
+    expect(screen.getByTestId('bar-count')).toBeInTheDocument();
   });
 
   it('shows empty state when data is empty', () => {

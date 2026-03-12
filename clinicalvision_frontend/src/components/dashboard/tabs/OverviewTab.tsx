@@ -39,7 +39,7 @@ import LatencyPercentilesChart from '../charts/LatencyPercentilesChart';
 import SystemHealthBar from '../charts/SystemHealthBar';
 import ChartSkeleton from '../charts/ChartSkeleton';
 import ErrorAlert from '../charts/ErrorAlert';
-import { DASHBOARD_THEME } from '../charts/dashboardTheme';
+import { useDashboardTheme } from '../../../hooks/useDashboardTheme';
 import { useOverviewMetrics, useSystemHealth } from '../../../hooks/useMetrics';
 import { EMPTY_OVERVIEW_METRICS } from '../../../types/metrics.types';
 import type { MetricsPeriod } from '../../../types/metrics.types';
@@ -61,6 +61,7 @@ const PERIOD_OPTIONS: { value: MetricsPeriod; label: string }[] = [
 
 const OverviewTab: React.FC = () => {
   const [period, setPeriod] = useState<MetricsPeriod>('30d');
+  const dt = useDashboardTheme();
 
   // Fetch from API with local-aggregator fallback
   const { data: metrics, isLoading, dataSource, refresh, error } =
@@ -88,11 +89,13 @@ const OverviewTab: React.FC = () => {
         sx={{ mb: 3 }}
       >
         <Typography
-          variant="subtitle1"
+          variant="h6"
           sx={{
-            fontFamily: DASHBOARD_THEME.fontHeading,
-            color: DASHBOARD_THEME.textPrimary,
-            fontWeight: 600,
+            fontFamily: dt.fontHeading,
+            color: dt.textPrimary,
+            fontWeight: 700,
+            fontSize: '1.1rem',
+            letterSpacing: '-0.01em',
           }}
         >
           AI Performance Overview
@@ -105,9 +108,9 @@ const OverviewTab: React.FC = () => {
           size="small"
           aria-label="Time period"
           sx={{
-            bgcolor: 'rgba(255, 255, 255, 0.04)',
+            bgcolor: alpha(dt.cardBackground, 0.5),
             borderRadius: '999px',
-            border: `1px solid ${DASHBOARD_THEME.cardBorder}`,
+            border: `1px solid ${dt.cardBorder}`,
             p: '2px',
             '& .MuiToggleButtonGroup-grouped': {
               border: 'none',
@@ -122,21 +125,22 @@ const OverviewTab: React.FC = () => {
               value={opt.value}
               sx={{
                 textTransform: 'none',
-                fontSize: '0.75rem',
+                fontSize: '0.78rem',
                 px: 1.5,
                 py: 0.4,
-                color: DASHBOARD_THEME.textMuted,
+                color: dt.textSecondary,
+                fontWeight: 500,
                 transition: 'all 0.2s ease',
                 '&:hover': {
-                  bgcolor: 'rgba(255, 255, 255, 0.06)',
-                  color: DASHBOARD_THEME.textSecondary,
+                  bgcolor: alpha(dt.primary, 0.08),
+                  color: dt.textPrimary,
                 },
                 '&.Mui-selected': {
-                  bgcolor: alpha(DASHBOARD_THEME.primary, 0.18),
-                  color: DASHBOARD_THEME.primary,
-                  fontWeight: 600,
+                  bgcolor: alpha(dt.primary, 0.2),
+                  color: dt.textPrimary,
+                  fontWeight: 700,
                   '&:hover': {
-                    bgcolor: alpha(DASHBOARD_THEME.primary, 0.25),
+                    bgcolor: alpha(dt.primary, 0.28),
                   },
                 },
               }}
@@ -148,7 +152,7 @@ const OverviewTab: React.FC = () => {
 
         <Stack direction="row" spacing={1} alignItems="center">
           {isLoading && (
-            <CircularProgress size={16} sx={{ color: DASHBOARD_THEME.primary }} data-testid="metrics-loading" />
+            <CircularProgress size={16} sx={{ color: dt.primary }} data-testid="metrics-loading" />
           )}
           {dataSource && (
             <Tooltip title={dataSource === 'api' ? 'Live data from server' : 'Local session data'}>
@@ -161,10 +165,10 @@ const OverviewTab: React.FC = () => {
                   height: 22,
                   fontSize: '0.65rem',
                   bgcolor: alpha(
-                    dataSource === 'api' ? DASHBOARD_THEME.success : DASHBOARD_THEME.warning,
+                    dataSource === 'api' ? dt.success : dt.warning,
                     0.15,
                   ),
-                  color: dataSource === 'api' ? DASHBOARD_THEME.success : DASHBOARD_THEME.warning,
+                  color: dataSource === 'api' ? dt.success : dt.warning,
                   '& .MuiChip-icon': { color: 'inherit' },
                 }}
               />
@@ -176,7 +180,7 @@ const OverviewTab: React.FC = () => {
               onClick={refresh}
               disabled={isLoading}
               data-testid="refresh-metrics"
-              sx={{ color: DASHBOARD_THEME.textMuted, '&:hover': { color: DASHBOARD_THEME.primary } }}
+              sx={{ color: dt.textMuted, '&:hover': { color: dt.primary } }}
             >
               <RefreshIcon fontSize="small" />
             </IconButton>
@@ -219,7 +223,7 @@ const OverviewTab: React.FC = () => {
             value={confidencePct}
             maxValue={100}
             unit="%"
-            color={DASHBOARD_THEME.primary}
+            color={dt.primary}
             trend={kpiTrends.confidenceChange !== 0 ? Math.round(kpiTrends.confidenceChange * 100) : undefined}
           />
         </Grid>
@@ -229,7 +233,7 @@ const OverviewTab: React.FC = () => {
             value={uncertaintyPct}
             maxValue={100}
             unit="%"
-            color={uncertaintyPct > 15 ? DASHBOARD_THEME.danger : DASHBOARD_THEME.success}
+            color={uncertaintyPct > 15 ? dt.danger : dt.success}
           />
         </Grid>
         <Grid size={{ xs: 6, md: 3 }}>
@@ -238,7 +242,7 @@ const OverviewTab: React.FC = () => {
             value={kpis.totalAnalyses}
             maxValue={Math.max(kpis.totalAnalyses, 50)}
             unit=""
-            color={DASHBOARD_THEME.secondary}
+            color={dt.secondary}
           />
         </Grid>
         <Grid size={{ xs: 6, md: 3 }}>
@@ -247,7 +251,7 @@ const OverviewTab: React.FC = () => {
             value={latencyMs}
             maxValue={Math.max(latencyMs, 1000)}
             unit="ms"
-            color={latencyMs > 500 ? DASHBOARD_THEME.warning : DASHBOARD_THEME.primary}
+            color={latencyMs > 500 ? dt.warning : dt.primary}
             trend={kpiTrends.latencyChange !== 0 ? Math.round(kpiTrends.latencyChange) : undefined}
           />
         </Grid>
@@ -266,7 +270,7 @@ const OverviewTab: React.FC = () => {
             ) : (
               <Typography
                 variant="body2"
-                sx={{ color: DASHBOARD_THEME.neutral, textAlign: 'center' }}
+                sx={{ color: dt.neutral, textAlign: 'center' }}
                 data-testid="empty-confidence-trend"
               >
                 No trend data available yet. Run analyses to populate.
@@ -289,7 +293,7 @@ const OverviewTab: React.FC = () => {
             ) : (
               <Typography
                 variant="body2"
-                sx={{ color: DASHBOARD_THEME.neutral, textAlign: 'center' }}
+                sx={{ color: dt.neutral, textAlign: 'center' }}
                 data-testid="empty-predictions"
               >
                 No predictions available yet.
@@ -306,7 +310,7 @@ const OverviewTab: React.FC = () => {
             ) : (
               <Typography
                 variant="body2"
-                sx={{ color: DASHBOARD_THEME.neutral, textAlign: 'center' }}
+                sx={{ color: dt.neutral, textAlign: 'center' }}
                 data-testid="empty-birads"
               >
                 No BI-RADS data yet.
@@ -326,7 +330,7 @@ const OverviewTab: React.FC = () => {
             ) : (
               <Typography
                 variant="body2"
-                sx={{ color: DASHBOARD_THEME.neutral, textAlign: 'center' }}
+                sx={{ color: dt.neutral, textAlign: 'center' }}
                 data-testid="empty-risk"
               >
                 No risk data yet.
@@ -342,7 +346,7 @@ const OverviewTab: React.FC = () => {
             ) : (
               <Typography
                 variant="body2"
-                sx={{ color: DASHBOARD_THEME.neutral, textAlign: 'center' }}
+                sx={{ color: dt.neutral, textAlign: 'center' }}
                 data-testid="empty-latency"
               >
                 No latency data yet.

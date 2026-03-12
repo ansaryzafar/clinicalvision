@@ -17,7 +17,7 @@ import {
   PolarAngleAxis,
   ResponsiveContainer,
 } from 'recharts';
-import { DASHBOARD_THEME } from './dashboardTheme';
+import { useDashboardTheme } from '../../../hooks/useDashboardTheme';
 
 // ────────────────────────────────────────────────────────────────────────────
 
@@ -46,6 +46,7 @@ const GaugeCard: React.FC<GaugeCardProps> = ({
   trend,
   color,
 }) => {
+  const dt = useDashboardTheme();
   const data = [{ value, fill: color }];
 
   // Background track colour
@@ -58,10 +59,10 @@ const GaugeCard: React.FC<GaugeCardProps> = ({
     const arrow = trend > 0 ? '↑' : trend < 0 ? '↓' : '—';
     const trendColor =
       trend > 0
-        ? DASHBOARD_THEME.success
+        ? dt.success
         : trend < 0
-          ? DASHBOARD_THEME.danger
-          : DASHBOARD_THEME.neutral;
+          ? dt.danger
+          : dt.neutral;
 
     return (
       <Typography
@@ -79,22 +80,22 @@ const GaugeCard: React.FC<GaugeCardProps> = ({
       elevation={0}
       sx={{
         p: 2,
-        background: DASHBOARD_THEME.cardGradient,
-        border: `1px solid ${DASHBOARD_THEME.cardBorder}`,
+        background: dt.cardGradient,
+        border: `1px solid ${dt.cardBorder}`,
         borderRadius: 2,
         textAlign: 'center',
         transition: 'all 0.2s ease',
         '&:hover': {
-          background: DASHBOARD_THEME.cardGradientHover,
-          borderColor: 'rgba(0, 201, 234, 0.2)',
+          background: dt.cardGradientHover,
+          borderColor: dt.cardBorder,
         },
       }}
     >
       <Typography
         variant="overline"
         sx={{
-          color: DASHBOARD_THEME.textMuted,
-          fontFamily: DASHBOARD_THEME.fontBody,
+          color: dt.textMuted,
+          fontFamily: dt.fontBody,
           fontSize: '0.7rem',
           letterSpacing: '0.08em',
         }}
@@ -139,9 +140,9 @@ const GaugeCard: React.FC<GaugeCardProps> = ({
           <Typography
             variant="h5"
             sx={{
-              fontFamily: DASHBOARD_THEME.fontMono,
+              fontFamily: dt.fontMono,
               fontWeight: 700,
-              color: '#FFFFFF',
+              color: dt.textPrimary,
               lineHeight: 1,
             }}
           >

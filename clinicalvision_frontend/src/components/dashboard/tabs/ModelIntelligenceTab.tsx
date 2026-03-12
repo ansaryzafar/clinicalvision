@@ -38,7 +38,7 @@ import ReviewTriggersPie from '../charts/ReviewTriggersPie';
 import EntropyHistogram from '../charts/EntropyHistogram';
 import ChartSkeleton from '../charts/ChartSkeleton';
 import ErrorAlert from '../charts/ErrorAlert';
-import { DASHBOARD_THEME } from '../charts/dashboardTheme';
+import { useDashboardTheme } from '../../../hooks/useDashboardTheme';
 import { useModelIntelligenceMetrics } from '../../../hooks/useMetrics';
 import { EMPTY_MODEL_INTELLIGENCE_METRICS } from '../../../types/metrics.types';
 import type { MetricsPeriod } from '../../../types/metrics.types';
@@ -60,6 +60,7 @@ const PERIOD_OPTIONS: { value: MetricsPeriod; label: string }[] = [
 
 const ModelIntelligenceTab: React.FC = () => {
   const [period, setPeriod] = useState<MetricsPeriod>('30d');
+  const dt = useDashboardTheme();
 
   const { data: metrics, isLoading, dataSource, refresh, error } =
     useModelIntelligenceMetrics({ period });
@@ -101,11 +102,13 @@ const ModelIntelligenceTab: React.FC = () => {
         sx={{ mb: 3 }}
       >
         <Typography
-          variant="subtitle1"
+          variant="h6"
           sx={{
-            fontFamily: DASHBOARD_THEME.fontHeading,
-            color: DASHBOARD_THEME.textPrimary,
-            fontWeight: 600,
+            fontFamily: dt.fontHeading,
+            color: dt.textPrimary,
+            fontWeight: 700,
+            fontSize: '1.1rem',
+            letterSpacing: '-0.01em',
           }}
         >
           Model Intelligence
@@ -118,9 +121,9 @@ const ModelIntelligenceTab: React.FC = () => {
           size="small"
           aria-label="Time period"
           sx={{
-            bgcolor: 'rgba(255, 255, 255, 0.04)',
+            bgcolor: alpha(dt.cardBackground, 0.5),
             borderRadius: '999px',
-            border: `1px solid ${DASHBOARD_THEME.cardBorder}`,
+            border: `1px solid ${dt.cardBorder}`,
             p: '2px',
             '& .MuiToggleButtonGroup-grouped': {
               border: 'none',
@@ -135,21 +138,22 @@ const ModelIntelligenceTab: React.FC = () => {
               value={opt.value}
               sx={{
                 textTransform: 'none',
-                fontSize: '0.75rem',
+                fontSize: '0.78rem',
                 px: 1.5,
                 py: 0.4,
-                color: DASHBOARD_THEME.textMuted,
+                color: dt.textSecondary,
+                fontWeight: 500,
                 transition: 'all 0.2s ease',
                 '&:hover': {
-                  bgcolor: 'rgba(255, 255, 255, 0.06)',
-                  color: DASHBOARD_THEME.textSecondary,
+                  bgcolor: alpha(dt.primary, 0.08),
+                  color: dt.textPrimary,
                 },
                 '&.Mui-selected': {
-                  bgcolor: alpha(DASHBOARD_THEME.primary, 0.18),
-                  color: DASHBOARD_THEME.primary,
-                  fontWeight: 600,
+                  bgcolor: alpha(dt.primary, 0.2),
+                  color: dt.textPrimary,
+                  fontWeight: 700,
                   '&:hover': {
-                    bgcolor: alpha(DASHBOARD_THEME.primary, 0.25),
+                    bgcolor: alpha(dt.primary, 0.28),
                   },
                 },
               }}
@@ -163,7 +167,7 @@ const ModelIntelligenceTab: React.FC = () => {
           {isLoading && (
             <CircularProgress
               size={16}
-              sx={{ color: DASHBOARD_THEME.primary }}
+              sx={{ color: dt.primary }}
               data-testid="intel-metrics-loading"
             />
           )}
@@ -182,10 +186,10 @@ const ModelIntelligenceTab: React.FC = () => {
                   height: 22,
                   fontSize: '0.65rem',
                   bgcolor: alpha(
-                    dataSource === 'api' ? DASHBOARD_THEME.success : DASHBOARD_THEME.warning,
+                    dataSource === 'api' ? dt.success : dt.warning,
                     0.15,
                   ),
-                  color: dataSource === 'api' ? DASHBOARD_THEME.success : DASHBOARD_THEME.warning,
+                  color: dataSource === 'api' ? dt.success : dt.warning,
                   '& .MuiChip-icon': { color: 'inherit' },
                 }}
               />
@@ -197,7 +201,7 @@ const ModelIntelligenceTab: React.FC = () => {
               onClick={refresh}
               disabled={isLoading}
               data-testid="intel-refresh-metrics"
-              sx={{ color: DASHBOARD_THEME.textMuted, '&:hover': { color: DASHBOARD_THEME.primary } }}
+              sx={{ color: dt.textMuted, '&:hover': { color: dt.primary } }}
             >
               <RefreshIcon fontSize="small" />
             </IconButton>
@@ -241,7 +245,7 @@ const ModelIntelligenceTab: React.FC = () => {
             value={summaryMetrics.totalVersions}
             maxValue={Math.max(summaryMetrics.totalVersions, 10)}
             unit=""
-            color={DASHBOARD_THEME.primary}
+            color={dt.primary}
           />
         </Grid>
         <Grid size={{ xs: 6, md: 3 }}>
@@ -249,8 +253,8 @@ const ModelIntelligenceTab: React.FC = () => {
             <Typography
               variant="h5"
               sx={{
-                fontFamily: DASHBOARD_THEME.fontHeading,
-                color: DASHBOARD_THEME.textPrimary,
+                fontFamily: dt.fontHeading,
+                color: dt.textPrimary,
                 fontWeight: 700,
                 textAlign: 'center',
                 mt: 2,
@@ -267,7 +271,7 @@ const ModelIntelligenceTab: React.FC = () => {
             value={Math.round(summaryMetrics.latestRate * 100)}
             maxValue={100}
             unit="%"
-            color={DASHBOARD_THEME.warning}
+            color={dt.warning}
           />
         </Grid>
         <Grid size={{ xs: 6, md: 3 }}>
@@ -275,8 +279,8 @@ const ModelIntelligenceTab: React.FC = () => {
             <Typography
               variant="body1"
               sx={{
-                fontFamily: DASHBOARD_THEME.fontHeading,
-                color: DASHBOARD_THEME.tertiary,
+                fontFamily: dt.fontHeading,
+                color: dt.tertiary,
                 fontWeight: 600,
                 textAlign: 'center',
                 mt: 2,
@@ -302,7 +306,7 @@ const ModelIntelligenceTab: React.FC = () => {
             ) : (
               <Typography
                 variant="body2"
-                sx={{ color: DASHBOARD_THEME.neutral, textAlign: 'center' }}
+                sx={{ color: dt.neutral, textAlign: 'center' }}
                 data-testid="empty-decomposition"
               >
                 No uncertainty decomposition data yet.
@@ -311,8 +315,8 @@ const ModelIntelligenceTab: React.FC = () => {
           </MetricCard>
         </Grid>
 
-        {/* ── Row 3: Model version comparison (full width) ───────── */}
-        <Grid size={{ xs: 12 }}>
+        {/* ── Row 3: Model version comparison + Entropy (side by side) ─ */}
+        <Grid size={{ xs: 12, md: 6 }}>
           <MetricCard
             title="Model Version Comparison"
             subtitle="Performance metrics across deployed versions"
@@ -323,7 +327,7 @@ const ModelIntelligenceTab: React.FC = () => {
             ) : (
               <Typography
                 variant="body2"
-                sx={{ color: DASHBOARD_THEME.neutral, textAlign: 'center' }}
+                sx={{ color: dt.neutral, textAlign: 'center' }}
                 data-testid="empty-version-comparison"
               >
                 No model version data available.
@@ -345,7 +349,7 @@ const ModelIntelligenceTab: React.FC = () => {
             ) : (
               <Typography
                 variant="body2"
-                sx={{ color: DASHBOARD_THEME.neutral, textAlign: 'center' }}
+                sx={{ color: dt.neutral, textAlign: 'center' }}
                 data-testid="empty-review-rate"
               >
                 No review rate data yet.
@@ -365,7 +369,7 @@ const ModelIntelligenceTab: React.FC = () => {
             ) : (
               <Typography
                 variant="body2"
-                sx={{ color: DASHBOARD_THEME.neutral, textAlign: 'center' }}
+                sx={{ color: dt.neutral, textAlign: 'center' }}
                 data-testid="empty-triggers"
               >
                 No review trigger data yet.
@@ -374,19 +378,18 @@ const ModelIntelligenceTab: React.FC = () => {
           </MetricCard>
         </Grid>
 
-        {/* ── Row 5: Entropy distribution ────────────────────────── */}
         <Grid size={{ xs: 12, md: 6 }}>
           <MetricCard
             title="Predictive Entropy Distribution"
             subtitle="Histogram of model prediction entropy"
-            height={290}
+            height={330}
           >
             {safeMetrics.entropyDistribution.length > 0 ? (
               <EntropyHistogram data={safeMetrics.entropyDistribution} />
             ) : (
               <Typography
                 variant="body2"
-                sx={{ color: DASHBOARD_THEME.neutral, textAlign: 'center' }}
+                sx={{ color: dt.neutral, textAlign: 'center' }}
                 data-testid="empty-entropy"
               >
                 No entropy distribution data yet.
