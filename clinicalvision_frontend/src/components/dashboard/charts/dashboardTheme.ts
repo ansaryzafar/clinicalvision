@@ -16,13 +16,19 @@
 export const DASHBOARD_THEME = {
   // Base surfaces
   background: '#0F1022',
-  cardBackground: '#161832',
-  cardBorder: 'rgba(0, 201, 234, 0.08)',
+  cardBackground: '#1A1D3A',
+  cardBackgroundHover: '#1E2145',
+  cardBorder: 'rgba(0, 201, 234, 0.12)',
+  cardGradient: 'linear-gradient(135deg, #1A1D3A 0%, #161832 50%, #141628 100%)',
+  cardGradientHover: 'linear-gradient(135deg, #1E2145 0%, #1A1D3A 50%, #171A36 100%)',
 
   // Typography
   fontHeading: '"ClashGrotesk", "Inter", sans-serif',
   fontBody: '"Lexend", "Inter", sans-serif',
   fontMono: '"JetBrains Mono", "Fira Code", monospace',
+  textPrimary: '#F1F5F9',     // High-contrast heading text
+  textSecondary: '#CBD5E1',   // Sub-heading text
+  textMuted: '#94A3B8',       // Muted labels (WCAG AA compliant on dark)
 
   // Chart data-series colours
   primary: '#00C9EA',
@@ -32,7 +38,7 @@ export const DASHBOARD_THEME = {
   success: '#22C55E',
   warning: '#F59E0B',
   danger: '#EF4444',
-  neutral: '#6B7280',
+  neutral: '#94A3B8',  // Bumped from #6B7280 → #94A3B8 for WCAG AA compliance
 
   // Gradient fills (area charts)
   primaryGradient: ['rgba(0, 201, 234, 0.3)', 'rgba(0, 201, 234, 0.0)'] as const,
@@ -40,8 +46,8 @@ export const DASHBOARD_THEME = {
   dangerGradient: ['rgba(239, 68, 68, 0.3)', 'rgba(239, 68, 68, 0.0)'] as const,
 
   // Axes / grid
-  gridStroke: 'rgba(255, 255, 255, 0.05)',
-  axisStroke: '#6B7280',
+  gridStroke: 'rgba(255, 255, 255, 0.07)',
+  axisStroke: '#94A3B8',
   axisFontSize: 11,
 
   // Tooltip

@@ -24,6 +24,10 @@ import {
 } from '../services/metricsApi';
 import { aggregateLocalMetrics } from '../services/localMetricsAggregator';
 import {
+  aggregateLocalPerformanceMetrics,
+  aggregateLocalModelIntelligenceMetrics,
+} from '../services/localMetricsAggregator';
+import {
   EMPTY_OVERVIEW_METRICS,
   EMPTY_PERFORMANCE_METRICS,
   EMPTY_MODEL_INTELLIGENCE_METRICS,
@@ -205,12 +209,13 @@ interface UseGenericMetricsReturn<T> {
 /**
  * Internal factory: creates a metrics hook for any tab type.
  * Follows the same API-first pattern as useOverviewMetrics.
- * No local fallback for Performance / Intelligence tabs (API only).
+ * Accepts an optional localFallback for offline/demo mode.
  */
 function useGenericMetrics<T>(
   fetcher: (period: MetricsPeriod, signal: AbortSignal) => Promise<T>,
   emptyDefault: T,
   options?: UseGenericMetricsOptions,
+  localFallback?: (period: MetricsPeriod) => T,
 ): UseGenericMetricsReturn<T> {
   const {
     period = '30d',
@@ -246,14 +251,28 @@ function useGenericMetrics<T>(
       if (controller.signal.aborted) return;
       if (!mountedRef.current) return;
 
-      setError('Unable to load analytics data');
-      setDataSource(null);
+      // Try local fallback if provided
+      if (localFallback) {
+        try {
+          const localData = localFallback(period);
+          setData(localData);
+          setDataSource('local');
+          setError(null);
+          setLastUpdated(new Date());
+        } catch {
+          setError('Unable to load analytics data');
+          setDataSource(null);
+        }
+      } else {
+        setError('Unable to load analytics data');
+        setDataSource(null);
+      }
     } finally {
       if (mountedRef.current) {
         setIsLoading(false);
       }
     }
-  }, [period, fetcher]);
+  }, [period, fetcher, localFallback]);
 
   const refresh = useCallback(() => {
     if (enabled) fetchData();
@@ -294,6 +313,7 @@ export function usePerformanceMetrics(
     fetchPerformanceMetrics,
     EMPTY_PERFORMANCE_METRICS,
     options,
+    aggregateLocalPerformanceMetrics,
   );
 }
 
@@ -309,6 +329,7 @@ export function useModelIntelligenceMetrics(
     fetchModelIntelligenceMetrics,
     EMPTY_MODEL_INTELLIGENCE_METRICS,
     options,
+    aggregateLocalModelIntelligenceMetrics,
   );
 }
 

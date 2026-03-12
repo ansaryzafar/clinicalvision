@@ -1082,45 +1082,73 @@ const ClinicalDashboard: React.FC = () => {
         {/* ── Tab Panel: AI Analytics ─────────────────────────────── */}
         {activeTab === 1 && (
           <Box>
-            {/* Analytics Sub-Tabs */}
-            <Paper
-              elevation={0}
+            {/* Analytics Sub-Tabs — Capsule Navigation */}
+            <Box
               sx={{
                 mb: 3,
-                borderRadius: 2,
-                bgcolor: DASHBOARD_THEME.cardBackground,
-                border: `1px solid ${DASHBOARD_THEME.cardBorder}`,
+                display: 'flex',
+                justifyContent: 'center',
               }}
             >
-              <Tabs
-                value={analyticsSubTab}
-                onChange={(_, v) => setAnalyticsSubTab(v)}
-                aria-label="Analytics sub-sections"
-                variant="fullWidth"
+              <Box
                 sx={{
-                  minHeight: 40,
-                  '& .MuiTab-root': {
-                    minHeight: 40,
-                    textTransform: 'none',
-                    fontWeight: 500,
-                    fontSize: '0.8rem',
-                    color: DASHBOARD_THEME.neutral,
-                    '&.Mui-selected': {
-                      color: DASHBOARD_THEME.primary,
-                    },
-                  },
-                  '& .MuiTabs-indicator': {
-                    height: 2,
-                    borderRadius: '2px 2px 0 0',
-                    backgroundColor: DASHBOARD_THEME.primary,
-                  },
+                  display: 'inline-flex',
+                  background: 'rgba(15, 16, 34, 0.6)',
+                  border: `1px solid ${DASHBOARD_THEME.cardBorder}`,
+                  borderRadius: '999px',
+                  p: 0.5,
+                  gap: 0.5,
                 }}
               >
-                <Tab label="Overview" data-testid="analytics-sub-tab-overview" />
-                <Tab label="Performance" data-testid="analytics-sub-tab-performance" />
-                <Tab label="Model Intelligence" data-testid="analytics-sub-tab-intelligence" />
-              </Tabs>
-            </Paper>
+                {[
+                  { label: 'Overview', testId: 'analytics-sub-tab-overview', idx: 0 },
+                  { label: 'Performance', testId: 'analytics-sub-tab-performance', idx: 1 },
+                  { label: 'Model Intelligence', testId: 'analytics-sub-tab-intelligence', idx: 2 },
+                ].map((tab) => (
+                  <Box
+                    key={tab.idx}
+                    component="button"
+                    data-testid={tab.testId}
+                    onClick={() => setAnalyticsSubTab(tab.idx)}
+                    sx={{
+                      all: 'unset',
+                      cursor: 'pointer',
+                      px: 2.5,
+                      py: 0.9,
+                      borderRadius: '999px',
+                      fontSize: '0.8rem',
+                      fontWeight: analyticsSubTab === tab.idx ? 600 : 500,
+                      fontFamily: DASHBOARD_THEME.fontBody,
+                      color:
+                        analyticsSubTab === tab.idx
+                          ? '#FFFFFF'
+                          : DASHBOARD_THEME.textMuted,
+                      background:
+                        analyticsSubTab === tab.idx
+                          ? `linear-gradient(135deg, ${DASHBOARD_THEME.primary}, ${alpha(DASHBOARD_THEME.primary, 0.7)})`
+                          : 'transparent',
+                      boxShadow:
+                        analyticsSubTab === tab.idx
+                          ? `0 2px 12px ${alpha(DASHBOARD_THEME.primary, 0.3)}`
+                          : 'none',
+                      transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                      '&:hover': {
+                        background:
+                          analyticsSubTab === tab.idx
+                            ? `linear-gradient(135deg, ${DASHBOARD_THEME.primary}, ${alpha(DASHBOARD_THEME.primary, 0.7)})`
+                            : alpha(DASHBOARD_THEME.primary, 0.08),
+                        color:
+                          analyticsSubTab === tab.idx
+                            ? '#FFFFFF'
+                            : DASHBOARD_THEME.textSecondary,
+                      },
+                    }}
+                  >
+                    {tab.label}
+                  </Box>
+                ))}
+              </Box>
+            </Box>
 
             {/* Analytics Sub-Tab Panels */}
             {analyticsSubTab === 0 && <OverviewTab />}

@@ -42,7 +42,7 @@ const ErrorAlert: React.FC<ErrorAlertProps> = ({ message, onRetry }) => (
     sx={{
       mb: 2,
       bgcolor: alpha(DASHBOARD_THEME.danger, 0.1),
-      color: '#F8D7DA',
+      color: DASHBOARD_THEME.textPrimary,
       borderColor: alpha(DASHBOARD_THEME.danger, 0.3),
       border: '1px solid',
       '& .MuiAlert-icon': { color: DASHBOARD_THEME.danger },

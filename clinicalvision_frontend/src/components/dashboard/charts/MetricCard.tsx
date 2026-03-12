@@ -72,12 +72,17 @@ const MetricCard: React.FC<MetricCardProps> = ({
       elevation={0}
       sx={{
         p: 2,
-        bgcolor: DASHBOARD_THEME.cardBackground,
+        background: DASHBOARD_THEME.cardGradient,
         border: `1px solid ${DASHBOARD_THEME.cardBorder}`,
         borderRadius: 2,
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
+        transition: 'all 0.2s ease',
+        '&:hover': {
+          background: DASHBOARD_THEME.cardGradientHover,
+          borderColor: 'rgba(0, 201, 234, 0.18)',
+        },
       }}
     >
       {/* ── Header row ─────────────────────────────────────────────── */}
@@ -92,7 +97,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
             variant="subtitle2"
             sx={{
               fontFamily: DASHBOARD_THEME.fontHeading,
-              color: '#E5E7EB',
+              color: DASHBOARD_THEME.textPrimary,
               fontWeight: 600,
               fontSize: '0.85rem',
               letterSpacing: '0.02em',
@@ -104,7 +109,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
           {subtitle && (
             <Typography
               variant="caption"
-              sx={{ color: DASHBOARD_THEME.neutral, display: 'block', mt: 0.25 }}
+              sx={{ color: DASHBOARD_THEME.textMuted, display: 'block', mt: 0.25 }}
             >
               {subtitle}
             </Typography>
@@ -145,8 +150,8 @@ const MetricCard: React.FC<MetricCardProps> = ({
             sx={{
               height: 20,
               fontSize: '0.68rem',
-              bgcolor: 'rgba(255,255,255,0.06)',
-              color: DASHBOARD_THEME.neutral,
+              bgcolor: 'rgba(255,255,255,0.08)',
+              color: DASHBOARD_THEME.textMuted,
             }}
           />
         </Box>

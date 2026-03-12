@@ -87,7 +87,7 @@ const PerformanceTab: React.FC = () => {
           variant="subtitle1"
           sx={{
             fontFamily: DASHBOARD_THEME.fontHeading,
-            color: '#E5E7EB',
+            color: DASHBOARD_THEME.textPrimary,
             fontWeight: 600,
           }}
         >
@@ -100,6 +100,17 @@ const PerformanceTab: React.FC = () => {
           onChange={(_, v) => v && setPeriod(v as MetricsPeriod)}
           size="small"
           aria-label="Time period"
+          sx={{
+            bgcolor: 'rgba(255, 255, 255, 0.04)',
+            borderRadius: '999px',
+            border: `1px solid ${DASHBOARD_THEME.cardBorder}`,
+            p: '2px',
+            '& .MuiToggleButtonGroup-grouped': {
+              border: 'none',
+              borderRadius: '999px !important',
+              mx: '1px',
+            },
+          }}
         >
           {PERIOD_OPTIONS.map((opt) => (
             <ToggleButton
@@ -109,12 +120,20 @@ const PerformanceTab: React.FC = () => {
                 textTransform: 'none',
                 fontSize: '0.75rem',
                 px: 1.5,
-                color: DASHBOARD_THEME.neutral,
-                borderColor: DASHBOARD_THEME.cardBorder,
+                py: 0.4,
+                color: DASHBOARD_THEME.textMuted,
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  bgcolor: 'rgba(255, 255, 255, 0.06)',
+                  color: DASHBOARD_THEME.textSecondary,
+                },
                 '&.Mui-selected': {
-                  bgcolor: alpha(DASHBOARD_THEME.primary, 0.15),
+                  bgcolor: alpha(DASHBOARD_THEME.primary, 0.18),
                   color: DASHBOARD_THEME.primary,
-                  borderColor: alpha(DASHBOARD_THEME.primary, 0.3),
+                  fontWeight: 600,
+                  '&:hover': {
+                    bgcolor: alpha(DASHBOARD_THEME.primary, 0.25),
+                  },
                 },
               }}
             >
@@ -161,7 +180,7 @@ const PerformanceTab: React.FC = () => {
               onClick={refresh}
               disabled={isLoading}
               data-testid="perf-refresh-metrics"
-              sx={{ color: DASHBOARD_THEME.neutral, '&:hover': { color: DASHBOARD_THEME.primary } }}
+              sx={{ color: DASHBOARD_THEME.textMuted, '&:hover': { color: DASHBOARD_THEME.primary } }}
             >
               <RefreshIcon fontSize="small" />
             </IconButton>

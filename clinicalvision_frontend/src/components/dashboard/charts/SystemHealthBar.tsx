@@ -95,7 +95,7 @@ const SystemHealthBar: React.FC<SystemHealthBarProps> = ({ health }) => {
       role="status"
       aria-label="System health status"
       sx={{
-        bgcolor: DASHBOARD_THEME.cardBackground,
+        background: DASHBOARD_THEME.cardGradient,
         border: `1px solid ${DASHBOARD_THEME.cardBorder}`,
         borderRadius: 2,
         px: 2.5,
@@ -185,7 +185,7 @@ const SystemHealthBar: React.FC<SystemHealthBarProps> = ({ health }) => {
             <AccessTimeIcon sx={{ fontSize: 14, color: DASHBOARD_THEME.neutral }} />
             <Typography
               variant="caption"
-              sx={{ color: '#E5E7EB', fontSize: '0.7rem', fontFamily: DASHBOARD_THEME.fontMono }}
+              sx={{ color: DASHBOARD_THEME.textSecondary, fontSize: '0.7rem', fontFamily: DASHBOARD_THEME.fontMono }}
               data-testid="uptime-value"
             >
               {formatUptime(health.uptimeSeconds)}
@@ -205,7 +205,7 @@ const SystemHealthBar: React.FC<SystemHealthBarProps> = ({ health }) => {
             <Typography
               variant="caption"
               sx={{
-                color: health.errorCount24h > 0 ? DASHBOARD_THEME.danger : '#E5E7EB',
+                color: health.errorCount24h > 0 ? DASHBOARD_THEME.danger : DASHBOARD_THEME.textSecondary,
                 fontSize: '0.7rem',
                 fontFamily: DASHBOARD_THEME.fontMono,
               }}
@@ -222,7 +222,7 @@ const SystemHealthBar: React.FC<SystemHealthBarProps> = ({ health }) => {
             <QueueIcon sx={{ fontSize: 14, color: DASHBOARD_THEME.neutral }} />
             <Typography
               variant="caption"
-              sx={{ color: '#E5E7EB', fontSize: '0.7rem', fontFamily: DASHBOARD_THEME.fontMono }}
+              sx={{ color: DASHBOARD_THEME.textSecondary, fontSize: '0.7rem', fontFamily: DASHBOARD_THEME.fontMono }}
               data-testid="queue-depth"
             >
               {health.queueDepth} queued

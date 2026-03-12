@@ -71,7 +71,7 @@ const PredictionDonut: React.FC<PredictionDonutProps> = ({ benign, malignant }) 
       >
         <Typography
           variant="h5"
-          sx={{ fontFamily: DASHBOARD_THEME.fontMono, color: '#FFF', fontWeight: 700, lineHeight: 1 }}
+          sx={{ fontFamily: DASHBOARD_THEME.fontMono, color: DASHBOARD_THEME.textPrimary, fontWeight: 700, lineHeight: 1 }}
         >
           {benignPct}%
         </Typography>
@@ -85,7 +85,7 @@ const PredictionDonut: React.FC<PredictionDonutProps> = ({ benign, malignant }) 
         {data.map((d) => (
           <Stack key={d.name} direction="row" spacing={0.5} alignItems="center">
             <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: d.color }} />
-            <Typography variant="caption" sx={{ color: '#E5E7EB', fontSize: '0.7rem' }}>
+            <Typography variant="caption" sx={{ color: DASHBOARD_THEME.textSecondary, fontSize: '0.7rem' }}>
               {d.name} ({d.name === 'Benign' ? benignPct : malignantPct}%)
             </Typography>
           </Stack>

@@ -38,7 +38,7 @@ const GaugeSkeleton: React.FC = () => (
   <Paper
     data-testid="skeleton-gauge"
     sx={{
-      bgcolor: DASHBOARD_THEME.cardBackground,
+      background: DASHBOARD_THEME.cardGradient,
       border: `1px solid ${DASHBOARD_THEME.cardBorder}`,
       borderRadius: 2,
       p: 2,
@@ -59,7 +59,7 @@ const ChartCardSkeleton: React.FC<{ height: number }> = ({ height }) => (
   <Paper
     data-testid="skeleton-chart"
     sx={{
-      bgcolor: DASHBOARD_THEME.cardBackground,
+      background: DASHBOARD_THEME.cardGradient,
       border: `1px solid ${DASHBOARD_THEME.cardBorder}`,
       borderRadius: 2,
       p: 2,
@@ -82,7 +82,7 @@ const BarSkeleton: React.FC<{ height: number }> = ({ height }) => (
   <Paper
     data-testid="skeleton-bar"
     sx={{
-      bgcolor: DASHBOARD_THEME.cardBackground,
+      background: DASHBOARD_THEME.cardGradient,
       border: `1px solid ${DASHBOARD_THEME.cardBorder}`,
       borderRadius: 2,
       px: 2.5,

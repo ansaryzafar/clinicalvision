@@ -79,16 +79,21 @@ const GaugeCard: React.FC<GaugeCardProps> = ({
       elevation={0}
       sx={{
         p: 2,
-        bgcolor: DASHBOARD_THEME.cardBackground,
+        background: DASHBOARD_THEME.cardGradient,
         border: `1px solid ${DASHBOARD_THEME.cardBorder}`,
         borderRadius: 2,
         textAlign: 'center',
+        transition: 'all 0.2s ease',
+        '&:hover': {
+          background: DASHBOARD_THEME.cardGradientHover,
+          borderColor: 'rgba(0, 201, 234, 0.2)',
+        },
       }}
     >
       <Typography
         variant="overline"
         sx={{
-          color: DASHBOARD_THEME.neutral,
+          color: DASHBOARD_THEME.textMuted,
           fontFamily: DASHBOARD_THEME.fontBody,
           fontSize: '0.7rem',
           letterSpacing: '0.08em',

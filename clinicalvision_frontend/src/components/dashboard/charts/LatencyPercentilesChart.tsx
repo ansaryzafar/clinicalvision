@@ -58,7 +58,7 @@ const LatencyPercentilesChart: React.FC<LatencyPercentilesChartProps> = ({
           formatter={(value: number, name: string) => [`${value}ms`, name]}
         />
         <Legend
-          wrapperStyle={{ fontSize: 11, color: '#E5E7EB' }}
+          wrapperStyle={{ fontSize: 11, color: DASHBOARD_THEME.textSecondary }}
         />
         <ReferenceLine
           y={slaThreshold}

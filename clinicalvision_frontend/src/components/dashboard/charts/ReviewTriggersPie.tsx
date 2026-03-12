@@ -118,7 +118,7 @@ const ReviewTriggersPie: React.FC<ReviewTriggersPieProps> = ({ data }) => {
             direction="row"
             alignItems="center"
             spacing={1}
-            sx={{ fontSize: '0.7rem', color: '#D1D5DB' }}
+            sx={{ fontSize: '0.7rem', color: DASHBOARD_THEME.textSecondary }}
           >
             <Box
               sx={{
@@ -131,7 +131,7 @@ const ReviewTriggersPie: React.FC<ReviewTriggersPieProps> = ({ data }) => {
             />
             <Typography
               variant="caption"
-              sx={{ color: '#D1D5DB', flex: 1, fontSize: '0.65rem' }}
+              sx={{ color: DASHBOARD_THEME.textSecondary, flex: 1, fontSize: '0.65rem' }}
               noWrap
             >
               {entry.trigger}
