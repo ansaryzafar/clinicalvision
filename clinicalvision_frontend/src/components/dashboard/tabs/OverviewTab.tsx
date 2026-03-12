@@ -36,8 +36,11 @@ import PredictionDonut from '../charts/PredictionDonut';
 import BiRadsBarChart from '../charts/BiRadsBarChart';
 import RiskDistributionChart from '../charts/RiskDistributionChart';
 import LatencyPercentilesChart from '../charts/LatencyPercentilesChart';
+import SystemHealthBar from '../charts/SystemHealthBar';
+import ChartSkeleton from '../charts/ChartSkeleton';
+import ErrorAlert from '../charts/ErrorAlert';
 import { DASHBOARD_THEME } from '../charts/dashboardTheme';
-import { useOverviewMetrics } from '../../../hooks/useMetrics';
+import { useOverviewMetrics, useSystemHealth } from '../../../hooks/useMetrics';
 import { EMPTY_OVERVIEW_METRICS } from '../../../types/metrics.types';
 import type { MetricsPeriod } from '../../../types/metrics.types';
 
@@ -60,8 +63,11 @@ const OverviewTab: React.FC = () => {
   const [period, setPeriod] = useState<MetricsPeriod>('30d');
 
   // Fetch from API with local-aggregator fallback
-  const { data: metrics, isLoading, dataSource, refresh } =
+  const { data: metrics, isLoading, dataSource, refresh, error } =
     useOverviewMetrics({ period });
+
+  // Fetch system health (separate, faster refresh)
+  const { data: systemHealth } = useSystemHealth();
 
   const kpis = metrics?.kpis ?? EMPTY_OVERVIEW_METRICS.kpis;
   const kpiTrends = metrics?.kpiTrends ?? EMPTY_OVERVIEW_METRICS.kpiTrends;
@@ -159,6 +165,33 @@ const OverviewTab: React.FC = () => {
         </Stack>
       </Stack>
 
+      {/* Error alert */}
+      {error && <ErrorAlert message={error} onRetry={refresh} />}
+
+      {/* Loading skeletons */}
+      {isLoading && !metrics ? (
+        <Grid container spacing={2.5}>
+          {[0, 1, 2, 3].map((i) => (
+            <Grid key={i} size={{ xs: 6, md: 3 }}>
+              <ChartSkeleton variant="gauge" />
+            </Grid>
+          ))}
+          <Grid size={{ xs: 12, md: 6 }}>
+            <ChartSkeleton height={260} />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <ChartSkeleton height={260} />
+          </Grid>
+          {[0, 1, 2].map((i) => (
+            <Grid key={i} size={{ xs: 12, md: 4 }}>
+              <ChartSkeleton height={200} />
+            </Grid>
+          ))}
+          <Grid size={{ xs: 12 }}>
+            <ChartSkeleton variant="bar" height={50} />
+          </Grid>
+        </Grid>
+      ) : (
       <Grid container spacing={2.5}>
         {/* ── Row 1: KPI Gauges ──────────────────────────────────── */}
         <Grid size={{ xs: 6, md: 3 }}>
@@ -298,7 +331,13 @@ const OverviewTab: React.FC = () => {
             )}
           </MetricCard>
         </Grid>
+
+        {/* ── Row 4: System Health Status Bar ────────────────────── */}
+        <Grid size={{ xs: 12 }}>
+          <SystemHealthBar health={systemHealth} />
+        </Grid>
       </Grid>
+      )}
     </Box>
   );
 };

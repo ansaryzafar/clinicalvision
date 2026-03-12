@@ -23,6 +23,7 @@ import type {
   UncertaintyScatterPoint,
   TemporalConfidencePoint,
   ConcordanceEntry,
+  CalibrationPoint,
 } from '../../../../types/metrics.types';
 import { EMPTY_PERFORMANCE_METRICS } from '../../../../types/metrics.types';
 
@@ -57,6 +58,8 @@ jest.mock('recharts', () => {
     Legend: () => React.createElement('div', { 'data-testid': 'legend' }),
     ReferenceLine: () => React.createElement('div', { 'data-testid': 'reference-line' }),
     Cell: () => React.createElement('div'),
+    LineChart: (props: any) =>
+      React.createElement('div', { 'data-testid': 'line-chart', 'data-length': props.data?.length ?? 0 }, props.children),
     RadialBarChart: ({ children }: any) =>
       React.createElement('div', { 'data-testid': 'radial-bar-chart' }, children),
     RadialBar: () => React.createElement('div', { 'data-testid': 'radial-bar' }),
@@ -109,6 +112,12 @@ const MOCK_CONCORDANCE: ConcordanceEntry[] = [
   { category: 'Benign', aiCount: 120, radiologistCount: 125, agreementRate: 0.96 },
 ];
 
+const MOCK_CALIBRATION: CalibrationPoint[] = [
+  { binStart: 0.0, binEnd: 0.1, predictedProbability: 0.05, observedFrequency: 0.03, count: 20 },
+  { binStart: 0.5, binEnd: 0.6, predictedProbability: 0.55, observedFrequency: 0.52, count: 30 },
+  { binStart: 0.9, binEnd: 1.0, predictedProbability: 0.95, observedFrequency: 0.93, count: 45 },
+];
+
 const MOCK_POPULATED: PerformanceMetrics = {
   kpis: {
     sensitivity: 0.92,
@@ -130,6 +139,7 @@ const MOCK_POPULATED: PerformanceMetrics = {
   uncertaintyScatter: MOCK_SCATTER,
   temporalConfidence: MOCK_TEMPORAL,
   concordanceData: MOCK_CONCORDANCE,
+  calibrationCurve: MOCK_CALIBRATION,
 };
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -280,5 +290,36 @@ describe('PerformanceTab', () => {
     expect(screen.getAllByText('88%').length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText('95%').length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText('85%').length).toBeGreaterThanOrEqual(1);
+  });
+
+  // ── Calibration Curve ─────────────────────────────────────────────
+
+  it('renders Calibration Curve card title', () => {
+    wrap(<PerformanceTab />);
+    expect(screen.getByText('Calibration Curve')).toBeInTheDocument();
+  });
+
+  it('shows calibration empty state when no calibration data', () => {
+    wrap(<PerformanceTab />);
+    expect(screen.getByTestId('empty-calibration')).toBeInTheDocument();
+  });
+
+  it('renders calibration chart when data is populated', () => {
+    mockHookReturn = {
+      ...mockHookReturn,
+      data: MOCK_POPULATED,
+      dataSource: 'api',
+    };
+    wrap(<PerformanceTab />);
+    expect(screen.queryByTestId('empty-calibration')).not.toBeInTheDocument();
+  });
+
+  // ── Error alert ──────────────────────────────────────────────────
+
+  it('shows error alert when error is set', () => {
+    mockHookReturn = { ...mockHookReturn, error: 'API timeout' };
+    wrap(<PerformanceTab />);
+    expect(screen.getByTestId('error-alert')).toBeInTheDocument();
+    expect(screen.getByText('API timeout')).toBeInTheDocument();
   });
 });

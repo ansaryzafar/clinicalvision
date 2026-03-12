@@ -181,6 +181,15 @@ class ConcordanceEntry(BaseModel):
     agreement_rate: float = Field(0.0, ge=0.0, le=1.0)
 
 
+class CalibrationPoint(BaseModel):
+    """One point on the calibration curve (predicted vs observed)."""
+    bin_start: float = Field(..., ge=0.0, le=1.0)
+    bin_end: float = Field(..., ge=0.0, le=1.0)
+    predicted_probability: float = Field(0.0, ge=0.0, le=1.0, description="Mean predicted probability in bin")
+    observed_frequency: float = Field(0.0, ge=0.0, le=1.0, description="Actual positive fraction in bin")
+    count: int = Field(0, ge=0, description="Number of cases in this bin")
+
+
 class PerformanceMetricsResponse(BaseModel):
     """
     Complete response for GET /api/v1/analytics/performance
@@ -193,6 +202,7 @@ class PerformanceMetricsResponse(BaseModel):
     uncertainty_scatter: List[UncertaintyScatterPoint] = Field(default_factory=list)
     temporal_confidence: List[TemporalConfidencePoint] = Field(default_factory=list)
     concordance_data: List[ConcordanceEntry] = Field(default_factory=list)
+    calibration_curve: List[CalibrationPoint] = Field(default_factory=list)
 
     model_config = ConfigDict(protected_namespaces=())
 
@@ -234,6 +244,14 @@ class ReviewTriggerEntry(BaseModel):
     percentage: float = Field(0.0, ge=0.0, le=100.0)
 
 
+class EntropyBin(BaseModel):
+    """One bin of the predictive entropy histogram."""
+    bin_start: float = Field(..., ge=0.0)
+    bin_end: float = Field(..., ge=0.0)
+    count: int = Field(0, ge=0)
+    label: str = Field(...)
+
+
 class ModelIntelligenceMetricsResponse(BaseModel):
     """
     Complete response for GET /api/v1/analytics/model-intelligence
@@ -244,5 +262,27 @@ class ModelIntelligenceMetricsResponse(BaseModel):
     model_version_comparison: List[ModelVersionStatsEntry] = Field(default_factory=list)
     human_review_rate: List[HumanReviewRatePoint] = Field(default_factory=list)
     review_triggers: List[ReviewTriggerEntry] = Field(default_factory=list)
+    entropy_distribution: List[EntropyBin] = Field(default_factory=list)
+
+    model_config = ConfigDict(protected_namespaces=())
+
+
+# ============================================================================
+# System Health (Overview Tab — Row 4)
+# ============================================================================
+
+class SystemHealthResponse(BaseModel):
+    """
+    System health snapshot for the analytics dashboard status bar.
+
+    Frontend mapping: SystemHealthStatus TypeScript interface.
+    """
+    model_status: str = Field("unknown", description="healthy | degraded | unhealthy | unknown")
+    model_version: str = Field("—", description="Current active model version string")
+    backend_status: str = Field("unknown", description="healthy | degraded | unhealthy")
+    gpu_available: bool = Field(False, description="Whether GPU acceleration is active")
+    uptime_seconds: float = Field(0.0, ge=0.0, description="Backend uptime in seconds")
+    error_count_24h: int = Field(0, ge=0, description="Errors logged in the last 24 hours")
+    queue_depth: int = Field(0, ge=0, description="Pending inference requests in queue")
 
     model_config = ConfigDict(protected_namespaces=())

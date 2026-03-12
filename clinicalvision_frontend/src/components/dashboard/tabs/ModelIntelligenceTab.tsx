@@ -35,6 +35,9 @@ import UncertaintyDecompositionChart from '../charts/UncertaintyDecompositionCha
 import ModelVersionComparison from '../charts/ModelVersionComparison';
 import HumanReviewRateChart from '../charts/HumanReviewRateChart';
 import ReviewTriggersPie from '../charts/ReviewTriggersPie';
+import EntropyHistogram from '../charts/EntropyHistogram';
+import ChartSkeleton from '../charts/ChartSkeleton';
+import ErrorAlert from '../charts/ErrorAlert';
 import { DASHBOARD_THEME } from '../charts/dashboardTheme';
 import { useModelIntelligenceMetrics } from '../../../hooks/useMetrics';
 import { EMPTY_MODEL_INTELLIGENCE_METRICS } from '../../../types/metrics.types';
@@ -58,7 +61,7 @@ const PERIOD_OPTIONS: { value: MetricsPeriod; label: string }[] = [
 const ModelIntelligenceTab: React.FC = () => {
   const [period, setPeriod] = useState<MetricsPeriod>('30d');
 
-  const { data: metrics, isLoading, dataSource, refresh } =
+  const { data: metrics, isLoading, dataSource, refresh, error } =
     useModelIntelligenceMetrics({ period });
 
   const safeMetrics = { ...EMPTY_MODEL_INTELLIGENCE_METRICS, ...metrics };
@@ -71,7 +74,7 @@ const ModelIntelligenceTab: React.FC = () => {
 
     const totalVersions = versions.length;
     const activeVersion =
-      versions.length > 0 ? versions[versions.length - 1].versionLabel : '—';
+      versions.length > 0 ? versions[versions.length - 1].version : '—';
 
     // Latest review rate
     const latestRate =
@@ -183,6 +186,34 @@ const ModelIntelligenceTab: React.FC = () => {
         </Stack>
       </Stack>
 
+      {/* Error alert */}
+      {error && <ErrorAlert message={error} onRetry={refresh} />}
+
+      {/* Loading skeletons */}
+      {isLoading && !metrics ? (
+        <Grid container spacing={2.5}>
+          {[0, 1, 2, 3].map((i) => (
+            <Grid key={i} size={{ xs: 6, md: 3 }}>
+              <ChartSkeleton variant="gauge" />
+            </Grid>
+          ))}
+          <Grid size={{ xs: 12 }}>
+            <ChartSkeleton height={330} />
+          </Grid>
+          <Grid size={{ xs: 12 }}>
+            <ChartSkeleton height={330} />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <ChartSkeleton height={290} />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <ChartSkeleton height={290} />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <ChartSkeleton height={290} />
+          </Grid>
+        </Grid>
+      ) : (
       <Grid container spacing={2.5}>
         {/* ── Row 1: Summary KPI cards ───────────────────────────── */}
         <Grid size={{ xs: 6, md: 3 }}>
@@ -323,7 +354,29 @@ const ModelIntelligenceTab: React.FC = () => {
             )}
           </MetricCard>
         </Grid>
+
+        {/* ── Row 5: Entropy distribution ────────────────────────── */}
+        <Grid size={{ xs: 12, md: 6 }}>
+          <MetricCard
+            title="Predictive Entropy Distribution"
+            subtitle="Histogram of model prediction entropy"
+            height={290}
+          >
+            {safeMetrics.entropyDistribution.length > 0 ? (
+              <EntropyHistogram data={safeMetrics.entropyDistribution} />
+            ) : (
+              <Typography
+                variant="body2"
+                sx={{ color: DASHBOARD_THEME.neutral, textAlign: 'center' }}
+                data-testid="empty-entropy"
+              >
+                No entropy distribution data yet.
+              </Typography>
+            )}
+          </MetricCard>
+        </Grid>
       </Grid>
+      )}
     </Box>
   );
 };

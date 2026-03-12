@@ -20,9 +20,11 @@ from typing import List, Optional
 from unittest.mock import MagicMock, patch, PropertyMock
 
 from app.schemas.analytics import (
+    CalibrationPoint,
     ConfidenceBin,
     ConfidenceTrendPoint,
     ConcordanceEntry,
+    EntropyBin,
     HumanReviewRatePoint,
     KPITrends,
     LatencyPercentilePoint,
@@ -36,6 +38,7 @@ from app.schemas.analytics import (
     PredictionDistribution,
     ReviewTriggerEntry,
     RiskDistribution,
+    SystemHealthResponse,
     TemporalConfidencePoint,
     UncertaintyDecompositionPoint,
     UncertaintyScatterPoint,
@@ -617,3 +620,195 @@ class TestReviewTriggerClassification:
     def test_empty_trigger_list_valid(self):
         resp = ModelIntelligenceMetricsResponse(review_triggers=[])
         assert resp.review_triggers == []
+
+
+# ============================================================================
+# Unit Tests — Calibration Curve Schema
+# ============================================================================
+
+
+class TestCalibrationPointSchema:
+    """Verify CalibrationPoint Pydantic model."""
+
+    def test_calibration_point_defaults(self):
+        pt = CalibrationPoint(bin_start=0.0, bin_end=0.1)
+        assert pt.predicted_probability == 0.0
+        assert pt.observed_frequency == 0.0
+        assert pt.count == 0
+
+    def test_calibration_point_with_values(self):
+        pt = CalibrationPoint(
+            bin_start=0.8,
+            bin_end=0.9,
+            predicted_probability=0.85,
+            observed_frequency=0.82,
+            count=45,
+        )
+        assert pt.bin_start == 0.8
+        assert pt.bin_end == 0.9
+        assert pt.predicted_probability == 0.85
+        assert pt.observed_frequency == 0.82
+        assert pt.count == 45
+
+    def test_calibration_point_serialisation(self):
+        pt = CalibrationPoint(
+            bin_start=0.5, bin_end=0.6,
+            predicted_probability=0.55, observed_frequency=0.58,
+            count=20,
+        )
+        data = pt.model_dump()
+        assert data["bin_start"] == 0.5
+        assert data["predicted_probability"] == 0.55
+        assert data["observed_frequency"] == 0.58
+
+    def test_performance_response_includes_calibration(self):
+        resp = PerformanceMetricsResponse()
+        assert resp.calibration_curve == []
+
+    def test_performance_response_with_calibration(self):
+        resp = PerformanceMetricsResponse(
+            calibration_curve=[
+                CalibrationPoint(
+                    bin_start=0.0, bin_end=0.1,
+                    predicted_probability=0.05, observed_frequency=0.03,
+                    count=10,
+                ),
+                CalibrationPoint(
+                    bin_start=0.9, bin_end=1.0,
+                    predicted_probability=0.95, observed_frequency=0.92,
+                    count=30,
+                ),
+            ],
+        )
+        data = resp.model_dump()
+        assert len(data["calibration_curve"]) == 2
+        assert data["calibration_curve"][1]["observed_frequency"] == 0.92
+
+
+# ============================================================================
+# Unit Tests — Entropy Bin Schema
+# ============================================================================
+
+
+class TestEntropyBinSchema:
+    """Verify EntropyBin Pydantic model."""
+
+    def test_entropy_bin_creation(self):
+        b = EntropyBin(bin_start=0.0, bin_end=0.1, count=15, label="0.00–0.10")
+        assert b.bin_start == 0.0
+        assert b.bin_end == 0.1
+        assert b.count == 15
+        assert b.label == "0.00–0.10"
+
+    def test_entropy_bin_serialisation(self):
+        b = EntropyBin(bin_start=0.5, bin_end=0.6, count=8, label="0.50–0.60")
+        data = b.model_dump()
+        assert data["bin_start"] == 0.5
+        assert data["count"] == 8
+
+    def test_model_intelligence_response_includes_entropy(self):
+        resp = ModelIntelligenceMetricsResponse()
+        assert resp.entropy_distribution == []
+
+    def test_model_intelligence_response_with_entropy(self):
+        resp = ModelIntelligenceMetricsResponse(
+            entropy_distribution=[
+                EntropyBin(bin_start=0.0, bin_end=0.1, count=50, label="0.00–0.10"),
+                EntropyBin(bin_start=0.1, bin_end=0.2, count=30, label="0.10–0.20"),
+                EntropyBin(bin_start=0.9, bin_end=1.0, count=5, label="0.90–1.00"),
+            ],
+        )
+        data = resp.model_dump()
+        assert len(data["entropy_distribution"]) == 3
+        assert data["entropy_distribution"][0]["count"] == 50
+
+
+# ============================================================================
+# Unit Tests — System Health Schema
+# ============================================================================
+
+
+class TestSystemHealthSchema:
+    """Verify SystemHealthResponse Pydantic model."""
+
+    def test_system_health_defaults(self):
+        health = SystemHealthResponse()
+        assert health.model_status == "unknown"
+        assert health.model_version == "—"
+        assert health.backend_status == "unknown"
+        assert health.gpu_available is False
+        assert health.uptime_seconds == 0.0
+        assert health.error_count_24h == 0
+        assert health.queue_depth == 0
+
+    def test_system_health_with_values(self):
+        health = SystemHealthResponse(
+            model_status="healthy",
+            model_version="v2.1.0",
+            backend_status="healthy",
+            gpu_available=True,
+            uptime_seconds=86400.0,
+            error_count_24h=3,
+            queue_depth=2,
+        )
+        assert health.model_status == "healthy"
+        assert health.model_version == "v2.1.0"
+        assert health.gpu_available is True
+        assert health.uptime_seconds == 86400.0
+        assert health.error_count_24h == 3
+        assert health.queue_depth == 2
+
+    def test_system_health_serialisation(self):
+        health = SystemHealthResponse(
+            model_status="degraded",
+            backend_status="healthy",
+            gpu_available=False,
+            uptime_seconds=3600.5,
+        )
+        data = health.model_dump()
+        assert data["model_status"] == "degraded"
+        assert data["backend_status"] == "healthy"
+        assert data["gpu_available"] is False
+        assert data["uptime_seconds"] == 3600.5
+
+    def test_system_health_json_keys(self):
+        health = SystemHealthResponse()
+        data = health.model_dump()
+        expected_keys = {
+            "model_status", "model_version", "backend_status",
+            "gpu_available", "uptime_seconds", "error_count_24h", "queue_depth",
+        }
+        assert set(data.keys()) == expected_keys
+
+
+# ============================================================================
+# Unit Tests — Granular Cache TTLs
+# ============================================================================
+
+
+class TestGranularCacheTTLs:
+    """Verify that different endpoints use different TTL values."""
+
+    def test_cache_ttl_constants_exist(self):
+        from app.services.analytics_service import (
+            CACHE_TTL_SECONDS,
+            CACHE_TTL_PERFORMANCE,
+            CACHE_TTL_INTELLIGENCE,
+        )
+        assert CACHE_TTL_SECONDS == 300  # 5 minutes
+        assert CACHE_TTL_PERFORMANCE == 900  # 15 minutes
+        assert CACHE_TTL_INTELLIGENCE == 1800  # 30 minutes
+
+    def test_performance_cache_ttl_longer_than_overview(self):
+        from app.services.analytics_service import (
+            CACHE_TTL_SECONDS,
+            CACHE_TTL_PERFORMANCE,
+        )
+        assert CACHE_TTL_PERFORMANCE > CACHE_TTL_SECONDS
+
+    def test_intelligence_cache_ttl_longest(self):
+        from app.services.analytics_service import (
+            CACHE_TTL_PERFORMANCE,
+            CACHE_TTL_INTELLIGENCE,
+        )
+        assert CACHE_TTL_INTELLIGENCE > CACHE_TTL_PERFORMANCE

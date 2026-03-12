@@ -19,9 +19,11 @@ from sqlalchemy.orm import Session
 
 from app.db.models.analysis import Analysis, AnalysisStatus, PredictionClass
 from app.schemas.analytics import (
+    CalibrationPoint,
     ConfidenceBin,
     ConfidenceTrendPoint,
     ConcordanceEntry,
+    EntropyBin,
     HumanReviewRatePoint,
     KPITrends,
     LatencyPercentilePoint,
@@ -35,6 +37,7 @@ from app.schemas.analytics import (
     PredictionDistribution,
     ReviewTriggerEntry,
     RiskDistribution,
+    SystemHealthResponse,
     TemporalConfidencePoint,
     UncertaintyDecompositionPoint,
     UncertaintyScatterPoint,
@@ -67,7 +70,9 @@ def _cutoff_date(period: str) -> Optional[datetime]:
 # ────────────────────────────────────────────────────────────────────────────
 
 _cache: Dict[str, Tuple[datetime, OverviewMetricsResponse]] = {}
-CACHE_TTL_SECONDS = 300  # 5 minutes
+CACHE_TTL_SECONDS = 300  # 5 minutes — overview (changes frequently)
+CACHE_TTL_PERFORMANCE = 900  # 15 minutes — performance (ground truth slow to change)
+CACHE_TTL_INTELLIGENCE = 1800  # 30 minutes — model intelligence (rarely changes)
 
 
 def _cache_key(period: str) -> str:
@@ -475,6 +480,7 @@ def get_performance_metrics(db: Session, period: str = "30d") -> PerformanceMetr
         scatter = _compute_uncertainty_scatter(db, cutoff)
         temporal = _compute_temporal_confidence(db, cutoff)
         concordance = _compute_concordance(db, cutoff)
+        calibration = _compute_calibration_curve(db, cutoff)
 
         result = PerformanceMetricsResponse(
             kpis=kpis,
@@ -483,6 +489,7 @@ def get_performance_metrics(db: Session, period: str = "30d") -> PerformanceMetr
             uncertainty_scatter=scatter,
             temporal_confidence=temporal,
             concordance_data=concordance,
+            calibration_curve=calibration,
         )
 
         _set_cached_generic(cache_key, result)
@@ -735,6 +742,79 @@ def _compute_concordance(
         return []
 
 
+def _compute_calibration_curve(
+    db: Session, cutoff: Optional[datetime], num_bins: int = 10
+) -> List[CalibrationPoint]:
+    """
+    Compute calibration curve: predicted probability vs observed frequency.
+
+    Requires Feedback ground truth to determine actual positive rate
+    in each confidence bin. Returns empty list if no feedback data exists.
+    """
+    try:
+        from app.db.models.feedback import Feedback
+
+        q = (
+            db.query(
+                Analysis.confidence_score,
+                Feedback.actual_diagnosis,
+            )
+            .join(Feedback, Feedback.analysis_id == Analysis.id)
+            .filter(
+                Analysis.status == AnalysisStatus.COMPLETED,
+                Analysis.confidence_score.isnot(None),
+            )
+        )
+        if cutoff is not None:
+            q = q.filter(Analysis.created_at >= cutoff)
+
+        rows = q.all()
+        if not rows:
+            return []
+
+        bin_width = 1.0 / num_bins
+        points: List[CalibrationPoint] = []
+
+        for i in range(num_bins):
+            bin_start = round(i * bin_width, 2)
+            bin_end = round((i + 1) * bin_width, 2)
+
+            # Collect cases in this bin
+            bin_cases = [
+                r for r in rows
+                if (bin_start <= float(r.confidence_score) < bin_end)
+                or (i == num_bins - 1 and float(r.confidence_score) == bin_end)
+            ]
+
+            if not bin_cases:
+                continue
+
+            # Mean predicted probability in bin
+            predicted = sum(float(r.confidence_score) for r in bin_cases) / len(bin_cases)
+
+            # Observed frequency (fraction actually malignant)
+            actual_positives = sum(
+                1 for r in bin_cases
+                if (r.actual_diagnosis.value if hasattr(r.actual_diagnosis, 'value')
+                    else str(r.actual_diagnosis)) == "malignant"
+            )
+            observed = actual_positives / len(bin_cases)
+
+            points.append(CalibrationPoint(
+                bin_start=bin_start,
+                bin_end=bin_end,
+                predicted_probability=round(predicted, 4),
+                observed_frequency=round(observed, 4),
+                count=len(bin_cases),
+            ))
+
+        return points
+
+    except Exception as e:
+        logger.warning(f"Calibration curve computation failed: {e}")
+        return []
+
+
 # ════════════════════════════════════════════════════════════════════════════
 # MODEL INTELLIGENCE (Tab 3)
 # ════════════════════════════════════════════════════════════════════════════
@@ -763,12 +843,14 @@ def get_model_intelligence_metrics(
         version_stats = _compute_model_version_comparison(db, cutoff)
         review_rate = _compute_human_review_rate(db, cutoff)
         triggers = _compute_review_triggers(db, cutoff)
+        entropy_dist = _compute_entropy_histogram(db, cutoff)
 
         result = ModelIntelligenceMetricsResponse(
             uncertainty_decomposition=decomposition,
             model_version_comparison=version_stats,
             human_review_rate=review_rate,
             review_triggers=triggers,
+            entropy_distribution=entropy_dist,
         )
 
         _set_cached_generic(cache_key, result)
@@ -977,6 +1059,49 @@ def _compute_review_triggers(
     return triggers
 
 
+def _compute_entropy_histogram(
+    db: Session, cutoff: Optional[datetime], num_bins: int = 10
+) -> List[EntropyBin]:
+    """
+    Build a predictive entropy histogram.
+
+    Entropy values are typically 0-1 for binary classification (log₂ scale).
+    Dynamically determines the max entropy for bin sizing.
+    """
+    q = _base_filter(db, cutoff).filter(
+        Analysis.predictive_entropy.isnot(None)
+    )
+
+    entropies = [
+        float(r[0])
+        for r in q.with_entities(Analysis.predictive_entropy).all()
+    ]
+    if not entropies:
+        return []
+
+    max_entropy = max(entropies) if entropies else 1.0
+    # Clamp to at least 1.0 so bins make sense
+    max_entropy = max(max_entropy, 1.0)
+    bin_width = max_entropy / num_bins
+
+    bins: List[EntropyBin] = []
+    for i in range(num_bins):
+        bin_start = round(i * bin_width, 3)
+        bin_end = round((i + 1) * bin_width, 3)
+        count = sum(
+            1 for e in entropies
+            if (bin_start <= e < bin_end) or (i == num_bins - 1 and e == bin_end)
+        )
+        bins.append(EntropyBin(
+            bin_start=bin_start,
+            bin_end=bin_end,
+            count=count,
+            label=f"{bin_start:.2f}–{bin_end:.2f}",
+        ))
+
+    return bins
+
+
 # ════════════════════════════════════════════════════════════════════════════
 # Generic cache helpers (supports multiple endpoint types)
 # ════════════════════════════════════════════════════════════════════════════
@@ -990,7 +1115,14 @@ def _get_cached_generic(key: str) -> Optional[object]:
     if entry is None:
         return None
     cached_at, data = entry
-    if (datetime.now(timezone.utc) - cached_at).total_seconds() > CACHE_TTL_SECONDS:
+    # Use granular TTL based on cache key prefix
+    if key.startswith("performance:"):
+        ttl = CACHE_TTL_PERFORMANCE
+    elif key.startswith("model_intelligence:"):
+        ttl = CACHE_TTL_INTELLIGENCE
+    else:
+        ttl = CACHE_TTL_SECONDS
+    if (datetime.now(timezone.utc) - cached_at).total_seconds() > ttl:
         del _generic_cache[key]
         return None
     return data
@@ -999,3 +1131,86 @@ def _get_cached_generic(key: str) -> Optional[object]:
 def _set_cached_generic(key: str, data: object) -> None:
     """Store in generic cache with current timestamp."""
     _generic_cache[key] = (datetime.now(timezone.utc), data)
+
+
+# ════════════════════════════════════════════════════════════════════════════
+# SYSTEM HEALTH (Overview Tab — Row 4)
+# ════════════════════════════════════════════════════════════════════════════
+
+def get_system_health(db: Session) -> SystemHealthResponse:
+    """
+    Aggregate system health status for the dashboard status bar.
+
+    Checks model status, backend health, GPU availability,
+    uptime, recent errors, and inference queue depth.
+    """
+    import time
+
+    try:
+        # Model status
+        model_status = "unknown"
+        model_version_str = "—"
+        gpu_available = False
+
+        try:
+            from app.models.inference import get_model_inference
+            model = get_model_inference()
+            model_loaded = model.is_loaded()
+            model_status = "healthy" if model_loaded else "unhealthy"
+
+            if hasattr(model, 'model_version') and model.model_version:
+                model_version_str = str(model.model_version)
+
+            if hasattr(model, 'get_device_info'):
+                device_info = model.get_device_info()
+                gpu_available = device_info.get("using_gpu", False)
+        except Exception:
+            model_status = "unhealthy"
+
+        # Backend status — if we're executing this, API is up
+        backend_status = "healthy"
+
+        # Uptime
+        try:
+            from app.api.routes.health import _start_time
+            uptime = time.time() - _start_time
+        except Exception:
+            uptime = 0.0
+
+        # Error count in last 24h (count analyses with error status)
+        try:
+            cutoff_24h = datetime.now(timezone.utc) - timedelta(hours=24)
+            error_count = (
+                db.query(func.count(Analysis.id))
+                .filter(
+                    Analysis.status == AnalysisStatus.FAILED,
+                    Analysis.created_at >= cutoff_24h,
+                )
+                .scalar() or 0
+            )
+        except Exception:
+            error_count = 0
+
+        # Queue depth (pending analyses)
+        try:
+            queue_depth = (
+                db.query(func.count(Analysis.id))
+                .filter(Analysis.status == AnalysisStatus.PENDING)
+                .scalar() or 0
+            )
+        except Exception:
+            queue_depth = 0
+
+        return SystemHealthResponse(
+            model_status=model_status,
+            model_version=model_version_str,
+            backend_status=backend_status,
+            gpu_available=gpu_available,
+            uptime_seconds=round(uptime, 1),
+            error_count_24h=error_count,
+            queue_depth=queue_depth,
+        )
+
+    except Exception as e:
+        logger.error(f"System health aggregation failed: {e}", exc_info=True)
+        return SystemHealthResponse(backend_status="degraded")

@@ -19,6 +19,7 @@ import type {
   OverviewMetrics,
   PerformanceMetrics,
   ModelIntelligenceMetrics,
+  SystemHealthStatus,
 } from '../types/metrics.types';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -184,6 +185,14 @@ interface BackendConcordanceEntry {
   agreement_rate: number;
 }
 
+interface BackendCalibrationPoint {
+  bin_start: number;
+  bin_end: number;
+  predicted_probability: number;
+  observed_frequency: number;
+  count: number;
+}
+
 interface BackendPerformanceResponse {
   kpis: BackendPerformanceKPIs;
   kpi_trends: BackendPerformanceKPITrends;
@@ -191,6 +200,7 @@ interface BackendPerformanceResponse {
   uncertainty_scatter: BackendUncertaintyScatterPoint[];
   temporal_confidence: BackendTemporalConfidencePoint[];
   concordance_data: BackendConcordanceEntry[];
+  calibration_curve: BackendCalibrationPoint[];
 }
 
 function mapPerformanceToFrontend(raw: BackendPerformanceResponse): PerformanceMetrics {
@@ -234,6 +244,13 @@ function mapPerformanceToFrontend(raw: BackendPerformanceResponse): PerformanceM
       aiCount: c.ai_count,
       radiologistCount: c.radiologist_count,
       agreementRate: c.agreement_rate,
+    })),
+    calibrationCurve: (raw.calibration_curve ?? []).map((pt) => ({
+      binStart: pt.bin_start,
+      binEnd: pt.bin_end,
+      predictedProbability: pt.predicted_probability,
+      observedFrequency: pt.observed_frequency,
+      count: pt.count,
     })),
   };
 }
@@ -286,11 +303,19 @@ interface BackendReviewTrigger {
   percentage: number;
 }
 
+interface BackendEntropyBin {
+  bin_start: number;
+  bin_end: number;
+  count: number;
+  label: string;
+}
+
 interface BackendModelIntelligenceResponse {
   uncertainty_decomposition: BackendUncertaintyDecompositionPoint[];
   model_version_comparison: BackendModelVersionStats[];
   human_review_rate: BackendHumanReviewRatePoint[];
   review_triggers: BackendReviewTrigger[];
+  entropy_distribution: BackendEntropyBin[];
 }
 
 function mapModelIntelligenceToFrontend(
@@ -322,6 +347,12 @@ function mapModelIntelligenceToFrontend(
       count: t.count,
       percentage: t.percentage,
     })),
+    entropyDistribution: (raw.entropy_distribution ?? []).map((b) => ({
+      binStart: b.bin_start,
+      binEnd: b.bin_end,
+      count: b.count,
+      label: b.label,
+    })),
   };
 }
 
@@ -337,4 +368,44 @@ export async function fetchModelIntelligenceMetrics(
     { params: { period }, signal },
   );
   return mapModelIntelligenceToFrontend(response.data);
+}
+
+
+// ────────────────────────────────────────────────────────────────────────────
+// System Health — Backend types
+// ────────────────────────────────────────────────────────────────────────────
+
+interface BackendSystemHealthResponse {
+  model_status: string;
+  model_version: string;
+  backend_status: string;
+  gpu_available: boolean;
+  uptime_seconds: number;
+  error_count_24h: number;
+  queue_depth: number;
+}
+
+function mapSystemHealthToFrontend(raw: BackendSystemHealthResponse): SystemHealthStatus {
+  return {
+    modelStatus: raw.model_status,
+    modelVersion: raw.model_version,
+    backendStatus: raw.backend_status,
+    gpuAvailable: raw.gpu_available,
+    uptimeSeconds: raw.uptime_seconds,
+    errorCount24h: raw.error_count_24h,
+    queueDepth: raw.queue_depth,
+  };
+}
+
+/**
+ * Fetch system health status from the backend.
+ */
+export async function fetchSystemHealth(
+  signal?: AbortSignal,
+): Promise<SystemHealthStatus> {
+  const response = await apiClient.get<BackendSystemHealthResponse>(
+    `/api/v1/analytics/system-health`,
+    { signal },
+  );
+  return mapSystemHealthToFrontend(response.data);
 }

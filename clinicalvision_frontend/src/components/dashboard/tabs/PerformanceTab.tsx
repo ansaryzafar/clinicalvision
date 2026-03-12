@@ -35,6 +35,9 @@ import ConfidenceHistogram from '../charts/ConfidenceHistogram';
 import UncertaintyScatter from '../charts/UncertaintyScatter';
 import TemporalConfidenceChart from '../charts/TemporalConfidenceChart';
 import ConcordanceChart from '../charts/ConcordanceChart';
+import CalibrationCurve from '../charts/CalibrationCurve';
+import ChartSkeleton from '../charts/ChartSkeleton';
+import ErrorAlert from '../charts/ErrorAlert';
 import { DASHBOARD_THEME } from '../charts/dashboardTheme';
 import { usePerformanceMetrics } from '../../../hooks/useMetrics';
 import { EMPTY_PERFORMANCE_METRICS } from '../../../types/metrics.types';
@@ -58,7 +61,7 @@ const PERIOD_OPTIONS: { value: MetricsPeriod; label: string }[] = [
 const PerformanceTab: React.FC = () => {
   const [period, setPeriod] = useState<MetricsPeriod>('30d');
 
-  const { data: metrics, isLoading, dataSource, refresh } =
+  const { data: metrics, isLoading, dataSource, refresh, error } =
     usePerformanceMetrics({ period });
 
   const kpis = metrics?.kpis ?? EMPTY_PERFORMANCE_METRICS.kpis;
@@ -166,6 +169,34 @@ const PerformanceTab: React.FC = () => {
         </Stack>
       </Stack>
 
+      {/* Error alert */}
+      {error && <ErrorAlert message={error} onRetry={refresh} />}
+
+      {/* Loading skeletons */}
+      {isLoading && !metrics ? (
+        <Grid container spacing={2.5}>
+          {[0, 1, 2, 3].map((i) => (
+            <Grid key={i} size={{ xs: 6, md: 3 }}>
+              <ChartSkeleton variant="gauge" />
+            </Grid>
+          ))}
+          <Grid size={{ xs: 12, md: 6 }}>
+            <ChartSkeleton height={290} />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <ChartSkeleton height={290} />
+          </Grid>
+          <Grid size={{ xs: 12 }}>
+            <ChartSkeleton height={330} />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <ChartSkeleton height={290} />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <ChartSkeleton height={290} />
+          </Grid>
+        </Grid>
+      ) : (
       <Grid container spacing={2.5}>
         {/* ── Row 1: Performance KPI Gauges ──────────────────────── */}
         <Grid size={{ xs: 6, md: 3 }}>
@@ -293,7 +324,29 @@ const PerformanceTab: React.FC = () => {
             )}
           </MetricCard>
         </Grid>
+
+        {/* ── Row 5: Calibration Curve ───────────────────────────── */}
+        <Grid size={{ xs: 12, md: 6 }}>
+          <MetricCard
+            title="Calibration Curve"
+            subtitle="Predicted probability vs observed frequency"
+            height={290}
+          >
+            {safeMetrics.calibrationCurve.length > 0 ? (
+              <CalibrationCurve data={safeMetrics.calibrationCurve} />
+            ) : (
+              <Typography
+                variant="body2"
+                sx={{ color: DASHBOARD_THEME.neutral, textAlign: 'center' }}
+                data-testid="empty-calibration"
+              >
+                No calibration data yet. Requires radiologist feedback.
+              </Typography>
+            )}
+          </MetricCard>
+        </Grid>
       </Grid>
+      )}
     </Box>
   );
 };

@@ -24,6 +24,7 @@ import type {
   ModelVersionStats,
   HumanReviewRatePoint,
   ReviewTrigger,
+  EntropyBin,
 } from '../../../../types/metrics.types';
 import { EMPTY_MODEL_INTELLIGENCE_METRICS } from '../../../../types/metrics.types';
 
@@ -86,13 +87,13 @@ jest.mock('../../../../hooks/useMetrics', () => ({
 // ────────────────────────────────────────────────────────────────────────────
 
 const MOCK_DECOMPOSITION: UncertaintyDecompositionPoint[] = [
-  { date: '2024-01-15', epistemicMean: 0.08, aleatoricMean: 0.12, totalUncertainty: 0.20 },
-  { date: '2024-01-16', epistemicMean: 0.07, aleatoricMean: 0.11, totalUncertainty: 0.18 },
+  { date: '2024-01-15', epistemic: 0.08, aleatoric: 0.12, total: 0.20 },
+  { date: '2024-01-16', epistemic: 0.07, aleatoric: 0.11, total: 0.18 },
 ];
 
 const MOCK_VERSIONS: ModelVersionStats[] = [
-  { versionLabel: 'v1.2.0', analysisCount: 200, avgConfidence: 0.82, avgLatencyMs: 310, aucRoc: 0.91 },
-  { versionLabel: 'v1.3.0', analysisCount: 300, avgConfidence: 0.87, avgLatencyMs: 280, aucRoc: 0.95 },
+  { version: 'v1.2.0', accuracy: 0.9, totalPredictions: 200, avgConfidence: 0.82, avgLatencyMs: 310, aucRoc: 0.91 },
+  { version: 'v1.3.0', accuracy: 0.93, totalPredictions: 300, avgConfidence: 0.87, avgLatencyMs: 280, aucRoc: 0.95 },
 ];
 
 const MOCK_REVIEW_RATE: HumanReviewRatePoint[] = [
@@ -106,11 +107,18 @@ const MOCK_TRIGGERS: ReviewTrigger[] = [
   { trigger: 'high_entropy', count: 15, percentage: 21.4 },
 ];
 
+const MOCK_ENTROPY = [
+  { binStart: 0.0, binEnd: 0.1, count: 30, label: '0.00–0.10' },
+  { binStart: 0.1, binEnd: 0.2, count: 20, label: '0.10–0.20' },
+  { binStart: 0.5, binEnd: 0.6, count: 5, label: '0.50–0.60' },
+];
+
 const MOCK_POPULATED: ModelIntelligenceMetrics = {
   uncertaintyDecomposition: MOCK_DECOMPOSITION,
   modelVersionComparison: MOCK_VERSIONS,
   humanReviewRate: MOCK_REVIEW_RATE,
   reviewTriggers: MOCK_TRIGGERS,
+  entropyDistribution: MOCK_ENTROPY,
 };
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -265,5 +273,32 @@ describe('ModelIntelligenceTab', () => {
     expect(screen.getByText('Model Version Comparison')).toBeInTheDocument();
     expect(screen.getByText('Human Review Rate Over Time')).toBeInTheDocument();
     expect(screen.getByText('Review Trigger Breakdown')).toBeInTheDocument();
+    expect(screen.getByText('Predictive Entropy Distribution')).toBeInTheDocument();
+  });
+
+  // ── Entropy histogram ──────────────────────────────────────────────────
+
+  it('shows entropy empty state when no entropy data', () => {
+    wrap(<ModelIntelligenceTab />);
+    expect(screen.getByTestId('empty-entropy')).toBeInTheDocument();
+  });
+
+  it('renders entropy histogram when data is populated', () => {
+    mockHookReturn = {
+      ...mockHookReturn,
+      data: MOCK_POPULATED,
+      dataSource: 'api',
+    };
+    wrap(<ModelIntelligenceTab />);
+    expect(screen.queryByTestId('empty-entropy')).not.toBeInTheDocument();
+  });
+
+  // ── Error state ──────────────────────────────────────────────────────
+
+  it('shows error alert when error is set', () => {
+    mockHookReturn = { ...mockHookReturn, error: 'Network error' };
+    wrap(<ModelIntelligenceTab />);
+    expect(screen.getByTestId('error-alert')).toBeInTheDocument();
+    expect(screen.getByText('Network error')).toBeInTheDocument();
   });
 });

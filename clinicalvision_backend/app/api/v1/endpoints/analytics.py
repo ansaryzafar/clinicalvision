@@ -21,11 +21,13 @@ from app.schemas.analytics import (
     OverviewMetricsResponse,
     PerformanceMetricsResponse,
     ModelIntelligenceMetricsResponse,
+    SystemHealthResponse,
 )
 from app.services.analytics_service import (
     get_overview_metrics,
     get_performance_metrics,
     get_model_intelligence_metrics,
+    get_system_health,
     VALID_PERIODS,
 )
 
@@ -172,4 +174,43 @@ async def get_model_intelligence(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to compute model intelligence metrics",
+        )
+
+
+# ────────────────────────────────────────────────────────────────────────────
+# System Health
+# ────────────────────────────────────────────────────────────────────────────
+
+@router.get(
+    "/system-health",
+    response_model=SystemHealthResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Get system health status for dashboard status bar",
+    description=(
+        "Returns model status, backend health, GPU availability, "
+        "uptime, recent error count, and inference queue depth."
+    ),
+)
+async def get_system_health_endpoint(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+) -> SystemHealthResponse:
+    """
+    **Get System Health Status**
+
+    Returns a snapshot of system health for the dashboard status bar
+    in the Overview tab.
+    """
+    try:
+        health = get_system_health(db)
+        logger.info(
+            f"System health served for user={current_user.email}"
+        )
+        return health
+
+    except Exception as e:
+        logger.error(f"System health endpoint failed: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to retrieve system health",
         )

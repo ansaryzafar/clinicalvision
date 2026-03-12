@@ -118,6 +118,14 @@ export interface ConcordanceEntry {
   agreementRate: number; // 0-1
 }
 
+export interface CalibrationPoint {
+  binStart: number;             // e.g. 0.0
+  binEnd: number;               // e.g. 0.1
+  predictedProbability: number; // Mean predicted probability in bin
+  observedFrequency: number;    // Actual positive fraction in bin
+  count: number;                // Number of cases in this bin
+}
+
 export interface PerformanceMetrics {
   kpis: PerformanceKPIs;
   kpiTrends: PerformanceKPITrends;
@@ -125,6 +133,7 @@ export interface PerformanceMetrics {
   uncertaintyScatter: UncertaintyScatterPoint[];
   temporalConfidence: TemporalConfidencePoint[];
   concordanceData: ConcordanceEntry[];
+  calibrationCurve: CalibrationPoint[];
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -160,11 +169,33 @@ export interface ReviewTrigger {
   percentage: number;  // 0-100
 }
 
+export interface EntropyBin {
+  binStart: number;   // e.g. 0.0
+  binEnd: number;     // e.g. 0.1
+  count: number;
+  label: string;      // e.g. "0.00–0.10"
+}
+
 export interface ModelIntelligenceMetrics {
   uncertaintyDecomposition: UncertaintyDecompositionPoint[];
   modelVersionComparison: ModelVersionStats[];
   humanReviewRate: HumanReviewRatePoint[];
   reviewTriggers: ReviewTrigger[];
+  entropyDistribution: EntropyBin[];
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// System Health (Overview Tab — Row 4)
+// ────────────────────────────────────────────────────────────────────────────
+
+export interface SystemHealthStatus {
+  modelStatus: string;      // 'healthy' | 'degraded' | 'unhealthy' | 'unknown'
+  modelVersion: string;
+  backendStatus: string;    // 'healthy' | 'degraded' | 'unhealthy'
+  gpuAvailable: boolean;
+  uptimeSeconds: number;
+  errorCount24h: number;
+  queueDepth: number;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -190,6 +221,7 @@ export const EMPTY_PERFORMANCE_METRICS: PerformanceMetrics = {
   uncertaintyScatter: [],
   temporalConfidence: [],
   concordanceData: [],
+  calibrationCurve: [],
 };
 
 export const EMPTY_MODEL_INTELLIGENCE_METRICS: ModelIntelligenceMetrics = {
@@ -197,6 +229,7 @@ export const EMPTY_MODEL_INTELLIGENCE_METRICS: ModelIntelligenceMetrics = {
   modelVersionComparison: [],
   humanReviewRate: [],
   reviewTriggers: [],
+  entropyDistribution: [],
 };
 
 export const EMPTY_OVERVIEW_METRICS: OverviewMetrics = {
@@ -218,4 +251,14 @@ export const EMPTY_OVERVIEW_METRICS: OverviewMetrics = {
   riskDistribution: { low: 0, moderate: 0, high: 0 },
   biradsDistribution: {},
   latencyPercentiles: [],
+};
+
+export const EMPTY_SYSTEM_HEALTH: SystemHealthStatus = {
+  modelStatus: 'unknown',
+  modelVersion: '—',
+  backendStatus: 'unknown',
+  gpuAvailable: false,
+  uptimeSeconds: 0,
+  errorCount24h: 0,
+  queueDepth: 0,
 };

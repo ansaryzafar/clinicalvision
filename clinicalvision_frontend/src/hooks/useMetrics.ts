@@ -20,18 +20,21 @@ import {
   fetchOverviewMetrics,
   fetchPerformanceMetrics,
   fetchModelIntelligenceMetrics,
+  fetchSystemHealth,
 } from '../services/metricsApi';
 import { aggregateLocalMetrics } from '../services/localMetricsAggregator';
 import {
   EMPTY_OVERVIEW_METRICS,
   EMPTY_PERFORMANCE_METRICS,
   EMPTY_MODEL_INTELLIGENCE_METRICS,
+  EMPTY_SYSTEM_HEALTH,
 } from '../types/metrics.types';
 import type {
   MetricsPeriod,
   OverviewMetrics,
   PerformanceMetrics,
   ModelIntelligenceMetrics,
+  SystemHealthStatus,
 } from '../types/metrics.types';
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -307,4 +310,78 @@ export function useModelIntelligenceMetrics(
     EMPTY_MODEL_INTELLIGENCE_METRICS,
     options,
   );
+}
+
+
+// ════════════════════════════════════════════════════════════════════════════
+// System Health hook (Overview Tab — Row 4)
+// ════════════════════════════════════════════════════════════════════════════
+
+export interface UseSystemHealthReturn {
+  data: SystemHealthStatus;
+  isLoading: boolean;
+  error: string | null;
+  refresh: () => void;
+}
+
+export function useSystemHealth(
+  options?: { refreshIntervalMs?: number; enabled?: boolean },
+): UseSystemHealthReturn {
+  const {
+    refreshIntervalMs = 60_000, // refresh every 60s (more frequent for health)
+    enabled = true,
+  } = options ?? {};
+
+  const [data, setData] = useState<SystemHealthStatus>(EMPTY_SYSTEM_HEALTH);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const mountedRef = useRef(true);
+  const abortRef = useRef<AbortController | null>(null);
+
+  const fetchData = useCallback(async () => {
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+    setIsLoading(true);
+
+    try {
+      const health = await fetchSystemHealth(controller.signal);
+      if (!mountedRef.current) return;
+      setData(health);
+      setError(null);
+    } catch (e: unknown) {
+      if (controller.signal.aborted) return;
+      if (!mountedRef.current) return;
+      setError('Unable to load system health');
+    } finally {
+      if (mountedRef.current) setIsLoading(false);
+    }
+  }, []);
+
+  const refresh = useCallback(() => {
+    if (enabled) fetchData();
+  }, [enabled, fetchData]);
+
+  useEffect(() => {
+    if (!enabled) return;
+    fetchData();
+    return () => { abortRef.current?.abort(); };
+  }, [enabled, fetchData]);
+
+  useEffect(() => {
+    if (!enabled || refreshIntervalMs <= 0) return;
+    const id = setInterval(fetchData, refreshIntervalMs);
+    return () => clearInterval(id);
+  }, [enabled, refreshIntervalMs, fetchData]);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      abortRef.current?.abort();
+    };
+  }, []);
+
+  return { data, isLoading, error, refresh };
 }
