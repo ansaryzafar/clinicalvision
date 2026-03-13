@@ -17,7 +17,7 @@ import base64
 from app.db.session import get_db
 from app.db.models.user import User
 from app.db.models.image import Image as ImageModel
-from app.db.models.analysis import Analysis
+from app.db.models.analysis import Analysis, AnalysisStatus
 from app.core.dependencies import get_current_active_user, RoleChecker
 from app.core.rate_limit import limiter, get_rate_limit
 from app.schemas.inference import (
@@ -513,6 +513,7 @@ async def predict_with_tiles(
                     inference_time_ms=inference_time_ms,
                     suspicious_regions=result.get("explanation", {}).get("suspicious_regions", []),
                     clinical_narrative=result.get("explanation", {}).get("narrative"),
+                    status=AnalysisStatus.COMPLETED,
                     processing_metadata={
                         "analysis_mode": mode,
                         "tiles_analyzed": result.get("tiles_analyzed", 0),

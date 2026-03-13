@@ -15,7 +15,7 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.core.logging import logger
 from app.db.models.image import Image
-from app.db.models.analysis import Analysis
+from app.db.models.analysis import Analysis, AnalysisStatus
 from app.db.models.model_version import ModelVersion
 from app.models.inference import get_model_inference, BaseModelInference
 
@@ -307,6 +307,7 @@ class InferenceService:
                 attention_map=prediction.get("explanation", {}).get("attention_map"),
                 suspicious_regions=prediction.get("explanation", {}).get("suspicious_regions", []),
                 clinical_narrative=prediction.get("explanation", {}).get("narrative"),
+                status=AnalysisStatus.COMPLETED,
                 processing_metadata={
                     "case_id": prediction.get("case_id"),
                     "timestamp": prediction.get("timestamp"),
