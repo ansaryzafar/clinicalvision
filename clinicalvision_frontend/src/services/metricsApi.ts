@@ -399,13 +399,58 @@ function mapSystemHealthToFrontend(raw: BackendSystemHealthResponse): SystemHeal
 
 /**
  * Fetch system health status from the backend.
+ * Tries the dedicated analytics endpoint first, then falls back
+ * to the basic /health/ probe so the dashboard is never blank.
  */
 export async function fetchSystemHealth(
   signal?: AbortSignal,
 ): Promise<SystemHealthStatus> {
-  const response = await apiClient.get<BackendSystemHealthResponse>(
-    `/api/v1/analytics/system-health`,
-    { signal },
-  );
-  return mapSystemHealthToFrontend(response.data);
+  // ── Try the dedicated analytics endpoint first ────────────────────────
+  try {
+    const response = await apiClient.get<BackendSystemHealthResponse>(
+      `/api/v1/analytics/system-health`,
+      { signal },
+    );
+    return mapSystemHealthToFrontend(response.data);
+  } catch {
+    // Fall through to the lightweight probe
+  }
+
+  // ── Fallback: derive health from /health/ probe ───────────────────────
+  try {
+    const baseUrl = process.env.REACT_APP_API_URL || '';
+    const probeUrl = `${baseUrl}/health/`;
+    const res = await fetch(probeUrl, { signal });
+    if (!res.ok) throw new Error('probe failed');
+
+    const probe: {
+      status?: string;
+      version?: string;
+      model_loaded?: boolean;
+      database_connected?: boolean;
+      uptime_seconds?: number;
+      services?: { api?: string; model?: string; database?: string };
+    } = await res.json();
+
+    const modelLoaded = probe.model_loaded ?? false;
+    const dbConnected = probe.database_connected ?? false;
+
+    return {
+      modelStatus: modelLoaded ? 'healthy' : 'unhealthy',
+      modelVersion: probe.version ?? '—',
+      backendStatus:
+        probe.services?.api === 'healthy'
+          ? 'healthy'
+          : probe.status === 'healthy'
+            ? 'healthy'
+            : 'degraded',
+      gpuAvailable: false, // probe doesn't report GPU
+      uptimeSeconds: Math.round(probe.uptime_seconds ?? 0),
+      errorCount24h: 0,    // not available from probe
+      queueDepth: 0,       // not available from probe
+    };
+  } catch {
+    // Both endpoints unreachable
+    throw new Error('System health unavailable');
+  }
 }
