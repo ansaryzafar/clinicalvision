@@ -101,33 +101,31 @@ const MOCK_POPULATED: OverviewMetrics = {
     averageConfidence: 0.87,
     highUncertaintyRate: 0.12,
     averageInferenceTimeMs: 340,
-    pendingReview: 25,
+    totalCases: 200,
+    completedCases: 180,
   },
   kpiTrends: {
     confidenceChange: 0.02,
     uncertaintyChange: -0.01,
-    volumeChange: 0.15,
     latencyChange: -0.05,
   },
-  predictionDistribution: [
-    { label: 'Malignant', count: 80 },
-    { label: 'Benign', count: 300 },
-    { label: 'Uncertain', count: 120 },
-  ],
-  biRadsDistribution: [
-    { category: '1', count: 100 },
-    { category: '2', count: 150 },
-    { category: '4', count: 80 },
-  ],
+  predictionDistribution: {
+    benign: 300,
+    malignant: 80,
+  },
+  biradsDistribution: {
+    '1': 100,
+    '2': 150,
+    '4': 80,
+  },
   confidenceTrend: [
-    { date: '2024-01-15', avgConfidence: 0.85, analysisCount: 50 },
-    { date: '2024-01-16', avgConfidence: 0.87, analysisCount: 55 },
+    { date: '2024-01-15', avgConfidence: 0.85, stdConfidence: 0.05, analysisCount: 50 },
+    { date: '2024-01-16', avgConfidence: 0.87, stdConfidence: 0.04, analysisCount: 55 },
   ],
   riskDistribution: { low: 250, moderate: 150, high: 100 },
   latencyPercentiles: [
-    { percentile: 'p50', value: 300 },
-    { percentile: 'p95', value: 600 },
-    { percentile: 'p99', value: 900 },
+    { date: '2024-01-15', p50: 300, p90: 600, p99: 900 },
+    { date: '2024-01-16', p50: 290, p90: 580, p99: 870 },
   ],
 };
 

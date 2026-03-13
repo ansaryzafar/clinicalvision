@@ -91,15 +91,15 @@ jest.mock('../../../../hooks/useMetrics', () => ({
 // ────────────────────────────────────────────────────────────────────────────
 
 const MOCK_HISTOGRAM: ConfidenceBin[] = [
-  { binStart: 0, binEnd: 0.1, count: 5 },
-  { binStart: 0.1, binEnd: 0.2, count: 10 },
-  { binStart: 0.5, binEnd: 0.6, count: 25 },
-  { binStart: 0.9, binEnd: 1.0, count: 40 },
+  { binStart: 0, binEnd: 0.1, count: 5, label: '0–10%' },
+  { binStart: 0.1, binEnd: 0.2, count: 10, label: '10–20%' },
+  { binStart: 0.5, binEnd: 0.6, count: 25, label: '50–60%' },
+  { binStart: 0.9, binEnd: 1.0, count: 40, label: '90–100%' },
 ];
 
 const MOCK_SCATTER: UncertaintyScatterPoint[] = [
-  { analysisId: 'a1', confidence: 0.85, uncertainty: 0.1, processingTimeMs: 200, riskLevel: 'low' },
-  { analysisId: 'a2', confidence: 0.5, uncertainty: 0.4, processingTimeMs: 350, riskLevel: 'high' },
+  { confidence: 0.85, uncertainty: 0.1, processingTimeMs: 200, riskLevel: 'low' },
+  { confidence: 0.5, uncertainty: 0.4, processingTimeMs: 350, riskLevel: 'high' },
 ];
 
 const MOCK_TEMPORAL: TemporalConfidencePoint[] = [
@@ -126,8 +126,6 @@ const MOCK_POPULATED: PerformanceMetrics = {
     ppv: 0.85,
     npv: 0.93,
     f1Score: 0.89,
-    totalAnalyses: 500,
-    flaggedForReview: 42,
   },
   kpiTrends: {
     sensitivityChange: 0.02,
