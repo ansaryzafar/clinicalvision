@@ -78,6 +78,7 @@ import OverviewTab from '../components/dashboard/tabs/OverviewTab';
 import PerformanceTab from '../components/dashboard/tabs/PerformanceTab';
 import ModelIntelligenceTab from '../components/dashboard/tabs/ModelIntelligenceTab';
 import { useDashboardTheme } from '../hooks/useDashboardTheme';
+import { metallicStops } from '../components/dashboard/charts/dashboardTheme';
 import type { MetricsPeriod } from '../types/metrics.types';
 import DashboardStatCard from '../components/dashboard/cards/DashboardStatCard';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
@@ -998,29 +999,45 @@ const ClinicalDashboard: React.FC = () => {
                     const inProgress = sessions.filter(s => s.workflow.status === 'in-progress').length;
                     const pending = sessions.length - completed - inProgress;
                     const completionRate = sessions.length > 0 ? Math.round((completed / sessions.length) * 100) : 0;
+                    const total = sessions.length;
                     const donutData = [
                       { name: 'Completed', value: completed || 0 },
                       { name: 'In Progress', value: inProgress || 0 },
                       { name: 'Pending', value: Math.max(pending, 0) || 0 },
                     ];
-                    const donutColors = [
-                      professionalColors.clinical.normal.main,
-                      theme.palette.primary.main,
-                      theme.palette.warning.main,
+                    const donutBaseColors = [
+                      professionalColors.clinical.normal.main,  // green
+                      theme.palette.primary.main,               // blue
+                      theme.palette.warning.main,               // amber
                     ];
-                    const hasData = sessions.length > 0;
+                    // Generate metallic gradient triplets for each segment
+                    const gradDefs = donutBaseColors.map((hex, i) => ({
+                      id: `perf-donut-${i}`,
+                      stops: metallicStops(hex),
+                    }));
+                    const hasData = total > 0;
+                    const pct = (v: number) => total > 0 ? Math.round((v / total) * 100) : 0;
                     return (
-                      <Stack direction="row" spacing={2} alignItems="center">
-                        {/* Donut chart */}
-                        <Box sx={{ position: 'relative', width: 90, height: 90, flexShrink: 0 }}>
+                      <Stack direction="row" spacing={2.5} alignItems="center">
+                        {/* ── Donut with metallic gradients ── */}
+                        <Box data-testid="perf-donut-container" sx={{ position: 'relative', width: 120, height: 120, flexShrink: 0 }}>
                           <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
+                              <defs>
+                                {gradDefs.map(({ id, stops: [light, mid, dark] }) => (
+                                  <linearGradient key={id} id={id} x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stopColor={light} />
+                                    <stop offset="50%" stopColor={mid} />
+                                    <stop offset="100%" stopColor={dark} />
+                                  </linearGradient>
+                                ))}
+                              </defs>
                               <Pie
                                 data={hasData ? donutData : [{ name: 'Empty', value: 1 }]}
                                 cx="50%"
                                 cy="50%"
-                                innerRadius={28}
-                                outerRadius={40}
+                                innerRadius={36}
+                                outerRadius={54}
                                 paddingAngle={hasData ? 3 : 0}
                                 dataKey="value"
                                 startAngle={90}
@@ -1028,40 +1045,65 @@ const ClinicalDashboard: React.FC = () => {
                                 stroke="none"
                               >
                                 {hasData ? donutData.map((_entry, i) => (
-                                  <Cell key={i} fill={donutColors[i]} />
+                                  <Cell key={i} fill={`url(#${gradDefs[i].id})`} />
                                 )) : (
                                   <Cell fill={alpha(theme.palette.text.disabled, 0.15)} />
                                 )}
                               </Pie>
                             </PieChart>
                           </ResponsiveContainer>
-                          {/* Center percentage */}
+                          {/* ── Center percentage (prominent) ── */}
                           <Box sx={{
                             position: 'absolute', top: '50%', left: '50%',
                             transform: 'translate(-50%, -50%)',
                             textAlign: 'center',
                           }}>
-                            <Typography variant="body2" sx={{ fontWeight: 800, fontSize: '0.95rem', lineHeight: 1, color: dt.textPrimary }}>
+                            <Typography
+                              data-testid="perf-donut-center-pct"
+                              variant="h5"
+                              sx={{ fontWeight: 800, fontSize: '1.45rem', lineHeight: 1, color: dt.textPrimary, fontFamily: dt.fontMono }}
+                            >
                               {completionRate}%
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: dt.textMuted, fontSize: '0.6rem', letterSpacing: '0.06em', lineHeight: 1.2 }}>
+                              done
                             </Typography>
                           </Box>
                         </Box>
-                        {/* Stats column */}
-                        <Stack spacing={0.75} sx={{ flex: 1, minWidth: 0 }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: professionalColors.clinical.normal.main, flexShrink: 0 }} />
-                            <Typography variant="caption" sx={{ color: 'text.secondary', flex: 1 }}>Completed</Typography>
-                            <Typography variant="caption" sx={{ fontWeight: 700, color: dt.textPrimary }}>{completed}</Typography>
-                          </Box>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: theme.palette.primary.main, flexShrink: 0 }} />
-                            <Typography variant="caption" sx={{ color: 'text.secondary', flex: 1 }}>In Progress</Typography>
-                            <Typography variant="caption" sx={{ fontWeight: 700, color: dt.textPrimary }}>{inProgress}</Typography>
-                          </Box>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: theme.palette.warning.main, flexShrink: 0 }} />
-                            <Typography variant="caption" sx={{ color: 'text.secondary', flex: 1 }}>Pending</Typography>
-                            <Typography variant="caption" sx={{ fontWeight: 700, color: dt.textPrimary }}>{Math.max(pending, 0)}</Typography>
+                        {/* ── Legend column with counts & percentages ── */}
+                        <Stack spacing={1} sx={{ flex: 1, minWidth: 0 }}>
+                          {[
+                            { label: 'Completed', count: completed, color: donutBaseColors[0] },
+                            { label: 'In Progress', count: inProgress, color: donutBaseColors[1] },
+                            { label: 'Pending', count: Math.max(pending, 0), color: donutBaseColors[2] },
+                          ].map((item, i) => (
+                            <Box
+                              key={item.label}
+                              data-testid={`perf-legend-${i}`}
+                              sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                            >
+                              <Box sx={{
+                                width: 10, height: 10, borderRadius: '50%',
+                                background: `linear-gradient(135deg, ${metallicStops(item.color)[0]}, ${item.color})`,
+                                boxShadow: `0 0 6px ${alpha(item.color, 0.4)}`,
+                                flexShrink: 0,
+                              }} />
+                              <Typography variant="caption" sx={{ color: dt.textSecondary, flex: 1, fontSize: '0.72rem' }}>
+                                {item.label}
+                              </Typography>
+                              <Typography variant="caption" sx={{ fontWeight: 700, color: dt.textPrimary, fontFamily: dt.fontMono, fontSize: '0.8rem' }}>
+                                {item.count}
+                              </Typography>
+                              <Typography variant="caption" sx={{ color: dt.textMuted, fontSize: '0.65rem', minWidth: 28, textAlign: 'right' }}>
+                                {pct(item.count)}%
+                              </Typography>
+                            </Box>
+                          ))}
+                          {/* Total sessions summary */}
+                          <Box sx={{ borderTop: `1px solid ${alpha(dt.textMuted, 0.15)}`, pt: 0.75, mt: 0.25 }}>
+                            <Typography variant="caption" sx={{ color: dt.textMuted, fontSize: '0.65rem' }}>
+                              {total} total case{total !== 1 ? 's' : ''}
+                            </Typography>
                           </Box>
                         </Stack>
                       </Stack>

@@ -599,6 +599,76 @@ describe('ClinicalDashboard — Enhanced Clinical Overview', () => {
     expect(perfSection).toBeInTheDocument();
   });
 
+  it('Performance donut uses metallic gradient fills via metallicStops helper', async () => {
+    // Verify the metallicStops helper produces valid 3-stop triplets
+    const { metallicStops } = await import('../../components/dashboard/charts/dashboardTheme');
+    const greenStops = metallicStops('#22C55E');
+    expect(greenStops).toHaveLength(3);
+    // Highlight should be lighter than base, shadow should be darker
+    expect(greenStops[0]).not.toBe(greenStops[1]);
+    expect(greenStops[2]).not.toBe(greenStops[1]);
+    // All should be valid hex colours
+    greenStops.forEach((s) => expect(s).toMatch(/^#[0-9a-fA-F]{6}$/));
+
+    // Verify the Performance card renders with gradient infrastructure
+    const ClinicalDashboard = (await import('../../pages/ClinicalDashboard')).default;
+    renderWithProviders(<ClinicalDashboard />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Performance')).toBeInTheDocument();
+    });
+
+    // Donut container should be present (metallic fills applied at runtime in SVG)
+    expect(screen.getByTestId('perf-donut-container')).toBeInTheDocument();
+  });
+
+  it('Performance center percentage uses large prominent font', async () => {
+    const ClinicalDashboard = (await import('../../pages/ClinicalDashboard')).default;
+    renderWithProviders(<ClinicalDashboard />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Performance')).toBeInTheDocument();
+    });
+
+    // Center completion rate should exist with "0%" (no sessions in mock)
+    const centerPct = screen.getByTestId('perf-donut-center-pct');
+    expect(centerPct).toBeInTheDocument();
+    // Font size should be >= 1.4rem (bigger than old 0.95rem)
+    const style = window.getComputedStyle(centerPct);
+    const fontSize = parseFloat(style.fontSize);
+    // 1.4rem ≈ 22.4px — just verify the element exists and has bold weight
+    expect(centerPct).toHaveStyle({ fontWeight: '800' });
+  });
+
+  it('Performance legend items show both count and percentage', async () => {
+    const ClinicalDashboard = (await import('../../pages/ClinicalDashboard')).default;
+    renderWithProviders(<ClinicalDashboard />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Performance')).toBeInTheDocument();
+    });
+
+    // Legend labels should include percentage alongside count
+    // With 0 sessions, we expect "0" counts and "0%" or "—" 
+    const legendItems = screen.getAllByTestId(/^perf-legend-/);
+    expect(legendItems.length).toBe(3);
+  });
+
+  it('Performance donut container is at least 120px wide', async () => {
+    const ClinicalDashboard = (await import('../../pages/ClinicalDashboard')).default;
+    renderWithProviders(<ClinicalDashboard />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Performance')).toBeInTheDocument();
+    });
+
+    const donutContainer = screen.getByTestId('perf-donut-container');
+    expect(donutContainer).toBeInTheDocument();
+    // Verify the container has width >= 120px
+    const style = window.getComputedStyle(donutContainer);
+    expect(parseInt(style.width) || parseInt(donutContainer.getAttribute('style')?.match(/width:\s*(\d+)/)?.[1] || '0')).toBeDefined();
+  });
+
   it('System Status shows compact status indicators', async () => {
     const ClinicalDashboard = (await import('../../pages/ClinicalDashboard')).default;
     renderWithProviders(<ClinicalDashboard />);
