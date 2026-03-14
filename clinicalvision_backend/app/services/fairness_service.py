@@ -252,7 +252,13 @@ class FairnessService:
                 nist_rmf_status=nist_status
             ),
             alerts=active_alerts,
-            attributes=attributes
+            attributes=attributes,
+            # Always identify demo data source for transparency
+            metadata={
+                "data_source": "demo_fallback",
+                "reason": "No real prediction data available — using pre-computed demonstration values",
+                "note": "These metrics do not reflect actual model performance or real patient data"
+            }
         )
     
     def get_alerts(

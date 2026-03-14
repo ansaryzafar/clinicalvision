@@ -427,7 +427,7 @@ const ClinicalDashboard: React.FC = () => {
           </Box>
         </Paper>
 
-        {/* ── Sub-Banner: Thin tab strip ──── */}
+        {/* ── Sub-Banner: Tab strip with capsule buttons ──── */}
         <Paper
           elevation={0}
           sx={{
@@ -442,50 +442,53 @@ const ClinicalDashboard: React.FC = () => {
             sx={{
               display: 'flex',
               alignItems: 'center',
-              px: 0.5,
-              minHeight: 42,
+              px: 1,
+              minHeight: 52,
             }}
           >
-            {/* Left: main dashboard tabs */}
+            {/* Left: main dashboard tabs — dominant capsule buttons */}
             <Tabs
               value={activeTab}
               onChange={(_, v) => setActiveTab(v)}
               aria-label="Dashboard sections"
               sx={{
-                minHeight: 42,
+                minHeight: 52,
                 flex: '0 0 auto',
                 '& .MuiTab-root': {
-                  minHeight: 42,
+                  minHeight: 44,
                   textTransform: 'none',
                   fontWeight: 700,
-                  fontSize: '0.85rem',
-                  py: 0,
-                  px: 1.5,
-                  color: alpha(theme.palette.text.primary, 0.7),
-                  transition: 'all 0.2s ease',
+                  fontSize: '1rem',
+                  py: 0.75,
+                  px: 2.5,
+                  mx: 0.5,
+                  borderRadius: '999px',
+                  color: alpha(theme.palette.text.primary, 0.65),
+                  transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
                   '&:hover': {
                     color: theme.palette.primary.main,
-                    backgroundColor: alpha(theme.palette.primary.main, 0.06),
+                    backgroundColor: alpha(theme.palette.primary.main, 0.08),
                   },
                   '&.Mui-selected': {
-                    color: theme.palette.primary.main,
+                    color: '#FFFFFF',
                     fontWeight: 800,
+                    fontSize: '1rem',
+                    background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${alpha(theme.palette.primary.dark, 0.9)})`,
+                    boxShadow: `0 3px 10px ${alpha(theme.palette.primary.main, 0.35)}`,
                   },
                 },
                 '& .MuiTabs-indicator': {
-                  height: 2.5,
-                  borderRadius: '2px 2px 0 0',
-                  background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${alpha('#60A5FA', 0.8)})`,
+                  display: 'none',
                 },
               }}
             >
               <Tab
-                icon={<DashboardOutlined sx={{ fontSize: 16 }} />}
+                icon={<DashboardOutlined sx={{ fontSize: 18 }} />}
                 iconPosition="start"
                 label="Clinical Overview"
               />
               <Tab
-                icon={<InsightsOutlined sx={{ fontSize: 16 }} />}
+                icon={<InsightsOutlined sx={{ fontSize: 18 }} />}
                 iconPosition="start"
                 label="AI Analytics"
               />
@@ -696,32 +699,47 @@ const ClinicalDashboard: React.FC = () => {
         })()}
 
         {/* Main Content Grid */}
-        <Grid container spacing={3}>
+        <Grid container spacing={2}>
           {/* Recent Cases */}
           <Grid size={{ xs: 12, md: 8 }}>
             <Card
               elevation={0}
               sx={{
+                height: '100%',
                 background: dt.cardDiagonalGradient,
                 border: `1px solid ${dt.cardBorder}`,
                 borderRadius: `${dt.cardBorderRadius}px`,
                 boxShadow: dt.cardShadow,
                 transition: 'all 0.28s cubic-bezier(0.4, 0, 0.2, 1)',
+                position: 'relative',
+                overflow: 'hidden',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: 3,
+                  background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${alpha(theme.palette.primary.light, 0.6)})`,
+                },
                 '&:hover': {
                   boxShadow: dt.cardShadowHover,
                 },
               }}
             >
-              <CardContent>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                  <Typography variant="h6" sx={{ fontWeight: dt.cardTitleWeight, fontFamily: dt.fontHeading, color: dt.textPrimary }}>
-                    Recent Cases
-                  </Typography>
+              <CardContent sx={{ p: 2.5 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <Assignment sx={{ fontSize: 22, color: theme.palette.primary.main }} />
+                    <Typography variant="h6" sx={{ fontWeight: dt.cardTitleWeight, fontFamily: dt.fontHeading, color: dt.textPrimary, fontSize: '1.05rem' }}>
+                      Recent Cases
+                    </Typography>
+                  </Stack>
                   <Button
                     size="small"
                     endIcon={<ArrowForward />}
                     onClick={() => navigate(ROUTES.HISTORY)}
-                    sx={{ color: 'primary.main' }}
+                    sx={{ color: 'primary.main', fontWeight: 600, textTransform: 'none' }}
                   >
                     View All
                   </Button>
@@ -859,7 +877,7 @@ const ClinicalDashboard: React.FC = () => {
 
           {/* Quick Actions & System Info */}
           <Grid size={{ xs: 12, md: 4 }}>
-            <Stack spacing={3}>
+            <Stack spacing={2}>
               {/* Quick Actions */}
               <Card
                 elevation={0}
@@ -869,13 +887,27 @@ const ClinicalDashboard: React.FC = () => {
                   borderRadius: `${dt.cardBorderRadius}px`,
                   boxShadow: dt.cardShadow,
                   transition: 'all 0.28s cubic-bezier(0.4, 0, 0.2, 1)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: 3,
+                    background: `linear-gradient(90deg, ${theme.palette.success.main}, ${alpha(theme.palette.success.light, 0.6)})`,
+                  },
                   '&:hover': { boxShadow: dt.cardShadowHover },
                 }}
               >
-                <CardContent>
-                  <Typography variant="h6" sx={{ fontWeight: dt.cardTitleWeight, fontFamily: dt.fontHeading, color: dt.textPrimary, mb: 2 }}>
-                    Quick Actions
-                  </Typography>
+                <CardContent sx={{ p: 2.5 }}>
+                  <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
+                    <Biotech sx={{ fontSize: 22, color: theme.palette.success.main }} />
+                    <Typography variant="h6" sx={{ fontWeight: dt.cardTitleWeight, fontFamily: dt.fontHeading, color: dt.textPrimary, fontSize: '1.05rem' }}>
+                      Quick Actions
+                    </Typography>
+                  </Stack>
                   <Stack spacing={1.5}>
                     <Button
                       fullWidth
@@ -884,12 +916,17 @@ const ClinicalDashboard: React.FC = () => {
                       onClick={() => navigate(ROUTES.WORKFLOW)}
                       sx={{
                         justifyContent: 'flex-start',
-                        backgroundColor: 'primary.main',
+                        background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
                         textTransform: 'none',
                         py: 1.25,
+                        borderRadius: 1.5,
+                        boxShadow: `0 2px 8px ${alpha(theme.palette.primary.main, 0.25)}`,
                         '&:hover': {
-                          backgroundColor: 'primary.dark',
+                          background: `linear-gradient(135deg, ${theme.palette.primary.dark}, ${theme.palette.primary.main})`,
+                          boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.35)}`,
+                          transform: 'translateY(-1px)',
                         },
+                        transition: 'all 0.2s ease',
                       }}
                     >
                       New Diagnostic Analysis
@@ -964,15 +1001,28 @@ const ClinicalDashboard: React.FC = () => {
                   borderRadius: `${dt.cardBorderRadius}px`,
                   boxShadow: dt.cardShadow,
                   transition: 'all 0.28s cubic-bezier(0.4, 0, 0.2, 1)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: 3,
+                    background: `linear-gradient(90deg, ${professionalColors.clinical.normal.main}, ${alpha(professionalColors.clinical.normal.light || theme.palette.success.light, 0.6)})`,
+                  },
                   '&:hover': { boxShadow: dt.cardShadowHover },
                 }}
               >
-                <CardContent>
+                <CardContent sx={{ p: 2.5 }}>
                   <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-                    <Typography variant="h6" sx={{ fontWeight: dt.cardTitleWeight, fontFamily: dt.fontHeading, color: dt.textPrimary }}>
-                      Performance
-                    </Typography>
-                    <TrendingUp sx={{ color: professionalColors.clinical.normal.main }} />
+                    <Stack direction="row" spacing={1} alignItems="center">
+                      <TrendingUp sx={{ fontSize: 22, color: professionalColors.clinical.normal.main }} />
+                      <Typography variant="h6" sx={{ fontWeight: dt.cardTitleWeight, fontFamily: dt.fontHeading, color: dt.textPrimary, fontSize: '1.05rem' }}>
+                        Performance
+                      </Typography>
+                    </Stack>
                   </Stack>
                   <Stack spacing={2}>
                     <Box>
@@ -1038,14 +1088,28 @@ const ClinicalDashboard: React.FC = () => {
                   borderRadius: `${dt.cardBorderRadius}px`,
                   boxShadow: dt.cardShadow,
                   transition: 'all 0.28s cubic-bezier(0.4, 0, 0.2, 1)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: 3,
+                    background: `linear-gradient(90deg, ${theme.palette.info.main}, ${alpha(theme.palette.info.light, 0.6)})`,
+                  },
                   '&:hover': { boxShadow: dt.cardShadowHover },
                 }}
               >
-                <CardContent>
+                <CardContent sx={{ p: 2.5 }}>
                   <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-                    <Typography variant="h6" sx={{ fontWeight: dt.cardTitleWeight, fontFamily: dt.fontHeading, color: dt.textPrimary }}>
-                      System Status
-                    </Typography>
+                    <Stack direction="row" spacing={1} alignItems="center">
+                      <Refresh sx={{ fontSize: 22, color: theme.palette.info.main }} />
+                      <Typography variant="h6" sx={{ fontWeight: dt.cardTitleWeight, fontFamily: dt.fontHeading, color: dt.textPrimary, fontSize: '1.05rem' }}>
+                        System Status
+                      </Typography>
+                    </Stack>
                     <Tooltip title="Refresh status">
                       <IconButton size="small" onClick={checkBackendHealth}>
                         <Refresh sx={{ fontSize: 18 }} />

@@ -396,14 +396,14 @@ export const SettingsPage: React.FC = () => {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 3 }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 1.5 }}>
       <Container maxWidth="xl">
         {/* Professional Page Header */}
         <Paper
           elevation={0}
           sx={{
-            p: 3,
-            mb: 3,
+            p: 2,
+            mb: 1,
             borderRadius: 2,
             background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${alpha(theme.palette.primary.light, 0.85)} 100%)`,
             color: 'white',
