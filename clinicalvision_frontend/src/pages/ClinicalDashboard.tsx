@@ -80,6 +80,7 @@ import ModelIntelligenceTab from '../components/dashboard/tabs/ModelIntelligence
 import { useDashboardTheme } from '../hooks/useDashboardTheme';
 import type { MetricsPeriod } from '../types/metrics.types';
 import DashboardStatCard from '../components/dashboard/cards/DashboardStatCard';
+import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 
 // Period selector options (shared with sub-banner)
 const PERIOD_OPTIONS: { value: MetricsPeriod; label: string }[] = [
@@ -494,20 +495,20 @@ const ClinicalDashboard: React.FC = () => {
               />
             </Tabs>
 
-            {/* Right: Analytics sub-tabs + period (only when AI Analytics active) */}
+            {/* Center: Analytics sub-tabs + period (only when AI Analytics active) */}
             {activeTab === 1 && (
               <>
                 <Box sx={{ flex: 1 }} />
 
-                {/* Capsule nav */}
+                {/* Capsule nav — centered in banner */}
                 <Box
                   sx={{
                     display: 'inline-flex',
                     background: alpha(dt.cardBackground, 0.5),
                     border: `1px solid ${alpha(dt.primary, 0.12)}`,
                     borderRadius: '999px',
-                    p: '2px',
-                    gap: '2px',
+                    p: '3px',
+                    gap: '3px',
                   }}
                 >
                   {[
@@ -523,10 +524,10 @@ const ClinicalDashboard: React.FC = () => {
                       sx={{
                         all: 'unset',
                         cursor: 'pointer',
-                        px: 1.5,
-                        py: 0.4,
+                        px: 2,
+                        py: 0.6,
                         borderRadius: '999px',
-                        fontSize: '0.75rem',
+                        fontSize: '0.85rem',
                         fontWeight: analyticsSubTab === tab.idx ? 700 : 500,
                         fontFamily: dt.fontBody,
                         letterSpacing: '-0.01em',
@@ -611,6 +612,8 @@ const ClinicalDashboard: React.FC = () => {
                     </ToggleButton>
                   ))}
                 </ToggleButtonGroup>
+
+                <Box sx={{ flex: 1 }} />
               </>
             )}
           </Box>
@@ -908,87 +911,53 @@ const ClinicalDashboard: React.FC = () => {
                       Quick Actions
                     </Typography>
                   </Stack>
-                  <Stack spacing={1.5}>
-                    <Button
-                      fullWidth
-                      variant="contained"
-                      startIcon={<Biotech />}
-                      onClick={() => navigate(ROUTES.WORKFLOW)}
-                      sx={{
-                        justifyContent: 'flex-start',
-                        background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
-                        textTransform: 'none',
-                        py: 1.25,
-                        borderRadius: 1.5,
-                        boxShadow: `0 2px 8px ${alpha(theme.palette.primary.main, 0.25)}`,
-                        '&:hover': {
-                          background: `linear-gradient(135deg, ${theme.palette.primary.dark}, ${theme.palette.primary.main})`,
-                          boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.35)}`,
-                          transform: 'translateY(-1px)',
-                        },
-                        transition: 'all 0.2s ease',
-                      }}
-                    >
-                      New Diagnostic Analysis
-                    </Button>
-                    <Button
-                      fullWidth
-                      variant="outlined"
-                      startIcon={<FolderOpen />}
-                      onClick={() => navigate(ROUTES.ANALYSIS_ARCHIVE)}
-                      sx={{
-                        justifyContent: 'flex-start',
-                        borderColor: theme.palette.divider,
-                        color: 'text.primary',
-                        textTransform: 'none',
-                        py: 1.25,
-                        '&:hover': {
-                          borderColor: 'primary.main',
-                          backgroundColor: alpha(theme.palette.primary.main, 0.08),
-                        },
-                      }}
-                    >
-                      Browse Case Archive
-                    </Button>
-                    <Button
-                      fullWidth
-                      variant="outlined"
-                      startIcon={<History />}
-                      onClick={() => navigate(ROUTES.HISTORY)}
-                      sx={{
-                        justifyContent: 'flex-start',
-                        borderColor: theme.palette.divider,
-                        color: 'text.primary',
-                        textTransform: 'none',
-                        py: 1.25,
-                        '&:hover': {
-                          borderColor: 'primary.main',
-                          backgroundColor: alpha(theme.palette.primary.main, 0.08),
-                        },
-                      }}
-                    >
-                      View Session History
-                    </Button>
-                    <Button
-                      fullWidth
-                      variant="outlined"
-                      startIcon={<Settings />}
-                      onClick={() => navigate(ROUTES.SETTINGS)}
-                      sx={{
-                        justifyContent: 'flex-start',
-                        borderColor: theme.palette.divider,
-                        color: 'text.primary',
-                        textTransform: 'none',
-                        py: 1.25,
-                        '&:hover': {
-                          borderColor: 'primary.main',
-                          backgroundColor: alpha(theme.palette.primary.main, 0.08),
-                        },
-                      }}
-                    >
-                      Settings
-                    </Button>
-                  </Stack>
+                  <Grid container spacing={1.5}>
+                    {[
+                      { label: 'New Analysis', icon: <Biotech />, route: ROUTES.WORKFLOW, gradient: true },
+                      { label: 'Case Archive', icon: <FolderOpen />, route: ROUTES.ANALYSIS_ARCHIVE },
+                      { label: 'History', icon: <History />, route: ROUTES.HISTORY },
+                      { label: 'Settings', icon: <Settings />, route: ROUTES.SETTINGS },
+                    ].map((action) => (
+                      <Grid size={{ xs: 6 }} key={action.label}>
+                        <Box
+                          onClick={() => navigate(action.route)}
+                          sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            p: 1.5,
+                            borderRadius: 2,
+                            cursor: 'pointer',
+                            border: `1px solid ${action.gradient ? 'transparent' : theme.palette.divider}`,
+                            background: action.gradient
+                              ? `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`
+                              : alpha(dt.cardBackground, 0.5),
+                            color: action.gradient ? '#FFFFFF' : dt.textPrimary,
+                            boxShadow: action.gradient ? `0 2px 8px ${alpha(theme.palette.primary.main, 0.25)}` : 'none',
+                            transition: 'all 0.2s ease',
+                            '&:hover': {
+                              transform: 'translateY(-2px)',
+                              boxShadow: action.gradient
+                                ? `0 4px 12px ${alpha(theme.palette.primary.main, 0.35)}`
+                                : `0 2px 8px ${alpha(theme.palette.primary.main, 0.15)}`,
+                              borderColor: action.gradient ? 'transparent' : theme.palette.primary.main,
+                              background: action.gradient
+                                ? `linear-gradient(135deg, ${theme.palette.primary.dark}, ${theme.palette.primary.main})`
+                                : alpha(theme.palette.primary.main, 0.08),
+                            },
+                          }}
+                        >
+                          <Box sx={{ mb: 0.5, '& .MuiSvgIcon-root': { fontSize: 24 } }}>
+                            {action.icon}
+                          </Box>
+                          <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.7rem', textAlign: 'center' }}>
+                            {action.label}
+                          </Typography>
+                        </Box>
+                      </Grid>
+                    ))}
+                  </Grid>
                 </CardContent>
               </Card>
 
@@ -1016,7 +985,7 @@ const ClinicalDashboard: React.FC = () => {
                 }}
               >
                 <CardContent sx={{ p: 2.5 }}>
-                  <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+                  <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }}>
                     <Stack direction="row" spacing={1} alignItems="center">
                       <TrendingUp sx={{ fontSize: 22, color: professionalColors.clinical.normal.main }} />
                       <Typography variant="h6" sx={{ fontWeight: dt.cardTitleWeight, fontFamily: dt.fontHeading, color: dt.textPrimary, fontSize: '1.05rem' }}>
@@ -1024,58 +993,80 @@ const ClinicalDashboard: React.FC = () => {
                       </Typography>
                     </Stack>
                   </Stack>
-                  <Stack spacing={2}>
-                    <Box>
-                      <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.5 }}>
-                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                          Cases Analyzed
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: 'text.primary', fontWeight: 600 }}>
-                          {sessions.filter(s => s.workflow.status === 'completed').length}
-                        </Typography>
+                  {(() => {
+                    const completed = sessions.filter(s => s.workflow.status === 'completed').length;
+                    const inProgress = sessions.filter(s => s.workflow.status === 'in-progress').length;
+                    const pending = sessions.length - completed - inProgress;
+                    const completionRate = sessions.length > 0 ? Math.round((completed / sessions.length) * 100) : 0;
+                    const donutData = [
+                      { name: 'Completed', value: completed || 0 },
+                      { name: 'In Progress', value: inProgress || 0 },
+                      { name: 'Pending', value: Math.max(pending, 0) || 0 },
+                    ];
+                    const donutColors = [
+                      professionalColors.clinical.normal.main,
+                      theme.palette.primary.main,
+                      theme.palette.warning.main,
+                    ];
+                    const hasData = sessions.length > 0;
+                    return (
+                      <Stack direction="row" spacing={2} alignItems="center">
+                        {/* Donut chart */}
+                        <Box sx={{ position: 'relative', width: 90, height: 90, flexShrink: 0 }}>
+                          <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                              <Pie
+                                data={hasData ? donutData : [{ name: 'Empty', value: 1 }]}
+                                cx="50%"
+                                cy="50%"
+                                innerRadius={28}
+                                outerRadius={40}
+                                paddingAngle={hasData ? 3 : 0}
+                                dataKey="value"
+                                startAngle={90}
+                                endAngle={-270}
+                                stroke="none"
+                              >
+                                {hasData ? donutData.map((_entry, i) => (
+                                  <Cell key={i} fill={donutColors[i]} />
+                                )) : (
+                                  <Cell fill={alpha(theme.palette.text.disabled, 0.15)} />
+                                )}
+                              </Pie>
+                            </PieChart>
+                          </ResponsiveContainer>
+                          {/* Center percentage */}
+                          <Box sx={{
+                            position: 'absolute', top: '50%', left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            textAlign: 'center',
+                          }}>
+                            <Typography variant="body2" sx={{ fontWeight: 800, fontSize: '0.95rem', lineHeight: 1, color: dt.textPrimary }}>
+                              {completionRate}%
+                            </Typography>
+                          </Box>
+                        </Box>
+                        {/* Stats column */}
+                        <Stack spacing={0.75} sx={{ flex: 1, minWidth: 0 }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: professionalColors.clinical.normal.main, flexShrink: 0 }} />
+                            <Typography variant="caption" sx={{ color: 'text.secondary', flex: 1 }}>Completed</Typography>
+                            <Typography variant="caption" sx={{ fontWeight: 700, color: dt.textPrimary }}>{completed}</Typography>
+                          </Box>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: theme.palette.primary.main, flexShrink: 0 }} />
+                            <Typography variant="caption" sx={{ color: 'text.secondary', flex: 1 }}>In Progress</Typography>
+                            <Typography variant="caption" sx={{ fontWeight: 700, color: dt.textPrimary }}>{inProgress}</Typography>
+                          </Box>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: theme.palette.warning.main, flexShrink: 0 }} />
+                            <Typography variant="caption" sx={{ color: 'text.secondary', flex: 1 }}>Pending</Typography>
+                            <Typography variant="caption" sx={{ fontWeight: 700, color: dt.textPrimary }}>{Math.max(pending, 0)}</Typography>
+                          </Box>
+                        </Stack>
                       </Stack>
-                      <LinearProgress
-                        variant="determinate"
-                        value={Math.min((sessions.filter(s => s.workflow.status === 'completed').length / 50) * 100, 100)}
-                        sx={{
-                          height: 6,
-                          borderRadius: 1,
-                          backgroundColor: alpha(theme.palette.primary.main, 0.15),
-                          '& .MuiLinearProgress-bar': {
-                            backgroundColor: theme.palette.primary.main,
-                            borderRadius: 1,
-                          },
-                        }}
-                      />
-                    </Box>
-                    <Box>
-                      <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.5 }}>
-                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                          Completion Rate
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: 'text.primary', fontWeight: 600 }}>
-                          {sessions.length > 0 
-                            ? Math.round((sessions.filter(s => s.workflow.status === 'completed').length / sessions.length) * 100) 
-                            : 0}%
-                        </Typography>
-                      </Stack>
-                      <LinearProgress
-                        variant="determinate"
-                        value={sessions.length > 0 
-                          ? Math.round((sessions.filter(s => s.workflow.status === 'completed').length / sessions.length) * 100) 
-                          : 0}
-                        sx={{
-                          height: 6,
-                          borderRadius: 1,
-                          backgroundColor: alpha(professionalColors.clinical.normal.main, 0.15),
-                          '& .MuiLinearProgress-bar': {
-                            backgroundColor: professionalColors.clinical.normal.main,
-                            borderRadius: 1,
-                          },
-                        }}
-                      />
-                    </Box>
-                  </Stack>
+                    );
+                  })()}
                 </CardContent>
               </Card>
 
@@ -1103,7 +1094,7 @@ const ClinicalDashboard: React.FC = () => {
                 }}
               >
                 <CardContent sx={{ p: 2.5 }}>
-                  <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+                  <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }}>
                     <Stack direction="row" spacing={1} alignItems="center">
                       <Refresh sx={{ fontSize: 22, color: theme.palette.info.main }} />
                       <Typography variant="h6" sx={{ fontWeight: dt.cardTitleWeight, fontFamily: dt.fontHeading, color: dt.textPrimary, fontSize: '1.05rem' }}>
@@ -1116,101 +1107,71 @@ const ClinicalDashboard: React.FC = () => {
                       </IconButton>
                     </Tooltip>
                   </Stack>
-                  <Stack spacing={2}>
-                    <Box>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                          AI Model ({systemHealth.modelVersion})
-                        </Typography>
-                        <Chip
-                          label={systemHealth.aiModel === 'online' ? 'Online' : systemHealth.aiModel === 'loading' ? 'Loading...' : 'Offline'}
-                          size="small"
-                          sx={{
-                            height: 20,
-                            fontSize: '0.65rem',
-                            backgroundColor: alpha(
-                              systemHealth.aiModel === 'online' 
-                                ? professionalColors.clinical.normal.main 
-                                : systemHealth.aiModel === 'loading'
-                                  ? professionalColors.clinical.uncertain.main
-                                  : professionalColors.clinical.abnormal.main, 
-                              0.15
-                            ),
-                            color: systemHealth.aiModel === 'online' 
-                              ? professionalColors.clinical.normal.main 
-                              : systemHealth.aiModel === 'loading'
-                                ? professionalColors.clinical.uncertain.main
-                                : professionalColors.clinical.abnormal.main,
-                            fontWeight: 600,
-                          }}
-                        />
-                      </Box>
-                      <LinearProgress
-                        variant={systemHealth.aiModel === 'loading' ? 'indeterminate' : 'determinate'}
-                        value={systemHealth.aiModel === 'online' ? 100 : 0}
-                        sx={{
-                          height: 6,
-                          borderRadius: 1,
-                          backgroundColor: alpha(
-                            systemHealth.aiModel === 'online' 
-                              ? professionalColors.clinical.normal.main 
-                              : professionalColors.clinical.abnormal.main, 
-                            0.15
-                          ),
-                          '& .MuiLinearProgress-bar': {
-                            backgroundColor: systemHealth.aiModel === 'online' 
-                              ? professionalColors.clinical.normal.main 
-                              : professionalColors.clinical.abnormal.main,
-                            borderRadius: 1,
-                          },
-                        }}
-                      />
+
+                  {/* Compact status rows with pulsing dot indicators */}
+                  <Stack spacing={1.5}>
+                    {/* AI Model */}
+                    <Box sx={{
+                      display: 'flex', alignItems: 'center', gap: 1.5,
+                      p: 1.25, borderRadius: 1.5,
+                      bgcolor: alpha(
+                        systemHealth.aiModel === 'online' ? professionalColors.clinical.normal.main : theme.palette.error.main,
+                        0.06
+                      ),
+                      border: `1px solid ${alpha(
+                        systemHealth.aiModel === 'online' ? professionalColors.clinical.normal.main : theme.palette.error.main,
+                        0.12
+                      )}`,
+                    }}>
+                      <Box sx={{
+                        width: 10, height: 10, borderRadius: '50%', flexShrink: 0,
+                        bgcolor: systemHealth.aiModel === 'online'
+                          ? professionalColors.clinical.normal.main
+                          : systemHealth.aiModel === 'loading'
+                            ? professionalColors.clinical.uncertain.main
+                            : professionalColors.clinical.abnormal.main,
+                        boxShadow: systemHealth.aiModel === 'online'
+                          ? `0 0 6px ${alpha(professionalColors.clinical.normal.main, 0.6)}`
+                          : 'none',
+                      }} />
+                      <Typography variant="caption" sx={{ color: 'text.secondary', flex: 1 }}>
+                        AI Model ({systemHealth.modelVersion})
+                      </Typography>
+                      <Typography variant="caption" sx={{ fontWeight: 700, color: dt.textPrimary }}>
+                        {systemHealth.aiModel === 'online' ? 'Online' : systemHealth.aiModel === 'loading' ? 'Loading' : 'Offline'}
+                      </Typography>
                     </Box>
-                    <Box>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                          Backend
-                        </Typography>
-                        <Chip
-                          label={systemHealth.backendStatus === 'healthy' ? 'Healthy' : systemHealth.backendStatus === 'degraded' ? 'Degraded' : 'Offline'}
-                          size="small"
-                          sx={{
-                            height: 20,
-                            fontSize: '0.65rem',
-                            backgroundColor: alpha(
-                              systemHealth.backendStatus === 'healthy' 
-                                ? professionalColors.clinical.normal.main 
-                                : systemHealth.backendStatus === 'degraded'
-                                  ? professionalColors.clinical.uncertain.main
-                                  : professionalColors.clinical.abnormal.main, 
-                              0.15
-                            ),
-                            color: systemHealth.backendStatus === 'healthy' 
-                              ? professionalColors.clinical.normal.main 
-                              : systemHealth.backendStatus === 'degraded'
-                                ? professionalColors.clinical.uncertain.main
-                                : professionalColors.clinical.abnormal.main,
-                            fontWeight: 600,
-                          }}
-                        />
-                      </Box>
-                      <LinearProgress
-                        variant="determinate"
-                        value={systemHealth.backendStatus === 'healthy' ? 100 : systemHealth.backendStatus === 'degraded' ? 50 : 0}
-                        sx={{
-                          height: 6,
-                          borderRadius: 1,
-                          backgroundColor: alpha(theme.palette.primary.main, 0.15),
-                          '& .MuiLinearProgress-bar': {
-                            backgroundColor: systemHealth.backendStatus === 'healthy' 
-                              ? professionalColors.clinical.normal.main 
-                              : systemHealth.backendStatus === 'degraded'
-                                ? professionalColors.clinical.uncertain.main
-                                : professionalColors.clinical.abnormal.main,
-                            borderRadius: 1,
-                          },
-                        }}
-                      />
+
+                    {/* Backend */}
+                    <Box sx={{
+                      display: 'flex', alignItems: 'center', gap: 1.5,
+                      p: 1.25, borderRadius: 1.5,
+                      bgcolor: alpha(
+                        systemHealth.backendStatus === 'healthy' ? professionalColors.clinical.normal.main : theme.palette.error.main,
+                        0.06
+                      ),
+                      border: `1px solid ${alpha(
+                        systemHealth.backendStatus === 'healthy' ? professionalColors.clinical.normal.main : theme.palette.error.main,
+                        0.12
+                      )}`,
+                    }}>
+                      <Box sx={{
+                        width: 10, height: 10, borderRadius: '50%', flexShrink: 0,
+                        bgcolor: systemHealth.backendStatus === 'healthy'
+                          ? professionalColors.clinical.normal.main
+                          : systemHealth.backendStatus === 'degraded'
+                            ? professionalColors.clinical.uncertain.main
+                            : professionalColors.clinical.abnormal.main,
+                        boxShadow: systemHealth.backendStatus === 'healthy'
+                          ? `0 0 6px ${alpha(professionalColors.clinical.normal.main, 0.6)}`
+                          : 'none',
+                      }} />
+                      <Typography variant="caption" sx={{ color: 'text.secondary', flex: 1 }}>
+                        Backend Server
+                      </Typography>
+                      <Typography variant="caption" sx={{ fontWeight: 700, color: dt.textPrimary }}>
+                        {systemHealth.backendStatus === 'healthy' ? 'Healthy' : systemHealth.backendStatus === 'degraded' ? 'Degraded' : 'Offline'}
+                      </Typography>
                     </Box>
                   </Stack>
                 </CardContent>

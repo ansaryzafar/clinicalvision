@@ -556,7 +556,18 @@ const FairnessDashboard: React.FC = () => {
 
           {/* Subgroups Tab */}
           <TabPanel value={tabValue} index={1}>
-            {dashboard.attributes.map((attr) => (
+            {dashboard.attributes.length === 0 ? (
+              <Alert
+                severity="info"
+                icon={<Groups />}
+                sx={{ borderRadius: 2 }}
+              >
+                <Typography fontWeight={500}>
+                  No subgroup data available. Fairness subgroup analysis requires sufficient
+                  prediction history with demographic metadata (age, breast density, imaging device).
+                </Typography>
+              </Alert>
+            ) : dashboard.attributes.map((attr) => (
               <Box key={attr.attribute} mb={3}>
                 <Box display="flex" alignItems="center" gap={1.5} mb={2}>
                   {getStatusIcon(attr.status)}
@@ -637,7 +648,8 @@ const FairnessDashboard: React.FC = () => {
                   </Table>
                 </TableContainer>
               </Box>
-            ))}
+            ))
+            }
           </TabPanel>
 
           {/* Metrics Tab */}
@@ -655,6 +667,18 @@ const FairnessDashboard: React.FC = () => {
                 A disparity threshold of <strong>10%</strong> is used per FDA guidance for AI/ML medical devices.
               </Typography>
             </Alert>
+            {dashboard.attributes.length === 0 ? (
+              <Alert
+                severity="info"
+                icon={<Assessment />}
+                sx={{ borderRadius: 2 }}
+              >
+                <Typography fontWeight={500}>
+                  No attribute metrics available. Comprehensive fairness metrics require
+                  predictions with demographic attributes and ground truth labels.
+                </Typography>
+              </Alert>
+            ) : (
             <Grid container spacing={3}>
               {dashboard.attributes.map((attr) => (
                 <Grid size={{ xs: 12, md: 4 }} key={attr.attribute}>
@@ -723,6 +747,7 @@ const FairnessDashboard: React.FC = () => {
                 </Grid>
               ))}
             </Grid>
+            )}
           </TabPanel>
         </Box>
       </Paper>

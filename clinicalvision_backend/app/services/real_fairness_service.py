@@ -420,10 +420,18 @@ class RealFairnessService:
             ))
             all_alerts.extend(self._generate_alerts(ProtectedAttribute.BREAST_DENSITY, density_metrics, density_disparity))
         
-        # If metrics exist but no attributes have enough data, fall back to demo
-        if len(attributes) == 0:
-            logger.warning("No subgroup metrics computed (insufficient demographic data) - returning demo metrics")
-            return self._get_demo_dashboard("Insufficient demographic metadata for subgroup analysis")
+        # If metrics exist but data is insufficient for comprehensive fairness analysis,
+        # fall back to demo. Require at least 3 attributes with ≥2 groups each for
+        # meaningful cross-subgroup disparity analysis.
+        total_groups = sum(len(a.groups) for a in attributes)
+        if len(attributes) < 3 or total_groups < 6:
+            reason = (
+                f"Insufficient demographic data for comprehensive analysis "
+                f"({len(attributes)} attribute(s), {total_groups} subgroup(s)). "
+                f"Need ≥3 attributes with ≥2 groups each."
+            )
+            logger.warning(f"{reason} — returning demo metrics")
+            return self._get_demo_dashboard(reason)
         
         # Compute summary
         critical_count = sum(1 for a in all_alerts if a.severity == AlertSeverity.CRITICAL)

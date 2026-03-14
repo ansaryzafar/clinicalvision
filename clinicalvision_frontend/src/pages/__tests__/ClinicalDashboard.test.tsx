@@ -75,6 +75,9 @@ jest.mock('recharts', () => {
     RadialBarChart: P,
     RadialBar: P,
     PolarAngleAxis: P,
+    PieChart: P,
+    Pie: P,
+    Cell: P,
   };
 });
 
@@ -128,8 +131,9 @@ describe('ClinicalDashboard — Tabbed Layout', () => {
     await waitFor(() => {
       // The existing stat card labels
       expect(screen.getByText('Total Cases')).toBeInTheDocument();
-      expect(screen.getByText('In Progress')).toBeInTheDocument();
-      expect(screen.getByText('Completed')).toBeInTheDocument();
+      // 'In Progress' and 'Completed' now appear in both stat cards and donut legend
+      expect(screen.getAllByText('In Progress').length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText('Completed').length).toBeGreaterThanOrEqual(1);
       expect(screen.getByText('High Priority')).toBeInTheDocument();
     });
   });
