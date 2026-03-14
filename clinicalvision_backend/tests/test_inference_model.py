@@ -4,24 +4,24 @@ TDD Tests for Model Inference — Phase 0 System Validation
 Tests written FIRST (RED) to define expected behavior, then fixes applied (GREEN).
 
 Test Categories:
-1. MockModelInference — Response structure, schema compliance, deterministic behavior
-2. Factory Function — get_model_inference switching, singleton pattern, fallback mechanism
-3. Risk Level — Threshold boundary correctness
-4. Calibration — Graceful fallback when calibrator.pkl missing
-5. Response Schema — Pydantic model validation
-6. Singleton Lifecycle — Proper reset between tests
-7. Model Load Resilience — Real → Mock fallback with warning on failure
+1. Factory Function — get_model_inference singleton, error handling (no mock fallback)
+2. Risk Level — Threshold boundary correctness
+3. Calibration — Graceful fallback when calibrator.pkl missing
+4. Singleton Lifecycle — Proper reset between tests
+5. Anatomical Location Mapping
+6. Narrative Generation
+7. Confidence Explanation
 
-Covers critical issues from DEMO_DATA_IMPLEMENTATION_PLAN.md §13.2:
-- ISSUE 1: CPU-only inference (validates response structure still correct)
-- ISSUE 2: Missing calibration file (tests graceful fallback)
-- ISSUE 4: Mock vs Real parity (validates both match InferenceResponse schema)
-- ISSUE 5: Model load failure resilience (tests fallback mechanism)
+NOTE: MockModelInference was permanently removed from inference.py.
+ClinicalVision requires real AI inference via RealModelInference (V12 DenseNet-121 ensemble).
+Tests that previously tested MockModelInference have been removed to match the updated
+production code. The factory function now raises RuntimeError on failure instead of
+falling back to a mock.
 
 Usage:
     pytest tests/test_inference_model.py -v
-    pytest tests/test_inference_model.py -v -k "TestMockModel"
-    pytest tests/test_inference_model.py -v -k "TestFallback"
+    pytest tests/test_inference_model.py -v -k "TestRiskLevel"
+    pytest tests/test_inference_model.py -v -k "TestCalibration"
 """
 
 import pytest
@@ -29,11 +29,11 @@ import numpy as np
 from unittest.mock import patch, Mock, MagicMock
 
 from app.models.inference import (
-    MockModelInference,
     RealModelInference,
     BaseModelInference,
     get_model_inference,
     _reset_model_instances,
+    _model_instances,
 )
 from app.core.config import settings
 
@@ -41,12 +41,6 @@ from app.core.config import settings
 # ============================================================================
 # Fixtures
 # ============================================================================
-
-@pytest.fixture
-def mock_model():
-    """Create a fresh MockModelInference instance."""
-    return MockModelInference()
-
 
 @pytest.fixture
 def sample_image():
@@ -79,241 +73,92 @@ def clean_singletons():
 
 
 # ============================================================================
-# Test 1: MockModelInference — Response Structure
-# ============================================================================
-
-@pytest.mark.unit
-class TestMockModelInference:
-    """Verify MockModelInference returns valid, schema-compliant responses."""
-
-    def test_is_loaded(self, mock_model):
-        """Mock model should always report as loaded."""
-        assert mock_model.is_loaded() is True
-
-    def test_is_base_model_instance(self, mock_model):
-        """Mock model must implement BaseModelInference interface."""
-        assert isinstance(mock_model, BaseModelInference)
-
-    def test_model_version(self, mock_model):
-        """Model version should be identifiable as mock."""
-        assert mock_model.model_version == "mock-v1.0"
-
-    def test_response_has_all_required_keys(self, mock_model, sample_image):
-        """Response must contain all top-level keys needed by frontend."""
-        result = mock_model.predict(sample_image)
-        required_keys = {
-            "prediction", "confidence", "probabilities", "risk_level",
-            "uncertainty", "explanation", "model_version"
-        }
-        assert required_keys.issubset(result.keys()), (
-            f"Missing keys: {required_keys - result.keys()}"
-        )
-
-    def test_prediction_is_valid_class(self, mock_model, sample_image):
-        """Prediction must be 'benign' or 'malignant' (matches PredictionClass enum)."""
-        result = mock_model.predict(sample_image)
-        assert result["prediction"] in ("benign", "malignant")
-
-    def test_confidence_in_valid_range(self, mock_model, sample_image):
-        """Confidence must be between 0 and 1 inclusive."""
-        result = mock_model.predict(sample_image)
-        assert 0.0 <= result["confidence"] <= 1.0
-
-    def test_confidence_equals_max_probability(self, mock_model, sample_image):
-        """Confidence should be max(p_benign, p_malignant)."""
-        result = mock_model.predict(sample_image)
-        expected = max(
-            result["probabilities"]["benign"],
-            result["probabilities"]["malignant"]
-        )
-        assert abs(result["confidence"] - expected) < 1e-6
-
-    def test_probabilities_sum_to_one(self, mock_model, sample_image):
-        """Benign + malignant probabilities must sum to 1.0."""
-        result = mock_model.predict(sample_image)
-        total = result["probabilities"]["benign"] + result["probabilities"]["malignant"]
-        assert abs(total - 1.0) < 1e-6, f"Probabilities sum to {total}, expected 1.0"
-
-    def test_probabilities_has_both_classes(self, mock_model, sample_image):
-        """Probabilities dict must have exactly 'benign' and 'malignant' keys."""
-        result = mock_model.predict(sample_image)
-        assert set(result["probabilities"].keys()) == {"benign", "malignant"}
-
-    def test_risk_level_is_valid_enum(self, mock_model, sample_image):
-        """Risk level must be 'low', 'moderate', or 'high' (matches RiskLevel enum)."""
-        result = mock_model.predict(sample_image)
-        assert result["risk_level"] in ("low", "moderate", "high")
-
-    def test_risk_level_correlates_with_malignancy(self, mock_model, sample_image):
-        """Risk level must be consistent with malignancy probability thresholds."""
-        result = mock_model.predict(sample_image)
-        prob_m = result["probabilities"]["malignant"]
-        risk = result["risk_level"]
-
-        if prob_m > 0.7:
-            assert risk == "high"
-        elif prob_m > 0.4:
-            assert risk == "moderate"
-        else:
-            assert risk == "low"
-
-    def test_attention_map_is_56x56(self, mock_model, sample_image):
-        """Attention map must be downsampled to 56×56 for JSON efficiency."""
-        result = mock_model.predict(sample_image)
-        attention = result["explanation"]["attention_map"]
-        assert len(attention) == 56, f"Expected 56 rows, got {len(attention)}"
-        assert len(attention[0]) == 56, f"Expected 56 cols, got {len(attention[0])}"
-
-    def test_attention_map_values_normalized(self, mock_model, sample_image):
-        """All attention values must be in [0, 1]."""
-        result = mock_model.predict(sample_image)
-        attention = np.array(result["explanation"]["attention_map"])
-        assert attention.min() >= 0.0, f"Min attention {attention.min()} < 0"
-        assert attention.max() <= 1.0, f"Max attention {attention.max()} > 1"
-
-    def test_suspicious_regions_have_required_fields(self, mock_model, sample_image):
-        """Each suspicious region must have region_id, bbox, attention_score, location."""
-        result = mock_model.predict(sample_image)
-        regions = result["explanation"]["suspicious_regions"]
-        assert isinstance(regions, list)
-        assert len(regions) >= 1, "At least one suspicious region expected"
-        for region in regions:
-            assert "region_id" in region
-            assert "bbox" in region
-            assert len(region["bbox"]) == 4, "bbox must be [x, y, w, h]"
-            assert "attention_score" in region
-            assert 0.0 <= region["attention_score"] <= 1.0
-            assert "location" in region
-            assert isinstance(region["location"], str)
-
-    def test_suspicious_regions_sorted_by_attention(self, mock_model, sample_image):
-        """Regions must be sorted by attention_score descending."""
-        result = mock_model.predict(sample_image)
-        regions = result["explanation"]["suspicious_regions"]
-        scores = [r["attention_score"] for r in regions]
-        assert scores == sorted(scores, reverse=True), "Regions not sorted by attention score"
-
-    def test_uncertainty_has_required_fields(self, mock_model, sample_image):
-        """Uncertainty metrics must include epistemic, entropy, and review flag."""
-        result = mock_model.predict(sample_image)
-        u = result["uncertainty"]
-        assert "epistemic_uncertainty" in u
-        assert "predictive_entropy" in u
-        assert "requires_human_review" in u
-        assert isinstance(u["requires_human_review"], bool)
-        assert u["epistemic_uncertainty"] >= 0.0
-        assert u["predictive_entropy"] >= 0.0
-
-    def test_explanation_has_narrative(self, mock_model, sample_image):
-        """Explanation must include a clinical narrative string."""
-        result = mock_model.predict(sample_image)
-        narrative = result["explanation"]["narrative"]
-        assert isinstance(narrative, str)
-        assert len(narrative) > 10, "Narrative should be meaningful text"
-
-    def test_explanation_has_confidence_explanation(self, mock_model, sample_image):
-        """Explanation must include confidence explanation string."""
-        result = mock_model.predict(sample_image)
-        conf_exp = result["explanation"]["confidence_explanation"]
-        assert isinstance(conf_exp, str)
-        assert len(conf_exp) > 10
-
-
-# ============================================================================
-# Test 2: Factory Function — get_model_inference
+# Test 1: Factory Function — get_model_inference (No Mock Fallback)
 # ============================================================================
 
 @pytest.mark.unit
 class TestGetModelInference:
-    """Verify factory function correctly switches between mock and real models."""
+    """Verify factory function behavior with real model only (no mock fallback).
 
-    def test_returns_mock_when_configured(self, monkeypatch):
-        """When USE_MOCK_MODEL=true, should return MockModelInference."""
-        monkeypatch.setattr(settings, 'USE_MOCK_MODEL', True)
-        model = get_model_inference()
-        assert isinstance(model, MockModelInference)
+    The factory now raises RuntimeError when the real model fails to load,
+    requiring the issue to be fixed rather than silently falling back to mock.
+    """
 
-    def test_mock_is_singleton(self, monkeypatch):
-        """Multiple calls should return the same MockModelInference instance."""
-        monkeypatch.setattr(settings, 'USE_MOCK_MODEL', True)
-        m1 = get_model_inference()
-        m2 = get_model_inference()
-        assert m1 is m2, "Mock model should be a singleton"
+    def test_factory_returns_base_model_interface(self):
+        """Factory must return a BaseModelInference subclass when it succeeds."""
+        mock_instance = Mock(spec=RealModelInference)
+        mock_instance.is_loaded.return_value = True
 
-    def test_returns_base_model_interface(self, monkeypatch):
-        """Factory must always return BaseModelInference subclass."""
-        monkeypatch.setattr(settings, 'USE_MOCK_MODEL', True)
-        model = get_model_inference()
-        assert isinstance(model, BaseModelInference)
+        with patch(
+            'app.models.inference.RealModelInference',
+            return_value=mock_instance
+        ):
+            model = get_model_inference()
+            assert isinstance(model, BaseModelInference)
 
-    def test_mock_model_is_functional(self, monkeypatch):
-        """Mock model from factory should produce valid predictions."""
-        monkeypatch.setattr(settings, 'USE_MOCK_MODEL', True)
-        model = get_model_inference()
-        image = np.random.rand(224, 224, 3).astype(np.float32)
-        result = model.predict(image)
-        assert result["prediction"] in ("benign", "malignant")
-
-    def test_fallback_to_mock_on_real_model_failure(self, monkeypatch):
-        """If RealModelInference fails to init, should fall back to MockModelInference."""
-        monkeypatch.setattr(settings, 'USE_MOCK_MODEL', False)
-
+    def test_factory_raises_on_model_load_failure(self):
+        """If RealModelInference fails to init, factory MUST raise RuntimeError."""
         with patch(
             'app.models.inference.RealModelInference',
             side_effect=Exception("TF not available")
         ):
-            model = get_model_inference()
-            assert isinstance(model, MockModelInference), (
-                "Should fall back to MockModelInference on failure"
-            )
-            assert getattr(model, '_fallback_active', False) is True
+            with pytest.raises(RuntimeError, match="Real AI model failed to load"):
+                get_model_inference()
 
-    def test_fallback_preserves_error_reason(self, monkeypatch):
-        """Fallback should store the reason for failure (for debugging/UI banner)."""
-        monkeypatch.setattr(settings, 'USE_MOCK_MODEL', False)
+    def test_factory_raises_when_model_not_loaded(self):
+        """If RealModelInference creates but is_loaded()=False, MUST raise."""
+        mock_instance = Mock(spec=RealModelInference)
+        mock_instance.is_loaded.return_value = False
 
         with patch(
             'app.models.inference.RealModelInference',
-            side_effect=RuntimeError("CUDA version mismatch: expected 570.195.3")
+            return_value=mock_instance
         ):
-            model = get_model_inference()
-            reason = getattr(model, '_fallback_reason', '')
-            assert "CUDA version mismatch" in reason
+            with pytest.raises(RuntimeError, match="failed to load"):
+                get_model_inference()
 
-    def test_fallback_model_produces_valid_predictions(self, monkeypatch):
-        """Fallback mock model should still produce valid predictions."""
-        monkeypatch.setattr(settings, 'USE_MOCK_MODEL', False)
+    def test_factory_caches_successful_instance(self):
+        """Multiple calls should return the same cached instance."""
+        mock_instance = Mock(spec=RealModelInference)
+        mock_instance.is_loaded.return_value = True
 
         with patch(
             'app.models.inference.RealModelInference',
-            side_effect=Exception("model load failed")
+            return_value=mock_instance
         ):
-            model = get_model_inference()
-            image = np.random.rand(224, 224, 3).astype(np.float32)
-            result = model.predict(image)
-            assert result["prediction"] in ("benign", "malignant")
-            assert 0.0 <= result["confidence"] <= 1.0
+            m1 = get_model_inference()
+            m2 = get_model_inference()
+            assert m1 is m2, "Factory should cache and reuse instances"
 
-    def test_fallback_on_model_not_loaded(self, monkeypatch):
-        """If RealModelInference creates but is_loaded()=False, should fall back."""
-        monkeypatch.setattr(settings, 'USE_MOCK_MODEL', False)
+    def test_factory_does_not_cache_failed_attempts(self):
+        """Failed load attempts must NOT be cached — allow retry."""
+        call_count = 0
 
-        mock_real = Mock(spec=RealModelInference)
-        mock_real.is_loaded.return_value = False
+        def create_model(*args, **kwargs):
+            nonlocal call_count
+            call_count += 1
+            raise Exception(f"Load failed attempt {call_count}")
 
+        with patch('app.models.inference.RealModelInference', side_effect=create_model):
+            with pytest.raises(RuntimeError):
+                get_model_inference()
+            with pytest.raises(RuntimeError):
+                get_model_inference()
+            # Should attempt to create each time since failures aren't cached
+            assert call_count == 2
+
+    def test_factory_error_message_includes_cause(self):
+        """RuntimeError should include the original exception message."""
         with patch(
             'app.models.inference.RealModelInference',
-            return_value=mock_real
+            side_effect=Exception("CUDA version mismatch: expected 12.4")
         ):
-            model = get_model_inference()
-            assert isinstance(model, MockModelInference), (
-                "Should fall back when model creates but fails to load"
-            )
-            assert getattr(model, '_fallback_active', False) is True
+            with pytest.raises(RuntimeError, match="CUDA version mismatch"):
+                get_model_inference()
 
 
 # ============================================================================
-# Test 3: Risk Level Determination
+# Test 2: Risk Level Determination
 # ============================================================================
 
 @pytest.mark.unit
@@ -367,7 +212,7 @@ class TestRiskLevelDetermination:
 
 
 # ============================================================================
-# Test 4: Calibration Fallback (ISSUE 2 from critical evaluation)
+# Test 3: Calibration Fallback (ISSUE 2 from critical evaluation)
 # ============================================================================
 
 @pytest.mark.unit
@@ -415,110 +260,46 @@ class TestCalibrationFallback:
 
 
 # ============================================================================
-# Test 5: Response Schema Compliance
-# ============================================================================
-
-@pytest.mark.unit
-class TestResponseSchemaCompliance:
-    """Verify model responses can be validated by Pydantic InferenceResponse schema.
-
-    Tests that the model output structure matches what the API endpoint
-    expects to serialize into InferenceResponse.
-    """
-
-    def test_mock_prediction_validates_as_prediction_class(self):
-        """Prediction value must be valid PredictionClass enum."""
-        from app.schemas.inference import PredictionClass
-
-        model = MockModelInference()
-        image = np.random.rand(224, 224, 3).astype(np.float32)
-        result = model.predict(image)
-
-        # Should not raise
-        PredictionClass(result["prediction"])
-
-    def test_mock_risk_validates_as_risk_level(self):
-        """Risk level must be valid RiskLevel enum."""
-        from app.schemas.inference import RiskLevel
-
-        model = MockModelInference()
-        image = np.random.rand(224, 224, 3).astype(np.float32)
-        result = model.predict(image)
-
-        # Should not raise
-        RiskLevel(result["risk_level"])
-
-    def test_mock_uncertainty_validates_as_uncertainty_metrics(self):
-        """Uncertainty dict must construct valid UncertaintyMetrics."""
-        from app.schemas.inference import UncertaintyMetrics
-
-        model = MockModelInference()
-        image = np.random.rand(224, 224, 3).astype(np.float32)
-        result = model.predict(image)
-        u = result["uncertainty"]
-
-        # Should not raise
-        UncertaintyMetrics(
-            epistemic_uncertainty=u["epistemic_uncertainty"],
-            predictive_entropy=u["predictive_entropy"],
-            requires_human_review=u["requires_human_review"],
-            aleatoric_uncertainty=u.get("aleatoric_uncertainty"),
-            mutual_information=u.get("mutual_information"),
-        )
-
-    def test_mock_regions_validate_as_suspicious_region(self):
-        """Each suspicious region must construct valid SuspiciousRegion."""
-        from app.schemas.inference import SuspiciousRegion
-
-        model = MockModelInference()
-        image = np.random.rand(224, 224, 3).astype(np.float32)
-        result = model.predict(image)
-
-        for r in result["explanation"]["suspicious_regions"]:
-            # Should not raise
-            SuspiciousRegion(
-                region_id=r["region_id"],
-                bbox=r["bbox"],
-                attention_score=r["attention_score"],
-                location=r["location"],
-            )
-
-
-# ============================================================================
-# Test 6: Singleton Lifecycle
+# Test 4: Singleton Lifecycle
 # ============================================================================
 
 @pytest.mark.unit
 class TestSingletonLifecycle:
     """Verify singleton instances are properly managed and reset between tests."""
 
-    def test_reset_clears_mock_instance(self, monkeypatch):
-        """After reset, a new MockModelInference should be created."""
-        monkeypatch.setattr(settings, 'USE_MOCK_MODEL', True)
-        m1 = get_model_inference()
-        _reset_model_instances()
-        m2 = get_model_inference()
-        assert m1 is not m2, "Reset should create a new instance"
-
-    def test_reset_clears_real_instance_cache(self):
-        """After reset, the real model cache should be empty."""
-        from app.models.inference import _model_instances
+    def test_reset_clears_all_instances(self):
+        """After reset, the instance cache should be empty."""
         _model_instances["test_key"] = Mock()
         assert len(_model_instances) == 1
         _reset_model_instances()
         assert len(_model_instances) == 0
 
-    def test_independent_tests_get_independent_instances(self, monkeypatch):
-        """Each test should start with clean singletons (autouse fixture)."""
-        monkeypatch.setattr(settings, 'USE_MOCK_MODEL', True)
-        model = get_model_inference()
-        # If singletons leaked from previous test, this would be stale
-        assert isinstance(model, MockModelInference)
-        assert model.is_loaded()
+    def test_reset_allows_new_instance_creation(self):
+        """After reset, factory should attempt to create a new instance."""
+        def make_mock(*args, **kwargs):
+            m = Mock(spec=RealModelInference)
+            m.is_loaded.return_value = True
+            return m
+
+        with patch(
+            'app.models.inference.RealModelInference',
+            side_effect=make_mock
+        ):
+            m1 = get_model_inference()
+            _reset_model_instances()
+            m2 = get_model_inference()
+            assert m1 is not m2, "Reset should force new instance creation"
+
+    def test_multiple_resets_are_safe(self):
+        """Calling reset multiple times should not raise."""
+        _reset_model_instances()
+        _reset_model_instances()
+        _reset_model_instances()
+        assert len(_model_instances) == 0
 
 
 # ============================================================================
-# Test 7: Anatomical Location Mapping
+# Test 5: Anatomical Location Mapping
 # ============================================================================
 
 @pytest.mark.unit
@@ -543,7 +324,7 @@ class TestAnatomicalLocationMapping:
 
 
 # ============================================================================
-# Test 8: Narrative Generation
+# Test 6: Narrative Generation
 # ============================================================================
 
 @pytest.mark.unit
@@ -582,7 +363,7 @@ class TestNarrativeGeneration:
 
 
 # ============================================================================
-# Test 9: Confidence Explanation
+# Test 7: Confidence Explanation
 # ============================================================================
 
 @pytest.mark.unit

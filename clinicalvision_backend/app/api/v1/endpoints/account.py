@@ -4,7 +4,7 @@ Email verification, password reset, and account security operations
 """
 
 from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks, Query
-from pydantic import BaseModel, Field, EmailStr, validator
+from pydantic import BaseModel, Field, EmailStr, field_validator
 from typing import Optional
 from sqlalchemy.orm import Session
 import logging
@@ -44,8 +44,9 @@ class ResetPasswordRequest(BaseModel):
     new_password: str = Field(..., min_length=8)
     confirm_password: str = Field(..., min_length=8)
     
-    @validator('new_password')
-    def validate_password_strength(cls, v):
+    @field_validator('new_password')
+    @classmethod
+    def validate_password_strength(cls, v: str) -> str:
         """Validate password meets security requirements"""
         if len(v) < 8:
             raise ValueError('Password must be at least 8 characters')
@@ -59,10 +60,11 @@ class ResetPasswordRequest(BaseModel):
             raise ValueError('Password must contain at least one special character')
         return v
     
-    @validator('confirm_password')
-    def passwords_match(cls, v, values):
+    @field_validator('confirm_password')
+    @classmethod
+    def passwords_match(cls, v: str, info) -> str:
         """Validate passwords match"""
-        if 'new_password' in values and v != values['new_password']:
+        if 'new_password' in info.data and v != info.data['new_password']:
             raise ValueError('Passwords do not match')
         return v
 
@@ -73,8 +75,9 @@ class ChangePasswordRequest(BaseModel):
     new_password: str = Field(..., min_length=8)
     confirm_password: str = Field(..., min_length=8)
     
-    @validator('new_password')
-    def validate_password_strength(cls, v):
+    @field_validator('new_password')
+    @classmethod
+    def validate_password_strength(cls, v: str) -> str:
         """Validate password meets security requirements"""
         if len(v) < 8:
             raise ValueError('Password must be at least 8 characters')
