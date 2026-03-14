@@ -12,13 +12,11 @@
  *  Row 3 — 3 secondary chart cards (xs=12, md=4)
  */
 
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Box,
   Grid,
   Typography,
-  ToggleButtonGroup,
-  ToggleButton,
   Stack,
   Chip,
   IconButton,
@@ -44,23 +42,15 @@ import { useOverviewMetrics, useSystemHealth } from '../../../hooks/useMetrics';
 import { EMPTY_OVERVIEW_METRICS } from '../../../types/metrics.types';
 import type { MetricsPeriod } from '../../../types/metrics.types';
 
-// ────────────────────────────────────────────────────────────────────────────
-// Period selector labels
-// ────────────────────────────────────────────────────────────────────────────
-
-const PERIOD_OPTIONS: { value: MetricsPeriod; label: string }[] = [
-  { value: '7d', label: '7 Days' },
-  { value: '30d', label: '30 Days' },
-  { value: '90d', label: '90 Days' },
-  { value: 'all', label: 'All Time' },
-];
+interface OverviewTabProps {
+  period: MetricsPeriod;
+}
 
 // ────────────────────────────────────────────────────────────────────────────
 // Component
 // ────────────────────────────────────────────────────────────────────────────
 
-const OverviewTab: React.FC = () => {
-  const [period, setPeriod] = useState<MetricsPeriod>('30d');
+const OverviewTab: React.FC<OverviewTabProps> = ({ period }) => {
   const dt = useDashboardTheme();
 
   // Fetch from API with local-aggregator fallback
@@ -81,12 +71,12 @@ const OverviewTab: React.FC = () => {
 
   return (
     <Box data-testid="overview-tab">
-      {/* ── Period selector ─────────────────────────────────────────── */}
+      {/* ── Tab header with data source indicator ────────────────── */}
       <Stack
         direction="row"
         justifyContent="space-between"
         alignItems="center"
-        sx={{ mb: 3 }}
+        sx={{ mb: 2 }}
       >
         <Typography
           variant="h6"
@@ -100,55 +90,6 @@ const OverviewTab: React.FC = () => {
         >
           AI Performance Overview
         </Typography>
-
-        <ToggleButtonGroup
-          value={period}
-          exclusive
-          onChange={(_, v) => v && setPeriod(v as MetricsPeriod)}
-          size="small"
-          aria-label="Time period"
-          sx={{
-            bgcolor: alpha(dt.cardBackground, 0.5),
-            borderRadius: '999px',
-            border: `1px solid ${dt.cardBorder}`,
-            p: '2px',
-            '& .MuiToggleButtonGroup-grouped': {
-              border: 'none',
-              borderRadius: '999px !important',
-              mx: '1px',
-            },
-          }}
-        >
-          {PERIOD_OPTIONS.map((opt) => (
-            <ToggleButton
-              key={opt.value}
-              value={opt.value}
-              sx={{
-                textTransform: 'none',
-                fontSize: '0.78rem',
-                px: 1.5,
-                py: 0.4,
-                color: dt.textSecondary,
-                fontWeight: 500,
-                transition: 'all 0.2s ease',
-                '&:hover': {
-                  bgcolor: alpha(dt.primary, 0.08),
-                  color: dt.textPrimary,
-                },
-                '&.Mui-selected': {
-                  bgcolor: alpha(dt.primary, 0.2),
-                  color: dt.textPrimary,
-                  fontWeight: 700,
-                  '&:hover': {
-                    bgcolor: alpha(dt.primary, 0.28),
-                  },
-                },
-              }}
-            >
-              {opt.label}
-            </ToggleButton>
-          ))}
-        </ToggleButtonGroup>
 
         <Stack direction="row" spacing={1} alignItems="center">
           {isLoading && (
@@ -262,7 +203,7 @@ const OverviewTab: React.FC = () => {
             title="Confidence Trend"
             subtitle="Average confidence over time"
             value={`${confidencePct}%`}
-            timeRange={PERIOD_OPTIONS.find((o) => o.value === period)?.label}
+            timeRange={period === '7d' ? '7 Days' : period === '30d' ? '30 Days' : period === '90d' ? '90 Days' : 'All Time'}
             height={260}
           >
             {safeMetrics.confidenceTrend.length > 0 ? (

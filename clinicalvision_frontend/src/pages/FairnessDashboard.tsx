@@ -45,6 +45,7 @@ import {
   Gavel,
 } from '@mui/icons-material';
 import { api, FairnessDashboardResponse } from '../services/api';
+import DashboardStatCard from '../components/dashboard/cards/DashboardStatCard';
 
 // Get status color based on theme
 const getStatusColor = (status: string, theme: any): string => {
@@ -235,7 +236,8 @@ const FairnessDashboard: React.FC = () => {
   const statusColor = getStatusColor(dashboard.overall_status, theme);
 
   return (
-    <Container maxWidth="xl" sx={{ py: 3 }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 1.5 }}>
+      <Container maxWidth="xl">
       {/* Refresh indicator */}
       {refreshing && (
         <LinearProgress 
@@ -254,7 +256,7 @@ const FairnessDashboard: React.FC = () => {
         <Alert 
           severity="warning" 
           sx={{ 
-            mb: 3, 
+            mb: 1, 
             borderRadius: 2,
             border: `1px solid ${theme.palette.warning.main}`,
             '& .MuiAlert-icon': { alignItems: 'center' },
@@ -272,196 +274,116 @@ const FairnessDashboard: React.FC = () => {
         </Alert>
       )}
 
-      {/* Header */}
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Box display="flex" alignItems="center" gap={2}>
-          <Box
-            sx={{
-              p: 1.5,
-              borderRadius: 2,
-              bgcolor: alpha(theme.palette.primary.main, 0.1),
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Security sx={{ fontSize: 32, color: 'primary.main' }} />
-          </Box>
-          <Box>
-            <Typography variant="h4" fontWeight={600} color="text.primary">
-              AI Fairness Monitor
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Model: {dashboard.model_version} • Last evaluated: {dashboard.last_evaluation && dashboard.metadata?.data_source !== 'demo_fallback'
-                ? new Date(dashboard.last_evaluation).toLocaleString()
-                : dashboard.metadata?.data_source === 'demo_fallback'
-                  ? 'N/A — Demo Data'
-                  : dashboard.last_evaluation
-                    ? new Date(dashboard.last_evaluation).toLocaleString()
-                    : 'N/A'}
-            </Typography>
-          </Box>
-        </Box>
-        <Tooltip title="Refresh data">
-          <IconButton 
-            onClick={handleRefresh} 
-            color="primary"
-            disabled={refreshing}
-            sx={{
-              bgcolor: alpha(theme.palette.primary.main, 0.1),
-              '&:hover': {
-                bgcolor: alpha(theme.palette.primary.main, 0.2),
-              },
-            }}
-          >
-            <Refresh sx={{ animation: refreshing ? 'spin 1s linear infinite' : 'none' }} />
-          </IconButton>
-        </Tooltip>
-      </Box>
-
-      {/* Summary Cards */}
-      <Grid container spacing={3} sx={{ mb: 3 }}>
-        {/* Overall Status */}
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <Card 
-            sx={{ 
-              height: '100%', 
-              borderLeft: `4px solid ${statusColor}`,
-              transition: 'transform 0.2s, box-shadow 0.2s',
-              '&:hover': {
-                transform: 'translateY(-2px)',
-                boxShadow: theme.shadows[4],
-              },
-            }}
-          >
-            <CardContent>
-              <Box display="flex" alignItems="center" gap={1} mb={1}>
-                {getStatusIcon(dashboard.overall_status)}
-                <Typography variant="subtitle2" color="text.secondary" fontWeight={500}>
-                  Overall Status
-                </Typography>
-              </Box>
+      {/* Page Header — Unified gradient banner */}
+      <Paper
+        elevation={0}
+        sx={{
+          p: 2,
+          mb: 1,
+          borderRadius: 2,
+          background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${alpha(theme.palette.primary.light, 0.85)} 100%)`,
+          color: 'white',
+        }}
+      >
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Security sx={{ fontSize: 36, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.15))' }} />
+            <Box>
               <Typography 
                 variant="h5" 
-                fontWeight={700} 
-                sx={{ color: statusColor, textTransform: 'uppercase' }}
+                sx={{ 
+                  fontWeight: 700, 
+                  mb: 0.5,
+                  textShadow: '0 1px 2px rgba(0,0,0,0.15)',
+                }}
               >
-                {dashboard.overall_status.replace('_', ' ')}
+                AI Fairness Monitor
               </Typography>
-            </CardContent>
-          </Card>
+              <Typography 
+                variant="body2" 
+                sx={{ 
+                  fontWeight: 500,
+                  color: 'rgba(255,255,255,0.95)',
+                }}
+              >
+                Model: {dashboard.model_version} • Last evaluated: {dashboard.last_evaluation && dashboard.metadata?.data_source !== 'demo_fallback'
+                  ? new Date(dashboard.last_evaluation).toLocaleString()
+                  : dashboard.metadata?.data_source === 'demo_fallback'
+                    ? 'N/A — Demo Data'
+                    : dashboard.last_evaluation
+                      ? new Date(dashboard.last_evaluation).toLocaleString()
+                      : 'N/A'}
+              </Typography>
+            </Box>
+          </Box>
+          <Tooltip title="Refresh data">
+            <IconButton 
+              onClick={handleRefresh} 
+              disabled={refreshing}
+              sx={{
+                color: 'white',
+                bgcolor: 'rgba(255,255,255,0.1)',
+                '&:hover': { bgcolor: 'rgba(255,255,255,0.2)' },
+              }}
+            >
+              <Refresh sx={{ animation: refreshing ? 'spin 1s linear infinite' : 'none' }} />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      </Paper>
+
+      {/* Summary Cards */}
+      <Grid container spacing={1.5} sx={{ mb: 2 }}>
+        {/* Overall Status */}
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <DashboardStatCard
+            value={dashboard.overall_status.replace('_', ' ').toUpperCase()}
+            label="Overall Status"
+            color={statusColor}
+            icon={getStatusIcon(dashboard.overall_status)}
+          />
         </Grid>
 
         {/* Compliance Score */}
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <Card 
-            sx={{ 
-              height: '100%',
-              transition: 'transform 0.2s, box-shadow 0.2s',
-              '&:hover': {
-                transform: 'translateY(-2px)',
-                boxShadow: theme.shadows[4],
-              },
-            }}
-          >
-            <CardContent>
-              <Box display="flex" alignItems="center" gap={1} mb={1}>
-                <TrendingUp sx={{ color: 'primary.main' }} />
-                <Typography variant="subtitle2" color="text.secondary" fontWeight={500}>
-                  Compliance Score
-                </Typography>
-              </Box>
-              <Box display="flex" alignItems="baseline" gap={0.5}>
-                <Typography variant="h3" fontWeight={700} color="primary.main">
-                  {dashboard.summary.compliance_score}
-                </Typography>
-                <Typography variant="h6" color="text.secondary">%</Typography>
-              </Box>
-              <LinearProgress 
-                variant="determinate" 
-                value={dashboard.summary.compliance_score} 
-                sx={{ 
-                  mt: 1, 
-                  height: 6, 
-                  borderRadius: 3,
-                  bgcolor: alpha(theme.palette.primary.main, 0.1),
-                }} 
-              />
-            </CardContent>
-          </Card>
+          <DashboardStatCard
+            value={`${dashboard.summary.compliance_score}%`}
+            label="Compliance Score"
+            color={theme.palette.primary.main}
+            icon={<TrendingUp />}
+            trend={dashboard.summary.compliance_score >= 80 ? 'up' : dashboard.summary.compliance_score >= 60 ? 'neutral' : 'down'}
+          />
         </Grid>
 
         {/* Active Alerts */}
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <Card 
-            sx={{ 
-              height: '100%',
-              transition: 'transform 0.2s, box-shadow 0.2s',
-              '&:hover': {
-                transform: 'translateY(-2px)',
-                boxShadow: theme.shadows[4],
-              },
-            }}
-          >
-            <CardContent>
-              <Box display="flex" alignItems="center" gap={1} mb={1}>
-                <Warning sx={{ color: 'warning.main' }} />
-                <Typography variant="subtitle2" color="text.secondary" fontWeight={500}>
-                  Active Alerts
-                </Typography>
-              </Box>
-              <Box display="flex" alignItems="baseline" gap={1}>
-                <Typography variant="h3" fontWeight={700}>
-                  {dashboard.summary.total_alerts}
-                </Typography>
-                {dashboard.summary.critical_alerts > 0 && (
-                  <Chip
-                    label={`${dashboard.summary.critical_alerts} Critical`}
-                    size="small"
-                    color="error"
-                    sx={{ fontWeight: 600 }}
-                  />
-                )}
-              </Box>
-            </CardContent>
-          </Card>
+          <DashboardStatCard
+            value={dashboard.summary.total_alerts}
+            label="Active Alerts"
+            color={theme.palette.warning.main}
+            icon={<Warning />}
+            subtitle={dashboard.summary.critical_alerts > 0 ? `${dashboard.summary.critical_alerts} Critical` : undefined}
+            trend={dashboard.summary.total_alerts > 0 ? 'down' : 'up'}
+          />
         </Grid>
 
         {/* Attributes Analyzed */}
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <Card 
-            sx={{ 
-              height: '100%',
-              transition: 'transform 0.2s, box-shadow 0.2s',
-              '&:hover': {
-                transform: 'translateY(-2px)',
-                boxShadow: theme.shadows[4],
-              },
-            }}
-          >
-            <CardContent>
-              <Box display="flex" alignItems="center" gap={1} mb={1}>
-                <Groups sx={{ color: 'info.main' }} />
-                <Typography variant="subtitle2" color="text.secondary" fontWeight={500}>
-                  Attributes Analyzed
-                </Typography>
-              </Box>
-              <Typography variant="h3" fontWeight={700}>
-                {dashboard.summary.attributes_analyzed}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                Protected groups
-              </Typography>
-            </CardContent>
-          </Card>
+          <DashboardStatCard
+            value={dashboard.summary.attributes_analyzed}
+            label="Attributes Analyzed"
+            color={theme.palette.info.main}
+            icon={<Groups />}
+            subtitle="Protected groups"
+          />
         </Grid>
       </Grid>
 
       {/* Compliance Breakdown */}
       <Paper 
         sx={{ 
-          p: 3, 
-          mb: 3, 
+          p: 2, 
+          mb: 1.5, 
           borderRadius: 2,
           border: `1px solid ${theme.palette.divider}`,
         }}
@@ -813,6 +735,7 @@ const FairnessDashboard: React.FC = () => {
         }
       `}</style>
     </Container>
+    </Box>
   );
 };
 

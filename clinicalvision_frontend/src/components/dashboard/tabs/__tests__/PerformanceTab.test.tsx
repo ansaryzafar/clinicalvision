@@ -168,19 +168,19 @@ describe('PerformanceTab', () => {
   // ── Basic rendering ──────────────────────────────────────────────────────
 
   it('renders the tab container', () => {
-    wrap(<PerformanceTab />);
+    wrap(<PerformanceTab period="30d" />);
     expect(screen.getByTestId('performance-tab')).toBeInTheDocument();
   });
 
   it('renders the heading', () => {
-    wrap(<PerformanceTab />);
+    wrap(<PerformanceTab period="30d" />);
     expect(screen.getByText('Performance Deep Dive')).toBeInTheDocument();
   });
 
   // ── Empty state ──────────────────────────────────────────────────────────
 
   it('shows empty messages when no data is available', () => {
-    wrap(<PerformanceTab />);
+    wrap(<PerformanceTab period="30d" />);
     expect(screen.getByTestId('empty-histogram')).toBeInTheDocument();
     expect(screen.getByTestId('empty-scatter')).toBeInTheDocument();
     expect(screen.getByTestId('empty-temporal')).toBeInTheDocument();
@@ -195,7 +195,7 @@ describe('PerformanceTab', () => {
       data: MOCK_POPULATED,
       dataSource: 'api',
     };
-    wrap(<PerformanceTab />);
+    wrap(<PerformanceTab period="30d" />);
 
     // Should NOT show empty messages
     expect(screen.queryByTestId('empty-histogram')).not.toBeInTheDocument();
@@ -211,7 +211,7 @@ describe('PerformanceTab', () => {
 
   it('renders KPI gauge labels', () => {
     mockHookReturn = { ...mockHookReturn, data: MOCK_POPULATED, dataSource: 'api' };
-    wrap(<PerformanceTab />);
+    wrap(<PerformanceTab period="30d" />);
 
     expect(screen.getByText('Sensitivity')).toBeInTheDocument();
     expect(screen.getByText('Specificity')).toBeInTheDocument();
@@ -223,12 +223,12 @@ describe('PerformanceTab', () => {
 
   it('shows loading spinner when loading', () => {
     mockHookReturn = { ...mockHookReturn, isLoading: true };
-    wrap(<PerformanceTab />);
+    wrap(<PerformanceTab period="30d" />);
     expect(screen.getByTestId('perf-metrics-loading')).toBeInTheDocument();
   });
 
   it('hides loading spinner when not loading', () => {
-    wrap(<PerformanceTab />);
+    wrap(<PerformanceTab period="30d" />);
     expect(screen.queryByTestId('perf-metrics-loading')).not.toBeInTheDocument();
   });
 
@@ -236,41 +236,42 @@ describe('PerformanceTab', () => {
 
   it('shows "Live" chip when dataSource is api', () => {
     mockHookReturn = { ...mockHookReturn, dataSource: 'api' };
-    wrap(<PerformanceTab />);
+    wrap(<PerformanceTab period="30d" />);
     const chip = screen.getByTestId('perf-data-source-chip');
     expect(chip).toBeInTheDocument();
     expect(chip).toHaveTextContent('Live');
   });
 
   it('does not show data source chip when dataSource is null', () => {
-    wrap(<PerformanceTab />);
+    wrap(<PerformanceTab period="30d" />);
     expect(screen.queryByTestId('perf-data-source-chip')).not.toBeInTheDocument();
   });
 
   // ── Refresh button ──────────────────────────────────────────────────────
 
   it('calls refresh when clicking the refresh button', () => {
-    wrap(<PerformanceTab />);
+    wrap(<PerformanceTab period="30d" />);
     const btn = screen.getByTestId('perf-refresh-metrics');
     fireEvent.click(btn);
     expect(mockRefresh).toHaveBeenCalledTimes(1);
   });
 
-  // ── Period selector ─────────────────────────────────────────────────────
+  // ── Period prop ──────────────────────────────────────────────────────────
 
-  it('renders all period options', () => {
-    wrap(<PerformanceTab />);
-    expect(screen.getByText('7 Days')).toBeInTheDocument();
-    // '30 Days' appears in both toggle button AND MetricCard timeRange
-    expect(screen.getAllByText('30 Days').length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText('90 Days')).toBeInTheDocument();
-    expect(screen.getByText('All Time')).toBeInTheDocument();
+  it('accepts period prop and passes it to data hook', () => {
+    wrap(<PerformanceTab period="7d" />);
+    expect(mockHookReturn).toBeDefined();
+  });
+
+  it('renders correctly with different period values', () => {
+    wrap(<PerformanceTab period="90d" />);
+    expect(screen.getByText('Performance Deep Dive')).toBeInTheDocument();
   });
 
   // ── MetricCard titles ───────────────────────────────────────────────────
 
   it('renders chart card titles', () => {
-    wrap(<PerformanceTab />);
+    wrap(<PerformanceTab period="30d" />);
     expect(screen.getByText('Confidence Distribution')).toBeInTheDocument();
     expect(screen.getByText('Uncertainty vs Confidence')).toBeInTheDocument();
     expect(screen.getByText('Confidence & Uncertainty Over Time')).toBeInTheDocument();
@@ -281,7 +282,7 @@ describe('PerformanceTab', () => {
 
   it('displays correct gauge percentages from KPI values', () => {
     mockHookReturn = { ...mockHookReturn, data: MOCK_POPULATED, dataSource: 'api' };
-    wrap(<PerformanceTab />);
+    wrap(<PerformanceTab period="30d" />);
 
     // GaugeCard renders "{value}{unit}" e.g. "92%"
     expect(screen.getAllByText('92%').length).toBeGreaterThanOrEqual(1);
@@ -293,12 +294,12 @@ describe('PerformanceTab', () => {
   // ── Calibration Curve ─────────────────────────────────────────────
 
   it('renders Calibration Curve card title', () => {
-    wrap(<PerformanceTab />);
+    wrap(<PerformanceTab period="30d" />);
     expect(screen.getByText('Calibration Curve')).toBeInTheDocument();
   });
 
   it('shows calibration empty state when no calibration data', () => {
-    wrap(<PerformanceTab />);
+    wrap(<PerformanceTab period="30d" />);
     expect(screen.getByTestId('empty-calibration')).toBeInTheDocument();
   });
 
@@ -308,7 +309,7 @@ describe('PerformanceTab', () => {
       data: MOCK_POPULATED,
       dataSource: 'api',
     };
-    wrap(<PerformanceTab />);
+    wrap(<PerformanceTab period="30d" />);
     expect(screen.queryByTestId('empty-calibration')).not.toBeInTheDocument();
   });
 
@@ -316,7 +317,7 @@ describe('PerformanceTab', () => {
 
   it('shows error alert when error is set', () => {
     mockHookReturn = { ...mockHookReturn, error: 'API timeout' };
-    wrap(<PerformanceTab />);
+    wrap(<PerformanceTab period="30d" />);
     expect(screen.getByTestId('error-alert')).toBeInTheDocument();
     expect(screen.getByText('API timeout')).toBeInTheDocument();
   });

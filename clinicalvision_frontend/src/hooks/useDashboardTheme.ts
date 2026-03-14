@@ -32,10 +32,11 @@ export function useChartTooltipStyle(): React.CSSProperties {
   return useMemo(
     () => ({
       backgroundColor: dt.tooltipBackground,
-      border: `1px solid ${dt.tooltipBorder}`,
-      borderRadius: dt.tooltipBorderRadius,
+      border: `1px solid ${dt.primary}`,
+      borderRadius: dt.cardBorderRadius,
       color: dt.textPrimary,
       fontSize: 12,
+      boxShadow: dt.cardShadow,
     }),
     [dt],
   );

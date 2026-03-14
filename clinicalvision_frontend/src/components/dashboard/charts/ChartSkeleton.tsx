@@ -45,9 +45,10 @@ const ChartSkeleton: React.FC<ChartSkeletonProps> = ({
       <Paper
         data-testid="skeleton-gauge"
         sx={{
-          background: dt.cardGradient,
+          background: dt.cardDiagonalGradient,
           border: `1px solid ${dt.cardBorder}`,
-          borderRadius: 2,
+          borderRadius: `${dt.cardBorderRadius}px`,
+          boxShadow: dt.cardShadow,
           p: 2,
           height: 140,
           display: 'flex',
@@ -68,9 +69,10 @@ const ChartSkeleton: React.FC<ChartSkeletonProps> = ({
       <Paper
         data-testid="skeleton-bar"
         sx={{
-          background: dt.cardGradient,
+          background: dt.cardDiagonalGradient,
           border: `1px solid ${dt.cardBorder}`,
-          borderRadius: 2,
+          borderRadius: `${dt.cardBorderRadius}px`,
+          boxShadow: dt.cardShadow,
           px: 2.5,
           py: 1.5,
           height,
@@ -97,9 +99,10 @@ const ChartSkeleton: React.FC<ChartSkeletonProps> = ({
     <Paper
       data-testid="skeleton-chart"
       sx={{
-        background: dt.cardGradient,
+        background: dt.cardDiagonalGradient,
         border: `1px solid ${dt.cardBorder}`,
-        borderRadius: 2,
+        borderRadius: `${dt.cardBorderRadius}px`,
+        boxShadow: dt.cardShadow,
         p: 2,
         height,
       }}

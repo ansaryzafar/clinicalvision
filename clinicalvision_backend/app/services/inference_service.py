@@ -67,7 +67,7 @@ class InferenceService:
         image_id: Optional[int] = None,
         db: Optional[Session] = None,
         model_version: Optional[str] = None,
-        save_result: bool = False
+        save_result: bool = True
     ) -> Dict[str, Any]:
         """
         Run inference on single mammogram image
@@ -291,7 +291,7 @@ class InferenceService:
             Created Analysis record
         """
         try:
-            # Create Analysis record
+            # Create Analysis record with ALL fields for complete data persistence
             analysis = Analysis(
                 image_id=image_id,
                 model_version=prediction.get("model_version", "unknown"),
@@ -301,17 +301,22 @@ class InferenceService:
                 benign_probability=prediction["probabilities"]["benign"],
                 risk_level=prediction["risk_level"],
                 epistemic_uncertainty=prediction["uncertainty"]["epistemic_uncertainty"],
+                aleatoric_uncertainty=prediction["uncertainty"].get("aleatoric_uncertainty"),
                 predictive_entropy=prediction["uncertainty"]["predictive_entropy"],
+                mutual_information=prediction["uncertainty"].get("mutual_information"),
                 requires_human_review=prediction["uncertainty"]["requires_human_review"],
                 inference_time_ms=prediction.get("inference_time_ms", 0),
                 attention_map=prediction.get("explanation", {}).get("attention_map"),
                 suspicious_regions=prediction.get("explanation", {}).get("suspicious_regions", []),
                 clinical_narrative=prediction.get("explanation", {}).get("narrative"),
+                confidence_explanation=prediction.get("explanation", {}).get("confidence_explanation"),
                 status=AnalysisStatus.COMPLETED,
                 processing_metadata={
                     "case_id": prediction.get("case_id"),
                     "timestamp": prediction.get("timestamp"),
-                    "model_version": prediction.get("model_version")
+                    "model_version": prediction.get("model_version"),
+                    "device": prediction.get("device", "unknown"),
+                    "calibration_applied": prediction.get("calibration", {}).get("calibration_applied", False),
                 }
             )
             

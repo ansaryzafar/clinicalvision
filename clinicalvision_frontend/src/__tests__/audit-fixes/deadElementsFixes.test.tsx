@@ -76,7 +76,7 @@ describe('ModernMainLayout sidebar navigation', () => {
     expect(casesItem).toBeInTheDocument();
   });
 
-  it('C2: should include Analysis Suite (/analysis-suite) in navigation', async () => {
+  it('C2: Analysis Suite removed from sidebar (accessed only programmatically)', async () => {
     const { MainLayout } = await import('../../components/layout/ModernMainLayout');
     
     render(
@@ -87,9 +87,9 @@ describe('ModernMainLayout sidebar navigation', () => {
       </TestWrapper>
     );
 
-    // The sidebar should contain an "Analysis Suite" navigation item
-    const suiteItem = screen.getByText(/analysis suite/i);
-    expect(suiteItem).toBeInTheDocument();
+    // Analysis Suite was removed from the sidebar — it is now accessed
+    // only programmatically through the clinical workflow.
+    expect(screen.queryByText(/analysis suite/i)).not.toBeInTheDocument();
   });
 });
 

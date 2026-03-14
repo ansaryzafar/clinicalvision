@@ -10,6 +10,7 @@ import io
 import time
 import uuid
 from datetime import datetime
+from sqlalchemy.orm import Session
 
 from app.schemas.analysis import AnalysisResponse, AnalysisMetadata, PredictionResult, UncertaintyMetrics, ExplanationData
 from app.models.inference import get_model_inference
@@ -17,7 +18,10 @@ from app.utils.preprocessing import preprocess_mammogram, validate_image, save_u
 from app.core.config import settings
 from app.core.logging import logger
 from app.core.dependencies import get_current_active_user
+from app.db.session import get_db
 from app.db.models.user import User
+from app.db.models.image import Image as ImageModel
+from app.db.models.analysis import Analysis, AnalysisStatus
 
 router = APIRouter(prefix="/analyze", tags=["analysis"])
 
@@ -36,7 +40,8 @@ def get_model():
 @router.post("/", response_model=AnalysisResponse, status_code=status.HTTP_200_OK)
 async def analyze_mammogram(
     file: UploadFile = File(..., description="Mammogram image (JPEG, PNG, DICOM)"),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
 ):
     """
     Analyze mammogram image for breast cancer detection
@@ -105,6 +110,52 @@ async def analyze_mammogram(
         # Generate clinical narrative based on results
         clinical_narrative = _generate_clinical_narrative(prediction_result)
         recommendation = _generate_recommendation(prediction_result)
+        
+        # ALWAYS persist analysis results to database to prevent data loss
+        try:
+            # Create or find image record
+            image_record = ImageModel(
+                file_path=str(saved_path),
+                original_filename=file.filename,
+                file_size=len(contents),
+                mime_type=f"image/{file_ext}",
+            )
+            db.add(image_record)
+            db.flush()
+            
+            # Create Analysis record
+            analysis_record = Analysis(
+                image_id=image_record.id,
+                model_version=prediction_result.get('model_version', 'unknown'),
+                prediction_class=prediction_result['prediction'],
+                confidence_score=prediction_result['confidence'],
+                malignant_probability=prediction_result['probabilities']['malignant'],
+                benign_probability=prediction_result['probabilities']['benign'],
+                risk_level=prediction_result['risk_level'],
+                epistemic_uncertainty=prediction_result['uncertainty']['epistemic_uncertainty'],
+                aleatoric_uncertainty=prediction_result['uncertainty'].get('aleatoric_uncertainty'),
+                predictive_entropy=prediction_result['uncertainty']['predictive_entropy'],
+                mutual_information=prediction_result['uncertainty'].get('mutual_information'),
+                requires_human_review=prediction_result['uncertainty']['requires_human_review'],
+                inference_time_ms=inference_time_ms,
+                attention_map=prediction_result.get('explanation', {}).get('attention_map'),
+                suspicious_regions=prediction_result.get('explanation', {}).get('suspicious_regions', []),
+                clinical_narrative=clinical_narrative,
+                confidence_explanation=prediction_result.get('explanation', {}).get('confidence_explanation'),
+                status=AnalysisStatus.COMPLETED,
+                processing_metadata={
+                    'case_id': case_id,
+                    'timestamp': datetime.utcnow().isoformat(),
+                    'model_version': prediction_result.get('model_version'),
+                }
+            )
+            db.add(analysis_record)
+            db.commit()
+            logger.info(f"Analysis saved to database: analysis_id={analysis_record.id}, case_id={case_id}")
+        except Exception as db_err:
+            logger.error(f"Failed to persist analysis to database: {db_err}")
+            db.rollback()
+            # Don't fail the request — still return the result
         
         # Build response
         response = AnalysisResponse(

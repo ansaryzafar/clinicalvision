@@ -92,13 +92,19 @@ const navigationSections: NavigationSection[] = [
         icon: <Dashboard />,
         description: 'Overview & quick stats',
       },
+      {
+        title: 'Fairness Monitor',
+        path: ROUTES.FAIRNESS,
+        icon: <Security />,
+        description: 'AI bias & compliance',
+      },
     ],
   },
   {
     title: 'Clinical Workflow',
     items: [
       {
-        title: 'New Analysis',
+        title: 'New Case',
         path: ROUTES.WORKFLOW,
         icon: <LocalHospital />,
         description: 'Upload & analyze mammogram',
@@ -110,34 +116,16 @@ const navigationSections: NavigationSection[] = [
         description: 'Cases currently being worked on',
       },
       {
-        title: 'Analysis Suite',
-        path: ROUTES.ANALYSIS_SUITE,
-        icon: <Biotech />,
-        description: 'Advanced image analysis',
-      },
-      {
         title: 'Case History',
         path: ROUTES.HISTORY,
         icon: <History />,
         description: 'Completed clinical records',
-        dividerLabel: 'Records',
       },
       {
-        title: 'AI Analysis Log',
+        title: 'AI Results Archive',
         path: ROUTES.ANALYSIS_ARCHIVE,
         icon: <Folder />,
         description: 'View saved AI analyses',
-      },
-    ],
-  },
-  {
-    title: 'AI Monitoring',
-    items: [
-      {
-        title: 'Fairness Monitor',
-        path: ROUTES.FAIRNESS,
-        icon: <Security />,
-        description: 'AI bias & compliance',
       },
     ],
   },
@@ -196,7 +184,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             }
             break;
           case 'n':
-            // ⌘N - New Analysis (only if not in input)
+            // ⌘N - New Case (only if not in input)
             if (!isInputFocused) {
               e.preventDefault();
               navigate(ROUTES.WORKFLOW);

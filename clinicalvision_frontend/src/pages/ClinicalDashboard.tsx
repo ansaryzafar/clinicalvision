@@ -42,6 +42,8 @@ import {
   Paper,
   Tabs,
   Tab,
+  ToggleButtonGroup,
+  ToggleButton,
 } from '@mui/material';
 import {
   FolderOpen,
@@ -76,6 +78,16 @@ import OverviewTab from '../components/dashboard/tabs/OverviewTab';
 import PerformanceTab from '../components/dashboard/tabs/PerformanceTab';
 import ModelIntelligenceTab from '../components/dashboard/tabs/ModelIntelligenceTab';
 import { useDashboardTheme } from '../hooks/useDashboardTheme';
+import type { MetricsPeriod } from '../types/metrics.types';
+import DashboardStatCard from '../components/dashboard/cards/DashboardStatCard';
+
+// Period selector options (shared with sub-banner)
+const PERIOD_OPTIONS: { value: MetricsPeriod; label: string }[] = [
+  { value: '7d', label: '7 Days' },
+  { value: '30d', label: '30 Days' },
+  { value: '90d', label: '90 Days' },
+  { value: 'all', label: 'All Time' },
+];
 
 // Backend health status type
 interface SystemHealth {
@@ -98,6 +110,7 @@ const ClinicalDashboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(0);
   const [analyticsSubTab, setAnalyticsSubTab] = useState(0);
+  const [analyticsPeriod, setAnalyticsPeriod] = useState<MetricsPeriod>('30d');
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [systemHealth, setSystemHealth] = useState<SystemHealth>({
     aiModel: 'loading',
@@ -315,7 +328,7 @@ const ClinicalDashboard: React.FC = () => {
       sx={{
         minHeight: '100vh',
         backgroundColor: 'background.default',
-        py: 3,
+        py: 1.5,
       }}
     >
       <Container maxWidth="xl">
@@ -323,22 +336,11 @@ const ClinicalDashboard: React.FC = () => {
         <Paper
           elevation={0}
           sx={{
-            p: 3.5,
-            mb: 3,
-            borderRadius: 3,
-            background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${alpha('#60A5FA', 0.95)} 100%)`,
+            p: 2,
+            mb: 1,
+            borderRadius: 2,
+            background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${alpha(theme.palette.primary.light, 0.85)} 100%)`,
             color: 'white',
-            position: 'relative',
-            overflow: 'hidden',
-            '&::before': {
-              content: '""',
-              position: 'absolute',
-              top: 0,
-              right: 0,
-              width: '40%',
-              height: '100%',
-              background: 'radial-gradient(circle at 70% 50%, rgba(255,255,255,0.1) 0%, transparent 70%)',
-            },
           }}
         >
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
@@ -425,163 +427,207 @@ const ClinicalDashboard: React.FC = () => {
           </Box>
         </Paper>
 
-        {/* ── Dashboard Tabs ────────────────────────────────────────── */}
+        {/* ── Sub-Banner: Thin tab strip ──── */}
         <Paper
           elevation={0}
           sx={{
-            mb: 3,
-            borderRadius: 2.5,
+            mb: 1.5,
+            borderRadius: `${dt.cardBorderRadius}px`,
             overflow: 'hidden',
-            background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.08)} 0%, ${alpha('#60A5FA', 0.06)} 100%)`,
-            border: `1px solid ${alpha(theme.palette.primary.main, 0.15)}`,
-            backdropFilter: 'blur(8px)',
+            background: dt.cardDiagonalGradient,
+            border: `1px solid ${dt.cardBorder}`,
           }}
         >
-          <Tabs
-            value={activeTab}
-            onChange={(_, v) => setActiveTab(v)}
-            aria-label="Dashboard sections"
+          <Box
             sx={{
-              minHeight: 52,
-              px: 1,
-              '& .MuiTab-root': {
-                minHeight: 52,
-                textTransform: 'none',
-                fontWeight: 700,
-                fontSize: '0.95rem',
-                color: alpha(theme.palette.text.primary, 0.7),
-                transition: 'all 0.2s ease',
-                borderRadius: 2,
-                mx: 0.5,
-                '&:hover': {
-                  color: theme.palette.primary.main,
-                  backgroundColor: alpha(theme.palette.primary.main, 0.06),
-                },
-                '&.Mui-selected': {
-                  color: theme.palette.primary.main,
-                  fontWeight: 800,
-                },
-              },
-              '& .MuiTabs-indicator': {
-                height: 3,
-                borderRadius: '3px 3px 0 0',
-                background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${alpha('#60A5FA', 0.8)})`,
-              },
+              display: 'flex',
+              alignItems: 'center',
+              px: 0.5,
+              minHeight: 42,
             }}
           >
-            <Tab
-              icon={<DashboardOutlined sx={{ fontSize: 18 }} />}
-              iconPosition="start"
-              label="Clinical Overview"
-            />
-            <Tab
-              icon={<InsightsOutlined sx={{ fontSize: 18 }} />}
-              iconPosition="start"
-              label="AI Analytics"
-            />
-          </Tabs>
+            {/* Left: main dashboard tabs */}
+            <Tabs
+              value={activeTab}
+              onChange={(_, v) => setActiveTab(v)}
+              aria-label="Dashboard sections"
+              sx={{
+                minHeight: 42,
+                flex: '0 0 auto',
+                '& .MuiTab-root': {
+                  minHeight: 42,
+                  textTransform: 'none',
+                  fontWeight: 700,
+                  fontSize: '0.85rem',
+                  py: 0,
+                  px: 1.5,
+                  color: alpha(theme.palette.text.primary, 0.7),
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    color: theme.palette.primary.main,
+                    backgroundColor: alpha(theme.palette.primary.main, 0.06),
+                  },
+                  '&.Mui-selected': {
+                    color: theme.palette.primary.main,
+                    fontWeight: 800,
+                  },
+                },
+                '& .MuiTabs-indicator': {
+                  height: 2.5,
+                  borderRadius: '2px 2px 0 0',
+                  background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${alpha('#60A5FA', 0.8)})`,
+                },
+              }}
+            >
+              <Tab
+                icon={<DashboardOutlined sx={{ fontSize: 16 }} />}
+                iconPosition="start"
+                label="Clinical Overview"
+              />
+              <Tab
+                icon={<InsightsOutlined sx={{ fontSize: 16 }} />}
+                iconPosition="start"
+                label="AI Analytics"
+              />
+            </Tabs>
+
+            {/* Right: Analytics sub-tabs + period (only when AI Analytics active) */}
+            {activeTab === 1 && (
+              <>
+                <Box sx={{ flex: 1 }} />
+
+                {/* Capsule nav */}
+                <Box
+                  sx={{
+                    display: 'inline-flex',
+                    background: alpha(dt.cardBackground, 0.5),
+                    border: `1px solid ${alpha(dt.primary, 0.12)}`,
+                    borderRadius: '999px',
+                    p: '2px',
+                    gap: '2px',
+                  }}
+                >
+                  {[
+                    { label: 'Overview', testId: 'analytics-sub-tab-overview', idx: 0 },
+                    { label: 'Performance', testId: 'analytics-sub-tab-performance', idx: 1 },
+                    { label: 'Model Intelligence', testId: 'analytics-sub-tab-intelligence', idx: 2 },
+                  ].map((tab) => (
+                    <Box
+                      key={tab.idx}
+                      component="button"
+                      data-testid={tab.testId}
+                      onClick={() => setAnalyticsSubTab(tab.idx)}
+                      sx={{
+                        all: 'unset',
+                        cursor: 'pointer',
+                        px: 1.5,
+                        py: 0.4,
+                        borderRadius: '999px',
+                        fontSize: '0.75rem',
+                        fontWeight: analyticsSubTab === tab.idx ? 700 : 500,
+                        fontFamily: dt.fontBody,
+                        letterSpacing: '-0.01em',
+                        color:
+                          analyticsSubTab === tab.idx
+                            ? '#FFFFFF'
+                            : dt.textSecondary,
+                        background:
+                          analyticsSubTab === tab.idx
+                            ? `linear-gradient(135deg, ${dt.primary}, ${alpha(dt.primary, 0.7)})`
+                            : 'transparent',
+                        boxShadow:
+                          analyticsSubTab === tab.idx
+                            ? `0 2px 8px ${alpha(dt.primary, 0.25)}`
+                            : 'none',
+                        transition: 'all 0.2s ease',
+                        '&:hover': {
+                          background:
+                            analyticsSubTab === tab.idx
+                              ? `linear-gradient(135deg, ${dt.primary}, ${alpha(dt.primary, 0.7)})`
+                              : alpha(dt.primary, 0.08),
+                          color:
+                            analyticsSubTab === tab.idx
+                              ? '#FFFFFF'
+                              : dt.textPrimary,
+                        },
+                      }}
+                    >
+                      {tab.label}
+                    </Box>
+                  ))}
+                </Box>
+
+                {/* Period pills */}
+                <ToggleButtonGroup
+                  value={analyticsPeriod}
+                  exclusive
+                  onChange={(_, v) => v && setAnalyticsPeriod(v as MetricsPeriod)}
+                  size="small"
+                  aria-label="Time period"
+                  sx={{
+                    ml: 1,
+                    mr: 0.5,
+                    bgcolor: alpha(dt.cardBackground, 0.4),
+                    borderRadius: '999px',
+                    border: `1px solid ${alpha(dt.cardBorder, 0.6)}`,
+                    p: '2px',
+                    '& .MuiToggleButtonGroup-grouped': {
+                      border: 'none',
+                      borderRadius: '999px !important',
+                      mx: '1px',
+                    },
+                  }}
+                >
+                  {PERIOD_OPTIONS.map((opt) => (
+                    <ToggleButton
+                      key={opt.value}
+                      value={opt.value}
+                      sx={{
+                        textTransform: 'none',
+                        fontSize: '0.7rem',
+                        px: 1.2,
+                        py: 0.2,
+                        color: dt.textSecondary,
+                        fontWeight: 500,
+                        transition: 'all 0.2s ease',
+                        '&:hover': {
+                          bgcolor: alpha(dt.primary, 0.08),
+                          color: dt.textPrimary,
+                        },
+                        '&.Mui-selected': {
+                          bgcolor: alpha(dt.primary, 0.18),
+                          color: dt.textPrimary,
+                          fontWeight: 700,
+                          '&:hover': {
+                            bgcolor: alpha(dt.primary, 0.25),
+                          },
+                        },
+                      }}
+                    >
+                      {opt.label}
+                    </ToggleButton>
+                  ))}
+                </ToggleButtonGroup>
+              </>
+            )}
+          </Box>
         </Paper>
 
         {/* ── Tab Panel: Clinical Overview (existing content) ──────── */}
         {activeTab === 0 && (
         <>
-        {/* Statistics Cards - Enhanced with visual weight */}
-        <Grid container spacing={2.5} sx={{ mb: 4 }}>
+        {/* Statistics Cards - Unified DashboardStatCard */}
+        <Grid container spacing={1.5} sx={{ mb: 2 }}>
           {stats.map((stat, index) => (
             <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
-              <Card
-                elevation={0}
-                sx={{
-                  backgroundColor: 'background.paper',
-                  border: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
-                  borderRadius: 3,
-                  transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
-                  position: 'relative',
-                  overflow: 'hidden',
-                  '&::before': {
-                    content: '""',
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    height: 3,
-                    background: `linear-gradient(90deg, ${stat.color}, ${alpha(stat.color, 0.6)})`,
-                  },
-                  '&:hover': {
-                    borderColor: alpha(stat.color, 0.3),
-                    transform: 'translateY(-4px)',
-                    boxShadow: `0 12px 24px ${alpha(stat.color, 0.15)}`,
-                  },
-                }}
-              >
-                <CardContent sx={{ p: 2.5 }}>
-                  <Stack spacing={2}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                      <Avatar
-                        sx={{
-                          background: `linear-gradient(135deg, ${alpha(stat.color, 0.15)}, ${alpha(stat.color, 0.08)})`,
-                          color: stat.color,
-                          width: 52,
-                          height: 52,
-                          boxShadow: `0 4px 12px ${alpha(stat.color, 0.2)}`,
-                          '& svg': {
-                            fontSize: 26,
-                          },
-                        }}
-                      >
-                        {stat.icon}
-                      </Avatar>
-                      <Chip
-                        label={stat.trend === 'up' ? '↑' : stat.trend === 'down' ? '↓' : '–'}
-                        size="small"
-                        sx={{
-                          backgroundColor: alpha(stat.color, 0.1),
-                          color: stat.color,
-                          fontWeight: 700,
-                          fontSize: '0.75rem',
-                          height: 24,
-                          borderRadius: 1.5,
-                        }}
-                      />
-                    </Box>
-                    <Box>
-                      <Typography 
-                        variant="h3" 
-                        sx={{ 
-                          fontWeight: 800, 
-                          color: 'text.primary', 
-                          mb: 0.5,
-                          fontSize: '2rem',
-                          letterSpacing: '-0.02em',
-                          lineHeight: 1,
-                        }}
-                      >
-                        {stat.value}
-                      </Typography>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          color: 'text.primary', 
-                          mb: 0.5,
-                          fontWeight: 600,
-                          fontSize: '0.9rem',
-                        }}
-                      >
-                        {stat.label}
-                      </Typography>
-                      <Typography 
-                        variant="caption" 
-                        sx={{ 
-                          color: 'text.secondary',
-                          fontSize: '0.75rem',
-                        }}
-                      >
-                        {stat.change}
-                      </Typography>
-                    </Box>
-                  </Stack>
-                </CardContent>
-              </Card>
+              <DashboardStatCard
+                value={stat.value}
+                label={stat.label}
+                color={stat.color}
+                icon={stat.icon}
+                subtitle={stat.change}
+                trend={stat.trend}
+              />
             </Grid>
           ))}
         </Grid>
@@ -605,11 +651,12 @@ const ClinicalDashboard: React.FC = () => {
             <Paper
               elevation={0}
               sx={{
-                p: 2,
-                mb: 3,
-                borderRadius: 2,
-                bgcolor: alpha(theme.palette.warning.main, 0.08),
+                p: 1.5,
+                mb: 2,
+                borderRadius: `${dt.cardBorderRadius}px`,
+                background: dt.cardDiagonalGradient,
                 border: `1px solid ${alpha(theme.palette.warning.main, 0.2)}`,
+                boxShadow: dt.cardShadow,
               }}
             >
               <Stack direction="row" spacing={2} alignItems="center">
@@ -655,14 +702,19 @@ const ClinicalDashboard: React.FC = () => {
             <Card
               elevation={0}
               sx={{
-                backgroundColor: 'background.paper',
-                border: `1px solid ${theme.palette.divider}`,
-                borderRadius: 2,
+                background: dt.cardDiagonalGradient,
+                border: `1px solid ${dt.cardBorder}`,
+                borderRadius: `${dt.cardBorderRadius}px`,
+                boxShadow: dt.cardShadow,
+                transition: 'all 0.28s cubic-bezier(0.4, 0, 0.2, 1)',
+                '&:hover': {
+                  boxShadow: dt.cardShadowHover,
+                },
               }}
             >
               <CardContent>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>
+                  <Typography variant="h6" sx={{ fontWeight: dt.cardTitleWeight, fontFamily: dt.fontHeading, color: dt.textPrimary }}>
                     Recent Cases
                   </Typography>
                   <Button
@@ -812,13 +864,16 @@ const ClinicalDashboard: React.FC = () => {
               <Card
                 elevation={0}
                 sx={{
-                  backgroundColor: 'background.paper',
-                  border: `1px solid ${theme.palette.divider}`,
-                  borderRadius: 2,
+                  background: dt.cardDiagonalGradient,
+                  border: `1px solid ${dt.cardBorder}`,
+                  borderRadius: `${dt.cardBorderRadius}px`,
+                  boxShadow: dt.cardShadow,
+                  transition: 'all 0.28s cubic-bezier(0.4, 0, 0.2, 1)',
+                  '&:hover': { boxShadow: dt.cardShadowHover },
                 }}
               >
                 <CardContent>
-                  <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary', mb: 2 }}>
+                  <Typography variant="h6" sx={{ fontWeight: dt.cardTitleWeight, fontFamily: dt.fontHeading, color: dt.textPrimary, mb: 2 }}>
                     Quick Actions
                   </Typography>
                   <Stack spacing={1.5}>
@@ -904,14 +959,17 @@ const ClinicalDashboard: React.FC = () => {
               <Card
                 elevation={0}
                 sx={{
-                  backgroundColor: 'background.paper',
-                  border: `1px solid ${theme.palette.divider}`,
-                  borderRadius: 2,
+                  background: dt.cardDiagonalGradient,
+                  border: `1px solid ${dt.cardBorder}`,
+                  borderRadius: `${dt.cardBorderRadius}px`,
+                  boxShadow: dt.cardShadow,
+                  transition: 'all 0.28s cubic-bezier(0.4, 0, 0.2, 1)',
+                  '&:hover': { boxShadow: dt.cardShadowHover },
                 }}
               >
                 <CardContent>
                   <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>
+                    <Typography variant="h6" sx={{ fontWeight: dt.cardTitleWeight, fontFamily: dt.fontHeading, color: dt.textPrimary }}>
                       Performance
                     </Typography>
                     <TrendingUp sx={{ color: professionalColors.clinical.normal.main }} />
@@ -975,14 +1033,17 @@ const ClinicalDashboard: React.FC = () => {
               <Card
                 elevation={0}
                 sx={{
-                  backgroundColor: 'background.paper',
-                  border: `1px solid ${theme.palette.divider}`,
-                  borderRadius: 2,
+                  background: dt.cardDiagonalGradient,
+                  border: `1px solid ${dt.cardBorder}`,
+                  borderRadius: `${dt.cardBorderRadius}px`,
+                  boxShadow: dt.cardShadow,
+                  transition: 'all 0.28s cubic-bezier(0.4, 0, 0.2, 1)',
+                  '&:hover': { boxShadow: dt.cardShadowHover },
                 }}
               >
                 <CardContent>
                   <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>
+                    <Typography variant="h6" sx={{ fontWeight: dt.cardTitleWeight, fontFamily: dt.fontHeading, color: dt.textPrimary }}>
                       System Status
                     </Typography>
                     <Tooltip title="Refresh status">
@@ -1101,86 +1162,14 @@ const ClinicalDashboard: React.FC = () => {
           <Box
             sx={{
               background: dt.pageGradient,
-              borderRadius: 3,
+              borderRadius: `${dt.cardBorderRadius}px`,
               p: { xs: 2, md: 3 },
-              mx: -3,
-              px: { xs: 2, md: 3 },
             }}
           >
-            {/* Analytics Sub-Tabs — Capsule Navigation */}
-            <Box
-              sx={{
-                mb: 3,
-                display: 'flex',
-                justifyContent: 'center',
-              }}
-            >
-              <Box
-                sx={{
-                  display: 'inline-flex',
-                  background: alpha(dt.cardBackground, 0.7),
-                  border: `1px solid ${alpha(dt.primary, 0.15)}`,
-                  borderRadius: '999px',
-                  p: 0.75,
-                  gap: 1,
-                  backdropFilter: 'blur(8px)',
-                }}
-              >
-                {[
-                  { label: 'Overview', testId: 'analytics-sub-tab-overview', idx: 0 },
-                  { label: 'Performance', testId: 'analytics-sub-tab-performance', idx: 1 },
-                  { label: 'Model Intelligence', testId: 'analytics-sub-tab-intelligence', idx: 2 },
-                ].map((tab) => (
-                  <Box
-                    key={tab.idx}
-                    component="button"
-                    data-testid={tab.testId}
-                    onClick={() => setAnalyticsSubTab(tab.idx)}
-                    sx={{
-                      all: 'unset',
-                      cursor: 'pointer',
-                      px: 3,
-                      py: 1,
-                      borderRadius: '999px',
-                      fontSize: '0.9rem',
-                      fontWeight: analyticsSubTab === tab.idx ? 700 : 500,
-                      fontFamily: dt.fontBody,
-                      letterSpacing: '-0.01em',
-                      color:
-                        analyticsSubTab === tab.idx
-                          ? '#FFFFFF'
-                          : dt.textSecondary,
-                      background:
-                        analyticsSubTab === tab.idx
-                          ? `linear-gradient(135deg, ${dt.primary}, ${alpha(dt.primary, 0.7)})`
-                          : 'transparent',
-                      boxShadow:
-                        analyticsSubTab === tab.idx
-                          ? `0 2px 16px ${alpha(dt.primary, 0.35)}`
-                          : 'none',
-                      transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
-                      '&:hover': {
-                        background:
-                          analyticsSubTab === tab.idx
-                            ? `linear-gradient(135deg, ${dt.primary}, ${alpha(dt.primary, 0.7)})`
-                            : alpha(dt.primary, 0.1),
-                        color:
-                          analyticsSubTab === tab.idx
-                            ? '#FFFFFF'
-                            : dt.textPrimary,
-                      },
-                    }}
-                  >
-                    {tab.label}
-                  </Box>
-                ))}
-              </Box>
-            </Box>
-
-            {/* Analytics Sub-Tab Panels */}
-            {analyticsSubTab === 0 && <OverviewTab />}
-            {analyticsSubTab === 1 && <PerformanceTab />}
-            {analyticsSubTab === 2 && <ModelIntelligenceTab />}
+            {/* Analytics Sub-Tab Panels — capsule nav & period now in sub-banner */}
+            {analyticsSubTab === 0 && <OverviewTab period={analyticsPeriod} />}
+            {analyticsSubTab === 1 && <PerformanceTab period={analyticsPeriod} />}
+            {analyticsSubTab === 2 && <ModelIntelligenceTab period={analyticsPeriod} />}
           </Box>
         )}
 

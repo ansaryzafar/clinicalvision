@@ -1,17 +1,10 @@
 /**
  * ReviewTriggersPie — Horizontal bar chart showing why cases get flagged
- *
- * Redesigned from pie/donut to horizontal bars for much clearer
- * categorical comparison. Each bar shows:
- *  - Trigger name (left-aligned label)
- *  - Proportional bar with percentage
- *  - Count on the right
- *
- * Helps prioritise model improvement efforts.
+ * Enhanced with metallic gradient fills on each bar.
  */
 
-import React from 'react';
-import { Box, Typography, Stack } from '@mui/material';
+import React, { useMemo } from 'react';
+import { Box, Typography } from '@mui/material';
 import {
   BarChart,
   Bar,
@@ -21,16 +14,12 @@ import {
   ResponsiveContainer,
   Cell,
 } from 'recharts';
-import { DASHBOARD_THEME, CHART_TOOLTIP_STYLE } from './dashboardTheme';
+import { DASHBOARD_THEME, CHART_TOOLTIP_STYLE, metallicStops } from './dashboardTheme';
 import type { ReviewTrigger } from '../../../types/metrics.types';
-
-// ────────────────────────────────────────────────────────────────────────────
 
 export interface ReviewTriggersPieProps {
   data: ReviewTrigger[];
 }
-
-// ────────────────────────────────────────────────────────────────────────────
 
 /** Assign consistent colours to each trigger type. */
 const TRIGGER_COLORS: Record<string, string> = {
@@ -54,9 +43,26 @@ function triggerColor(trigger: string, index: number): string {
   return TRIGGER_COLORS[trigger] ?? FALLBACK_COLORS[index % FALLBACK_COLORS.length];
 }
 
-// ────────────────────────────────────────────────────────────────────────────
-
 const ReviewTriggersPie: React.FC<ReviewTriggersPieProps> = ({ data }) => {
+  const sortedData = (data ?? []).length > 0
+    ? [...data].sort((a, b) => b.count - a.count)
+    : [];
+  const total = sortedData.reduce((sum, d) => sum + d.count, 0);
+
+  const chartData = sortedData.map((d, idx) => ({
+    ...d,
+    displayName: d.trigger.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
+    pct: total > 0 ? Math.round((d.count / total) * 100) : 0,
+    color: triggerColor(d.trigger, idx),
+    gradId: `trig-grad-${idx}`,
+  }));
+
+  // Pre-compute metallic gradient stops
+  const gradients = useMemo(() =>
+    chartData.map((d) => ({ id: d.gradId, stops: metallicStops(d.color) })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  [sortedData.length]);
+
   if (!data || data.length === 0) {
     return (
       <Box
@@ -75,18 +81,6 @@ const ReviewTriggersPie: React.FC<ReviewTriggersPieProps> = ({ data }) => {
     );
   }
 
-  // Sort data by count descending for visual hierarchy
-  const sortedData = [...data].sort((a, b) => b.count - a.count);
-  const total = sortedData.reduce((sum, d) => sum + d.count, 0);
-
-  // Format trigger names for display (replace underscores, capitalize)
-  const chartData = sortedData.map((d, idx) => ({
-    ...d,
-    displayName: d.trigger.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
-    pct: total > 0 ? Math.round((d.count / total) * 100) : 0,
-    color: triggerColor(d.trigger, idx),
-  }));
-
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <ResponsiveContainer width="100%" height={200}>
@@ -96,6 +90,15 @@ const ReviewTriggersPie: React.FC<ReviewTriggersPieProps> = ({ data }) => {
           margin={{ top: 4, right: 40, left: 8, bottom: 4 }}
           barCategoryGap="20%"
         >
+          <defs>
+            {gradients.map(({ id, stops: [light, base, dark] }) => (
+              <linearGradient key={id} id={id} x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor={dark} stopOpacity={1} />
+                <stop offset="50%" stopColor={base} stopOpacity={1} />
+                <stop offset="100%" stopColor={light} stopOpacity={1} />
+              </linearGradient>
+            ))}
+          </defs>
           <XAxis
             type="number"
             hide
@@ -137,7 +140,7 @@ const ReviewTriggersPie: React.FC<ReviewTriggersPieProps> = ({ data }) => {
             }}
           >
             {chartData.map((entry, idx) => (
-              <Cell key={`bar-${idx}`} fill={entry.color} fillOpacity={0.85} />
+              <Cell key={`bar-${idx}`} fill={`url(#${entry.gradId})`} />
             ))}
           </Bar>
         </BarChart>

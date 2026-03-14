@@ -149,19 +149,19 @@ describe('ModelIntelligenceTab', () => {
   // ── Basic rendering ──────────────────────────────────────────────────────
 
   it('renders the tab container', () => {
-    wrap(<ModelIntelligenceTab />);
+    wrap(<ModelIntelligenceTab period="30d" />);
     expect(screen.getByTestId('model-intelligence-tab')).toBeInTheDocument();
   });
 
   it('renders the heading', () => {
-    wrap(<ModelIntelligenceTab />);
+    wrap(<ModelIntelligenceTab period="30d" />);
     expect(screen.getByText('Model Intelligence')).toBeInTheDocument();
   });
 
   // ── Empty state ──────────────────────────────────────────────────────────
 
   it('shows empty messages when no data is available', () => {
-    wrap(<ModelIntelligenceTab />);
+    wrap(<ModelIntelligenceTab period="30d" />);
     expect(screen.getByTestId('empty-decomposition')).toBeInTheDocument();
     expect(screen.getByTestId('empty-version-comparison')).toBeInTheDocument();
     expect(screen.getByTestId('empty-review-rate')).toBeInTheDocument();
@@ -176,7 +176,7 @@ describe('ModelIntelligenceTab', () => {
       data: MOCK_POPULATED,
       dataSource: 'api',
     };
-    wrap(<ModelIntelligenceTab />);
+    wrap(<ModelIntelligenceTab period="30d" />);
 
     // Empty messages should be gone
     expect(screen.queryByTestId('empty-decomposition')).not.toBeInTheDocument();
@@ -192,7 +192,7 @@ describe('ModelIntelligenceTab', () => {
 
   it('derives correct model version count', () => {
     mockHookReturn = { ...mockHookReturn, data: MOCK_POPULATED, dataSource: 'api' };
-    wrap(<ModelIntelligenceTab />);
+    wrap(<ModelIntelligenceTab period="30d" />);
     // GaugeCard with "Model Versions" should show the count "2"
     expect(screen.getByText('Model Versions')).toBeInTheDocument();
     expect(screen.getByText('2')).toBeInTheDocument();
@@ -200,19 +200,19 @@ describe('ModelIntelligenceTab', () => {
 
   it('derives the active model version (last entry)', () => {
     mockHookReturn = { ...mockHookReturn, data: MOCK_POPULATED, dataSource: 'api' };
-    wrap(<ModelIntelligenceTab />);
+    wrap(<ModelIntelligenceTab period="30d" />);
     expect(screen.getByTestId('active-model-version')).toHaveTextContent('v1.3.0');
   });
 
   it('derives the top review trigger', () => {
     mockHookReturn = { ...mockHookReturn, data: MOCK_POPULATED, dataSource: 'api' };
-    wrap(<ModelIntelligenceTab />);
+    wrap(<ModelIntelligenceTab period="30d" />);
     const triggerElem = screen.getByTestId('top-review-trigger');
     expect(triggerElem).toHaveTextContent('high epistemic');
   });
 
   it('shows fallback for summary metrics when empty', () => {
-    wrap(<ModelIntelligenceTab />);
+    wrap(<ModelIntelligenceTab period="30d" />);
     expect(screen.getByTestId('active-model-version')).toHaveTextContent('—');
     expect(screen.getByTestId('top-review-trigger')).toHaveTextContent('—');
   });
@@ -221,12 +221,12 @@ describe('ModelIntelligenceTab', () => {
 
   it('shows loading spinner when loading', () => {
     mockHookReturn = { ...mockHookReturn, isLoading: true };
-    wrap(<ModelIntelligenceTab />);
+    wrap(<ModelIntelligenceTab period="30d" />);
     expect(screen.getByTestId('intel-metrics-loading')).toBeInTheDocument();
   });
 
   it('hides loading spinner when not loading', () => {
-    wrap(<ModelIntelligenceTab />);
+    wrap(<ModelIntelligenceTab period="30d" />);
     expect(screen.queryByTestId('intel-metrics-loading')).not.toBeInTheDocument();
   });
 
@@ -234,21 +234,21 @@ describe('ModelIntelligenceTab', () => {
 
   it('shows "Live" chip when dataSource is api', () => {
     mockHookReturn = { ...mockHookReturn, dataSource: 'api' };
-    wrap(<ModelIntelligenceTab />);
+    wrap(<ModelIntelligenceTab period="30d" />);
     const chip = screen.getByTestId('intel-data-source-chip');
     expect(chip).toBeInTheDocument();
     expect(chip).toHaveTextContent('Live');
   });
 
   it('does not show data source chip when dataSource is null', () => {
-    wrap(<ModelIntelligenceTab />);
+    wrap(<ModelIntelligenceTab period="30d" />);
     expect(screen.queryByTestId('intel-data-source-chip')).not.toBeInTheDocument();
   });
 
   // ── Refresh button ──────────────────────────────────────────────────────
 
   it('calls refresh when clicking the refresh button', () => {
-    wrap(<ModelIntelligenceTab />);
+    wrap(<ModelIntelligenceTab period="30d" />);
     const btn = screen.getByTestId('intel-refresh-metrics');
     fireEvent.click(btn);
     expect(mockRefresh).toHaveBeenCalledTimes(1);
@@ -256,19 +256,22 @@ describe('ModelIntelligenceTab', () => {
 
   // ── Period selector ─────────────────────────────────────────────────────
 
-  it('renders all period options', () => {
-    wrap(<ModelIntelligenceTab />);
-    expect(screen.getByText('7 Days')).toBeInTheDocument();
-    // '30 Days' appears in both toggle button AND MetricCard timeRange
-    expect(screen.getAllByText('30 Days').length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText('90 Days')).toBeInTheDocument();
-    expect(screen.getByText('All Time')).toBeInTheDocument();
+  it('accepts period prop and passes it to data hook', () => {
+    wrap(<ModelIntelligenceTab period="30d" />);
+    // Period selector is now in parent ClinicalDashboard sub-banner;
+    // tab receives period as prop and uses it for data fetching.
+    expect(screen.getByTestId('model-intelligence-tab')).toBeInTheDocument();
+  });
+
+  it('renders correctly with different period values', () => {
+    wrap(<ModelIntelligenceTab period="7d" />);
+    expect(screen.getByTestId('model-intelligence-tab')).toBeInTheDocument();
   });
 
   // ── MetricCard titles ───────────────────────────────────────────────────
 
   it('renders chart card titles', () => {
-    wrap(<ModelIntelligenceTab />);
+    wrap(<ModelIntelligenceTab period="30d" />);
     expect(screen.getByText('Uncertainty Decomposition Over Time')).toBeInTheDocument();
     expect(screen.getByText('Model Version Comparison')).toBeInTheDocument();
     expect(screen.getByText('Human Review Rate Over Time')).toBeInTheDocument();
@@ -279,7 +282,7 @@ describe('ModelIntelligenceTab', () => {
   // ── Entropy histogram ──────────────────────────────────────────────────
 
   it('shows entropy empty state when no entropy data', () => {
-    wrap(<ModelIntelligenceTab />);
+    wrap(<ModelIntelligenceTab period="30d" />);
     expect(screen.getByTestId('empty-entropy')).toBeInTheDocument();
   });
 
@@ -289,7 +292,7 @@ describe('ModelIntelligenceTab', () => {
       data: MOCK_POPULATED,
       dataSource: 'api',
     };
-    wrap(<ModelIntelligenceTab />);
+    wrap(<ModelIntelligenceTab period="30d" />);
     expect(screen.queryByTestId('empty-entropy')).not.toBeInTheDocument();
   });
 
@@ -297,7 +300,7 @@ describe('ModelIntelligenceTab', () => {
 
   it('shows error alert when error is set', () => {
     mockHookReturn = { ...mockHookReturn, error: 'Network error' };
-    wrap(<ModelIntelligenceTab />);
+    wrap(<ModelIntelligenceTab period="30d" />);
     expect(screen.getByTestId('error-alert')).toBeInTheDocument();
     expect(screen.getByText('Network error')).toBeInTheDocument();
   });

@@ -81,7 +81,7 @@ async def predict_image(
     request: Request,
     response: Response,
     file: UploadFile = File(..., description="Mammogram image file (JPEG, PNG, DICOM)"),
-    save_result: bool = Query(False, description="Save prediction to database"),
+    save_result: bool = Query(True, description="Save prediction to database (default: always save)"),
     model_version: Optional[str] = Query(None, description="Specific model version to use"),
     db: Session = Depends(get_db),
     current_user: User = Depends(require_radiologist)
@@ -93,7 +93,7 @@ async def predict_image(
     1. Validate and preprocess uploaded image
     2. Run AI model inference
     3. Generate uncertainty metrics
-    4. Optionally save result to database
+    4. Save result to database (default behavior)
     
     **Authentication:** Requires Radiologist, Technician, or Admin role
     
@@ -212,7 +212,7 @@ async def predict_batch(
     request: Request,
     response: Response,
     files: List[UploadFile] = File(..., description="Mammogram image files (up to 8)"),
-    save_result: bool = Query(False, description="Save predictions to database"),
+    save_result: bool = Query(True, description="Save predictions to database (default: always save)"),
     model_version: Optional[str] = Query(None, description="Specific model version to use"),
     db: Session = Depends(get_db),
     current_user: User = Depends(require_radiologist)
@@ -357,7 +357,7 @@ async def predict_with_tiles(
     overlap: float = Query(0.25, ge=0.0, le=0.75, description="Tile overlap fraction"),
     attention_threshold: float = Query(0.3, ge=0.0, le=1.0, description="Min attention to analyze tile"),
     max_tiles: int = Query(50, ge=1, le=200, description="Maximum tiles to analyze"),
-    save_result: bool = Query(False, description="Save prediction to database"),
+    save_result: bool = Query(True, description="Save prediction to database (default: always save)"),
     save_result_body: Optional[str] = None,
     db: Session = Depends(get_db),
     current_user: User = Depends(require_radiologist)

@@ -206,9 +206,13 @@ describe('Navigation State Preservation', () => {
 describe('Navigation Menu Items', () => {
   const navigationItems = [
     { title: 'Dashboard', path: '/dashboard' },
-    { title: 'Diagnostic Workstation', path: '/analyze' },
-    { title: 'Case Archive', path: '/analysis-archive' },
+    { title: 'Fairness Monitor', path: '/fairness' },
+    { title: 'New Case', path: '/workflow' },
+    { title: 'Active Cases', path: '/cases' },
+    { title: 'Case History', path: '/history' },
+    { title: 'AI Results Archive', path: '/analysis-archive' },
     { title: 'Settings', path: '/settings' },
+    { title: 'About', path: '/about' },
   ];
 
   navigationItems.forEach((item) => {
@@ -218,8 +222,8 @@ describe('Navigation Menu Items', () => {
     });
   });
 
-  it('should have exactly 4 main navigation items', () => {
-    expect(navigationItems.length).toBe(4);
+  it('should have exactly 8 main navigation items', () => {
+    expect(navigationItems.length).toBe(8);
   });
 
   it('should not have duplicate paths', () => {

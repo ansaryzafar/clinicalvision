@@ -7,6 +7,9 @@
  *  - Model Accuracy (94.2%)
  *  - Cases Today (42)
  *  - Average Latency (320 ms)
+ *
+ * Visual: light blue diagonal gradient card, metallic arc fill,
+ * rounded border, subtle shadow — matches the unified design system.
  */
 
 import React from 'react';
@@ -38,6 +41,9 @@ export interface GaugeCardProps {
 
 // ────────────────────────────────────────────────────────────────────────────
 
+/** Unique SVG gradient id per card instance */
+let gaugeIdCounter = 0;
+
 const GaugeCard: React.FC<GaugeCardProps> = ({
   label,
   value,
@@ -47,7 +53,15 @@ const GaugeCard: React.FC<GaugeCardProps> = ({
   color,
 }) => {
   const dt = useDashboardTheme();
-  const data = [{ value, fill: color }];
+  const [gradId] = React.useState(() => `gauge-metallic-${++gaugeIdCounter}`);
+
+  // Decide which metallic stops to use based on whether the colour is a danger colour
+  const isDanger = color === dt.danger;
+  const [mLight, mMid, mDark] = isDanger
+    ? dt.metallicGradientDanger
+    : dt.metallicGradient;
+
+  const data = [{ value, fill: `url(#${gradId})` }];
 
   // Background track colour
   const trackColor = 'rgba(255, 255, 255, 0.06)';
@@ -80,14 +94,17 @@ const GaugeCard: React.FC<GaugeCardProps> = ({
       elevation={0}
       sx={{
         p: 2,
-        background: dt.cardGradient,
+        background: dt.cardDiagonalGradient,
         border: `1px solid ${dt.cardBorder}`,
-        borderRadius: 2,
+        borderRadius: `${dt.cardBorderRadius}px`,
+        boxShadow: dt.cardShadow,
         textAlign: 'center',
-        transition: 'all 0.2s ease',
+        transition: 'all 0.28s cubic-bezier(0.4, 0, 0.2, 1)',
         '&:hover': {
-          background: dt.cardGradientHover,
+          background: dt.cardDiagonalGradientHover,
           borderColor: dt.cardBorder,
+          boxShadow: dt.cardShadowHover,
+          transform: 'translateY(-2px)',
         },
       }}
     >
@@ -96,7 +113,7 @@ const GaugeCard: React.FC<GaugeCardProps> = ({
         sx={{
           color: dt.textMuted,
           fontFamily: dt.fontBody,
-          fontSize: '0.7rem',
+          fontSize: dt.cardCaptionSize,
           letterSpacing: '0.08em',
         }}
       >
@@ -114,6 +131,14 @@ const GaugeCard: React.FC<GaugeCardProps> = ({
             endAngle={-45}
             barSize={10}
           >
+            {/* Metallic gradient definition */}
+            <defs>
+              <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor={mLight} />
+                <stop offset="50%" stopColor={mMid} />
+                <stop offset="100%" stopColor={mDark} />
+              </linearGradient>
+            </defs>
             <PolarAngleAxis
               type="number"
               domain={[0, maxValue]}
@@ -141,7 +166,7 @@ const GaugeCard: React.FC<GaugeCardProps> = ({
             variant="h5"
             sx={{
               fontFamily: dt.fontMono,
-              fontWeight: 700,
+              fontWeight: dt.cardValueWeight,
               color: dt.textPrimary,
               lineHeight: 1,
             }}

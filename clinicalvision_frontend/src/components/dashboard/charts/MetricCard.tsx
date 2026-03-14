@@ -74,16 +74,19 @@ const MetricCard: React.FC<MetricCardProps> = ({
       elevation={0}
       sx={{
         p: 2,
-        background: dt.cardGradient,
+        background: dt.cardDiagonalGradient,
         border: `1px solid ${dt.cardBorder}`,
-        borderRadius: 2,
+        borderRadius: `${dt.cardBorderRadius}px`,
+        boxShadow: dt.cardShadow,
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        transition: 'all 0.2s ease',
+        transition: 'all 0.28s cubic-bezier(0.4, 0, 0.2, 1)',
         '&:hover': {
-          background: dt.cardGradientHover,
+          background: dt.cardDiagonalGradientHover,
           borderColor: dt.cardBorder,
+          boxShadow: dt.cardShadowHover,
+          transform: 'translateY(-2px)',
         },
       }}
     >
@@ -100,8 +103,8 @@ const MetricCard: React.FC<MetricCardProps> = ({
             sx={{
               fontFamily: dt.fontHeading,
               color: dt.textPrimary,
-              fontWeight: 600,
-              fontSize: '0.85rem',
+              fontWeight: dt.cardTitleWeight,
+              fontSize: dt.cardTitleSize,
               letterSpacing: '0.02em',
             }}
           >
@@ -125,8 +128,8 @@ const MetricCard: React.FC<MetricCardProps> = ({
               sx={{
                 fontFamily: dt.fontMono,
                 color: dt.textPrimary,
-                fontWeight: 700,
-                fontSize: '1.05rem',
+                fontWeight: dt.cardValueWeight,
+                fontSize: dt.cardValueSize,
               }}
             >
               {value}

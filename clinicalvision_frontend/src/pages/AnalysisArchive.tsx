@@ -37,6 +37,7 @@ import {
   SelectChangeEvent,
   Container,
   LinearProgress,
+  Grid,
 } from '@mui/material';
 import {
   Search,
@@ -71,6 +72,7 @@ import {
 import { professionalColors } from '../theme/professionalColors';
 import { mapConfidenceToBiRads, formatBiRadsDisplay } from '../utils/clinicalMapping';
 import { useTheme } from '@mui/material/styles';
+import DashboardStatCard from '../components/dashboard/cards/DashboardStatCard';
 
 export const AnalysisArchive: React.FC = () => {
   const theme = useTheme();
@@ -206,14 +208,14 @@ export const AnalysisArchive: React.FC = () => {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 3 }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 1.5 }}>
       <Container maxWidth="xl">
         {/* Page Header */}
         <Paper
           elevation={0}
           sx={{
-            p: 3,
-            mb: 3,
+            p: 2,
+            mb: 1,
             borderRadius: 2,
             background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${alpha(theme.palette.primary.light, 0.85)} 100%)`,
             color: 'white',
@@ -280,312 +282,61 @@ export const AnalysisArchive: React.FC = () => {
       </Paper>
 
       {/* Enhanced Stats Cards */}
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2.5} sx={{ mb: 3 }}>
-        {/* Total Records Card - Click to show all */}
-        <Tooltip
-          title={predictionFilter !== 'all' ? 'Click to show all records' : 'Showing all records'}
-          placement="top"
-          arrow
-        >
-          <Card
-            elevation={0}
-            onClick={() => {
-              setPredictionFilter('all');
-              setSearchQuery('');
-            }}
-            sx={{
-              flex: 1,
-              bgcolor: 'background.paper',
-              border: `1px solid ${alpha(theme.palette.primary.main, predictionFilter === 'all' ? 0.3 : 0.12)}`,
-              borderRadius: 2.5,
-              transition: 'all 0.2s ease-in-out',
-              cursor: 'pointer',
-              '&:hover': {
-                borderColor: alpha(theme.palette.primary.main, 0.4),
-                boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.12)}`,
-                transform: 'translateY(-2px)',
-              },
-            }}
-          >
-            <CardContent sx={{ py: 2.5, px: 3 }}>
-              <Stack direction="row" alignItems="center" spacing={2}>
-                <Box
-                  sx={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: 2,
-                    bgcolor: alpha(theme.palette.primary.main, 0.1),
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Assessment sx={{ fontSize: 24, color: theme.palette.primary.main }} />
-                </Box>
-                <Box sx={{ flex: 1 }}>
-                  <Typography 
-                    variant="h4" 
-                    sx={{ 
-                      fontWeight: 700, 
-                      color: 'text.primary',
-                      lineHeight: 1.2,
-                      letterSpacing: '-0.02em',
-                    }}
-                  >
-                    {stats.totalAnalyses}
-                  </Typography>
-                  <Typography 
-                    variant="body2" 
-                    sx={{ 
-                      color: 'text.secondary',
-                      fontWeight: 500,
-                      mt: 0.25,
-                    }}
-                  >
-                    Total Records
-                  </Typography>
-                </Box>
-                {predictionFilter !== 'all' && (
-                  <FilterList sx={{ fontSize: 18, color: 'text.disabled', ml: 'auto' }} />
-                )}
-            </Stack>
-          </CardContent>
-        </Card>
-        </Tooltip>
+      <Grid container spacing={1.5} sx={{ mb: 2 }}>
+        {/* Total Records Card */}
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <DashboardStatCard
+            value={stats.totalAnalyses}
+            label="Total Records"
+            color={theme.palette.primary.main}
+            icon={<Assessment />}
+            subtitle={predictionFilter !== 'all' ? 'Click to show all' : 'Showing all records'}
+            onClick={() => { setPredictionFilter('all'); setSearchQuery(''); }}
+          />
+        </Grid>
 
-        {/* Flagged Cases Card - Clinically Meaningful */}
-        <Tooltip
-          title={flaggedCases > 0 ? 'Click to filter malignant cases' : 'No flagged cases'}
-          placement="top"
-          arrow
-        >
-          <Card
-            elevation={0}
-            onClick={() => {
-              if (flaggedCases > 0) {
-                setPredictionFilter('malignant');
-              }
-            }}
-            sx={{
-              flex: 1,
-              bgcolor: 'background.paper',
-              border: `1px solid ${alpha(flaggedCases > 0 ? professionalColors.clinical.abnormal.main : theme.palette.divider, 0.2)}`,
-              borderRadius: 2.5,
-              transition: 'all 0.2s ease-in-out',
-              cursor: flaggedCases > 0 ? 'pointer' : 'default',
-              '&:hover': {
-                borderColor: alpha(flaggedCases > 0 ? professionalColors.clinical.abnormal.main : theme.palette.divider, 0.4),
-                boxShadow: flaggedCases > 0 ? `0 4px 20px ${alpha(professionalColors.clinical.abnormal.main, 0.15)}` : 'none',
-                transform: flaggedCases > 0 ? 'translateY(-2px)' : 'none',
-              },
-            }}
-          >
-            <CardContent sx={{ py: 2.5, px: 3 }}>
-              <Stack direction="row" alignItems="center" spacing={2}>
-                <Box
-                  sx={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: 2,
-                    bgcolor: alpha(flaggedCases > 0 ? professionalColors.clinical.abnormal.main : theme.palette.text.disabled, 0.1),
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <PriorityHigh sx={{ fontSize: 24, color: flaggedCases > 0 ? professionalColors.clinical.abnormal.main : theme.palette.text.disabled }} />
-                </Box>
-                <Box sx={{ flex: 1 }}>
-                  <Typography 
-                    variant="h4" 
-                    sx={{ 
-                      fontWeight: 700, 
-                      color: flaggedCases > 0 ? professionalColors.clinical.abnormal.main : 'text.primary',
-                      lineHeight: 1.2,
-                      letterSpacing: '-0.02em',
-                    }}
-                  >
-                    {flaggedCases}
-                  </Typography>
-                  <Typography 
-                    variant="body2" 
-                    sx={{ 
-                      color: 'text.secondary',
-                      fontWeight: 500,
-                      mt: 0.25,
-                    }}
-                  >
-                    Flagged Cases
-                  </Typography>
-                </Box>
-                {flaggedCases > 0 && (
-                  <FilterList sx={{ fontSize: 18, color: 'text.disabled', ml: 'auto' }} />
-                )}
-              </Stack>
-            </CardContent>
-          </Card>
-        </Tooltip>
+        {/* Flagged Cases Card */}
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <DashboardStatCard
+            value={flaggedCases}
+            label="Flagged Cases"
+            color={flaggedCases > 0 ? professionalColors.clinical.abnormal.main : theme.palette.text.disabled}
+            icon={<PriorityHigh />}
+            subtitle={predictionFilter === 'malignant' ? 'Filtered' : undefined}
+            trend={flaggedCases > 0 ? 'down' : 'neutral'}
+            onClick={() => { if (flaggedCases > 0) setPredictionFilter('malignant'); }}
+          />
+        </Grid>
 
-        {/* Avg. Confidence Card - Model Reliability Metric */}
-        <Tooltip
-          title={analyses.length > 0 ? `Based on ${analyses.length} analyses` : 'No analyses yet'}
-          placement="top"
-          arrow
-        >
-          <Card
-            elevation={0}
-            sx={{
-              flex: 1,
-              bgcolor: 'background.paper',
-              border: `1px solid ${alpha(
-                avgConfidence >= 80 ? professionalColors.clinical.normal.main :
-                avgConfidence >= 60 ? professionalColors.clinical.uncertain.main :
-                theme.palette.text.disabled,
-                0.12
-              )}`,
-              borderRadius: 2.5,
-              transition: 'all 0.2s ease-in-out',
-              cursor: 'default',
-              '&:hover': {
-                borderColor: alpha(
-                  avgConfidence >= 80 ? professionalColors.clinical.normal.main :
-                  avgConfidence >= 60 ? professionalColors.clinical.uncertain.main :
-                  theme.palette.text.disabled,
-                  0.3
-                ),
-                boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.08)}`,
-                transform: 'translateY(-2px)',
-              },
-            }}
-          >
-            <CardContent sx={{ py: 2.5, px: 3 }}>
-              <Stack direction="row" alignItems="center" spacing={2}>
-                <Box
-                  sx={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: 2,
-                    bgcolor: alpha(
-                      avgConfidence >= 80 ? professionalColors.clinical.normal.main :
-                      avgConfidence >= 60 ? professionalColors.clinical.uncertain.main :
-                      theme.palette.text.disabled,
-                      0.1
-                    ),
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <TrendingUp sx={{ 
-                    fontSize: 24, 
-                    color: avgConfidence >= 80 ? professionalColors.clinical.normal.main :
-                           avgConfidence >= 60 ? professionalColors.clinical.uncertain.main :
-                           theme.palette.text.disabled
-                  }} />
-                </Box>
-                <Box sx={{ flex: 1 }}>
-                  <Typography 
-                    variant="h4" 
-                    sx={{ 
-                      fontWeight: 700, 
-                      color: avgConfidence >= 80 ? professionalColors.clinical.normal.main :
-                             avgConfidence >= 60 ? professionalColors.clinical.uncertain.main :
-                             'text.primary',
-                      lineHeight: 1.2,
-                      letterSpacing: '-0.02em',
-                    }}
-                  >
-                    {analyses.length > 0 ? `${avgConfidence}%` : '—'}
-                  </Typography>
-                  <Typography 
-                    variant="body2" 
-                    sx={{ 
-                      color: 'text.secondary',
-                      fontWeight: 500,
-                      mt: 0.25,
-                    }}
-                  >
-                    Avg. Confidence
-                  </Typography>
-                </Box>
-              </Stack>
-            </CardContent>
-          </Card>
-        </Tooltip>
+        {/* Avg. Confidence Card */}
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <DashboardStatCard
+            value={analyses.length > 0 ? `${avgConfidence}%` : '—'}
+            label="Avg. Confidence"
+            color={
+              avgConfidence >= 80 ? professionalColors.clinical.normal.main :
+              avgConfidence >= 60 ? professionalColors.clinical.uncertain.main :
+              theme.palette.text.disabled
+            }
+            icon={<TrendingUp />}
+            subtitle={analyses.length > 0 ? `Based on ${analyses.length} analyses` : 'No analyses yet'}
+            trend={avgConfidence >= 80 ? 'up' : avgConfidence >= 60 ? 'neutral' : 'down'}
+          />
+        </Grid>
 
-        {/* Benign Cases Card - Click to filter */}
-        <Tooltip
-          title={benignCases > 0 ? 'Click to filter benign cases' : 'No benign cases'}
-          placement="top"
-          arrow
-        >
-          <Card
-            elevation={0}
-            onClick={() => {
-              if (benignCases > 0) {
-                setPredictionFilter('benign');
-              }
-            }}
-            sx={{
-              flex: 1,
-              bgcolor: 'background.paper',
-              border: `1px solid ${alpha(benignCases > 0 ? professionalColors.clinical.normal.main : theme.palette.divider, predictionFilter === 'benign' ? 0.4 : 0.2)}`,
-              borderRadius: 2.5,
-              transition: 'all 0.2s ease-in-out',
-              cursor: benignCases > 0 ? 'pointer' : 'default',
-              '&:hover': benignCases > 0 ? {
-                borderColor: alpha(professionalColors.clinical.normal.main, 0.5),
-                boxShadow: `0 4px 20px ${alpha(professionalColors.clinical.normal.main, 0.15)}`,
-                transform: 'translateY(-2px)',
-              } : {},
-            }}
-          >
-            <CardContent sx={{ py: 2.5, px: 3 }}>
-              <Stack direction="row" alignItems="center" spacing={2}>
-                <Box
-                  sx={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: 2,
-                    bgcolor: alpha(benignCases > 0 ? professionalColors.clinical.normal.main : theme.palette.text.disabled, 0.1),
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <CheckCircle sx={{ fontSize: 24, color: benignCases > 0 ? professionalColors.clinical.normal.main : theme.palette.text.disabled }} />
-                </Box>
-                <Box sx={{ flex: 1 }}>
-                  <Typography 
-                    variant="h4" 
-                    sx={{ 
-                      fontWeight: 700, 
-                      color: benignCases > 0 ? professionalColors.clinical.normal.main : 'text.primary',
-                      lineHeight: 1.2,
-                      letterSpacing: '-0.02em',
-                    }}
-                  >
-                    {benignCases}
-                  </Typography>
-                  <Typography 
-                    variant="body2" 
-                    sx={{ 
-                      color: 'text.secondary',
-                      fontWeight: 500,
-                      mt: 0.25,
-                    }}
-                  >
-                    Benign Cases
-                  </Typography>
-                </Box>
-                {predictionFilter === 'benign' && (
-                  <FilterList sx={{ fontSize: 18, color: professionalColors.clinical.normal.main, ml: 'auto' }} />
-                )}
-              </Stack>
-            </CardContent>
-          </Card>
-        </Tooltip>
-      </Stack>
+        {/* Benign Cases Card */}
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <DashboardStatCard
+            value={benignCases}
+            label="Benign Cases"
+            color={benignCases > 0 ? professionalColors.clinical.normal.main : theme.palette.text.disabled}
+            icon={<CheckCircle />}
+            subtitle={predictionFilter === 'benign' ? 'Filtered' : undefined}
+            trend={benignCases > 0 ? 'up' : 'neutral'}
+            onClick={() => { if (benignCases > 0) setPredictionFilter('benign'); }}
+          />
+        </Grid>
+      </Grid>
 
           {/* Search & Filters */}
           <Paper

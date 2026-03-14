@@ -26,6 +26,24 @@ export interface DashboardThemeTokens {
   cardGradient: string;
   cardGradientHover: string;
 
+  // ── Unified card design system ────────────────────────────────
+  /** Light blue diagonal gradient for all analytics cards */
+  cardDiagonalGradient: string;
+  /** Hover variant of the diagonal gradient */
+  cardDiagonalGradientHover: string;
+  /** Uniform card border radius (px) */
+  cardBorderRadius: number;
+  /** Subtle card shadow */
+  cardShadow: string;
+  /** Hover card shadow (lifted) */
+  cardShadowHover: string;
+  /** Logo-branded gradient for hover info cards */
+  logoGradient: string;
+  /** Metallic arc gradient stops for gauge/donut charts */
+  metallicGradient: readonly [string, string, string];
+  /** Secondary metallic (danger) */
+  metallicGradientDanger: readonly [string, string, string];
+
   // Typography
   fontHeading: string;
   fontBody: string;
@@ -33,6 +51,13 @@ export interface DashboardThemeTokens {
   textPrimary: string;
   textSecondary: string;
   textMuted: string;
+
+  // ── Uniform card typography ───────────────────────────────────
+  cardTitleSize: string;
+  cardTitleWeight: number;
+  cardValueSize: string;
+  cardValueWeight: number;
+  cardCaptionSize: string;
 
   // Chart data-series colours
   primary: string;
@@ -74,6 +99,18 @@ export const DASHBOARD_THEME_DARK: DashboardThemeTokens = {
   cardGradient: 'linear-gradient(135deg, #1A1D3A 0%, #161832 50%, #141628 100%)',
   cardGradientHover: 'linear-gradient(135deg, #1E2145 0%, #1A1D3A 50%, #171A36 100%)',
 
+  // ── Unified card design system ────────────────────────────────
+  cardDiagonalGradient:
+    'linear-gradient(135deg, rgba(0, 201, 234, 0.08) 0%, rgba(26, 29, 58, 0.95) 40%, rgba(96, 165, 250, 0.06) 100%)',
+  cardDiagonalGradientHover:
+    'linear-gradient(135deg, rgba(0, 201, 234, 0.14) 0%, rgba(30, 33, 69, 0.95) 40%, rgba(96, 165, 250, 0.10) 100%)',
+  cardBorderRadius: 16,
+  cardShadow: '0 2px 12px rgba(0, 0, 0, 0.25), 0 0 1px rgba(0, 201, 234, 0.08)',
+  cardShadowHover: '0 8px 28px rgba(0, 0, 0, 0.35), 0 0 1px rgba(0, 201, 234, 0.18)',
+  logoGradient: 'linear-gradient(135deg, #00C9EA 0%, #60A5FA 50%, #00C9EA 100%)',
+  metallicGradient: ['#b8e6f0', '#00C9EA', '#007a8f'] as const,
+  metallicGradientDanger: ['#f8b4b4', '#EF4444', '#991b1b'] as const,
+
   // Typography
   fontHeading: '"ClashGrotesk", "Inter", sans-serif',
   fontBody: '"Lexend", "Inter", sans-serif',
@@ -81,6 +118,13 @@ export const DASHBOARD_THEME_DARK: DashboardThemeTokens = {
   textPrimary: '#F1F5F9',
   textSecondary: '#CBD5E1',
   textMuted: '#94A3B8',
+
+  // ── Uniform card typography ───────────────────────────────────
+  cardTitleSize: '0.85rem',
+  cardTitleWeight: 600,
+  cardValueSize: '1.05rem',
+  cardValueWeight: 700,
+  cardCaptionSize: '0.7rem',
 
   // Chart data-series colours
   primary: '#00C9EA',
@@ -102,9 +146,9 @@ export const DASHBOARD_THEME_DARK: DashboardThemeTokens = {
   axisStroke: '#94A3B8',
   axisFontSize: 11,
 
-  // Tooltip
-  tooltipBackground: '#161832',
-  tooltipBorder: 'rgba(0, 201, 234, 0.2)',
+  // Tooltip — light blue background for on-hover info cards
+  tooltipBackground: '#E0F2FE',
+  tooltipBorder: 'rgba(0, 201, 234, 0.25)',
   tooltipBorderRadius: 8,
 };
 
@@ -122,6 +166,18 @@ export const DASHBOARD_THEME_LIGHT: DashboardThemeTokens = {
   cardGradient: 'linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 50%, #F1F5F9 100%)',
   cardGradientHover: 'linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 50%, #EFF6FF 100%)',
 
+  // ── Unified card design system ────────────────────────────────
+  cardDiagonalGradient:
+    'linear-gradient(135deg, rgba(0, 201, 234, 0.05) 0%, #FFFFFF 40%, rgba(96, 165, 250, 0.06) 100%)',
+  cardDiagonalGradientHover:
+    'linear-gradient(135deg, rgba(0, 201, 234, 0.10) 0%, #FAFBFF 40%, rgba(96, 165, 250, 0.10) 100%)',
+  cardBorderRadius: 16,
+  cardShadow: '0 2px 12px rgba(0, 0, 0, 0.06), 0 0 1px rgba(37, 99, 235, 0.08)',
+  cardShadowHover: '0 8px 28px rgba(0, 0, 0, 0.10), 0 0 1px rgba(37, 99, 235, 0.15)',
+  logoGradient: 'linear-gradient(135deg, #0284C7 0%, #60A5FA 50%, #0284C7 100%)',
+  metallicGradient: ['#b8e6f0', '#0284C7', '#075985'] as const,
+  metallicGradientDanger: ['#fca5a5', '#DC2626', '#7f1d1d'] as const,
+
   // Typography
   fontHeading: '"ClashGrotesk", "Inter", sans-serif',
   fontBody: '"Lexend", "Inter", sans-serif',
@@ -129,6 +185,13 @@ export const DASHBOARD_THEME_LIGHT: DashboardThemeTokens = {
   textPrimary: '#0F172A',
   textSecondary: '#334155',
   textMuted: '#64748B',
+
+  // ── Uniform card typography ───────────────────────────────────
+  cardTitleSize: '0.85rem',
+  cardTitleWeight: 600,
+  cardValueSize: '1.05rem',
+  cardValueWeight: 700,
+  cardCaptionSize: '0.7rem',
 
   // Chart data-series colours (slightly deeper for light backgrounds)
   primary: '#0284C7',
@@ -150,9 +213,9 @@ export const DASHBOARD_THEME_LIGHT: DashboardThemeTokens = {
   axisStroke: '#64748B',
   axisFontSize: 11,
 
-  // Tooltip
-  tooltipBackground: '#FFFFFF',
-  tooltipBorder: 'rgba(37, 99, 235, 0.15)',
+  // Tooltip — light blue background for on-hover info cards
+  tooltipBackground: '#E0F2FE',
+  tooltipBorder: 'rgba(37, 99, 235, 0.20)',
   tooltipBorderRadius: 8,
 };
 
@@ -199,11 +262,13 @@ export const RISK_COLORS: Record<string, string> = {
 // ────────────────────────────────────────────────────────────────────────────
 
 export const CHART_TOOLTIP_STYLE: React.CSSProperties = {
-  backgroundColor: DASHBOARD_THEME.tooltipBackground,
-  border: `1px solid ${DASHBOARD_THEME.tooltipBorder}`,
-  borderRadius: DASHBOARD_THEME.tooltipBorderRadius,
-  color: '#FFFFFF',
+  backgroundColor: '#E0F2FE',
+  border: '1px solid rgba(0, 201, 234, 0.25)',
+  borderRadius: DASHBOARD_THEME.cardBorderRadius,
+  color: '#0F172A',
   fontSize: 12,
+  boxShadow: '0 4px 16px rgba(0,0,0,0.10)',
+  backdropFilter: 'blur(8px)',
 };
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -211,3 +276,37 @@ export const CHART_TOOLTIP_STYLE: React.CSSProperties = {
 // ────────────────────────────────────────────────────────────────────────────
 
 export type DashboardThemeKey = keyof DashboardThemeTokens;
+
+// ────────────────────────────────────────────────────────────────────────────
+// Metallic gradient helper — generates 3 stops (light, base, dark)
+// for SVG <linearGradient> defs on bar / pie / gauge fills
+// ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Generate metallic gradient stop triplet from a hex colour.
+ * Returns [highlight, base, shadow] hex values.
+ *
+ *  - highlight: 40% towards white
+ *  - base:      original colour
+ *  - shadow:    30% towards black
+ */
+export function metallicStops(hex: string): [string, string, string] {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+
+  const lr = Math.min(255, Math.round(r + (255 - r) * 0.4));
+  const lg = Math.min(255, Math.round(g + (255 - g) * 0.4));
+  const lb = Math.min(255, Math.round(b + (255 - b) * 0.4));
+
+  const dr = Math.round(r * 0.7);
+  const dg = Math.round(g * 0.7);
+  const db = Math.round(b * 0.7);
+
+  const toHex = (n: number) => n.toString(16).padStart(2, '0');
+  return [
+    `#${toHex(lr)}${toHex(lg)}${toHex(lb)}`,
+    hex,
+    `#${toHex(dr)}${toHex(dg)}${toHex(db)}`,
+  ];
+}

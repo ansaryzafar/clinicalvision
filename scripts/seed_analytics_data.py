@@ -41,7 +41,7 @@ random.seed(42)  # Reproducible
 # ────────────────────────────────────────────────────────────────────────────
 # Constants
 # ────────────────────────────────────────────────────────────────────────────
-MODEL_VERSIONS = ["mock-v1.0", "v12_production"]
+MODEL_VERSIONS = ["v12_production"]
 BIRADS_CATEGORIES = ["BIRADS_1", "BIRADS_2", "BIRADS_3", "BIRADS_4", "BIRADS_5"]
 RISK_LEVELS = ["low", "moderate", "high"]
 PREDICTION_CLASSES = ["BENIGN", "MALIGNANT"]

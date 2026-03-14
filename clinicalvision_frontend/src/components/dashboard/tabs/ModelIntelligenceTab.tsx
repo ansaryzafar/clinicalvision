@@ -12,13 +12,11 @@
  * Data flow: useModelIntelligenceMetrics → API → charts
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import {
   Box,
   Grid,
   Typography,
-  ToggleButtonGroup,
-  ToggleButton,
   Stack,
   Chip,
   IconButton,
@@ -43,23 +41,15 @@ import { useModelIntelligenceMetrics } from '../../../hooks/useMetrics';
 import { EMPTY_MODEL_INTELLIGENCE_METRICS } from '../../../types/metrics.types';
 import type { MetricsPeriod } from '../../../types/metrics.types';
 
-// ────────────────────────────────────────────────────────────────────────────
-// Period selector labels
-// ────────────────────────────────────────────────────────────────────────────
-
-const PERIOD_OPTIONS: { value: MetricsPeriod; label: string }[] = [
-  { value: '7d', label: '7 Days' },
-  { value: '30d', label: '30 Days' },
-  { value: '90d', label: '90 Days' },
-  { value: 'all', label: 'All Time' },
-];
+interface ModelIntelligenceTabProps {
+  period: MetricsPeriod;
+}
 
 // ────────────────────────────────────────────────────────────────────────────
 // Component
 // ────────────────────────────────────────────────────────────────────────────
 
-const ModelIntelligenceTab: React.FC = () => {
-  const [period, setPeriod] = useState<MetricsPeriod>('30d');
+const ModelIntelligenceTab: React.FC<ModelIntelligenceTabProps> = ({ period }) => {
   const dt = useDashboardTheme();
 
   const { data: metrics, isLoading, dataSource, refresh, error } =
@@ -94,12 +84,12 @@ const ModelIntelligenceTab: React.FC = () => {
 
   return (
     <Box data-testid="model-intelligence-tab">
-      {/* ── Period selector ─────────────────────────────────────────── */}
+      {/* ── Tab header with data source indicator ────────────────── */}
       <Stack
         direction="row"
         justifyContent="space-between"
         alignItems="center"
-        sx={{ mb: 3 }}
+        sx={{ mb: 2 }}
       >
         <Typography
           variant="h6"
@@ -113,55 +103,6 @@ const ModelIntelligenceTab: React.FC = () => {
         >
           Model Intelligence
         </Typography>
-
-        <ToggleButtonGroup
-          value={period}
-          exclusive
-          onChange={(_, v) => v && setPeriod(v as MetricsPeriod)}
-          size="small"
-          aria-label="Time period"
-          sx={{
-            bgcolor: alpha(dt.cardBackground, 0.5),
-            borderRadius: '999px',
-            border: `1px solid ${dt.cardBorder}`,
-            p: '2px',
-            '& .MuiToggleButtonGroup-grouped': {
-              border: 'none',
-              borderRadius: '999px !important',
-              mx: '1px',
-            },
-          }}
-        >
-          {PERIOD_OPTIONS.map((opt) => (
-            <ToggleButton
-              key={opt.value}
-              value={opt.value}
-              sx={{
-                textTransform: 'none',
-                fontSize: '0.78rem',
-                px: 1.5,
-                py: 0.4,
-                color: dt.textSecondary,
-                fontWeight: 500,
-                transition: 'all 0.2s ease',
-                '&:hover': {
-                  bgcolor: alpha(dt.primary, 0.08),
-                  color: dt.textPrimary,
-                },
-                '&.Mui-selected': {
-                  bgcolor: alpha(dt.primary, 0.2),
-                  color: dt.textPrimary,
-                  fontWeight: 700,
-                  '&:hover': {
-                    bgcolor: alpha(dt.primary, 0.28),
-                  },
-                },
-              }}
-            >
-              {opt.label}
-            </ToggleButton>
-          ))}
-        </ToggleButtonGroup>
 
         <Stack direction="row" spacing={1} alignItems="center">
           {isLoading && (
@@ -299,7 +240,7 @@ const ModelIntelligenceTab: React.FC = () => {
             title="Uncertainty Decomposition Over Time"
             subtitle="Stacked epistemic & aleatoric uncertainty trends"
             height={330}
-            timeRange={PERIOD_OPTIONS.find((o) => o.value === period)?.label}
+            timeRange={period === '7d' ? '7 Days' : period === '30d' ? '30 Days' : period === '90d' ? '90 Days' : 'All Time'}
           >
             {safeMetrics.uncertaintyDecomposition.length > 0 ? (
               <UncertaintyDecompositionChart data={safeMetrics.uncertaintyDecomposition} />
@@ -342,7 +283,7 @@ const ModelIntelligenceTab: React.FC = () => {
             title="Human Review Rate Over Time"
             subtitle="Proportion of cases flagged for expert review"
             height={290}
-            timeRange={PERIOD_OPTIONS.find((o) => o.value === period)?.label}
+            timeRange={period === '7d' ? '7 Days' : period === '30d' ? '30 Days' : period === '90d' ? '90 Days' : 'All Time'}
           >
             {safeMetrics.humanReviewRate.length > 0 ? (
               <HumanReviewRateChart data={safeMetrics.humanReviewRate} />

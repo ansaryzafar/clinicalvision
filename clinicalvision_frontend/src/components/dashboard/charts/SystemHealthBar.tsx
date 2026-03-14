@@ -96,9 +96,10 @@ const SystemHealthBar: React.FC<SystemHealthBarProps> = ({ health }) => {
       role="status"
       aria-label="System health status"
       sx={{
-        background: dt.cardGradient,
+        background: dt.cardDiagonalGradient,
         border: `1px solid ${dt.cardBorder}`,
-        borderRadius: 2,
+        borderRadius: `${dt.cardBorderRadius}px`,
+        boxShadow: dt.cardShadow,
         px: 2.5,
         py: 1.5,
       }}

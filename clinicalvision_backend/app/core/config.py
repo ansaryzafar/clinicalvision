@@ -111,7 +111,7 @@ class Settings(BaseSettings):
     PASSWORD_REQUIRE_SPECIAL: bool = True
     
     # Model Configuration
-    USE_MOCK_MODEL: bool = True
+    USE_MOCK_MODEL: bool = False  # Mock model permanently removed — always use real V12 model
     MODEL_PATH: str = "models/best_model.pth"
     MODEL_VERSION: str = "v12_production"
     

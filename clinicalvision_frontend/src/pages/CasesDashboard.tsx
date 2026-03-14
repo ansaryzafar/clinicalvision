@@ -37,6 +37,7 @@ import {
   LinearProgress,
   alpha,
   Container,
+  Grid,
 } from '@mui/material';
 import {
   Search,
@@ -64,6 +65,7 @@ import { AnalysisSession, WorkflowMode, getRiskLevel, getNumericBirads } from '.
 import { getCompletionPercentage as getDerivedCompletionPercentage } from '../utils/workflowUtils';
 import { professionalColors } from '../theme/professionalColors';
 import { useTheme } from '@mui/material/styles';
+import DashboardStatCard from '../components/dashboard/cards/DashboardStatCard';
 
 export const CasesDashboard: React.FC = () => {
   const theme = useTheme();
@@ -233,7 +235,8 @@ export const CasesDashboard: React.FC = () => {
     const configs: Record<string, { color: 'success' | 'warning' | 'error' | 'default' | 'info'; icon: React.ReactNode; label: string }> = {
       completed: { color: 'success', icon: <CheckCircle sx={{ fontSize: 16 }} />, label: 'Completed' },
       'in-progress': { color: 'warning', icon: <HourglassTop sx={{ fontSize: 16 }} />, label: 'In Progress' },
-      pending: { color: 'default', icon: <HourglassEmpty sx={{ fontSize: 16 }} />, label: 'Pending' },
+      pending: { color: 'default', icon: <HourglassEmpty sx={{ fontSize: 16 }} />, label: 'Not Started' },
+      paused: { color: 'info', icon: <HourglassEmpty sx={{ fontSize: 16 }} />, label: 'On Hold' },
       finalized: { color: 'info', icon: <CheckCircle sx={{ fontSize: 16 }} />, label: 'Finalized' },
     };
     const config = configs[status] || { color: 'default', icon: <ErrorIcon sx={{ fontSize: 16 }} />, label: status };
@@ -282,14 +285,14 @@ export const CasesDashboard: React.FC = () => {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 3 }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 1.5 }}>
       <Container maxWidth="xl">
         {/* Page Header */}
         <Paper
           elevation={0}
           sx={{
-            p: 3,
-            mb: 3,
+            p: 2,
+            mb: 1,
             borderRadius: 2,
             background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${alpha(theme.palette.primary.light, 0.85)} 100%)`,
             color: 'white',
@@ -373,169 +376,55 @@ export const CasesDashboard: React.FC = () => {
       </Paper>
 
       {/* Interactive Stats Cards - Click to filter */}
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 3 }}>
-        {/* Total Cases - Click to reset filters */}
-        <Tooltip title={statusFilter !== 'all' ? 'Click to show all cases' : 'Showing all cases'} arrow>
-          <Card
-            elevation={0}
-            onClick={() => {
-              setStatusFilter('all');
-              setSearchQuery('');
-            }}
-            sx={{
-              flex: 1,
-              bgcolor: alpha(theme.palette.primary.main, statusFilter === 'all' ? 0.12 : 0.08),
-              border: `1px solid ${alpha(theme.palette.primary.main, statusFilter === 'all' ? 0.3 : 0.2)}`,
-              borderRadius: 2,
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              '&:hover': {
-                borderColor: alpha(theme.palette.primary.main, 0.5),
-                transform: 'translateY(-2px)',
-                boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.15)}`,
-              },
-            }}
-          >
-            <CardContent sx={{ py: 2, px: 3 }}>
-              <Stack direction="row" alignItems="center" spacing={1.5}>
-                <Box sx={{ color: theme.palette.primary.main, display: 'flex' }}><Assignment /></Box>
-                <Box sx={{ flex: 1 }}>
-                  <Typography variant="h5" fontWeight={700} sx={{ color: theme.palette.primary.main }}>
-                    {stats.total}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    Total Cases
-                  </Typography>
-                </Box>
-                {statusFilter !== 'all' && (
-                  <FilterList sx={{ fontSize: 18, color: 'text.disabled' }} />
-                )}
-              </Stack>
-            </CardContent>
-          </Card>
-        </Tooltip>
-
-        {/* Paused - Click to filter */}
-        <Tooltip title={statusFilter === 'paused' ? 'Showing paused cases' : stats.paused > 0 ? 'Click to filter paused' : 'No paused cases'} arrow>
-          <Card
-            elevation={0}
+      <Grid container spacing={1.5} sx={{ mb: 2 }}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <DashboardStatCard
+            value={stats.total}
+            label="Total Cases"
+            color={theme.palette.primary.main}
+            icon={<Assignment />}
+            subtitle={statusFilter !== 'all' ? 'Click to show all' : 'Showing all cases'}
+            onClick={() => { setStatusFilter('all'); setSearchQuery(''); }}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <DashboardStatCard
+            value={stats.paused}
+            label="On Hold"
+            color={professionalColors.clinical.normal.main}
+            icon={<HourglassEmpty />}
+            subtitle={statusFilter === 'paused' ? 'Filtered' : 'Temporarily paused'}
             onClick={() => stats.paused > 0 && setStatusFilter(statusFilter === 'paused' ? 'all' : 'paused')}
-            sx={{
-              flex: 1,
-              bgcolor: alpha(professionalColors.clinical.normal.main, statusFilter === 'paused' ? 0.15 : 0.08),
-              border: `1px solid ${alpha(professionalColors.clinical.normal.main, statusFilter === 'paused' ? 0.4 : 0.2)}`,
-              borderRadius: 2,
-              cursor: stats.paused > 0 ? 'pointer' : 'default',
-              transition: 'all 0.2s ease',
-              '&:hover': stats.paused > 0 ? {
-                borderColor: alpha(professionalColors.clinical.normal.main, 0.5),
-                transform: 'translateY(-2px)',
-                boxShadow: `0 4px 12px ${alpha(professionalColors.clinical.normal.main, 0.15)}`,
-              } : {},
-            }}
-          >
-            <CardContent sx={{ py: 2, px: 3 }}>
-              <Stack direction="row" alignItems="center" spacing={1.5}>
-                <Box sx={{ color: stats.paused > 0 ? professionalColors.clinical.normal.main : 'text.disabled', display: 'flex' }}><HourglassEmpty /></Box>
-                <Box sx={{ flex: 1 }}>
-                  <Typography variant="h5" fontWeight={700} sx={{ color: stats.paused > 0 ? professionalColors.clinical.normal.main : 'text.primary' }}>
-                    {stats.paused}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    Paused
-                  </Typography>
-                </Box>
-                {statusFilter === 'paused' && (
-                  <FilterList sx={{ fontSize: 18, color: professionalColors.clinical.normal.main }} />
-                )}
-              </Stack>
-            </CardContent>
-          </Card>
-        </Tooltip>
-
-        {/* In Progress - Click to filter */}
-        <Tooltip title={statusFilter === 'in-progress' ? 'Showing in-progress cases' : 'Click to filter in-progress'} arrow>
-          <Card
-            elevation={0}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <DashboardStatCard
+            value={stats.inProgress}
+            label="In Progress"
+            color={professionalColors.clinical.uncertain.main}
+            icon={<HourglassTop />}
+            subtitle={statusFilter === 'in-progress' ? 'Filtered' : 'Actively being analyzed'}
             onClick={() => setStatusFilter(statusFilter === 'in-progress' ? 'all' : 'in-progress')}
-            sx={{
-              flex: 1,
-              bgcolor: alpha(professionalColors.clinical.uncertain.main, statusFilter === 'in-progress' ? 0.15 : 0.08),
-              border: `1px solid ${alpha(professionalColors.clinical.uncertain.main, statusFilter === 'in-progress' ? 0.4 : 0.2)}`,
-              borderRadius: 2,
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              '&:hover': {
-                borderColor: alpha(professionalColors.clinical.uncertain.main, 0.5),
-                transform: 'translateY(-2px)',
-                boxShadow: `0 4px 12px ${alpha(professionalColors.clinical.uncertain.main, 0.15)}`,
-              },
-            }}
-          >
-            <CardContent sx={{ py: 2, px: 3 }}>
-              <Stack direction="row" alignItems="center" spacing={1.5}>
-                <Box sx={{ color: professionalColors.clinical.uncertain.main, display: 'flex' }}><HourglassTop /></Box>
-                <Box sx={{ flex: 1 }}>
-                  <Typography variant="h5" fontWeight={700} sx={{ color: professionalColors.clinical.uncertain.main }}>
-                    {stats.inProgress}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    In Progress
-                  </Typography>
-                </Box>
-                {statusFilter === 'in-progress' && (
-                  <FilterList sx={{ fontSize: 18, color: professionalColors.clinical.uncertain.main }} />
-                )}
-              </Stack>
-            </CardContent>
-          </Card>
-        </Tooltip>
-
-        {/* Pending - Click to filter */}
-        <Tooltip title={statusFilter === 'pending' ? 'Showing pending cases' : stats.pending > 0 ? 'Click to filter pending' : 'No pending cases'} arrow>
-          <Card
-            elevation={0}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <DashboardStatCard
+            value={stats.pending}
+            label="Not Started"
+            color={theme.palette.text.secondary}
+            icon={<HourglassEmpty />}
+            subtitle={statusFilter === 'pending' ? 'Filtered' : 'Awaiting first action'}
             onClick={() => stats.pending > 0 && setStatusFilter(statusFilter === 'pending' ? 'all' : 'pending')}
-            sx={{
-              flex: 1,
-              bgcolor: alpha(theme.palette.text.secondary, statusFilter === 'pending' ? 0.15 : 0.08),
-              border: `1px solid ${alpha(theme.palette.text.secondary, statusFilter === 'pending' ? 0.4 : 0.2)}`,
-              borderRadius: 2,
-              cursor: stats.pending > 0 ? 'pointer' : 'default',
-              transition: 'all 0.2s ease',
-              '&:hover': stats.pending > 0 ? {
-                borderColor: alpha(theme.palette.text.secondary, 0.5),
-                transform: 'translateY(-2px)',
-                boxShadow: `0 4px 12px ${alpha(theme.palette.text.secondary, 0.15)}`,
-              } : {},
-            }}
-          >
-            <CardContent sx={{ py: 2, px: 3 }}>
-              <Stack direction="row" alignItems="center" spacing={1.5}>
-                <Box sx={{ color: theme.palette.text.secondary, display: 'flex' }}><HourglassEmpty /></Box>
-                <Box sx={{ flex: 1 }}>
-                  <Typography variant="h5" fontWeight={700} sx={{ color: theme.palette.text.secondary }}>
-                    {stats.pending}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    Pending
-                  </Typography>
-                </Box>
-                {statusFilter === 'pending' && (
-                  <FilterList sx={{ fontSize: 18, color: theme.palette.text.secondary }} />
-                )}
-              </Stack>
-            </CardContent>
-          </Card>
-        </Tooltip>
-      </Stack>
+          />
+        </Grid>
+      </Grid>
 
       {/* Search Bar */}
       <Paper
         elevation={0}
         sx={{
           p: 2,
-          mb: 3,
+          mb: 2,
           borderRadius: 2,
           bgcolor: 'background.paper',
           border: `1px solid ${theme.palette.divider}`,

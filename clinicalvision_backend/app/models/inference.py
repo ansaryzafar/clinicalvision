@@ -1,6 +1,6 @@
 """
-Model inference wrappers
-Supports both mock model (for development) and real model (for production)
+Model inference — V12 DenseNet-121 Production Ensemble
+Real AI inference ONLY — no mock models allowed
 
 IMPORTANT: This module configures TensorFlow environment settings at import time
 to prevent JIT compilation errors (libdevice.10.bc not found).
@@ -144,206 +144,9 @@ class BaseModelInference(ABC):
         pass
 
 
-class MockModelInference(BaseModelInference):
-    """
-    Mock model for development and testing
-    Returns realistic predictions without requiring actual model
-    
-    This allows full API development while model trains on Colab
-    """
-    
-    def __init__(self):
-        """Initialize mock model"""
-        logger.info("Initializing MOCK model inference (development mode)")
-        self.model_version = "mock-v1.0"
-        self._loaded = True
-    
-    def predict(self, image_array: np.ndarray) -> Dict[str, Any]:
-        """
-        Generate mock prediction with realistic structure
-        
-        Simulates actual model behavior including:
-        - Processing time
-        - Probabilistic outputs
-        - Uncertainty estimates
-        - Attention maps
-        """
-        
-        # Simulate processing time
-        time.sleep(random.uniform(0.3, 0.8))
-        
-        # Generate realistic probabilities
-        prob_malignant = random.uniform(0.15, 0.85)
-        prob_benign = 1.0 - prob_malignant
-        
-        # Determine risk level based on probability
-        if prob_malignant > 0.7:
-            risk_level = "high"
-        elif prob_malignant > 0.4:
-            risk_level = "moderate"
-        else:
-            risk_level = "low"
-        
-        # Generate uncertainty metrics
-        epistemic_uncertainty = random.uniform(0.05, 0.25)
-        predictive_entropy = -prob_malignant * np.log(prob_malignant + 1e-10) - prob_benign * np.log(prob_benign + 1e-10)
-        
-        # Flag for human review if uncertainty is high
-        requires_review = epistemic_uncertainty > 0.15 or (0.4 < prob_malignant < 0.6)
-        
-        # Generate mock attention map (224x224)
-        attention_map = self._generate_mock_attention_map()
-        
-        # Generate suspicious regions based on attention
-        suspicious_regions = self._generate_mock_regions(prob_malignant)
-        
-        logger.info(f"Mock prediction: {prob_malignant:.2%} malignant, uncertainty: {epistemic_uncertainty:.3f}")
-        
-        # Generate clinical narrative
-        prediction_label = "malignant" if prob_malignant > 0.5 else "benign"
-        narrative = self._generate_clinical_narrative(
-            prediction_label, prob_malignant, risk_level, suspicious_regions
-        )
-        
-        # Generate confidence explanation
-        confidence_explanation = self._generate_confidence_explanation(
-            epistemic_uncertainty, prob_malignant, requires_review
-        )
-        
-        return {
-            "prediction": prediction_label,
-            "confidence": max(prob_malignant, prob_benign),
-            "probabilities": {
-                "benign": float(prob_benign),
-                "malignant": float(prob_malignant)
-            },
-            "risk_level": risk_level,
-            "uncertainty": {
-                "epistemic_uncertainty": float(epistemic_uncertainty),
-                "aleatoric_uncertainty": float(random.uniform(0.02, 0.10)),
-                "predictive_entropy": float(predictive_entropy),
-                "mutual_information": float(random.uniform(0.01, 0.08)),
-                "requires_human_review": requires_review
-            },
-            "explanation": {
-                "attention_map": attention_map,
-                "suspicious_regions": suspicious_regions,
-                "narrative": narrative,
-                "confidence_explanation": confidence_explanation
-            },
-            "model_version": self.model_version
-        }
-    
-    def _generate_mock_attention_map(self) -> List[List[float]]:
-        """
-        Generate realistic attention heatmap
-        Simulates GradCAM output with hot spots
-        """
-        # Create base attention map
-        attention = np.random.rand(224, 224) * 0.3
-        
-        # Add a few hot spots (suspicious regions)
-        num_hotspots = random.randint(1, 3)
-        for _ in range(num_hotspots):
-            cx, cy = random.randint(50, 174), random.randint(50, 174)
-            y, x = np.ogrid[-cy:224-cy, -cx:224-cx]
-            mask = x*x + y*y <= 25*25  # Circular region
-            attention[mask] += random.uniform(0.5, 0.9)
-        
-        # Normalize to [0, 1]
-        attention = np.clip(attention, 0, 1)
-        
-        # Downsample for JSON size (can be upsampled on frontend)
-        attention_downsampled = attention[::4, ::4]  # 56x56
-        
-        return attention_downsampled.tolist()
-    
-    def _generate_mock_regions(self, prob_malignant: float) -> List[Dict[str, Any]]:
-        """
-        Generate mock suspicious regions based on malignancy probability
-        """
-        num_regions = 1 if prob_malignant < 0.4 else (2 if prob_malignant < 0.7 else 3)
-        
-        locations = [
-            "upper outer quadrant",
-            "upper inner quadrant",
-            "lower outer quadrant",
-            "lower inner quadrant",
-            "retroareolar region"
-        ]
-        
-        regions = []
-        for i in range(num_regions):
-            x = random.randint(50, 150)
-            y = random.randint(50, 150)
-            w = random.randint(30, 60)
-            h = random.randint(30, 60)
-            
-            regions.append({
-                "region_id": i + 1,
-                "bbox": [x, y, w, h],
-                "attention_score": random.uniform(0.6, 0.95),
-                "location": random.choice(locations)
-            })
-        
-        # Sort by attention score descending
-        regions.sort(key=lambda r: r["attention_score"], reverse=True)
-        
-        return regions
-    
-    def _generate_clinical_narrative(
-        self, 
-        prediction: str, 
-        prob_malignant: float, 
-        risk_level: str,
-        regions: List[Dict[str, Any]]
-    ) -> str:
-        """Generate human-readable clinical narrative"""
-        
-        if prediction == "malignant":
-            narrative = f"AI analysis suggests a {risk_level} risk malignant finding with {prob_malignant:.1%} confidence. "
-            if len(regions) > 0:
-                top_region = regions[0]
-                narrative += f"Primary area of concern identified in the {top_region['location']} with attention score {top_region['attention_score']:.2f}. "
-            narrative += "Recommend biopsy and further diagnostic workup."
-        else:
-            narrative = f"AI analysis suggests benign findings with {(1-prob_malignant):.1%} confidence. "
-            if len(regions) > 0:
-                narrative += f"Minimal areas of interest detected in {len(regions)} region(s). "
-            narrative += "Routine follow-up recommended."
-        
-        return narrative
-    
-    def _generate_confidence_explanation(
-        self,
-        epistemic_uncertainty: float,
-        prob_malignant: float,
-        requires_review: bool
-    ) -> str:
-        """Generate explanation for confidence level"""
-        
-        confidence = max(prob_malignant, 1 - prob_malignant)
-        
-        if confidence > 0.9:
-            explanation = "High confidence prediction based on clear distinguishing features."
-        elif confidence > 0.7:
-            explanation = "Moderate-to-high confidence with well-defined characteristics."
-        elif confidence > 0.6:
-            explanation = "Moderate confidence - some ambiguous features present."
-        else:
-            explanation = "Low confidence prediction with significant uncertainty."
-        
-        if epistemic_uncertainty > 0.15:
-            explanation += f" Model uncertainty ({epistemic_uncertainty:.2f}) suggests limited exposure to similar cases."
-        
-        if requires_review:
-            explanation += " Flagged for mandatory radiologist review due to borderline features or high uncertainty."
-        
-        return explanation
-    
-    def is_loaded(self) -> bool:
-        """Mock model is always 'loaded'"""
-        return self._loaded
+# NOTE: MockModelInference has been permanently removed.
+# ClinicalVision requires real AI inference via RealModelInference (V12 DenseNet-121 ensemble).
+# No mock/simulated predictions are allowed in the system.
 
 
 class RealModelInference(BaseModelInference):
@@ -1269,7 +1072,6 @@ class RealModelInference(BaseModelInference):
 
 # Singleton instances for model inference
 _model_instances: dict[str, BaseModelInference] = {}
-_mock_instance: Optional[BaseModelInference] = None
 
 
 def _reset_model_instances():
@@ -1278,66 +1080,60 @@ def _reset_model_instances():
     Called by conftest.py's reset_singletons fixture to ensure
     each test gets a clean model state.
     """
-    global _mock_instance
     _model_instances.clear()
-    _mock_instance = None
 
 
 def get_model_inference(version: Optional[str] = None) -> BaseModelInference:
     """
-    Factory function to get appropriate model inference instance.
-    Switches between mock and real model based on configuration.
+    Factory function to get the real V12 DenseNet-121 model inference instance.
     Uses singleton pattern to avoid reloading models on every request.
     
+    No mock fallback — if the real model cannot load, the server will raise
+    an error so the issue is immediately visible and must be resolved.
+    
     Args:
-        version: Specific model version to load (default: from settings)
+        version: Specific model version to load (default: v12_production)
     
     Returns:
-        Model inference instance (mock or real)
+        RealModelInference instance
+        
+    Raises:
+        RuntimeError: If the real model fails to load
     """
-    global _mock_instance
-    
-    if settings.USE_MOCK_MODEL:
-        if _mock_instance is None:
-            logger.info("Using MOCK model (development mode)")
-            _mock_instance = MockModelInference()
-        return _mock_instance
+    # Determine model path
+    if version:
+        model_path = Path(__file__).parent.parent.parent / "ml_models" / version
     else:
-        # Determine model path
-        if version:
-            model_path = Path(__file__).parent.parent.parent / "ml_models" / version
-        else:
-            model_path = Path(__file__).parent.parent.parent / "ml_models" / "v12_production"
+        model_path = Path(__file__).parent.parent.parent / "ml_models" / "v12_production"
+    
+    model_key = str(model_path)
+    
+    # Return cached instance if exists
+    if model_key in _model_instances:
+        return _model_instances[model_key]
+    
+    # Create new instance and cache it — NO mock fallback
+    try:
+        logger.info(f"Loading REAL V12 production model from: {model_path}")
+        instance = RealModelInference(model_path=str(model_path))
         
-        model_key = str(model_path)
-        
-        # Return cached instance if exists
-        if model_key in _model_instances:
-            return _model_instances[model_key]
-        
-        # Create new instance and cache it — with resilient fallback
-        try:
-            logger.info(f"Using REAL model from: {model_path}")
-            instance = RealModelInference(model_path=str(model_path))
-            
-            # Verify model actually loaded (TF ImportError sets _loaded=False without raising)
-            if not instance.is_loaded():
-                raise RuntimeError(
-                    "Model created but failed to load — check TensorFlow installation and model weights"
-                )
-            
-            _model_instances[model_key] = instance
-            return instance
-            
-        except Exception as e:
-            logger.error(f"❌ Failed to load real model: {e}")
-            logger.warning(
-                "⚠️  FALLING BACK TO MOCK MODEL — real model failed to initialize. "
-                "AI predictions will be SIMULATED, not real. "
-                "Fix the model loading issue and restart the server."
+        # Verify model actually loaded
+        if not instance.is_loaded():
+            raise RuntimeError(
+                "Model created but failed to load — check TensorFlow installation and model weights"
             )
-            if _mock_instance is None:
-                _mock_instance = MockModelInference()
-            _mock_instance._fallback_active = True
-            _mock_instance._fallback_reason = str(e)
-            return _mock_instance
+        
+        _model_instances[model_key] = instance
+        logger.info("✅ Real V12 model loaded and cached successfully")
+        return instance
+        
+    except Exception as e:
+        logger.error(f"❌ CRITICAL: Failed to load real model: {e}")
+        logger.error(
+            "The system REQUIRES a real AI model. Mock models are not allowed. "
+            "Fix the model loading issue (TensorFlow, model weights, config) and restart."
+        )
+        raise RuntimeError(
+            f"Real AI model failed to load: {e}. "
+            f"Mock models are permanently removed. Fix the issue and restart."
+        ) from e

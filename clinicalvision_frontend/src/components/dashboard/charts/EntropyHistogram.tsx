@@ -1,13 +1,6 @@
 /**
  * EntropyHistogram — Bar chart showing predictive entropy distribution
- *
- * Renders a vertical bar chart of predictive entropy values.
- * Low entropy → confident predictions, High entropy → uncertain predictions.
- *
- * Colour coding:
- *   - Low entropy bins (< 0.3)  → success (green)
- *   - Medium bins (0.3–0.6)     → warning (amber)
- *   - High entropy bins (> 0.6) → danger (red)
+ * Enhanced with metallic gradient fills on each bin bar.
  */
 
 import React from 'react';
@@ -22,28 +15,26 @@ import {
   ResponsiveContainer,
   Cell,
 } from 'recharts';
-import { DASHBOARD_THEME, CHART_TOOLTIP_STYLE } from './dashboardTheme';
+import { DASHBOARD_THEME, CHART_TOOLTIP_STYLE, metallicStops } from './dashboardTheme';
 import type { EntropyBin } from '../../../types/metrics.types';
-
-// ────────────────────────────────────────────────────────────────────────────
 
 export interface EntropyHistogramProps {
   data: EntropyBin[];
 }
 
-// ────────────────────────────────────────────────────────────────────────────
-
-/**
- * Map bin midpoint to colour along entropy spectrum.
- * Low entropy → green, medium → amber, high → red.
- */
+/** Map bin midpoint to colour along entropy spectrum. */
 function entropyColor(binStart: number): string {
   if (binStart >= 0.6) return DASHBOARD_THEME.danger;
   if (binStart >= 0.3) return DASHBOARD_THEME.warning;
   return DASHBOARD_THEME.success;
 }
 
-// ────────────────────────────────────────────────────────────────────────────
+/** Pre-computed metallic gradient defs for entropy colour spectrum */
+const ENTROPY_GRAD_MAP: Record<string, { id: string; stops: [string, string, string] }> = {
+  [DASHBOARD_THEME.success]: { id: 'ent-grad-success', stops: metallicStops(DASHBOARD_THEME.success) },
+  [DASHBOARD_THEME.warning]: { id: 'ent-grad-warning', stops: metallicStops(DASHBOARD_THEME.warning) },
+  [DASHBOARD_THEME.danger]: { id: 'ent-grad-danger', stops: metallicStops(DASHBOARD_THEME.danger) },
+};
 
 const EntropyHistogram: React.FC<EntropyHistogramProps> = ({ data }) => {
   if (!data || data.length === 0) {
@@ -72,6 +63,15 @@ const EntropyHistogram: React.FC<EntropyHistogramProps> = ({ data }) => {
         role="img"
         aria-label="Predictive entropy distribution histogram"
       >
+        <defs>
+          {Object.values(ENTROPY_GRAD_MAP).map(({ id, stops: [light, base, dark] }) => (
+            <linearGradient key={id} id={id} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={light} stopOpacity={1} />
+              <stop offset="50%" stopColor={base} stopOpacity={1} />
+              <stop offset="100%" stopColor={dark} stopOpacity={1} />
+            </linearGradient>
+          ))}
+        </defs>
         <CartesianGrid strokeDasharray="3 3" stroke={DASHBOARD_THEME.gridStroke} />
         <XAxis
           dataKey="label"
@@ -100,9 +100,13 @@ const EntropyHistogram: React.FC<EntropyHistogramProps> = ({ data }) => {
           formatter={(value: number) => [value, 'Cases']}
         />
         <Bar dataKey="count" radius={[4, 4, 0, 0]} maxBarSize={40}>
-          {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={entropyColor(entry.binStart)} />
-          ))}
+          {data.map((entry, index) => {
+            const color = entropyColor(entry.binStart);
+            const grad = ENTROPY_GRAD_MAP[color];
+            return (
+              <Cell key={`cell-${index}`} fill={grad ? `url(#${grad.id})` : color} />
+            );
+          })}
         </Bar>
       </BarChart>
     </ResponsiveContainer>

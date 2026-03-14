@@ -31,5 +31,9 @@ class HealthResponse(BaseModel):
         None,
         description="Application uptime in seconds"
     )
+    model_version: Optional[str] = Field(
+        None,
+        description="Active AI model version identifier"
+    )
     
     model_config = ConfigDict(protected_namespaces=())

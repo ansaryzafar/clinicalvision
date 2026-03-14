@@ -77,6 +77,7 @@ import { professionalColors } from '../theme/professionalColors';
 import { useTheme } from '@mui/material/styles';
 import { Warning, Psychology, TrendingUp, Assessment as AssessmentIcon } from '@mui/icons-material';
 import { getCompletionPercentage as getDerivedCompletionPercentage, getCompletedSteps } from '../utils/workflowUtils';
+import DashboardStatCard from '../components/dashboard/cards/DashboardStatCard';
 
 export const PatientRecords: React.FC = () => {
   const theme = useTheme();
@@ -335,20 +336,20 @@ export const PatientRecords: React.FC = () => {
   // Stats reflect completed cases only (completed, reviewed, finalized)
   const stats = {
     total: sessions.length,
-    completed: sessions.filter((s) => s.workflow.status === 'completed').length,
-    finalized: sessions.filter((s) => s.workflow.status === 'finalized' || s.workflow.status === 'reviewed').length,
+    awaitingSignoff: sessions.filter((s) => s.workflow.status === 'completed').length,
+    signedOff: sessions.filter((s) => s.workflow.status === 'finalized' || s.workflow.status === 'reviewed').length,
     withFindings: sessions.filter((s) => s.findings && s.findings.length > 0).length,
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 3 }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 1.5 }}>
       <Container maxWidth="xl">
         {/* Professional Page Header */}
         <Paper
           elevation={0}
           sx={{
-            p: 3,
-            mb: 3,
+            p: 2,
+            mb: 1,
             borderRadius: 2,
             background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${alpha(theme.palette.primary.light, 0.85)} 100%)`,
             color: 'white',
@@ -397,183 +398,64 @@ export const PatientRecords: React.FC = () => {
       </Paper>
 
       {/* Interactive Stats Cards - Click to filter */}
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 3 }}>
-        {/* Total Sessions - Click to reset all filters */}
-        <Tooltip title={statusFilter !== 'all' || findingsFilter ? 'Click to show all sessions' : 'Showing all sessions'} arrow>
-          <Card
-            elevation={0}
-            onClick={() => {
-              setStatusFilter('all');
-              setFindingsFilter(false);
-              setSearchQuery('');
-            }}
-            sx={{
-              flex: 1,
-              bgcolor: alpha(theme.palette.primary.main, statusFilter === 'all' && !findingsFilter ? 0.12 : 0.08),
-              border: `1px solid ${alpha(theme.palette.primary.main, statusFilter === 'all' && !findingsFilter ? 0.3 : 0.2)}`,
-              borderRadius: 2,
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              '&:hover': {
-                borderColor: alpha(theme.palette.primary.main, 0.5),
-                transform: 'translateY(-2px)',
-                boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.15)}`,
-              },
-            }}
-          >
-            <CardContent sx={{ py: 2, px: 3 }}>
-              <Stack direction="row" alignItems="center" spacing={1.5}>
-                <Box sx={{ color: theme.palette.primary.main, display: 'flex' }}><Assignment /></Box>
-                <Box sx={{ flex: 1 }}>
-                  <Typography variant="h5" fontWeight={700} sx={{ color: theme.palette.primary.main }}>
-                    {stats.total}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    Total Sessions
-                  </Typography>
-                </Box>
-                {(statusFilter !== 'all' || findingsFilter) && (
-                  <FilterList sx={{ fontSize: 18, color: 'text.disabled' }} />
-                )}
-              </Stack>
-            </CardContent>
-          </Card>
-        </Tooltip>
+      <Grid container spacing={1.5} sx={{ mb: 2 }}>
+        {/* Total Cases - Click to reset all filters */}
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <DashboardStatCard
+            value={stats.total}
+            label="Total Cases"
+            color={theme.palette.primary.main}
+            icon={<Assignment />}
+            subtitle={statusFilter !== 'all' || findingsFilter ? 'Click to show all' : 'Showing all cases'}
+            onClick={() => { setStatusFilter('all'); setFindingsFilter(false); setSearchQuery(''); }}
+          />
+        </Grid>
 
-        {/* Completed - Toggle filter (additive with findings) */}
-        <Tooltip title={statusFilter === 'completed' ? 'Click to remove status filter' : 'Click to show completed sessions'} arrow>
-          <Card
-            elevation={0}
-            onClick={() => {
-              setStatusFilter(statusFilter === 'completed' ? 'all' : 'completed');
-              // Don't reset findingsFilter - allow combining filters
-            }}
-            sx={{
-              flex: 1,
-              bgcolor: alpha(professionalColors.clinical.normal.main, statusFilter === 'completed' ? 0.15 : 0.08),
-              border: `1px solid ${alpha(professionalColors.clinical.normal.main, statusFilter === 'completed' ? 0.4 : 0.2)}`,
-              borderRadius: 2,
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              '&:hover': {
-                borderColor: alpha(professionalColors.clinical.normal.main, 0.5),
-                transform: 'translateY(-2px)',
-                boxShadow: `0 4px 12px ${alpha(professionalColors.clinical.normal.main, 0.15)}`,
-              },
-            }}
-          >
-            <CardContent sx={{ py: 2, px: 3 }}>
-              <Stack direction="row" alignItems="center" spacing={1.5}>
-                <Box sx={{ color: professionalColors.clinical.normal.main, display: 'flex' }}><CheckCircle /></Box>
-                <Box sx={{ flex: 1 }}>
-                  <Typography variant="h5" fontWeight={700} sx={{ color: professionalColors.clinical.normal.main }}>
-                    {stats.completed}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    Completed
-                  </Typography>
-                </Box>
-                {statusFilter === 'completed' && (
-                  <FilterList sx={{ fontSize: 18, color: professionalColors.clinical.normal.main }} />
-                )}
-              </Stack>
-            </CardContent>
-          </Card>
-        </Tooltip>
+        {/* Awaiting Sign-off (status=completed, steps done but not signed off) */}
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <DashboardStatCard
+            value={stats.awaitingSignoff}
+            label="Awaiting Sign-off"
+            color={professionalColors.clinical.normal.main}
+            icon={<HourglassTop />}
+            subtitle={statusFilter === 'completed' ? 'Filtered' : undefined}
+            onClick={() => setStatusFilter(statusFilter === 'completed' ? 'all' : 'completed')}
+          />
+        </Grid>
 
-        {/* Finalized/Reviewed - Toggle filter (additive with findings) */}
-        <Tooltip title={statusFilter === 'finalized' ? 'Click to remove status filter' : stats.finalized > 0 ? 'Click to show finalized/reviewed sessions' : 'No finalized sessions'} arrow>
-          <Card
-            elevation={0}
-            onClick={() => {
-              if (stats.finalized > 0) {
-                setStatusFilter(statusFilter === 'finalized' ? 'all' : 'finalized');
-              }
-              // Don't reset findingsFilter - allow combining filters
-            }}
-            sx={{
-              flex: 1,
-              bgcolor: alpha(professionalColors.clinical.uncertain.main, statusFilter === 'finalized' ? 0.15 : 0.08),
-              border: `1px solid ${alpha(professionalColors.clinical.uncertain.main, statusFilter === 'finalized' ? 0.4 : 0.2)}`,
-              borderRadius: 2,
-              cursor: stats.finalized > 0 ? 'pointer' : 'default',
-              transition: 'all 0.2s ease',
-              '&:hover': stats.finalized > 0 ? {
-                borderColor: alpha(professionalColors.clinical.uncertain.main, 0.5),
-                transform: 'translateY(-2px)',
-                boxShadow: `0 4px 12px ${alpha(professionalColors.clinical.uncertain.main, 0.15)}`,
-              } : {},
-            }}
-          >
-            <CardContent sx={{ py: 2, px: 3 }}>
-              <Stack direction="row" alignItems="center" spacing={1.5}>
-                <Box sx={{ color: stats.finalized > 0 ? professionalColors.clinical.uncertain.main : 'text.disabled', display: 'flex' }}><CheckCircle /></Box>
-                <Box sx={{ flex: 1 }}>
-                  <Typography variant="h5" fontWeight={700} sx={{ color: stats.finalized > 0 ? professionalColors.clinical.uncertain.main : 'text.primary' }}>
-                    {stats.finalized}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    Finalized
-                  </Typography>
-                </Box>
-                {statusFilter === 'finalized' && (
-                  <FilterList sx={{ fontSize: 18, color: professionalColors.clinical.uncertain.main }} />
-                )}
-              </Stack>
-            </CardContent>
-          </Card>
-        </Tooltip>
+        {/* Signed Off (status=finalized or reviewed) */}
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <DashboardStatCard
+            value={stats.signedOff}
+            label="Signed Off"
+            color={professionalColors.clinical.uncertain.main}
+            icon={<CheckCircle />}
+            subtitle={statusFilter === 'finalized' ? 'Filtered' : undefined}
+            trend="up"
+            onClick={() => stats.signedOff > 0 && setStatusFilter(statusFilter === 'finalized' ? 'all' : 'finalized')}
+          />
+        </Grid>
 
-        {/* With Findings - Additive toggle filter (works with status filters) */}
-        <Tooltip title={findingsFilter ? 'Click to remove findings filter' : stats.withFindings > 0 ? 'Click to show only sessions with findings' : 'No sessions with findings'} arrow>
-          <Card
-            elevation={0}
-            onClick={() => {
-              if (stats.withFindings > 0) {
-                setFindingsFilter(!findingsFilter);
-                // Don't reset statusFilter - allow combining filters
-              }
-            }}
-            sx={{
-              flex: 1,
-              bgcolor: alpha(professionalColors.clinical.abnormal.main, findingsFilter ? 0.15 : 0.08),
-              border: `1px solid ${alpha(professionalColors.clinical.abnormal.main, findingsFilter ? 0.4 : 0.2)}`,
-              borderRadius: 2,
-              cursor: stats.withFindings > 0 ? 'pointer' : 'default',
-              transition: 'all 0.2s ease',
-              '&:hover': stats.withFindings > 0 ? {
-                borderColor: alpha(professionalColors.clinical.abnormal.main, 0.5),
-                transform: 'translateY(-2px)',
-                boxShadow: `0 4px 12px ${alpha(professionalColors.clinical.abnormal.main, 0.15)}`,
-              } : {},
-            }}
-          >
-            <CardContent sx={{ py: 2, px: 3 }}>
-              <Stack direction="row" alignItems="center" spacing={1.5}>
-                <Box sx={{ color: stats.withFindings > 0 ? professionalColors.clinical.abnormal.main : 'text.disabled', display: 'flex' }}><PriorityHigh /></Box>
-                <Box sx={{ flex: 1 }}>
-                  <Typography variant="h5" fontWeight={700} sx={{ color: stats.withFindings > 0 ? professionalColors.clinical.abnormal.main : 'text.primary' }}>
-                    {stats.withFindings}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    With Findings
-                  </Typography>
-                </Box>
-                {findingsFilter && (
-                  <FilterList sx={{ fontSize: 18, color: professionalColors.clinical.abnormal.main }} />
-                )}
-              </Stack>
-            </CardContent>
-          </Card>
-        </Tooltip>
-      </Stack>
+        {/* With Findings - Additive toggle filter */}
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <DashboardStatCard
+            value={`${stats.withFindings}/${stats.total}`}
+            label="With Findings"
+            color={professionalColors.clinical.abnormal.main}
+            icon={<PriorityHigh />}
+            subtitle={findingsFilter ? 'Filtered' : undefined}
+            trend={stats.withFindings > 0 ? 'down' : 'neutral'}
+            onClick={() => stats.withFindings > 0 && setFindingsFilter(!findingsFilter)}
+          />
+        </Grid>
+      </Grid>
 
       {/* Filters & Search */}
       <Paper
         elevation={0}
         sx={{
           p: 2,
-          mb: 3,
+          mb: 2,
           borderRadius: 2,
           bgcolor: 'background.paper',
           border: `1px solid ${theme.palette.divider}`,

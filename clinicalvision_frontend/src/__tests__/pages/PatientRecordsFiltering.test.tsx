@@ -213,13 +213,16 @@ describe('PatientRecords — Filtering', () => {
   // Helper: find stats card by its caption label (unique to stats cards)
   // --------------------------------------------------------------------------
   function getStatsCard(label: string) {
-    // Stats card labels are rendered as <span class="MuiTypography-caption">label</span>
-    // Session row chips also show "Completed", "In Progress" etc, but as <span class="MuiChip-label">
-    // We target the caption element to avoid collisions.
-    const captions = screen.getAllByText(label);
-    const caption = captions.find(el => el.classList.contains('MuiTypography-caption'));
-    if (!caption) throw new Error(`Stats card caption "${label}" not found`);
-    return caption.closest('[class*="MuiCard"]')!;
+    // DashboardStatCard renders labels as <Typography variant="body2">
+    // which gets MuiTypography-body2 class. We target body2 to avoid collisions
+    // with session row chips that show status labels as MuiChip-label.
+    const allMatches = screen.getAllByText(label);
+    const body2 = allMatches.find(el =>
+      el.classList.contains('MuiTypography-body2') ||
+      el.classList.contains('MuiTypography-caption')
+    );
+    if (!body2) throw new Error(`Stats card label "${label}" not found`);
+    return body2.closest('[class*="MuiCard"]')!;
   }
 
   // --------------------------------------------------------------------------
@@ -228,45 +231,45 @@ describe('PatientRecords — Filtering', () => {
   describe('Stats card counts', () => {
     it('shows total count of completed sessions', () => {
       renderPatientRecords();
-      const totalCard = getStatsCard('Total Sessions');
+      const totalCard = getStatsCard('Total Cases');
       expect(within(totalCard).getByText('4')).toBeInTheDocument();
     });
 
-    it('shows completed count (status=completed only)', () => {
+    it('shows awaiting sign-off count (status=completed only)', () => {
       renderPatientRecords();
       // 2 sessions with status 'completed'
-      const completedCard = getStatsCard('Completed');
-      expect(within(completedCard).getByText('2')).toBeInTheDocument();
+      const awaitingCard = getStatsCard('Awaiting Sign-off');
+      expect(within(awaitingCard).getByText('2')).toBeInTheDocument();
     });
 
-    it('shows finalized count', () => {
+    it('shows signed off count', () => {
       renderPatientRecords();
       // 2 sessions with status 'finalized'
-      const finalizedCard = getStatsCard('Finalized');
-      expect(within(finalizedCard).getByText('2')).toBeInTheDocument();
+      const signedOffCard = getStatsCard('Signed Off');
+      expect(within(signedOffCard).getByText('2')).toBeInTheDocument();
     });
 
     it('shows "With Findings" count correctly', () => {
       renderPatientRecords();
       // 2 completed sessions have findings: sess-completed-2, sess-finalized-2
       const findingsCard = getStatsCard('With Findings');
-      expect(within(findingsCard).getByText('2')).toBeInTheDocument();
+      expect(within(findingsCard).getByText('2/4')).toBeInTheDocument();
     });
   });
 
   // --------------------------------------------------------------------------
-  // 2. Clicking "Completed" card filters to completed-status-only sessions
+  // 2. Clicking "Awaiting Sign-off" card filters to completed-status-only sessions
   // --------------------------------------------------------------------------
-  describe('Completed stats card filtering', () => {
-    it('clicking "Completed" card shows only completed sessions (not finalized)', () => {
+  describe('Awaiting Sign-off stats card filtering', () => {
+    it('clicking "Awaiting Sign-off" card shows only completed sessions (not finalized)', () => {
       renderPatientRecords();
 
       // Before filter: should show all 4 completed/finalized sessions
       expect(screen.getByText('PAT-001')).toBeInTheDocument();
       expect(screen.getByText('PAT-003')).toBeInTheDocument();
 
-      // Click the "Completed" stats card
-      fireEvent.click(getStatsCard('Completed'));
+      // Click the "Awaiting Sign-off" stats card
+      fireEvent.click(getStatsCard('Awaiting Sign-off'));
 
       // Should show only completed sessions
       expect(screen.getByText('PAT-001')).toBeInTheDocument(); // completed
@@ -277,15 +280,15 @@ describe('PatientRecords — Filtering', () => {
       expect(screen.queryByText('PAT-004')).not.toBeInTheDocument();
     });
 
-    it('clicking "Completed" card again resets filter to all', () => {
+    it('clicking "Awaiting Sign-off" card again resets filter to all', () => {
       renderPatientRecords();
 
       // Click to activate
-      fireEvent.click(getStatsCard('Completed'));
+      fireEvent.click(getStatsCard('Awaiting Sign-off'));
       expect(screen.queryByText('PAT-003')).not.toBeInTheDocument();
 
       // Click again to deactivate (toggle)
-      fireEvent.click(getStatsCard('Completed'));
+      fireEvent.click(getStatsCard('Awaiting Sign-off'));
       expect(screen.getByText('PAT-003')).toBeInTheDocument();
       expect(screen.getByText('PAT-004')).toBeInTheDocument();
     });
@@ -403,8 +406,8 @@ describe('PatientRecords — Filtering', () => {
     it('status + findings filter works together', () => {
       renderPatientRecords();
 
-      // Click "Completed" stats card
-      fireEvent.click(getStatsCard('Completed'));
+      // Click "Awaiting Sign-off" stats card
+      fireEvent.click(getStatsCard('Awaiting Sign-off'));
 
       // Also click "With Findings"
       fireEvent.click(getStatsCard('With Findings'));
@@ -423,7 +426,7 @@ describe('PatientRecords — Filtering', () => {
       renderPatientRecords();
 
       // Set status to completed
-      fireEvent.click(getStatsCard('Completed'));
+      fireEvent.click(getStatsCard('Awaiting Sign-off'));
 
       // Search for "bob"
       const searchInput = screen.getByPlaceholderText(/search by patient/i);
@@ -437,14 +440,14 @@ describe('PatientRecords — Filtering', () => {
   });
 
   // --------------------------------------------------------------------------
-  // 6. Total Sessions card resets all filters
+  // 6. Total Cases card resets all filters
   // --------------------------------------------------------------------------
-  describe('Total Sessions card', () => {
+  describe('Total Cases card', () => {
     it('resets status, findings, and search filters when clicked', () => {
       renderPatientRecords();
 
       // Apply multiple filters
-      fireEvent.click(getStatsCard('Completed'));
+      fireEvent.click(getStatsCard('Awaiting Sign-off'));
       fireEvent.click(getStatsCard('With Findings'));
 
       const searchInput = screen.getByPlaceholderText(/search by patient/i);
@@ -453,8 +456,8 @@ describe('PatientRecords — Filtering', () => {
       // Only PAT-002 visible at this point
       expect(screen.queryByText('PAT-003')).not.toBeInTheDocument();
 
-      // Click "Total Sessions" to reset everything
-      fireEvent.click(getStatsCard('Total Sessions'));
+      // Click "Total Cases" to reset everything
+      fireEvent.click(getStatsCard('Total Cases'));
 
       // All 4 completed sessions should be visible again
       expect(screen.getByText('PAT-001')).toBeInTheDocument();
@@ -465,13 +468,13 @@ describe('PatientRecords — Filtering', () => {
   });
 
   // --------------------------------------------------------------------------
-  // 7. Finalized filter
+  // 7. Signed Off filter
   // --------------------------------------------------------------------------
-  describe('Finalized filter', () => {
-    it('clicking "Finalized" card shows only finalized sessions', () => {
+  describe('Signed Off filter', () => {
+    it('clicking "Signed Off" card shows only finalized sessions', () => {
       renderPatientRecords();
 
-      fireEvent.click(getStatsCard('Finalized'));
+      fireEvent.click(getStatsCard('Signed Off'));
 
       expect(screen.getByText('PAT-003')).toBeInTheDocument();
       expect(screen.getByText('PAT-004')).toBeInTheDocument();

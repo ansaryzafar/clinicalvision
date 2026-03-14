@@ -48,6 +48,9 @@ async def health_check():
         
         uptime = time.time() - _start_time
         
+        # Get model version string
+        model_version_str = getattr(model, 'model_version', 'v12_production')
+        
         response = HealthResponse(
             status=status,
             version=settings.APP_VERSION,
@@ -59,7 +62,8 @@ async def health_check():
             },
             model_loaded=model_loaded,
             database_connected=database_connected,
-            uptime_seconds=uptime
+            uptime_seconds=uptime,
+            model_version=model_version_str
         )
         
         logger.debug(f"Health check: {status}")
