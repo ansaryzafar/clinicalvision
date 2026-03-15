@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ClinicalVision AI Favicon: Dotted C icon -->
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <linearGradient id="dotGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1A7A8A"/>
+      <stop offset="50%" stop-color="#20A0B0"/>
+      <stop offset="100%" stop-color="#0AC5D8"/>
+    </linearGradient>
+  </defs>
+  <!-- Outer ring (r=1.6 scaled) -->
+  <circle cx="83.2" cy="83.2" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="77.8" cy="87.9" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="71.8" cy="91.7" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="65.2" cy="94.5" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="58.3" cy="96.3" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="51.2" cy="97.0" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="44.1" cy="96.6" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="37.1" cy="95.2" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="30.4" cy="92.7" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="24.1" cy="89.2" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="18.5" cy="84.9" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="13.6" cy="79.7" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="9.5" cy="73.8" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="6.4" cy="67.4" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="4.2" cy="60.6" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="3.1" cy="53.6" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="3.1" cy="46.4" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="4.2" cy="39.4" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="6.4" cy="32.6" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="9.5" cy="26.2" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="13.6" cy="20.3" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="18.5" cy="15.1" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="24.1" cy="10.8" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="30.4" cy="7.3" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="37.1" cy="4.8" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="44.1" cy="3.4" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="51.2" cy="3.0" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="58.3" cy="3.7" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="65.2" cy="5.5" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="71.8" cy="8.3" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="77.8" cy="12.1" r="2.4" fill="url(#dotGrad)"/>
+  <circle cx="83.2" cy="16.8" r="2.4" fill="url(#dotGrad)"/>
+  <!-- Second ring (r=1.4 scaled) -->
+  <circle cx="79.7" cy="79.7" r="2.1" fill="url(#dotGrad)"/>
+  <circle cx="74.1" cy="84.4" r="2.1" fill="url(#dotGrad)"/>
+  <circle cx="67.7" cy="88.1" r="2.1" fill="url(#dotGrad)"/>
+  <circle cx="60.9" cy="90.6" r="2.1" fill="url(#dotGrad)"/>
+  <circle cx="53.7" cy="91.8" r="2.1" fill="url(#dotGrad)"/>
+  <circle cx="46.3" cy="91.8" r="2.1" fill="url(#dotGrad)"/>
+  <circle cx="39.1" cy="90.6" r="2.1" fill="url(#dotGrad)"/>
+  <circle cx="32.3" cy="88.1" r="2.1" fill="url(#dotGrad)"/>
+  <circle cx="25.9" cy="84.4" r="2.1" fill="url(#dotGrad)"/>
+  <circle cx="20.3" cy="79.7" r="2.1" fill="url(#dotGrad)"/>
+  <circle cx="15.6" cy="74.1" r="2.1" fill="url(#dotGrad)"/>
+  <circle cx="11.9" cy="67.7" r="2.1" fill="url(#dotGrad)"/>
+  <circle cx="9.4" cy="60.9" r="2.1" fill="url(#dotGrad)"/>
+  <circle cx="8.2" cy="53.7" r="2.1" fill="url(#dotGrad)"/>
+  <circle cx="8.2" cy="46.3" r="2.1" fill="url(#dotGrad)"/>
+  <circle cx="9.4" cy="39.1" r="2.1" fill="url(#dotGrad)"/>
+  <circle cx="11.9" cy="32.3" r="2.1" fill="url(#dotGrad)"/>
+  <circle cx="15.6" cy="25.9" r="2.1" fill="url(#dotGrad)"/>
+  <circle cx="20.3" cy="20.3" r="2.1" fill="url(#dotGrad)"/>
+  <circle cx="25.9" cy="15.6" r="2.1" fill="url(#dotGrad)"/>
+  <circle cx="32.3" cy="11.9" r="2.1" fill="url(#dotGrad)"/>
+  <circle cx="39.1" cy="9.4" r="2.1" fill="url(#dotGrad)"/>
+  <circle cx="46.3" cy="8.2" r="2.1" fill="url(#dotGrad)"/>
+  <circle cx="53.7" cy="8.2" r="2.1" fill="url(#dotGrad)"/>
+  <circle cx="60.9" cy="9.4" r="2.1" fill="url(#dotGrad)"/>
+  <circle cx="67.7" cy="11.9" r="2.1" fill="url(#dotGrad)"/>
+  <circle cx="74.1" cy="15.6" r="2.1" fill="url(#dotGrad)"/>
+  <circle cx="79.7" cy="20.3" r="2.1" fill="url(#dotGrad)"/>
+  <!-- Third ring (r=1.2 scaled) -->
+  <circle cx="76.2" cy="76.2" r="1.8" fill="url(#dotGrad)"/>
+  <circle cx="70.3" cy="80.9" r="1.8" fill="url(#dotGrad)"/>
+  <circle cx="63.6" cy="84.4" r="1.8" fill="url(#dotGrad)"/>
+  <circle cx="56.3" cy="86.5" r="1.8" fill="url(#dotGrad)"/>
+  <circle cx="48.7" cy="87.0" r="1.8" fill="url(#dotGrad)"/>
+  <circle cx="41.2" cy="85.9" r="1.8" fill="url(#dotGrad)"/>
+  <circle cx="34.1" cy="83.4" r="1.8" fill="url(#dotGrad)"/>
+  <circle cx="27.6" cy="79.5" r="1.8" fill="url(#dotGrad)"/>
+  <circle cx="22.1" cy="74.3" r="1.8" fill="url(#dotGrad)"/>
+  <circle cx="17.7" cy="68.1" r="1.8" fill="url(#dotGrad)"/>
+  <circle cx="14.7" cy="61.2" r="1.8" fill="url(#dotGrad)"/>
+  <circle cx="13.2" cy="53.8" r="1.8" fill="url(#dotGrad)"/>
+  <circle cx="13.2" cy="46.2" r="1.8" fill="url(#dotGrad)"/>
+  <circle cx="14.7" cy="38.8" r="1.8" fill="url(#dotGrad)"/>
+  <circle cx="17.7" cy="31.9" r="1.8" fill="url(#dotGrad)"/>
+  <circle cx="22.1" cy="25.7" r="1.8" fill="url(#dotGrad)"/>
+  <circle cx="27.6" cy="20.5" r="1.8" fill="url(#dotGrad)"/>
+  <circle cx="34.1" cy="16.6" r="1.8" fill="url(#dotGrad)"/>
+  <circle cx="41.2" cy="14.1" r="1.8" fill="url(#dotGrad)"/>
+  <circle cx="48.7" cy="13.0" r="1.8" fill="url(#dotGrad)"/>
+  <circle cx="56.3" cy="13.5" r="1.8" fill="url(#dotGrad)"/>
+  <circle cx="63.6" cy="15.6" r="1.8" fill="url(#dotGrad)"/>
+  <circle cx="70.3" cy="19.1" r="1.8" fill="url(#dotGrad)"/>
+  <circle cx="76.2" cy="23.8" r="1.8" fill="url(#dotGrad)"/>
+  <!-- Inner ring (r=1.0 scaled) -->
+  <circle cx="72.6" cy="72.6" r="1.5" fill="url(#dotGrad)"/>
+  <circle cx="66.4" cy="77.5" r="1.5" fill="url(#dotGrad)"/>
+  <circle cx="59.1" cy="80.7" r="1.5" fill="url(#dotGrad)"/>
+  <circle cx="51.3" cy="82.0" r="1.5" fill="url(#dotGrad)"/>
+  <circle cx="43.4" cy="81.3" r="1.5" fill="url(#dotGrad)"/>
+  <circle cx="35.9" cy="78.7" r="1.5" fill="url(#dotGrad)"/>
+  <circle cx="29.3" cy="74.4" r="1.5" fill="url(#dotGrad)"/>
+  <circle cx="24.0" cy="68.6" r="1.5" fill="url(#dotGrad)"/>
+  <circle cx="20.2" cy="61.6" r="1.5" fill="url(#dotGrad)"/>
+  <circle cx="18.2" cy="54.0" r="1.5" fill="url(#dotGrad)"/>
+  <circle cx="18.2" cy="46.0" r="1.5" fill="url(#dotGrad)"/>
+  <circle cx="20.2" cy="38.4" r="1.5" fill="url(#dotGrad)"/>
+  <circle cx="24.0" cy="31.4" r="1.5" fill="url(#dotGrad)"/>
+  <circle cx="29.3" cy="25.6" r="1.5" fill="url(#dotGrad)"/>
+  <circle cx="35.9" cy="21.3" r="1.5" fill="url(#dotGrad)"/>
+  <circle cx="43.4" cy="18.7" r="1.5" fill="url(#dotGrad)"/>
+  <circle cx="51.3" cy="18.0" r="1.5" fill="url(#dotGrad)"/>
+  <circle cx="59.1" cy="19.3" r="1.5" fill="url(#dotGrad)"/>
+  <circle cx="66.4" cy="22.5" r="1.5" fill="url(#dotGrad)"/>
+  <circle cx="72.6" cy="27.4" r="1.5" fill="url(#dotGrad)"/>
+  <!-- Innermost ring (r=0.8 scaled) -->
+  <circle cx="69.1" cy="69.1" r="1.2" fill="url(#dotGrad)"/>
+  <circle cx="62.3" cy="74.1" r="1.2" fill="url(#dotGrad)"/>
+  <circle cx="54.2" cy="76.7" r="1.2" fill="url(#dotGrad)"/>
+  <circle cx="45.8" cy="76.7" r="1.2" fill="url(#dotGrad)"/>
+  <circle cx="37.7" cy="74.1" r="1.2" fill="url(#dotGrad)"/>
+  <circle cx="30.9" cy="69.1" r="1.2" fill="url(#dotGrad)"/>
+  <circle cx="25.9" cy="62.3" r="1.2" fill="url(#dotGrad)"/>
+  <circle cx="23.3" cy="54.2" r="1.2" fill="url(#dotGrad)"/>
+  <circle cx="23.3" cy="45.8" r="1.2" fill="url(#dotGrad)"/>
+  <circle cx="25.9" cy="37.7" r="1.2" fill="url(#dotGrad)"/>
+  <circle cx="30.9" cy="30.9" r="1.2" fill="url(#dotGrad)"/>
+  <circle cx="37.7" cy="25.9" r="1.2" fill="url(#dotGrad)"/>
+  <circle cx="45.8" cy="23.3" r="1.2" fill="url(#dotGrad)"/>
+  <circle cx="54.2" cy="23.3" r="1.2" fill="url(#dotGrad)"/>
+  <circle cx="62.3" cy="25.9" r="1.2" fill="url(#dotGrad)"/>
+  <circle cx="69.1" cy="30.9" r="1.2" fill="url(#dotGrad)"/>
+</svg>
