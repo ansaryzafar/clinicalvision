@@ -50,9 +50,21 @@ USER appuser
 # Expose port
 EXPOSE 8000
 
-# Health check using curl (already installed)
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+# Health check: longer start period for AI model loading
+HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \
     CMD curl -f http://localhost:8000/health/live || exit 1
 
-# Run application with gunicorn (production process manager)
-CMD ["gunicorn", "main:app", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000", "--workers", "4"]
+# Production gunicorn configuration for AI inference:
+# - 1 worker: DenseNet-121 ensemble (3×106MB) needs ~1.5GB RAM per worker
+# - 300s timeout: model loading downloads ImageNet weights + loads 3 checkpoints
+# - graceful-timeout: allow in-flight inference to complete
+# - keep-alive: maintain connections for repeated inference requests
+CMD ["gunicorn", "main:app", \
+     "-k", "uvicorn.workers.UvicornWorker", \
+     "--bind", "0.0.0.0:8000", \
+     "--workers", "1", \
+     "--timeout", "300", \
+     "--graceful-timeout", "60", \
+     "--keep-alive", "120", \
+     "--max-requests", "10000", \
+     "--max-requests-jitter", "1000"]
