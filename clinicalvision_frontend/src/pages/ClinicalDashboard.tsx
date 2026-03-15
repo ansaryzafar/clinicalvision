@@ -191,7 +191,7 @@ const ClinicalDashboard: React.FC = () => {
   // Calculate real statistics from sessions
   const stats = React.useMemo(() => {
     const total = sessions.length;
-    const completed = sessions.filter(s => s.workflow.status === 'completed').length;
+    const completed = sessions.filter(s => s.workflow.status === 'completed' || s.workflow.status === 'finalized' || s.workflow.status === 'reviewed').length;
     const inProgress = sessions.filter(s => s.workflow.status === 'in-progress').length;
     const pending = sessions.filter(s => s.workflow.status === 'pending' || s.workflow.status === 'paused').length;
     
@@ -282,6 +282,8 @@ const ClinicalDashboard: React.FC = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
+      case 'finalized':
+      case 'reviewed':
         return professionalColors.clinical.normal.main;
       case 'pending':
         return professionalColors.clinical.uncertain.main;

@@ -37,7 +37,7 @@ import EntropyHistogram from '../charts/EntropyHistogram';
 import ChartSkeleton from '../charts/ChartSkeleton';
 import ErrorAlert from '../charts/ErrorAlert';
 import { useDashboardTheme } from '../../../hooks/useDashboardTheme';
-import { useModelIntelligenceMetrics } from '../../../hooks/useMetrics';
+import { useModelIntelligenceMetrics, useSystemHealth } from '../../../hooks/useMetrics';
 import { EMPTY_MODEL_INTELLIGENCE_METRICS } from '../../../types/metrics.types';
 import type { MetricsPeriod } from '../../../types/metrics.types';
 
@@ -55,6 +55,9 @@ const ModelIntelligenceTab: React.FC<ModelIntelligenceTabProps> = ({ period }) =
   const { data: metrics, isLoading, dataSource, refresh, error } =
     useModelIntelligenceMetrics({ period });
 
+  // System health for the actually-running model version
+  const { data: systemHealth } = useSystemHealth({ enabled: true });
+
   const safeMetrics = { ...EMPTY_MODEL_INTELLIGENCE_METRICS, ...metrics };
 
   // ── Derived summary metrics ──────────────────────────────────────────────
@@ -64,8 +67,11 @@ const ModelIntelligenceTab: React.FC<ModelIntelligenceTabProps> = ({ period }) =
     const triggers = safeMetrics.reviewTriggers;
 
     const totalVersions = versions.length;
-    const activeVersion =
-      versions.length > 0 ? versions[versions.length - 1].version : '—';
+    // Use the ACTUALLY RUNNING model version from system-health,
+    // not the last array entry from the comparison list.
+    const activeVersion = systemHealth.modelVersion && systemHealth.modelVersion !== '—'
+      ? systemHealth.modelVersion
+      : versions.length > 0 ? versions[0].version : '—';
 
     // Latest review rate
     const latestRate =
@@ -80,7 +86,7 @@ const ModelIntelligenceTab: React.FC<ModelIntelligenceTabProps> = ({ period }) =
         : '—';
 
     return { totalVersions, activeVersion, latestRate, topTrigger };
-  }, [safeMetrics]);
+  }, [safeMetrics, systemHealth.modelVersion]);
 
   return (
     <Box data-testid="model-intelligence-tab">
