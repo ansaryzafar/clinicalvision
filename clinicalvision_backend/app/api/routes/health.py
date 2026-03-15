@@ -9,7 +9,6 @@ from datetime import datetime
 from app.schemas.health import HealthResponse
 from app.core.config import settings
 from app.core.logging import logger
-from app.models.inference import get_model_inference
 import time
 
 router = APIRouter(prefix="/health", tags=["health"])
@@ -28,57 +27,67 @@ async def health_check():
     - Load balancers for traffic routing
     - Monitoring systems (Prometheus, DataDog, etc.)
     - CI/CD pipelines for deployment verification
+    
+    Each service is checked independently so a single failure
+    (e.g. model weights missing) does not mask other healthy services.
     """
     
+    uptime = time.time() - _start_time
+    
+    # --- 1. API is healthy if we reach this handler ---
+    api_status = "healthy"
+    
+    # --- 2. Database connectivity (real check) ---
     try:
-        # Check if model is loaded
+        from app.db.session import check_db_connection
+        database_connected = check_db_connection()
+    except Exception as e:
+        logger.warning(f"Database health check failed: {e}")
+        database_connected = False
+    
+    # --- 3. Model availability (isolated from API/DB) ---
+    model_loaded = False
+    model_version_str = settings.MODEL_VERSION
+    try:
+        from app.models.inference import get_model_inference
         model = get_model_inference()
         model_loaded = model.is_loaded()
-        
-        # TODO: Add database connection check when implemented
-        database_connected = True  # Placeholder
-        
-        # Determine overall status
-        if model_loaded and database_connected:
-            status = "healthy"
-        elif model_loaded or database_connected:
-            status = "degraded"
-        else:
-            status = "unhealthy"
-        
-        uptime = time.time() - _start_time
-        
-        # Get model version string
-        model_version_str = getattr(model, 'model_version', 'v12_production')
-        
-        response = HealthResponse(
-            status=status,
-            version=settings.APP_VERSION,
-            timestamp=datetime.utcnow(),
-            services={
-                "api": "healthy",
-                "model": "healthy" if model_loaded else "unhealthy",
-                "database": "healthy" if database_connected else "unhealthy"
-            },
-            model_loaded=model_loaded,
-            database_connected=database_connected,
-            uptime_seconds=uptime,
-            model_version=model_version_str
-        )
-        
-        logger.debug(f"Health check: {status}")
-        return response
-        
+        model_version_str = getattr(model, 'model_version', settings.MODEL_VERSION)
     except Exception as e:
-        logger.error(f"Health check failed: {e}")
-        return HealthResponse(
-            status="unhealthy",
-            version=settings.APP_VERSION,
-            timestamp=datetime.utcnow(),
-            services={"api": "unhealthy"},
-            model_loaded=False,
-            database_connected=False
-        )
+        # Model files missing or TF not available – this is expected
+        # on production VMs without GPU / model weights
+        logger.info(f"Model not available: {e}")
+        model_loaded = False
+    
+    # --- 4. Determine overall status ---
+    if api_status == "healthy" and database_connected and model_loaded:
+        status = "healthy"
+    elif api_status == "healthy" and database_connected:
+        # API + DB work, only model is unavailable → degraded
+        status = "degraded"
+    elif api_status == "healthy":
+        # API works but DB is down
+        status = "degraded"
+    else:
+        status = "unhealthy"
+    
+    response = HealthResponse(
+        status=status,
+        version=settings.APP_VERSION,
+        timestamp=datetime.utcnow(),
+        services={
+            "api": api_status,
+            "model": "healthy" if model_loaded else "unavailable",
+            "database": "healthy" if database_connected else "unhealthy"
+        },
+        model_loaded=model_loaded,
+        database_connected=database_connected,
+        uptime_seconds=uptime,
+        model_version=model_version_str
+    )
+    
+    logger.debug(f"Health check: {status} (api={api_status}, db={database_connected}, model={model_loaded})")
+    return response
 
 
 @router.get("/ready")
@@ -87,12 +96,14 @@ async def readiness_check():
     Kubernetes-style readiness probe
     Returns 200 only when service is fully ready to accept traffic
     """
-    model = get_model_inference()
-    
-    if not model.is_loaded():
-        return {"ready": False, "reason": "Model not loaded"}
-    
-    return {"ready": True}
+    try:
+        from app.models.inference import get_model_inference
+        model = get_model_inference()
+        if not model.is_loaded():
+            return {"ready": False, "reason": "Model not loaded"}
+        return {"ready": True}
+    except Exception as e:
+        return {"ready": False, "reason": f"Model unavailable: {e}"}
 
 
 @router.get("/device")
@@ -104,36 +115,34 @@ async def device_info():
     Useful for debugging GPU issues.
     """
     try:
+        from app.models.inference import get_model_inference
         model = get_model_inference()
         
         # Get device info if available
         if hasattr(model, 'get_device_info'):
-            device_info = model.get_device_info()
+            dev_info = model.get_device_info()
         else:
-            device_info = {"device_mode": "unknown", "using_gpu": False}
+            dev_info = {"device_mode": "unknown", "using_gpu": False}
         
         return {
             "model_loaded": model.is_loaded(),
-            "device": device_info,
+            "device": dev_info,
             "environment": {
                 "CUDA_VISIBLE_DEVICES": os.environ.get('CUDA_VISIBLE_DEVICES', 'not set'),
                 "TF_XLA_FLAGS": os.environ.get('TF_XLA_FLAGS', 'not set'),
                 "TF_DISABLE_XLA": os.environ.get('TF_DISABLE_XLA', 'not set'),
                 "CLINICALVISION_FORCE_CPU": os.environ.get('CLINICALVISION_FORCE_CPU', 'not set'),
             },
-            "gpu_fix_instructions": {
-                "issue": "CUDA version mismatch between driver and TensorFlow",
-                "solutions": [
-                    "Update NVIDIA driver to match TensorFlow's CUDA version",
-                    "Reinstall TensorFlow with pip install tensorflow==X.X.X",
-                    "Install matching CUDA toolkit",
-                    "Continue using CPU mode (reliable but slower)"
-                ],
-                "to_try_gpu": "Set CLINICALVISION_FORCE_CPU=false and restart server"
-            }
         }
     except Exception as e:
-        return {"error": str(e), "model_loaded": False}
+        return {
+            "error": str(e),
+            "model_loaded": False,
+            "environment": {
+                "CUDA_VISIBLE_DEVICES": os.environ.get('CUDA_VISIBLE_DEVICES', 'not set'),
+                "CLINICALVISION_FORCE_CPU": os.environ.get('CLINICALVISION_FORCE_CPU', 'not set'),
+            },
+        }
 
 
 @router.get("/live")

@@ -162,12 +162,21 @@ export const SystemStatus: React.FC<SystemStatusProps> = ({
         const healthResponse = await response.json();
         const latency = Date.now() - startTime;
       
+        // Map individual service statuses from the backend response
+        // services.api tells us if the API itself is healthy
+        // services.database tells us real DB connectivity
+        // model_loaded tells us if AI model weights are available
+        const apiHealthy = healthResponse.services?.api === 'healthy';
+        const dbHealthy = healthResponse.services?.database === 'healthy' 
+                          || healthResponse.database_connected === true;
+        const modelHealthy = healthResponse.model_loaded === true;
+
         const newStatus: SystemStatusData = {
-          backend: healthResponse.status === 'healthy' ? 'healthy' : 'degraded',
-          model: healthResponse.model_loaded ? 'healthy' : 'offline',
-          database: 'healthy', // Assume healthy if backend responds
+          backend: apiHealthy ? 'healthy' : 'degraded',
+          model: modelHealthy ? 'healthy' : 'degraded',
+          database: dbHealthy ? 'healthy' : 'offline',
           latency,
-          modelVersion: healthResponse.version || null,
+          modelVersion: healthResponse.model_version || healthResponse.version || null,
           lastChecked: new Date(),
         };
         
@@ -224,8 +233,11 @@ export const SystemStatus: React.FC<SystemStatusProps> = ({
 
   const getOverallStatus = (): StatusType => {
     if (status.backend === 'checking') return 'checking';
-    if (status.backend === 'offline' || status.model === 'offline') return 'offline';
-    if (status.backend === 'degraded' || status.model === 'degraded') return 'degraded';
+    if (status.backend === 'offline' && status.database === 'offline') return 'offline';
+    if (status.backend === 'offline') return 'offline';
+    // API is up but model/db may be degraded → show degraded (amber), not offline (red)
+    if (status.model === 'degraded' || status.model === 'offline') return 'degraded';
+    if (status.backend === 'degraded' || status.database === 'degraded') return 'degraded';
     return 'healthy';
   };
 
