@@ -29,20 +29,26 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         """Process request and add security headers"""
         
-        # HTTPS Enforcement in Production
+        # Paths that should NEVER be redirected — they are always proxied
+        # through nginx which handles SSL termination
+        EXEMPT_PREFIXES = ("/health", "/api/", "/inference/", "/docs", "/openapi.json")
+        path = request.url.path
+        
+        # HTTPS Enforcement in Production (non-exempt paths only)
         if settings.ENVIRONMENT == "production" and not settings.DEBUG:
-            # Check if request is HTTP (not HTTPS)
-            # Also check X-Forwarded-Proto header set by reverse proxy (nginx)
-            forwarded_proto = request.headers.get("X-Forwarded-Proto", "")
-            is_https = (
-                request.url.scheme == "https"
-                or forwarded_proto.lower() == "https"
-            )
-            if not is_https:
-                # Redirect to HTTPS
-                url = request.url.replace(scheme="https")
-                logger.info(f"Redirecting HTTP to HTTPS: {request.url} -> {url}")
-                return RedirectResponse(url=str(url), status_code=301)
+            if not any(path.startswith(p) for p in EXEMPT_PREFIXES):
+                # Check if request is HTTP (not HTTPS)
+                # Also check X-Forwarded-Proto header set by reverse proxy (nginx)
+                forwarded_proto = request.headers.get("X-Forwarded-Proto", "")
+                is_https = (
+                    request.url.scheme == "https"
+                    or forwarded_proto.lower() == "https"
+                )
+                if not is_https:
+                    # Redirect to HTTPS (use 307 to prevent caching issues)
+                    url = request.url.replace(scheme="https")
+                    logger.info(f"Redirecting HTTP to HTTPS: {request.url} -> {url}")
+                    return RedirectResponse(url=str(url), status_code=307)
         
         # Process the request
         response = await call_next(request)
@@ -55,21 +61,30 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
         
         # Content Security Policy
-        csp_directives = [
-            "default-src 'self'",
-            "script-src 'self' 'unsafe-inline'",  # Production CRA builds don't need eval
-            "style-src 'self' 'unsafe-inline'",  # Inline styles for components
-            "img-src 'self' data: blob:",  # Allow data URIs for images
-            "font-src 'self' data:",
-            "connect-src 'self' http://localhost:* ws://localhost:* http://127.0.0.1:*",  # API and WebSocket
-            "frame-ancestors 'none'",
-            "base-uri 'self'",
-            "form-action 'self'"
-        ]
-        
-        # In development, allow unsafe-eval for hot reloading
-        if settings.DEBUG:
-            csp_directives[1] = "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
+        if settings.ENVIRONMENT == "production":
+            csp_directives = [
+                "default-src 'self'",
+                "script-src 'self' 'unsafe-inline'",
+                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+                "img-src 'self' data: blob:",
+                "font-src 'self' data: https://fonts.gstatic.com",
+                "connect-src 'self' https://clinicalvision.ai https://www.clinicalvision.ai",
+                "frame-ancestors 'none'",
+                "base-uri 'self'",
+                "form-action 'self'"
+            ]
+        else:
+            csp_directives = [
+                "default-src 'self'",
+                "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+                "style-src 'self' 'unsafe-inline'",
+                "img-src 'self' data: blob:",
+                "font-src 'self' data:",
+                "connect-src 'self' http://localhost:* ws://localhost:* http://127.0.0.1:*",
+                "frame-ancestors 'none'",
+                "base-uri 'self'",
+                "form-action 'self'"
+            ]
         
         response.headers["Content-Security-Policy"] = "; ".join(csp_directives)
         

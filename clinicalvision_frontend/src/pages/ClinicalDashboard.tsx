@@ -1021,7 +1021,7 @@ const ClinicalDashboard: React.FC = () => {
                       <Stack direction="row" spacing={2.5} alignItems="center">
                         {/* ── Donut with metallic gradients ── */}
                         <Box data-testid="perf-donut-container" sx={{ position: 'relative', width: 120, height: 120, flexShrink: 0 }}>
-                          <ResponsiveContainer width="100%" height="100%">
+                          <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
                             <PieChart>
                               <defs>
                                 {gradDefs.map(({ id, stops: [light, mid, dark] }) => (
