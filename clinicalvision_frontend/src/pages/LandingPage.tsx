@@ -19,6 +19,7 @@ import {
   Fade,
   Chip,
   ClickAwayListener,
+  ThemeProvider,
 } from '@mui/material';
 import {
   ArrowForward,
@@ -56,6 +57,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { ROUTES, DEFAULT_AUTH_REDIRECT } from '../routes/paths';
 import { useAuth } from '../contexts/AuthContext';
+import { publicPagesTheme } from '../styles/lunitDesignSystem';
 
 // Import Lunit animations CSS
 import '../styles/lunit-animations.css';
@@ -361,6 +363,7 @@ const LandingPage: React.FC = () => {
   ];
 
   return (
+    <ThemeProvider theme={publicPagesTheme}>
     <Box sx={{ minHeight: '100vh', bgcolor: lunitColors.white }}>
       {/* Enhanced Navigation Bar - Lunit Style */}
       <Box
@@ -4870,6 +4873,7 @@ const LandingPage: React.FC = () => {
         </Box>
       </Box>
     </Box>
+    </ThemeProvider>
   );
 };
 

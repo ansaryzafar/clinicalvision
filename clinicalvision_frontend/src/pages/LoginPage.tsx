@@ -33,7 +33,8 @@ import {
   ArrowForward,
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
-import { lunitColors } from '../styles/lunitDesignSystem';
+import { lunitColors, publicPagesTheme } from '../styles/lunitDesignSystem';
+import { ThemeProvider } from '@mui/material';
 
 /** Value propositions shown on the brand panel */
 const VALUE_PROPS = [
@@ -146,6 +147,7 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
+    <ThemeProvider theme={publicPagesTheme}>
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       {/* ═══════════════════════════════════════════════
           LEFT — Brand Panel (hidden on mobile)
@@ -549,6 +551,7 @@ export const LoginPage: React.FC = () => {
         </Typography>
       </Box>
     </Box>
+    </ThemeProvider>
   );
 };
 

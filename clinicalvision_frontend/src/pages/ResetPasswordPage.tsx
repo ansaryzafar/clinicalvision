@@ -36,7 +36,8 @@ import {
   Shield,
   VerifiedUser,
 } from '@mui/icons-material';
-import { lunitColors } from '../styles/lunitDesignSystem';
+import { lunitColors, publicPagesTheme } from '../styles/lunitDesignSystem';
+import { ThemeProvider } from '@mui/material';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || '';
 
@@ -581,6 +582,7 @@ const ResetPasswordPage: React.FC = () => {
   };
 
   return (
+    <ThemeProvider theme={publicPagesTheme}>
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       {/* ═══════════════════════════════════════════════
           LEFT — Brand Panel (hidden on mobile)
@@ -767,6 +769,7 @@ const ResetPasswordPage: React.FC = () => {
         </Typography>
       </Box>
     </Box>
+    </ThemeProvider>
   );
 };
 

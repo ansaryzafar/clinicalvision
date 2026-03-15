@@ -52,7 +52,8 @@ import {
   Speed,
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
-import { lunitColors } from '../styles/lunitDesignSystem';
+import { lunitColors, publicPagesTheme } from '../styles/lunitDesignSystem';
+import { ThemeProvider } from '@mui/material';
 
 // ============================================================================
 // Types
@@ -655,6 +656,7 @@ export const RegisterPage: React.FC = () => {
   // ============================================================================
 
   return (
+    <ThemeProvider theme={publicPagesTheme}>
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       {/* ═══════════════════════════════════════════════
           LEFT — Brand Panel (hidden on mobile)
@@ -1053,6 +1055,7 @@ export const RegisterPage: React.FC = () => {
         </Typography>
       </Box>
     </Box>
+    </ThemeProvider>
   );
 };
 

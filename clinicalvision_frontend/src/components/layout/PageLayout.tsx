@@ -20,6 +20,7 @@ import {
   Fade,
   Chip,
   ClickAwayListener,
+  ThemeProvider,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../routes/paths';
@@ -57,7 +58,7 @@ import {
   lunitSpacing,
   lunitShadows,
 } from '../../styles/lunitDesignSystem';
-import { lunitRadius } from '../../styles/lunitDesignSystem';
+import { lunitRadius, publicPagesTheme } from '../../styles/lunitDesignSystem';
 import { useScrollReveal } from '../../hooks/useScrollReveal';
 
 // Footer Link Data
@@ -1031,13 +1032,15 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   showFooter = true,
 }) => {
   return (
-    <Box sx={{ bgcolor: lunitColors.white, minHeight: '100vh' }}>
-      <PageHeader variant={headerVariant} />
-      <Box sx={{ pt: { xs: '70px', md: '100px' } }}>
-        {children}
+    <ThemeProvider theme={publicPagesTheme}>
+      <Box sx={{ bgcolor: lunitColors.white, minHeight: '100vh' }}>
+        <PageHeader variant={headerVariant} />
+        <Box sx={{ pt: { xs: '70px', md: '100px' } }}>
+          {children}
+        </Box>
+        {showFooter && <PageFooter />}
       </Box>
-      {showFooter && <PageFooter />}
-    </Box>
+    </ThemeProvider>
   );
 };
 

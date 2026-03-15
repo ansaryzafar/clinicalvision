@@ -6,6 +6,8 @@
  * Color Palette: Teal primary, clean whites/grays
  */
 
+import { createTheme } from '@mui/material/styles';
+
 // ============================================
 // COLOR PALETTE
 // ============================================
@@ -1019,5 +1021,71 @@ const lunitDesignSystem = {
   linkStyles: lunitLinkStyles,
   breakpoints: lunitBreakpoints,
 };
+
+// ============================================
+// PUBLIC PAGES LIGHT THEME
+// ============================================
+// MUI theme override for public-facing pages that use the lunit design system.
+// Forces mode: 'light' so MUI components (Paper, Menu, Accordion, Card, etc.)
+// default to white/light backgrounds instead of inheriting the app-wide dark theme.
+export const publicPagesTheme = createTheme({
+  palette: {
+    mode: 'light',
+    background: {
+      default: lunitColors.white,
+      paper: lunitColors.white,
+    },
+    text: {
+      primary: lunitColors.headingColor,
+      secondary: lunitColors.text,
+    },
+    primary: {
+      main: lunitColors.teal,
+    },
+    divider: lunitColors.lightGray,
+    action: {
+      hover: 'rgba(0, 0, 0, 0.04)',
+      selected: 'rgba(0, 201, 234, 0.08)',
+    },
+  },
+  typography: {
+    fontFamily: '"Lexend", "Inter", system-ui, sans-serif',
+    button: {
+      textTransform: 'none' as const,
+    },
+  },
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundImage: 'none',
+          backgroundColor: lunitColors.white,
+        },
+      },
+    },
+    MuiAccordion: {
+      styleOverrides: {
+        root: {
+          backgroundColor: lunitColors.white,
+        },
+      },
+    },
+    MuiMenu: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: lunitColors.white,
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          backgroundColor: lunitColors.white,
+          backgroundImage: 'none',
+        },
+      },
+    },
+  },
+});
 
 export default lunitDesignSystem;
