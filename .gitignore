@@ -325,10 +325,7 @@ clinicalvision_backend/aux*
 clinicalvision_backend/sword_*
 clinicalvision_backend/browse_db.py
 clinicalvision_backend/debug_images_list.py
-clinicalvision_backend/init_test_user.py
 clinicalvision_backend/quick_validation.py
-clinicalvision_backend/seed_database.py
-clinicalvision_backend/seed_industry_standards.py
 clinicalvision_backend/validate_production.py
 clinicalvision_backend/verify_industry_standards.py
 clinicalvision_backend/verify_install.py
