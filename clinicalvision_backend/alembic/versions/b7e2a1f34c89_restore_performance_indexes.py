@@ -26,11 +26,30 @@ branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
+def _safe_create_index(sql: str) -> None:
+    """Execute CREATE INDEX only if the target table exists."""
+    from sqlalchemy import text
+    conn = op.get_bind()
+    # Extract table name from "... ON <table> ..." or "... ON <table> USING ..."
+    import re
+    match = re.search(r'\bON\s+(\w+)\b', sql, re.IGNORECASE)
+    if match:
+        table_name = match.group(1)
+        exists = conn.execute(
+            text("SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=:t)"),
+            {"t": table_name}
+        ).scalar()
+        if not exists:
+            return  # skip — table doesn't exist yet
+    op.execute(sql)
+
+
 def upgrade() -> None:
     """
     Restore dropped performance indexes and add critical missing indexes.
     
     Uses IF NOT EXISTS / execute() for safety — idempotent if indexes already exist.
+    Skips indexes whose target table does not exist (e.g. audit_log).
     """
     
     # =========================================================================
@@ -38,31 +57,31 @@ def upgrade() -> None:
     # =========================================================================
     
     # Composite indexes for multi-column queries
-    op.execute('CREATE INDEX IF NOT EXISTS idx_users_org_role ON users (organization_id, role)')
-    op.execute('CREATE INDEX IF NOT EXISTS idx_studies_org_date ON studies (organization_id, study_date)')
-    op.execute("CREATE INDEX IF NOT EXISTS idx_images_study_view ON images (study_id, view_type, laterality)")
-    op.execute('CREATE INDEX IF NOT EXISTS idx_analyses_image_prediction ON analyses (image_id, prediction_class)')
-    op.execute('CREATE INDEX IF NOT EXISTS idx_feedback_radiologist_date ON feedback (radiologist_id, created_at)')
+    _safe_create_index('CREATE INDEX IF NOT EXISTS idx_users_org_role ON users (organization_id, role)')
+    _safe_create_index('CREATE INDEX IF NOT EXISTS idx_studies_org_date ON studies (organization_id, study_date)')
+    _safe_create_index("CREATE INDEX IF NOT EXISTS idx_images_study_view ON images (study_id, view_type, laterality)")
+    _safe_create_index('CREATE INDEX IF NOT EXISTS idx_analyses_image_prediction ON analyses (image_id, prediction_class)')
+    _safe_create_index('CREATE INDEX IF NOT EXISTS idx_feedback_radiologist_date ON feedback (radiologist_id, created_at)')
     
     # GIN indexes for JSONB columns
-    op.execute('CREATE INDEX IF NOT EXISTS idx_analyses_explainability_gin ON analyses USING gin (explainability_data)')
-    op.execute('CREATE INDEX IF NOT EXISTS idx_analyses_roi_gin ON analyses USING gin (roi_coordinates)')
-    op.execute('CREATE INDEX IF NOT EXISTS idx_feedback_annotations_gin ON feedback USING gin (annotations)')
+    _safe_create_index('CREATE INDEX IF NOT EXISTS idx_analyses_explainability_gin ON analyses USING gin (explainability_data)')
+    _safe_create_index('CREATE INDEX IF NOT EXISTS idx_analyses_roi_gin ON analyses USING gin (roi_coordinates)')
+    _safe_create_index('CREATE INDEX IF NOT EXISTS idx_feedback_annotations_gin ON feedback USING gin (annotations)')
     
     # =========================================================================
     # 2. Add created_at indexes to high-query tables (for pagination & sorting)
     # =========================================================================
     
-    op.execute('CREATE INDEX IF NOT EXISTS idx_users_created_at ON users (created_at)')
-    op.execute('CREATE INDEX IF NOT EXISTS idx_studies_created_at ON studies (created_at)')
-    op.execute('CREATE INDEX IF NOT EXISTS idx_images_created_at ON images (created_at)')
-    op.execute('CREATE INDEX IF NOT EXISTS idx_analyses_created_at ON analyses (created_at)')
-    op.execute('CREATE INDEX IF NOT EXISTS idx_feedback_created_at ON feedback (created_at)')
-    op.execute('CREATE INDEX IF NOT EXISTS idx_audit_log_created_at ON audit_log (created_at)')
-    op.execute('CREATE INDEX IF NOT EXISTS idx_clinical_cases_created_at ON clinical_cases (created_at)')
-    op.execute('CREATE INDEX IF NOT EXISTS idx_clinical_reports_created_at ON clinical_reports (created_at)')
-    op.execute('CREATE INDEX IF NOT EXISTS idx_dicom_metadata_created_at ON dicom_metadata (created_at)')
-    op.execute('CREATE INDEX IF NOT EXISTS idx_model_versions_created_at ON model_versions (created_at)')
+    _safe_create_index('CREATE INDEX IF NOT EXISTS idx_users_created_at ON users (created_at)')
+    _safe_create_index('CREATE INDEX IF NOT EXISTS idx_studies_created_at ON studies (created_at)')
+    _safe_create_index('CREATE INDEX IF NOT EXISTS idx_images_created_at ON images (created_at)')
+    _safe_create_index('CREATE INDEX IF NOT EXISTS idx_analyses_created_at ON analyses (created_at)')
+    _safe_create_index('CREATE INDEX IF NOT EXISTS idx_feedback_created_at ON feedback (created_at)')
+    _safe_create_index('CREATE INDEX IF NOT EXISTS idx_audit_log_created_at ON audit_log (created_at)')
+    _safe_create_index('CREATE INDEX IF NOT EXISTS idx_clinical_cases_created_at ON clinical_cases (created_at)')
+    _safe_create_index('CREATE INDEX IF NOT EXISTS idx_clinical_reports_created_at ON clinical_reports (created_at)')
+    _safe_create_index('CREATE INDEX IF NOT EXISTS idx_dicom_metadata_created_at ON dicom_metadata (created_at)')
+    _safe_create_index('CREATE INDEX IF NOT EXISTS idx_model_versions_created_at ON model_versions (created_at)')
     
     # =========================================================================
     # 3. Remove redundant UUID indexes (primary_key already provides unique B-tree)
