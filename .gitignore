@@ -166,14 +166,19 @@ A Guide to Medical Imaging Software Development*
 !clinicalvision_frontend/public/**/*.svg
 !clinicalvision_frontend/src/**/*.svg
 *.webp
+!clinicalvision_frontend/public/**/*.webp
+!clinicalvision_frontend/src/**/*.webp
 *.jpg
 *.JPG
 *.jpeg
 *.JPEG
+!clinicalvision_frontend/public/**/*.jpg
+!clinicalvision_frontend/public/**/*.jpeg
 *.png
 *.PNG
 !clinicalvision_frontend/public/**/*.png
 !clinicalvision_frontend/public/**/*.ico
+!clinicalvision_frontend/public/**/*.gif
 !clinicalvision_frontend/src/**/*.png
 
 # ---------------------------------------------------------------------------

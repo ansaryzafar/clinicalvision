@@ -32,6 +32,10 @@ else
     echo "  ✓ Backend .env already exists"
 fi
 
+# Create frontend .env for REACT_APP_* build variables
+cp production/.env.frontend clinicalvision_frontend/.env
+echo "  ✓ Frontend .env created"
+
 # ── Step 2: Copy production nginx config ──────────────────────────────────
 echo "[2/6] Setting up nginx production config..."
 cp production/nginx.prod.conf clinicalvision_frontend/nginx.conf
