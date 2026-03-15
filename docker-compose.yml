@@ -52,6 +52,7 @@ services:
       - ./clinicalvision_backend/uploads:/app/uploads
       - ./clinicalvision_backend/logs:/app/logs
       - ./clinicalvision_backend/models:/app/models
+      - ./clinicalvision_backend/ml_models:/app/ml_models
     depends_on:
       db:
         condition: service_healthy
