@@ -305,10 +305,12 @@ const ClinicalDashboard: React.FC = () => {
     }
   };
 
-  // Handle session resume
+  // Handle session resume / view
   const handleResumeSession = (sessionId: string) => {
-    loadSession(sessionId);
-    navigate(ROUTES.WORKFLOW);
+    // Navigate to the workflow page with resumeCaseId so the 10-step
+    // ClinicalWorkflowPage picks up the existing case (same approach
+    // as PatientRecords / Case History).
+    navigate(ROUTES.WORKFLOW, { state: { resumeCaseId: sessionId } });
   };
 
   // Get greeting based on time of day
@@ -821,7 +823,7 @@ const ClinicalDashboard: React.FC = () => {
                               color: getStatusColor(case_.status),
                             }}
                           >
-                            {case_.status === 'completed' ? (
+                            {(case_.status === 'completed' || case_.status === 'finalized' || case_.status === 'reviewed') ? (
                               <CheckCircle />
                             ) : case_.status === 'pending' ? (
                               <HourglassEmpty />
@@ -916,7 +918,7 @@ const ClinicalDashboard: React.FC = () => {
                   </Stack>
                   <Grid container spacing={1.5}>
                     {[
-                      { label: 'New Analysis', icon: <Biotech />, route: ROUTES.WORKFLOW, gradient: true },
+                      { label: 'New Analysis', icon: <Biotech />, route: ROUTES.WORKFLOW },
                       { label: 'Case Archive', icon: <FolderOpen />, route: ROUTES.ANALYSIS_ARCHIVE },
                       { label: 'History', icon: <History />, route: ROUTES.HISTORY },
                       { label: 'Settings', icon: <Settings />, route: ROUTES.SETTINGS },
@@ -932,22 +934,16 @@ const ClinicalDashboard: React.FC = () => {
                             p: 1.5,
                             borderRadius: 2,
                             cursor: 'pointer',
-                            border: `1px solid ${action.gradient ? 'transparent' : theme.palette.divider}`,
-                            background: action.gradient
-                              ? `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`
-                              : alpha(dt.cardBackground, 0.5),
-                            color: action.gradient ? '#FFFFFF' : dt.textPrimary,
-                            boxShadow: action.gradient ? `0 2px 8px ${alpha(theme.palette.primary.main, 0.25)}` : 'none',
+                            border: `1px solid ${alpha(theme.palette.divider, 0.6)}`,
+                            background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.04)}, ${alpha(theme.palette.primary.light, 0.08)})`,
+                            color: dt.textPrimary,
+                            boxShadow: 'none',
                             transition: 'all 0.2s ease',
                             '&:hover': {
                               transform: 'translateY(-2px)',
-                              boxShadow: action.gradient
-                                ? `0 4px 12px ${alpha(theme.palette.primary.main, 0.35)}`
-                                : `0 2px 8px ${alpha(theme.palette.primary.main, 0.15)}`,
-                              borderColor: action.gradient ? 'transparent' : theme.palette.primary.main,
-                              background: action.gradient
-                                ? `linear-gradient(135deg, ${theme.palette.primary.dark}, ${theme.palette.primary.main})`
-                                : alpha(theme.palette.primary.main, 0.08),
+                              boxShadow: `0 2px 8px ${alpha(theme.palette.primary.main, 0.15)}`,
+                              borderColor: theme.palette.primary.main,
+                              background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.08)}, ${alpha(theme.palette.primary.light, 0.14)})`,
                             },
                           }}
                         >
@@ -997,7 +993,7 @@ const ClinicalDashboard: React.FC = () => {
                     </Stack>
                   </Stack>
                   {(() => {
-                    const completed = sessions.filter(s => s.workflow.status === 'completed').length;
+                    const completed = sessions.filter(s => s.workflow.status === 'completed' || s.workflow.status === 'finalized' || s.workflow.status === 'reviewed').length;
                     const inProgress = sessions.filter(s => s.workflow.status === 'in-progress').length;
                     const pending = sessions.length - completed - inProgress;
                     const completionRate = sessions.length > 0 ? Math.round((completed / sessions.length) * 100) : 0;

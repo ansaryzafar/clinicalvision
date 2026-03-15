@@ -10,6 +10,8 @@ import { ClinicalCaseProvider } from './contexts/ClinicalCaseContext';
 import ScrollToTop from './components/utils/ScrollToTop';
 // Centralized routing system
 import AppRoutes from './routes/AppRoutes';
+// GDPR/CCPA-compliant cookie consent banner
+import CookieConsentBanner from './components/shared/CookieConsentBanner';
 
 /**
  * ClinicalVision AI - Main Application
@@ -76,6 +78,7 @@ function App() {
             <Router>
               <ScrollToTop />
               <AppRoutes />
+              <CookieConsentBanner />
             </Router>
           </WorkflowProvider>
         </AuthenticatedClinicalCaseProvider>
