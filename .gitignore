@@ -355,3 +355,6 @@ clinicalvision_frontend/ClashGrotesk_Complete.zip
 !/clinicalvision_backend/scripts/BACKUP_README.md
 !/clinicalvision_frontend/README.md
 !/.github/**/*.md
+
+# Production secrets
+production/.env.production
