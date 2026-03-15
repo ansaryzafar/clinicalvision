@@ -32,7 +32,13 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         # HTTPS Enforcement in Production
         if settings.ENVIRONMENT == "production" and not settings.DEBUG:
             # Check if request is HTTP (not HTTPS)
-            if request.url.scheme == "http":
+            # Also check X-Forwarded-Proto header set by reverse proxy (nginx)
+            forwarded_proto = request.headers.get("X-Forwarded-Proto", "")
+            is_https = (
+                request.url.scheme == "https"
+                or forwarded_proto.lower() == "https"
+            )
+            if not is_https:
                 # Redirect to HTTPS
                 url = request.url.replace(scheme="https")
                 logger.info(f"Redirecting HTTP to HTTPS: {request.url} -> {url}")
