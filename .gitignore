@@ -146,6 +146,8 @@ report_subtitle.txt
 # ---------------------------------------------------------------------------
 *.ipynb
 !docs/*.ipynb
+!notebooks/**/*.ipynb
+!notebooks/README.md
 
 # ---------------------------------------------------------------------------
 # Prototype & Reference Files
@@ -352,6 +354,7 @@ clinicalvision_frontend/ClashGrotesk_Complete.zip
 !/CONTRIBUTING.md
 !/SECURITY.md
 !/PRE_DEPLOYMENT_AUDIT.md
+!/notebooks/README.md
 !/clinicalvision_backend/README.md
 !/clinicalvision_backend/ml_models/README.md
 !/clinicalvision_backend/scripts/BACKUP_README.md
