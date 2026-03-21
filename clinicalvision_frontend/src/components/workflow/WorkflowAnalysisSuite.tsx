@@ -27,6 +27,7 @@ import {
   Tab,
   Tabs,
   Typography,
+  useTheme,
 } from '@mui/material';
 import {
   ArrowBack as ArrowBackIcon,
@@ -61,12 +62,9 @@ const LUNIT = {
   fontBody: '"Lexend", "Inter", sans-serif',
   teal: '#00C9EA',
   tealDark: '#0F95AB',
-  darkGray: '#1A1A2E',
-  midGray: '#6B7280',
   lightGray: '#E5E7EB',
   green: '#22C55E',
   red: '#EF5350',
-  white: '#FFFFFF',
 } as const;
 
 // ============================================================================
@@ -208,6 +206,7 @@ export const WorkflowAnalysisSuite: React.FC<WorkflowAnalysisSuiteProps> = ({
   onContinue,
   onBack,
 }) => {
+  const theme = useTheme();
   const { images, analysisResults } = clinicalCase;
 
   // ── State ──────────────────────────────────────────────────────────
@@ -279,14 +278,14 @@ export const WorkflowAnalysisSuite: React.FC<WorkflowAnalysisSuiteProps> = ({
           sx={{
             fontFamily: LUNIT.fontHeading,
             fontWeight: 300,
-            color: LUNIT.darkGray,
+            color: theme.palette.text.primary,
             mb: 1,
           }}
         >
           Image Analysis
         </Typography>
         <Typography
-          sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray }}
+          sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary }}
         >
           No images available. Please upload images first.
         </Typography>
@@ -336,7 +335,7 @@ export const WorkflowAnalysisSuite: React.FC<WorkflowAnalysisSuiteProps> = ({
             fontFamily: LUNIT.fontHeading,
             fontWeight: 300,
             fontSize: '1.5rem',
-            color: LUNIT.darkGray,
+            color: theme.palette.text.primary,
             mb: 0.5,
           }}
         >
@@ -344,7 +343,7 @@ export const WorkflowAnalysisSuite: React.FC<WorkflowAnalysisSuiteProps> = ({
         </Typography>
         <Typography
           variant="body2"
-          sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray }}
+          sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary }}
         >
           Review AI analysis results with the imaging suite before proceeding
           to BI-RADS assessment.
@@ -407,7 +406,7 @@ export const WorkflowAnalysisSuite: React.FC<WorkflowAnalysisSuiteProps> = ({
                           width: 8,
                           height: 8,
                           borderRadius: '50%',
-                          backgroundColor: LUNIT.midGray,
+                          backgroundColor: theme.palette.text.secondary,
                         }}
                       />
                     )}
@@ -477,8 +476,8 @@ export const WorkflowAnalysisSuite: React.FC<WorkflowAnalysisSuiteProps> = ({
               fontSize: '0.75rem',
               textTransform: 'none',
               borderRadius: '100px',
-              backgroundColor: alpha(LUNIT.darkGray, 0.8),
-              color: LUNIT.white,
+              backgroundColor: alpha(theme.palette.text.primary, 0.8),
+              color: theme.palette.background.paper,
               backdropFilter: 'blur(4px)',
               '&:hover': {
                 backgroundColor: LUNIT.teal,
@@ -508,7 +507,7 @@ export const WorkflowAnalysisSuite: React.FC<WorkflowAnalysisSuiteProps> = ({
               <Typography
                 sx={{
                   fontFamily: LUNIT.fontBody,
-                  color: LUNIT.midGray,
+                  color: theme.palette.text.secondary,
                   fontSize: '0.9rem',
                 }}
               >
@@ -539,7 +538,7 @@ export const WorkflowAnalysisSuite: React.FC<WorkflowAnalysisSuiteProps> = ({
               fontWeight: 500,
               borderRadius: '100px',
               borderColor: LUNIT.lightGray,
-              color: LUNIT.darkGray,
+              color: theme.palette.text.primary,
               textTransform: 'none',
               px: 3,
               '&:hover': { borderColor: LUNIT.teal, color: LUNIT.teal },
@@ -581,7 +580,7 @@ export const WorkflowAnalysisSuite: React.FC<WorkflowAnalysisSuiteProps> = ({
             right: 0,
             bottom: 0,
             zIndex: 1300,
-            backgroundColor: LUNIT.darkGray,
+            backgroundColor: theme.palette.text.primary,
           }}
         >
           <AnalysisSuite
@@ -605,6 +604,7 @@ interface SidebarContentProps {
 }
 
 const SidebarContent: React.FC<SidebarContentProps> = ({ result }) => {
+  const theme = useTheme();
   const riskColor = getRiskColor(result.riskLevel);
   const predictionColor =
     result.prediction === 'malignant' ? LUNIT.red : LUNIT.green;
@@ -618,7 +618,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ result }) => {
         sx={{
           fontFamily: LUNIT.fontHeading,
           fontWeight: 500,
-          color: LUNIT.darkGray,
+          color: theme.palette.text.primary,
           mb: 1,
         }}
       >
@@ -664,7 +664,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ result }) => {
           variant="caption"
           sx={{
             fontFamily: LUNIT.fontBody,
-            color: LUNIT.midGray,
+            color: theme.palette.text.secondary,
             display: 'block',
             mb: 0.25,
           }}
@@ -690,7 +690,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ result }) => {
           variant="caption"
           sx={{
             fontFamily: LUNIT.fontBody,
-            color: LUNIT.midGray,
+            color: theme.palette.text.secondary,
             display: 'block',
             mb: 0.5,
           }}
@@ -700,13 +700,13 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ result }) => {
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography
             variant="body2"
-            sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.darkGray }}
+            sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.primary }}
           >
             Benign: {Math.round(result.probabilities.benign * 100)}%
           </Typography>
           <Typography
             variant="body2"
-            sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.darkGray }}
+            sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.primary }}
           >
             Malignant: {Math.round(result.probabilities.malignant * 100)}%
           </Typography>
@@ -721,7 +721,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ result }) => {
         sx={{
           fontFamily: LUNIT.fontHeading,
           fontWeight: 500,
-          color: LUNIT.darkGray,
+          color: theme.palette.text.primary,
           mb: 1,
         }}
       >
@@ -731,7 +731,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ result }) => {
       {result.suspiciousRegions.length === 0 ? (
         <Typography
           variant="body2"
-          sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray }}
+          sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary }}
         >
           No suspicious regions detected.
         </Typography>
@@ -760,7 +760,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ result }) => {
                 sx={{
                   fontFamily: LUNIT.fontBody,
                   fontWeight: 600,
-                  color: LUNIT.darkGray,
+                  color: theme.palette.text.primary,
                 }}
               >
                 Region {idx + 1}
@@ -787,7 +787,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ result }) => {
                 variant="caption"
                 sx={{
                   fontFamily: LUNIT.fontBody,
-                  color: LUNIT.midGray,
+                  color: theme.palette.text.secondary,
                   display: 'block',
                 }}
               >
@@ -807,7 +807,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ result }) => {
             sx={{
               fontFamily: LUNIT.fontHeading,
               fontWeight: 500,
-              color: LUNIT.darkGray,
+              color: theme.palette.text.primary,
               mb: 1,
             }}
           >
@@ -832,7 +832,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ result }) => {
             variant="caption"
             sx={{
               fontFamily: LUNIT.fontBody,
-              color: LUNIT.midGray,
+              color: theme.palette.text.secondary,
               display: 'block',
             }}
           >
@@ -848,7 +848,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ result }) => {
         variant="caption"
         sx={{
           fontFamily: LUNIT.fontBody,
-          color: alpha(LUNIT.midGray, 0.6),
+          color: alpha(theme.palette.text.secondary, 0.6),
           display: 'block',
         }}
       >

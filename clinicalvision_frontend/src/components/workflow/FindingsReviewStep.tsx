@@ -27,6 +27,7 @@ import {
   TableHead,
   TableRow,
   Typography,
+  useTheme,
 } from '@mui/material';
 import {
   ArrowBack as ArrowBackIcon,
@@ -52,11 +53,8 @@ const LUNIT = {
   fontHeading: '"ClashGrotesk", "Inter", sans-serif',
   fontBody: '"Lexend", "Inter", sans-serif',
   teal: '#00C9EA',
-  darkGray: '#1A1A2E',
-  midGray: '#6B7280',
   lightGray: '#E5E7EB',
   green: '#22C55E',
-  white: '#FFFFFF',
 } as const;
 
 // ============================================================================
@@ -121,6 +119,7 @@ export const FindingsReviewStep: React.FC<FindingsReviewStepProps> = ({
   onContinue,
   onBack,
 }) => {
+  const theme = useTheme();
   const { images, analysisResults, consolidatedFindings } = clinicalCase;
 
   // Build a lookup: imageId → MammogramImage
@@ -144,9 +143,9 @@ export const FindingsReviewStep: React.FC<FindingsReviewStepProps> = ({
             borderRadius: 2,
           }}
         >
-          <InfoIcon sx={{ fontSize: 36, color: LUNIT.midGray, mb: 1 }} />
+          <InfoIcon sx={{ fontSize: 36, color: theme.palette.text.secondary, mb: 1 }} />
           <Typography
-            sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray }}
+            sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary }}
           >
             No analysis results available. Please run the AI analysis first.
           </Typography>
@@ -193,7 +192,7 @@ export const FindingsReviewStep: React.FC<FindingsReviewStepProps> = ({
                   sx={{
                     fontFamily: LUNIT.fontHeading,
                     fontWeight: 500,
-                    color: LUNIT.darkGray,
+                    color: theme.palette.text.primary,
                   }}
                 >
                   {viewLabel}
@@ -230,7 +229,7 @@ export const FindingsReviewStep: React.FC<FindingsReviewStepProps> = ({
                 >
                   <Typography
                     variant="caption"
-                    sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray }}
+                    sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary }}
                   >
                     Confidence
                   </Typography>
@@ -239,7 +238,7 @@ export const FindingsReviewStep: React.FC<FindingsReviewStepProps> = ({
                     sx={{
                       fontFamily: LUNIT.fontBody,
                       fontWeight: 600,
-                      color: LUNIT.darkGray,
+                      color: theme.palette.text.primary,
                     }}
                   >
                     {pct}%
@@ -274,13 +273,13 @@ export const FindingsReviewStep: React.FC<FindingsReviewStepProps> = ({
               >
                 <Typography
                   variant="caption"
-                  sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray }}
+                  sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary }}
                 >
                   Benign: {Math.round(result.probabilities.benign * 100)}%
                 </Typography>
                 <Typography
                   variant="caption"
-                  sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray }}
+                  sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary }}
                 >
                   Malignant: {Math.round(result.probabilities.malignant * 100)}%
                 </Typography>
@@ -308,7 +307,7 @@ export const FindingsReviewStep: React.FC<FindingsReviewStepProps> = ({
         >
           <CheckIcon sx={{ fontSize: 32, color: LUNIT.green, mb: 1 }} />
           <Typography
-            sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray }}
+            sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary }}
           >
             No suspicious findings detected
           </Typography>
@@ -329,7 +328,7 @@ export const FindingsReviewStep: React.FC<FindingsReviewStepProps> = ({
                 sx={{
                   fontFamily: LUNIT.fontBody,
                   fontWeight: 600,
-                  color: LUNIT.darkGray,
+                  color: theme.palette.text.primary,
                   fontSize: '0.8rem',
                 }}
               >
@@ -339,7 +338,7 @@ export const FindingsReviewStep: React.FC<FindingsReviewStepProps> = ({
                 sx={{
                   fontFamily: LUNIT.fontBody,
                   fontWeight: 600,
-                  color: LUNIT.darkGray,
+                  color: theme.palette.text.primary,
                   fontSize: '0.8rem',
                 }}
               >
@@ -349,7 +348,7 @@ export const FindingsReviewStep: React.FC<FindingsReviewStepProps> = ({
                 sx={{
                   fontFamily: LUNIT.fontBody,
                   fontWeight: 600,
-                  color: LUNIT.darkGray,
+                  color: theme.palette.text.primary,
                   fontSize: '0.8rem',
                 }}
               >
@@ -359,7 +358,7 @@ export const FindingsReviewStep: React.FC<FindingsReviewStepProps> = ({
                 sx={{
                   fontFamily: LUNIT.fontBody,
                   fontWeight: 600,
-                  color: LUNIT.darkGray,
+                  color: theme.palette.text.primary,
                   fontSize: '0.8rem',
                 }}
               >
@@ -369,7 +368,7 @@ export const FindingsReviewStep: React.FC<FindingsReviewStepProps> = ({
                 sx={{
                   fontFamily: LUNIT.fontBody,
                   fontWeight: 600,
-                  color: LUNIT.darkGray,
+                  color: theme.palette.text.primary,
                   fontSize: '0.8rem',
                 }}
               >
@@ -386,7 +385,7 @@ export const FindingsReviewStep: React.FC<FindingsReviewStepProps> = ({
                     <Typography
                       variant="caption"
                       component="span"
-                      sx={{ ml: 0.5, color: LUNIT.midGray }}
+                      sx={{ ml: 0.5, color: theme.palette.text.secondary }}
                     >
                       ({finding.shape}{finding.margin ? `, ${finding.margin}` : ''})
                     </Typography>
@@ -398,7 +397,7 @@ export const FindingsReviewStep: React.FC<FindingsReviewStepProps> = ({
                     <Typography
                       variant="caption"
                       component="span"
-                      sx={{ ml: 0.5, color: LUNIT.midGray }}
+                      sx={{ ml: 0.5, color: theme.palette.text.secondary }}
                     >
                       {finding.clockPosition} o&apos;clock
                     </Typography>
@@ -424,7 +423,7 @@ export const FindingsReviewStep: React.FC<FindingsReviewStepProps> = ({
                         fontWeight: 600,
                         fontSize: '0.75rem',
                         backgroundColor: alpha(LUNIT.teal, 0.1),
-                        color: LUNIT.darkGray,
+                        color: theme.palette.text.primary,
                       }}
                     />
                   ) : (
@@ -459,7 +458,7 @@ export const FindingsReviewStep: React.FC<FindingsReviewStepProps> = ({
           fontFamily: LUNIT.fontHeading,
           fontWeight: 300,
           fontSize: '1.5rem',
-          color: LUNIT.darkGray,
+          color: theme.palette.text.primary,
           mb: 0.5,
         }}
       >
@@ -467,7 +466,7 @@ export const FindingsReviewStep: React.FC<FindingsReviewStepProps> = ({
       </Typography>
       <Typography
         variant="body2"
-        sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray, mb: 3 }}
+        sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary, mb: 3 }}
       >
         Review AI analysis results per image and consolidated findings before
         proceeding to the BI-RADS assessment.
@@ -479,7 +478,7 @@ export const FindingsReviewStep: React.FC<FindingsReviewStepProps> = ({
         sx={{
           fontFamily: LUNIT.fontHeading,
           fontWeight: 500,
-          color: LUNIT.darkGray,
+          color: theme.palette.text.primary,
           mb: 1.5,
         }}
       >
@@ -495,7 +494,7 @@ export const FindingsReviewStep: React.FC<FindingsReviewStepProps> = ({
         sx={{
           fontFamily: LUNIT.fontHeading,
           fontWeight: 500,
-          color: LUNIT.darkGray,
+          color: theme.palette.text.primary,
           mb: 1.5,
         }}
       >
@@ -515,7 +514,7 @@ export const FindingsReviewStep: React.FC<FindingsReviewStepProps> = ({
               fontWeight: 500,
               borderRadius: '100px',
               borderColor: LUNIT.lightGray,
-              color: LUNIT.darkGray,
+              color: theme.palette.text.primary,
               textTransform: 'none',
               px: 3,
               '&:hover': { borderColor: LUNIT.teal, color: LUNIT.teal },

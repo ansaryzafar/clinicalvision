@@ -34,6 +34,7 @@ import {
   FormGroup,
   Autocomplete,
   alpha,
+  useTheme,
 } from '@mui/material';
 import {
   ArrowForward,
@@ -61,9 +62,6 @@ const LUNIT = {
   fontHeading: '"ClashGrotesk", "Inter", sans-serif',
   fontBody: '"Lexend", "Inter", sans-serif',
   teal: '#00C9EA',
-  darkGray: '#1A1A2E',
-  midGray: '#6B7280',
-  white: '#FFFFFF',
 } as const;
 
 // ============================================================================
@@ -71,6 +69,7 @@ const LUNIT = {
 // ============================================================================
 
 export const ClinicalHistoryStep: React.FC = () => {
+  const theme = useTheme();
   const {
     currentCase,
     updateClinicalHistory,
@@ -271,7 +270,7 @@ export const ClinicalHistoryStep: React.FC = () => {
         elevation={0}
         sx={{
           p: 4,
-          background: LUNIT.white,
+          background: theme.palette.background.paper,
           border: `1px solid ${alpha(LUNIT.teal, 0.18)}`,
           borderRadius: 2,
         }}
@@ -283,7 +282,7 @@ export const ClinicalHistoryStep: React.FC = () => {
             sx={{
               fontFamily: LUNIT.fontHeading,
               fontWeight: 300,
-              color: LUNIT.darkGray,
+              color: theme.palette.text.primary,
               display: 'flex',
               alignItems: 'center',
               gap: 1,
@@ -292,7 +291,7 @@ export const ClinicalHistoryStep: React.FC = () => {
             <MedicalServices sx={{ color: LUNIT.teal }} />
             Clinical History
           </Typography>
-          <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray, mt: 0.5 }}>
+          <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary, mt: 0.5 }}>
             Provide clinical history and risk factor assessment for this examination.
           </Typography>
         </Box>
@@ -617,7 +616,7 @@ export const ClinicalHistoryStep: React.FC = () => {
             onClick={handleGoBack}
             sx={{
               borderColor: alpha(LUNIT.teal, 0.15),
-              color: LUNIT.midGray,
+              color: theme.palette.text.secondary,
               '&:hover': { borderColor: alpha(LUNIT.teal, 0.25) },
             }}
           >

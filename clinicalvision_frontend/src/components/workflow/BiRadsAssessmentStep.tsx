@@ -32,6 +32,7 @@ import {
   Stack,
   Chip,
   SelectChangeEvent,
+  useTheme,
 } from '@mui/material';
 import {
   ArrowBack,
@@ -119,11 +120,6 @@ const LUNIT = {
   fontHeading: '"ClashGrotesk", "Inter", sans-serif',
   fontBody: '"Lexend", "Inter", sans-serif',
   teal: '#00C9EA',
-  darkGray: '#1A1A2E',
-  midGray: '#6B7280',
-  lightGray: '#E5E7EB',
-  green: '#22C55E',
-  white: '#FFFFFF',
 } as const;
 
 // ============================================================================
@@ -249,6 +245,7 @@ export const BiRadsAssessmentStep: React.FC<BiRadsAssessmentStepProps> = ({
   onBack,
   isReadOnly = false,
 }) => {
+  const theme = useTheme();
   // Initialize assessment from case or create default
   const [assessment, setAssessment] = useState<BiRadsAssessment>(() => {
     if (clinicalCase.assessment) {
@@ -397,7 +394,7 @@ export const BiRadsAssessmentStep: React.FC<BiRadsAssessmentStepProps> = ({
       <Typography
         variant="h5"
         gutterBottom
-        sx={{ fontFamily: LUNIT.fontHeading, fontWeight: 300, color: LUNIT.darkGray }}
+        sx={{ fontFamily: LUNIT.fontHeading, fontWeight: 300, color: theme.palette.text.primary }}
       >
         BI-RADS Assessment
       </Typography>

@@ -23,6 +23,7 @@ import {
   LinearProgress,
   Paper,
   Typography,
+  useTheme,
 } from '@mui/material';
 import {
   PlayArrow as PlayArrowIcon,
@@ -56,11 +57,7 @@ const LUNIT = {
   fontHeading: '"ClashGrotesk", "Inter", sans-serif',
   fontBody: '"Lexend", "Inter", sans-serif',
   teal: '#00C9EA',
-  darkGray: '#1A1A2E',
-  midGray: '#6B7280',
   lightGray: '#E5E7EB',
-  green: '#22C55E',
-  white: '#FFFFFF',
 } as const;
 
 // ============================================================================
@@ -142,6 +139,7 @@ export const BatchAnalysisRunner: React.FC<BatchAnalysisRunnerProps> = ({
   onContinue,
   className = '',
 }) => {
+  const theme = useTheme();
   // State
   const [state, setState] = useState<AnalysisState>('idle');
   const [progress, setProgress] = useState(0);
@@ -352,10 +350,10 @@ export const BatchAnalysisRunner: React.FC<BatchAnalysisRunnerProps> = ({
     return (
       <Box sx={{ mb: 3 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-          <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray }}>
+          <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary }}>
             Analyzing images…
           </Typography>
-          <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, fontWeight: 600, color: LUNIT.darkGray }}>
+          <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, fontWeight: 600, color: theme.palette.text.primary }}>
             {progress}%
           </Typography>
         </Box>
@@ -411,7 +409,7 @@ export const BatchAnalysisRunner: React.FC<BatchAnalysisRunnerProps> = ({
 
         <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
           <Box>
-            <Typography variant="caption" sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray }}>
+            <Typography variant="caption" sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary }}>
               Images analyzed
             </Typography>
             <Typography variant="body1" sx={{ fontFamily: LUNIT.fontBody, fontWeight: 600 }}>
@@ -421,7 +419,7 @@ export const BatchAnalysisRunner: React.FC<BatchAnalysisRunnerProps> = ({
 
           {result.totalProcessingTimeMs > 0 && (
             <Box>
-              <Typography variant="caption" sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray }}>
+              <Typography variant="caption" sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary }}>
                 Processing time
               </Typography>
               <Typography variant="body1" sx={{ fontFamily: LUNIT.fontBody, fontWeight: 600 }}>
@@ -432,7 +430,7 @@ export const BatchAnalysisRunner: React.FC<BatchAnalysisRunnerProps> = ({
 
           {result.suggestedBiRads !== undefined && (
             <Box sx={{ gridColumn: '1 / -1' }}>
-              <Typography variant="caption" sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray }}>
+              <Typography variant="caption" sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary }}>
                 Suggested BI-RADS
               </Typography>
               <Typography
@@ -451,7 +449,7 @@ export const BatchAnalysisRunner: React.FC<BatchAnalysisRunnerProps> = ({
 
           {result.consolidatedFindings.length > 0 && (
             <Box sx={{ gridColumn: '1 / -1' }}>
-              <Typography variant="caption" sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray }}>
+              <Typography variant="caption" sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary }}>
                 Findings detected
               </Typography>
               <Typography variant="body1" sx={{ fontFamily: LUNIT.fontBody, fontWeight: 600 }}>
@@ -643,7 +641,7 @@ export const BatchAnalysisRunner: React.FC<BatchAnalysisRunnerProps> = ({
                 borderRadius: 2,
                 py: 1.2,
                 borderColor: LUNIT.lightGray,
-                color: LUNIT.midGray,
+                color: theme.palette.text.secondary,
                 '&:hover': { borderColor: LUNIT.teal, color: LUNIT.teal },
               }}
             >
@@ -677,7 +675,7 @@ export const BatchAnalysisRunner: React.FC<BatchAnalysisRunnerProps> = ({
           fontFamily: LUNIT.fontHeading,
           fontWeight: 300,
           fontSize: '1.25rem',
-          color: LUNIT.darkGray,
+          color: theme.palette.text.primary,
           mb: 1,
         }}
       >
@@ -687,7 +685,7 @@ export const BatchAnalysisRunner: React.FC<BatchAnalysisRunnerProps> = ({
       {/* Image count summary */}
       <Typography
         variant="body2"
-        sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray, mb: 3 }}
+        sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary, mb: 3 }}
       >
         {imageCount} images ready for analysis
       </Typography>

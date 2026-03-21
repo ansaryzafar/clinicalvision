@@ -40,6 +40,7 @@ import {
   Paper,
   Stack,
   Typography,
+  useTheme,
 } from '@mui/material';
 import {
   ArrowBack,
@@ -68,11 +69,7 @@ const LUNIT = {
   fontHeading: '"ClashGrotesk", "Inter", sans-serif',
   fontBody: '"Lexend", "Inter", sans-serif',
   teal: '#00C9EA',
-  darkGray: '#1A1A2E',
-  midGray: '#6B7280',
-  lightGray: '#E5E7EB',
   green: '#22C55E',
-  white: '#FFFFFF',
 } as const;
 
 // ============================================================================
@@ -104,6 +101,7 @@ const REPORT_STATUS_LABELS: Record<string, string> = {
 // ============================================================================
 
 export const FinalizeStep: React.FC = () => {
+  const theme = useTheme();
   const {
     currentCase,
     isLoading,
@@ -180,7 +178,7 @@ export const FinalizeStep: React.FC = () => {
         <TaskAlt sx={{ fontSize: 28, color: LUNIT.teal }} />
         <Typography
           variant="h5"
-          sx={{ fontFamily: LUNIT.fontHeading, fontWeight: 300, color: LUNIT.darkGray }}
+          sx={{ fontFamily: LUNIT.fontHeading, fontWeight: 300, color: theme.palette.text.primary }}
         >
           Final Review
         </Typography>
@@ -215,7 +213,7 @@ export const FinalizeStep: React.FC = () => {
           mb: 3,
           borderRadius: 2,
           borderColor: alpha(LUNIT.teal, 0.18),
-          backgroundColor: LUNIT.white,
+          backgroundColor: theme.palette.background.paper,
         }}
       >
         <Typography
@@ -233,13 +231,13 @@ export const FinalizeStep: React.FC = () => {
         <Stack spacing={1.5}>
           {/* Patient */}
           <Box>
-            <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray }}>
+            <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary }}>
               Patient
             </Typography>
             <Typography variant="body1" sx={{ fontFamily: LUNIT.fontBody }}>
               {patient.firstName} {patient.lastName} — MRN: {patient.mrn}
             </Typography>
-            <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray }}>
+            <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary }}>
               DOB: {patient.dateOfBirth || 'N/A'} · Gender: {patient.gender}
             </Typography>
           </Box>
@@ -248,7 +246,7 @@ export const FinalizeStep: React.FC = () => {
 
           {/* Images */}
           <Box>
-            <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray }}>
+            <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary }}>
               Images
             </Typography>
             <Typography variant="body1" sx={{ fontFamily: LUNIT.fontBody }}>
@@ -260,7 +258,7 @@ export const FinalizeStep: React.FC = () => {
 
           {/* Assessment */}
           <Box>
-            <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray }}>
+            <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary }}>
               BI-RADS Assessment
             </Typography>
             {assessment ? (
@@ -280,7 +278,7 @@ export const FinalizeStep: React.FC = () => {
 
           {/* Report */}
           <Box>
-            <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray }}>
+            <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary }}>
               Report Status
             </Typography>
             {report ? (
@@ -313,7 +311,7 @@ export const FinalizeStep: React.FC = () => {
           mb: 3,
           borderRadius: 2,
           borderColor: alpha(LUNIT.teal, 0.18),
-          backgroundColor: LUNIT.white,
+          backgroundColor: theme.palette.background.paper,
         }}
       >
         <Typography
@@ -322,7 +320,7 @@ export const FinalizeStep: React.FC = () => {
         >
           Pre-flight Checklist
         </Typography>
-        <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray, mb: 2 }}>
+        <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary, mb: 2 }}>
           All required steps must be completed before locking the case.
         </Typography>
 

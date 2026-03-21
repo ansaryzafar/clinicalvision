@@ -91,11 +91,6 @@ const LUNIT = {
   fontHeading: '"ClashGrotesk", "Inter", sans-serif',
   fontBody: '"Lexend", "Inter", sans-serif',
   teal: '#00C9EA',
-  darkGray: '#1A1A2E',
-  midGray: '#6B7280',
-  lightGray: '#E5E7EB',
-  green: '#22C55E',
-  white: '#FFFFFF',
 } as const;
 
 // ============================================================================
@@ -636,12 +631,16 @@ export const MultiImageUpload: React.FC<MultiImageUploadProps> = ({
           sx={{ mb: 2 }}
           action={
             <Button 
-              color="inherit" 
+              color="success" 
               size="small" 
-              variant="outlined"
+              variant="contained"
               onClick={() => {
                 setLastUploadCount(0);
                 if (onUploadComplete) onUploadComplete(existingImages as MammogramImage[]);
+              }}
+              sx={{
+                fontWeight: 600,
+                whiteSpace: 'nowrap',
               }}
             >
               Continue to Next Step →
@@ -701,7 +700,7 @@ export const MultiImageUpload: React.FC<MultiImageUploadProps> = ({
         
         <CloudUpload sx={{ fontSize: 48, color: LUNIT.teal, mb: 2 }} />
         
-        <Typography variant="h6" gutterBottom sx={{ fontFamily: LUNIT.fontHeading, fontWeight: 300, color: LUNIT.darkGray }}>
+        <Typography variant="h6" gutterBottom sx={{ fontFamily: LUNIT.fontHeading, fontWeight: 300, color: theme.palette.text.primary }}>
           Drag & Drop Images Here
         </Typography>
         

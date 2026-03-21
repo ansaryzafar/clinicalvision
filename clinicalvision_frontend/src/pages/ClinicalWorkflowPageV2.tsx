@@ -92,13 +92,9 @@ const LUNIT = {
   teal: '#00C9EA',
   tealDark: '#0F95AB',
   black: '#151515',
-  darkGray: '#1A1A2E',
-  midGray: '#6B7280',
   gray: '#6B7280',
-  lightGray: '#E5E7EB',
   disabledGray: '#9CA3AF',
   lightest: '#EFF0F4',
-  white: '#FFFFFF',
   green: '#22C55E',
   orange: '#FF5321',
   red: '#FF4444',
@@ -159,6 +155,7 @@ interface StepNavItemProps {
 const StepNavItem: React.FC<StepNavItemProps> = ({
   index, label, icon, completed, isCurrent, accessible, phaseColor, onClick,
 }) => {
+  const theme = useTheme();
   return (
     <Tooltip title={!accessible ? 'Complete previous steps first' : label} arrow placement="bottom">
       <Box
@@ -183,7 +180,7 @@ const StepNavItem: React.FC<StepNavItemProps> = ({
             ? phaseColor
             : completed
             ? LUNIT.green
-            : LUNIT.midGray,
+            : theme.palette.text.secondary,
           background: isCurrent
             ? alpha(phaseColor, 0.08)
             : 'transparent',
@@ -217,12 +214,12 @@ const StepNavItem: React.FC<StepNavItemProps> = ({
             ...(completed
               ? {
                   background: LUNIT.green,
-                  color: LUNIT.white,
+                  color: theme.palette.background.paper,
                 }
               : isCurrent
               ? {
                   background: phaseColor,
-                  color: LUNIT.white,
+                  color: theme.palette.background.paper,
                 }
               : {
                   background: 'transparent',
@@ -660,7 +657,7 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
             }}
           />
           <Typography
-            sx={{ fontFamily: LUNIT.fontBody, fontSize: '0.95rem', color: LUNIT.midGray }}
+            sx={{ fontFamily: LUNIT.fontBody, fontSize: '0.95rem', color: theme.palette.text.secondary }}
           >
             Loading clinical case…
           </Typography>
@@ -730,7 +727,7 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
                 width: '100%',
                 borderRadius: '20px',
                 border: `1px solid ${LUNIT.lightest}`,
-                background: LUNIT.white,
+                background: theme.palette.background.paper,
               }}
             >
               <Box
@@ -752,7 +749,7 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
                   fontFamily: LUNIT.fontHeading,
                   fontWeight: 300,
                   fontSize: '1.75rem',
-                  color: LUNIT.darkGray,
+                  color: theme.palette.text.primary,
                   mb: 1,
                 }}
               >
@@ -762,7 +759,7 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
                 sx={{
                   fontFamily: LUNIT.fontBody,
                   fontSize: '0.95rem',
-                  color: LUNIT.midGray,
+                  color: theme.palette.text.secondary,
                   mb: 4,
                   lineHeight: 1.7,
                 }}
@@ -778,7 +775,7 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
                   fontSize: '1rem',
                   borderRadius: '100px',
                   backgroundColor: LUNIT.black,
-                  color: LUNIT.white,
+                  color: theme.palette.background.paper,
                   textTransform: 'none',
                   px: 4,
                   py: 1.25,
@@ -821,7 +818,7 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
                       sx={{
                         fontFamily: LUNIT.fontBody,
                         fontSize: '0.85rem',
-                        color: LUNIT.midGray,
+                        color: theme.palette.text.secondary,
                       }}
                     >
                       Loading demo case — populating patient info, clinical history, and images…
@@ -839,7 +836,7 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
                   sx={{
                     fontFamily: LUNIT.fontBody,
                     fontSize: '0.72rem',
-                    color: alpha(LUNIT.midGray, 0.6),
+                    color: alpha(theme.palette.text.secondary, 0.6),
                     mt: 1.5,
                     fontStyle: 'italic',
                   }}
@@ -944,7 +941,7 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
                 fontFamily: LUNIT.fontHeading,
                 fontWeight: 300,
                 fontSize: '1.5rem',
-                color: LUNIT.darkGray,
+                color: theme.palette.text.primary,
                 lineHeight: 1.2,
               }}
             >
@@ -959,7 +956,7 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
                 sx={{
                   fontFamily: LUNIT.fontBody,
                   fontSize: '0.82rem',
-                  color: LUNIT.midGray,
+                  color: theme.palette.text.secondary,
                   mb: 0.25,
                 }}
               >
@@ -975,7 +972,7 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
                   fontFamily: LUNIT.fontBody,
                   fontSize: '0.75rem',
                   fontWeight: 500,
-                  color: completedCount === TOTAL_WORKFLOW_STEPS ? LUNIT.green : LUNIT.midGray,
+                  color: completedCount === TOTAL_WORKFLOW_STEPS ? LUNIT.green : theme.palette.text.secondary,
                   background: completedCount === TOTAL_WORKFLOW_STEPS
                     ? alpha(LUNIT.green, 0.08)
                     : alpha(LUNIT.gray, 0.08),
@@ -1037,7 +1034,7 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
             mb: 3,
             borderRadius: '16px',
             border: `1px solid ${LUNIT.lightest}`,
-            background: LUNIT.white,
+            background: theme.palette.background.paper,
             position: 'relative',
           }}
         >
@@ -1083,7 +1080,7 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
               py: 0.75,
               '&::-webkit-scrollbar': { height: '3px' },
               '&::-webkit-scrollbar-thumb': {
-                background: alpha(LUNIT.midGray, 0.2),
+                background: alpha(theme.palette.text.secondary, 0.2),
                 borderRadius: '4px',
               },
               '&::-webkit-scrollbar-track': { background: 'transparent' },
@@ -1175,7 +1172,7 @@ export const ClinicalWorkflowPageV2: React.FC = () => {
           sx={{
             borderRadius: '16px',
             border: `1px solid ${LUNIT.lightest}`,
-            background: LUNIT.white,
+            background: theme.palette.background.paper,
             minHeight: 420,
             p: { xs: 2, md: 3 },
           }}

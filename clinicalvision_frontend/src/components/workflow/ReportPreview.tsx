@@ -21,6 +21,7 @@ import {
   DialogActions,
   CircularProgress,
   Link,
+  useTheme,
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import {
@@ -91,11 +92,6 @@ interface EditableContent {
 
 const LUNIT = {
   teal: '#00C9EA',
-  darkGray: '#1A1A2E',
-  midGray: '#6B7280',
-  lightGray: '#E5E7EB',
-  green: '#22C55E',
-  white: '#FFFFFF',
   fontHeading: '"ClashGrotesk", "Inter", sans-serif',
   fontBody: '"Lexend", "Inter", sans-serif',
 };
@@ -142,7 +138,9 @@ const ReportSection: React.FC<ReportSectionProps> = ({
   fieldName,
   testId,
   emphasis,
-}) => (
+}) => {
+  const theme = useTheme();
+  return (
   <Box
     mb={3}
     data-testid={testId}
@@ -160,7 +158,7 @@ const ReportSection: React.FC<ReportSectionProps> = ({
       gutterBottom
       sx={{
         fontWeight: emphasis ? 700 : 600,
-        color: emphasis ? LUNIT.teal : LUNIT.darkGray,
+        color: emphasis ? LUNIT.teal : theme.palette.text.primary,
         fontFamily: LUNIT.fontHeading,
         textTransform: 'none',
         letterSpacing: '0.05em',
@@ -185,7 +183,8 @@ const ReportSection: React.FC<ReportSectionProps> = ({
       </Typography>
     )}
   </Box>
-);
+  );
+};
 
 interface SignatureDialogProps {
   open: boolean;
@@ -258,6 +257,7 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
   requireConfirmation = false,
   requireSignatureCredentials = false,
 }) => {
+  const theme = useTheme();
   const report = clinicalCase.report;
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState<EditableContent | null>(null);
@@ -439,12 +439,12 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
           <HospitalIcon sx={{ color: LUNIT.teal, fontSize: 28 }} />
           <Typography
             variant="h5"
-            sx={{ fontFamily: LUNIT.fontHeading, fontWeight: 300, color: LUNIT.darkGray }}
+            sx={{ fontFamily: LUNIT.fontHeading, fontWeight: 300, color: theme.palette.text.primary }}
           >
             ClinicalVision Medical Imaging
           </Typography>
         </Stack>
-        <Typography variant="body2" sx={{ color: LUNIT.midGray, fontFamily: LUNIT.fontBody }}>
+        <Typography variant="body2" sx={{ color: theme.palette.text.secondary, fontFamily: LUNIT.fontBody }}>
           AI-Assisted Diagnostic Radiology
         </Typography>
       </Box>
@@ -460,12 +460,12 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
           <Typography
             variant="h5"
             component="h1"
-            sx={{ fontFamily: LUNIT.fontHeading, fontWeight: 300, color: LUNIT.darkGray }}
+            sx={{ fontFamily: LUNIT.fontHeading, fontWeight: 300, color: theme.palette.text.primary }}
           >
             Report Preview
           </Typography>
           <Stack direction="row" spacing={2} alignItems="center" mt={0.5}>
-            <Typography variant="body2" sx={{ color: LUNIT.midGray, fontFamily: LUNIT.fontBody }}>
+            <Typography variant="body2" sx={{ color: theme.palette.text.secondary, fontFamily: LUNIT.fontBody }}>
               Case: {clinicalCase.caseNumber}
             </Typography>
             <Chip
@@ -475,7 +475,7 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
             />
           </Stack>
         </Box>
-        <Typography variant="body2" sx={{ color: LUNIT.midGray, fontFamily: LUNIT.fontBody }}>
+        <Typography variant="body2" sx={{ color: theme.palette.text.secondary, fontFamily: LUNIT.fontBody }}>
           Report Date: {new Date(report.generatedAt).toLocaleString()}
         </Typography>
       </Stack>
@@ -486,7 +486,7 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
       <Box
         mb={3}
         sx={{
-          backgroundColor: alpha(LUNIT.darkGray, 0.03),
+          backgroundColor: alpha(theme.palette.text.primary, 0.03),
           borderRadius: 2,
           p: 2,
         }}
@@ -494,7 +494,7 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
         <Typography
           variant="subtitle2"
           sx={{
-            color: LUNIT.midGray,
+            color: theme.palette.text.secondary,
             fontFamily: LUNIT.fontHeading,
             textTransform: 'none',
             letterSpacing: '0.05em',
@@ -504,20 +504,20 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
         >
           Patient Information
         </Typography>
-        <Typography variant="h6" sx={{ fontFamily: LUNIT.fontHeading, fontWeight: 300, color: LUNIT.darkGray }}>
+        <Typography variant="h6" sx={{ fontFamily: LUNIT.fontHeading, fontWeight: 300, color: theme.palette.text.primary }}>
           {clinicalCase.patient.firstName} {clinicalCase.patient.lastName}
         </Typography>
         <Stack direction="row" spacing={3} mt={0.5} flexWrap="wrap">
           {clinicalCase.patient.dateOfBirth && (
-            <Typography variant="body2" sx={{ color: LUNIT.midGray, fontFamily: LUNIT.fontBody }}>
+            <Typography variant="body2" sx={{ color: theme.palette.text.secondary, fontFamily: LUNIT.fontBody }}>
               DOB: {clinicalCase.patient.dateOfBirth}
               {' '}({computeAge(clinicalCase.patient.dateOfBirth)} yrs)
             </Typography>
           )}
-          <Typography variant="body2" sx={{ color: LUNIT.midGray, fontFamily: LUNIT.fontBody }}>
+          <Typography variant="body2" sx={{ color: theme.palette.text.secondary, fontFamily: LUNIT.fontBody }}>
             Sex: {formatGender(clinicalCase.patient.gender)}
           </Typography>
-          <Typography variant="body2" sx={{ color: LUNIT.midGray, fontFamily: LUNIT.fontBody }}>
+          <Typography variant="body2" sx={{ color: theme.palette.text.secondary, fontFamily: LUNIT.fontBody }}>
             MRN: {clinicalCase.patient.mrn}
           </Typography>
         </Stack>
@@ -536,7 +536,7 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
           sx={{
             fontWeight: 300,
             fontFamily: LUNIT.fontHeading,
-            color: LUNIT.darkGray,
+            color: theme.palette.text.primary,
             mb: 3,
             letterSpacing: '0.08em',
             textTransform: 'none',
@@ -602,7 +602,7 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
               variant="overline"
               sx={{
                 fontFamily: LUNIT.fontHeading,
-                color: LUNIT.midGray,
+                color: theme.palette.text.secondary,
                 letterSpacing: '0.1em',
               }}
             >
@@ -795,7 +795,7 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
         sx={{
           display: 'block',
           textAlign: 'center',
-          color: LUNIT.midGray,
+          color: theme.palette.text.secondary,
           fontFamily: LUNIT.fontBody,
           fontStyle: 'italic',
         }}

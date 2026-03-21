@@ -33,6 +33,7 @@ import {
   Stack,
   TextField,
   Typography,
+  useTheme,
 } from '@mui/material';
 import {
   ArrowBack,
@@ -57,11 +58,8 @@ const LUNIT = {
   fontHeading: '"ClashGrotesk", "Inter", sans-serif',
   fontBody: '"Lexend", "Inter", sans-serif',
   teal: '#00C9EA',
-  darkGray: '#1A1A2E',
-  midGray: '#6B7280',
   lightGray: '#E5E7EB',
   green: '#22C55E',
-  white: '#FFFFFF',
 } as const;
 
 // ============================================================================
@@ -95,6 +93,7 @@ async function generateSignatureHash(input: string): Promise<string> {
 // ============================================================================
 
 export const DigitalSignatureStep: React.FC = () => {
+  const theme = useTheme();
   const {
     currentCase,
     isLoading,
@@ -218,7 +217,7 @@ export const DigitalSignatureStep: React.FC = () => {
         <Draw sx={{ fontSize: 28, color: LUNIT.teal }} />
         <Typography
           variant="h5"
-          sx={{ fontFamily: LUNIT.fontHeading, fontWeight: 300, color: LUNIT.darkGray }}
+          sx={{ fontFamily: LUNIT.fontHeading, fontWeight: 300, color: theme.palette.text.primary }}
         >
           Digital Signature
         </Typography>
@@ -252,14 +251,14 @@ export const DigitalSignatureStep: React.FC = () => {
           mb: 2,
           borderRadius: 2,
           borderColor: alpha(LUNIT.teal, 0.18),
-          backgroundColor: LUNIT.white,
+          backgroundColor: theme.palette.background.paper,
         }}
       >
-        <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray }}>
+        <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary }}>
           Patient: {currentCase.patient.firstName} {currentCase.patient.lastName} — MRN:{' '}
           {currentCase.patient.mrn}
         </Typography>
-        <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray }}>
+        <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary }}>
           Case: {currentCase.caseNumber}
         </Typography>
       </Paper>
@@ -272,7 +271,7 @@ export const DigitalSignatureStep: React.FC = () => {
           mb: 3,
           borderRadius: 2,
           borderColor: alpha(LUNIT.teal, 0.18),
-          backgroundColor: LUNIT.white,
+          backgroundColor: theme.palette.background.paper,
           maxHeight: 400,
           overflow: 'auto',
         }}
@@ -292,7 +291,7 @@ export const DigitalSignatureStep: React.FC = () => {
         <Divider sx={{ my: 1.5, borderColor: alpha(LUNIT.teal, 0.12) }} />
 
         {/* Clinical History */}
-        <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray, fontWeight: 600 }}>
+        <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary, fontWeight: 600 }}>
           Clinical History
         </Typography>
         <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, mb: 1.5 }}>
@@ -300,7 +299,7 @@ export const DigitalSignatureStep: React.FC = () => {
         </Typography>
 
         {/* Technique */}
-        <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray, fontWeight: 600 }}>
+        <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary, fontWeight: 600 }}>
           Technique
         </Typography>
         <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, mb: 1.5 }}>
@@ -308,7 +307,7 @@ export const DigitalSignatureStep: React.FC = () => {
         </Typography>
 
         {/* Comparison */}
-        <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray, fontWeight: 600 }}>
+        <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary, fontWeight: 600 }}>
           Comparison
         </Typography>
         <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, mb: 1.5 }}>
@@ -316,7 +315,7 @@ export const DigitalSignatureStep: React.FC = () => {
         </Typography>
 
         {/* Findings */}
-        <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray, fontWeight: 600 }}>
+        <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary, fontWeight: 600 }}>
           Findings
         </Typography>
         <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, mb: 1.5 }}>
@@ -326,7 +325,7 @@ export const DigitalSignatureStep: React.FC = () => {
         <Divider sx={{ my: 1.5, borderColor: alpha(LUNIT.teal, 0.12) }} />
 
         {/* Impression */}
-        <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray, fontWeight: 600 }}>
+        <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary, fontWeight: 600 }}>
           Impression
         </Typography>
         <Typography variant="body1" sx={{ fontFamily: LUNIT.fontBody, fontWeight: 500, mb: 1.5 }}>
@@ -334,7 +333,7 @@ export const DigitalSignatureStep: React.FC = () => {
         </Typography>
 
         {/* Recommendation */}
-        <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray, fontWeight: 600 }}>
+        <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary, fontWeight: 600 }}>
           Recommendation
         </Typography>
         <Typography variant="body1" sx={{ fontFamily: LUNIT.fontBody, fontWeight: 500 }}>
@@ -386,7 +385,7 @@ export const DigitalSignatureStep: React.FC = () => {
                   sx={{
                     fontFamily: LUNIT.fontHeading,
                     fontWeight: 600,
-                    color: LUNIT.darkGray,
+                    color: theme.palette.text.primary,
                     lineHeight: 1.2,
                   }}
                 >
@@ -396,7 +395,7 @@ export const DigitalSignatureStep: React.FC = () => {
                   variant="caption"
                   sx={{
                     fontFamily: LUNIT.fontBody,
-                    color: LUNIT.midGray,
+                    color: theme.palette.text.secondary,
                     letterSpacing: 0.3,
                   }}
                 >
@@ -429,7 +428,7 @@ export const DigitalSignatureStep: React.FC = () => {
                 variant="overline"
                 sx={{
                   fontFamily: LUNIT.fontBody,
-                  color: LUNIT.midGray,
+                  color: theme.palette.text.secondary,
                   fontSize: '0.65rem',
                   letterSpacing: 1.2,
                   mb: 0.5,
@@ -442,7 +441,7 @@ export const DigitalSignatureStep: React.FC = () => {
                 sx={{
                   fontFamily: '"Dancing Script", "Georgia", cursive',
                   fontSize: '1.6rem',
-                  color: LUNIT.darkGray,
+                  color: theme.palette.text.primary,
                   lineHeight: 1.3,
                   mb: 0.5,
                 }}
@@ -453,7 +452,7 @@ export const DigitalSignatureStep: React.FC = () => {
                 {(user?.role) && (
                   <Typography
                     variant="body2"
-                    sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray, fontSize: '0.8rem' }}
+                    sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary, fontSize: '0.8rem' }}
                   >
                     {user.role === 'radiologist' ? 'Radiologist' : user.role === 'admin' ? 'Administrator' : user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                   </Typography>
@@ -461,7 +460,7 @@ export const DigitalSignatureStep: React.FC = () => {
                 {user?.license_number && (
                   <Typography
                     variant="body2"
-                    sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray, fontSize: '0.8rem' }}
+                    sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary, fontSize: '0.8rem' }}
                   >
                     License: {user.license_number}
                   </Typography>
@@ -469,7 +468,7 @@ export const DigitalSignatureStep: React.FC = () => {
                 {user?.specialization && (
                   <Typography
                     variant="body2"
-                    sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray, fontSize: '0.8rem' }}
+                    sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary, fontSize: '0.8rem' }}
                   >
                     {user.specialization}
                   </Typography>
@@ -490,7 +489,7 @@ export const DigitalSignatureStep: React.FC = () => {
                   variant="overline"
                   sx={{
                     fontFamily: LUNIT.fontBody,
-                    color: LUNIT.midGray,
+                    color: theme.palette.text.secondary,
                     fontSize: '0.65rem',
                     letterSpacing: 1.2,
                     mb: 0.25,
@@ -504,7 +503,7 @@ export const DigitalSignatureStep: React.FC = () => {
                   sx={{
                     fontFamily: LUNIT.fontBody,
                     fontWeight: 500,
-                    color: LUNIT.darkGray,
+                    color: theme.palette.text.primary,
                   }}
                 >
                   {signatureInfo.signedAt
@@ -517,7 +516,7 @@ export const DigitalSignatureStep: React.FC = () => {
                 </Typography>
                 <Typography
                   variant="caption"
-                  sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray }}
+                  sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary }}
                 >
                   {signatureInfo.signedAt
                     ? new Date(signatureInfo.signedAt).toLocaleTimeString('en-GB', {
@@ -534,7 +533,7 @@ export const DigitalSignatureStep: React.FC = () => {
                   variant="overline"
                   sx={{
                     fontFamily: LUNIT.fontBody,
-                    color: LUNIT.midGray,
+                    color: theme.palette.text.secondary,
                     fontSize: '0.65rem',
                     letterSpacing: 1.2,
                     mb: 0.25,
@@ -548,14 +547,14 @@ export const DigitalSignatureStep: React.FC = () => {
                   sx={{
                     fontFamily: LUNIT.fontBody,
                     fontWeight: 500,
-                    color: LUNIT.darkGray,
+                    color: theme.palette.text.primary,
                   }}
                 >
                   {currentCase.caseNumber}
                 </Typography>
                 <Typography
                   variant="caption"
-                  sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray }}
+                  sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary }}
                 >
                   {currentCase.patient.firstName} {currentCase.patient.lastName} — MRN: {currentCase.patient.mrn}
                 </Typography>
@@ -567,12 +566,12 @@ export const DigitalSignatureStep: React.FC = () => {
             {/* Document Integrity Hash */}
             <Box sx={{ mb: 1.5 }}>
               <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 0.75 }}>
-                <Fingerprint sx={{ fontSize: 16, color: LUNIT.midGray }} />
+                <Fingerprint sx={{ fontSize: 16, color: theme.palette.text.secondary }} />
                 <Typography
                   variant="overline"
                   sx={{
                     fontFamily: LUNIT.fontBody,
-                    color: LUNIT.midGray,
+                    color: theme.palette.text.secondary,
                     fontSize: '0.65rem',
                     letterSpacing: 1.2,
                   }}
@@ -586,7 +585,7 @@ export const DigitalSignatureStep: React.FC = () => {
                     px: 1.5,
                     py: 1,
                     borderRadius: 1,
-                    backgroundColor: alpha(LUNIT.darkGray, 0.03),
+                    backgroundColor: alpha(theme.palette.text.primary, 0.03),
                     border: `1px solid ${alpha(LUNIT.lightGray, 0.6)}`,
                     overflowX: 'auto',
                   }}
@@ -597,7 +596,7 @@ export const DigitalSignatureStep: React.FC = () => {
                     sx={{
                       fontFamily: '"JetBrains Mono", "Fira Code", "Consolas", monospace',
                       fontSize: '0.7rem',
-                      color: LUNIT.midGray,
+                      color: theme.palette.text.secondary,
                       letterSpacing: 0.8,
                       wordBreak: 'break-all',
                       lineHeight: 1.6,
@@ -616,19 +615,19 @@ export const DigitalSignatureStep: React.FC = () => {
               px: 3,
               py: 1.5,
               borderTop: `1px solid ${alpha(LUNIT.lightGray, 0.6)}`,
-              backgroundColor: alpha(LUNIT.darkGray, 0.015),
+              backgroundColor: alpha(theme.palette.text.primary, 0.015),
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
             }}
           >
             <Stack direction="row" alignItems="center" spacing={0.75}>
-              <Shield sx={{ fontSize: 14, color: LUNIT.midGray }} />
+              <Shield sx={{ fontSize: 14, color: theme.palette.text.secondary }} />
               <Typography
                 variant="caption"
                 sx={{
                   fontFamily: LUNIT.fontBody,
-                  color: LUNIT.midGray,
+                  color: theme.palette.text.secondary,
                   fontSize: '0.65rem',
                 }}
               >
@@ -639,7 +638,7 @@ export const DigitalSignatureStep: React.FC = () => {
               variant="caption"
               sx={{
                 fontFamily: LUNIT.fontBody,
-                color: alpha(LUNIT.midGray, 0.6),
+                color: alpha(theme.palette.text.secondary, 0.6),
                 fontSize: '0.6rem',
                 letterSpacing: 0.3,
               }}
@@ -656,7 +655,7 @@ export const DigitalSignatureStep: React.FC = () => {
             mb: 3,
             borderRadius: 2,
             borderColor: alpha(LUNIT.teal, 0.18),
-            backgroundColor: LUNIT.white,
+            backgroundColor: theme.palette.background.paper,
           }}
         >
           <Typography
@@ -665,7 +664,7 @@ export const DigitalSignatureStep: React.FC = () => {
           >
             Electronic Signature
           </Typography>
-          <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray, mb: 2 }}>
+          <Typography variant="body2" sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary, mb: 2 }}>
             By typing your name and entering your credentials, you are electronically signing
             this report and affirming its accuracy. This action is irrevocable.
           </Typography>
@@ -743,7 +742,7 @@ export const DigitalSignatureStep: React.FC = () => {
         >
           <Typography
             variant="body2"
-            sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray, mb: 2 }}
+            sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary, mb: 2 }}
           >
             This case has been signed and finalized. It is saved and can be
             reviewed from the Cases dashboard at any time.

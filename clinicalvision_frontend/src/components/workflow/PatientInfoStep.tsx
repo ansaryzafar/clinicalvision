@@ -31,6 +31,7 @@ import {
   Divider,
   Chip,
   alpha,
+  useTheme,
 } from '@mui/material';
 import {
   ArrowForward,
@@ -54,9 +55,6 @@ const LUNIT = {
   fontHeading: '"ClashGrotesk", "Inter", sans-serif',
   fontBody: '"Lexend", "Inter", sans-serif',
   teal: '#00C9EA',
-  darkGray: '#1A1A2E',
-  midGray: '#6B7280',
-  white: '#FFFFFF',
 } as const;
 
 // ============================================================================
@@ -74,6 +72,7 @@ const SEX_OPTIONS = [
 // ============================================================================
 
 export const PatientInfoStep: React.FC = () => {
+  const theme = useTheme();
   const {
     currentCase,
     updatePatientInfo,
@@ -304,7 +303,7 @@ export const PatientInfoStep: React.FC = () => {
         elevation={0}
         sx={{
           p: 4,
-          background: LUNIT.white,
+          background: theme.palette.background.paper,
           border: `1px solid ${alpha(LUNIT.teal, 0.18)}`,
           borderRadius: 2,
         }}
@@ -316,7 +315,7 @@ export const PatientInfoStep: React.FC = () => {
             sx={{
               fontFamily: LUNIT.fontHeading,
               fontWeight: 300,
-              color: LUNIT.darkGray,
+              color: theme.palette.text.primary,
               display: 'flex',
               alignItems: 'center',
               gap: 1,
@@ -325,7 +324,7 @@ export const PatientInfoStep: React.FC = () => {
             <Person sx={{ color: LUNIT.teal }} />
             Patient Registration
           </Typography>
-          <Typography variant="body2" sx={{ color: LUNIT.midGray, mt: 0.5 }}>
+          <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mt: 0.5 }}>
             Enter patient demographics and identification. Required fields are marked with *.
           </Typography>
         </Box>

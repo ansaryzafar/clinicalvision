@@ -26,6 +26,7 @@ import {
   Chip,
   alpha,
   SelectChangeEvent,
+  useTheme,
 } from '@mui/material';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
@@ -49,11 +50,7 @@ import { useClinicalCase } from '../../contexts/ClinicalCaseContext';
 const LUNIT = {
   teal: '#00C9EA',
   tealDark: '#0F95AB',
-  darkGray: '#1A1A2E',
-  midGray: '#6B7280',
   lightGray: '#E5E7EB',
-  green: '#22C55E',
-  white: '#FFFFFF',
   lightest: '#EFF0F4',
   fontHeading: '"ClashGrotesk", sans-serif',
   fontBody: '"Lexend", sans-serif',
@@ -93,6 +90,7 @@ export const ImageVerificationStep: React.FC<ImageVerificationStepProps> = ({
   onBack,
   onContinue,
 }) => {
+  const theme = useTheme();
   const { currentCase, updateImage } = useClinicalCase();
 
   const images = currentCase?.images ?? [];
@@ -126,7 +124,7 @@ export const ImageVerificationStep: React.FC<ImageVerificationStepProps> = ({
   if (!currentCase) {
     return (
       <Box sx={{ py: 6, textAlign: 'center' }}>
-        <Typography sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray }}>
+        <Typography sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary }}>
           No case loaded. Please go back and upload images.
         </Typography>
       </Box>
@@ -141,7 +139,7 @@ export const ImageVerificationStep: React.FC<ImageVerificationStepProps> = ({
         sx={{
           fontFamily: LUNIT.fontHeading,
           fontWeight: 300,
-          color: LUNIT.darkGray,
+          color: theme.palette.text.primary,
           mb: 1,
         }}
       >
@@ -150,7 +148,7 @@ export const ImageVerificationStep: React.FC<ImageVerificationStepProps> = ({
       <Typography
         sx={{
           fontFamily: LUNIT.fontBody,
-          color: LUNIT.midGray,
+          color: theme.palette.text.secondary,
           fontSize: '0.95rem',
           mb: 3,
         }}
@@ -195,8 +193,8 @@ export const ImageVerificationStep: React.FC<ImageVerificationStepProps> = ({
       {/* Empty state */}
       {!hasImages && (
         <Box sx={{ py: 6, textAlign: 'center' }}>
-          <ImageIcon sx={{ fontSize: 48, color: LUNIT.midGray, mb: 1 }} />
-          <Typography sx={{ fontFamily: LUNIT.fontBody, color: LUNIT.midGray }}>
+          <ImageIcon sx={{ fontSize: 48, color: theme.palette.text.secondary, mb: 1 }} />
+          <Typography sx={{ fontFamily: LUNIT.fontBody, color: theme.palette.text.secondary }}>
             No images uploaded yet. Go back to upload images.
           </Typography>
         </Box>
@@ -253,7 +251,7 @@ export const ImageVerificationStep: React.FC<ImageVerificationStepProps> = ({
                     variant="caption"
                     sx={{
                       fontFamily: LUNIT.fontBody,
-                      color: LUNIT.midGray,
+                      color: theme.palette.text.secondary,
                       display: 'block',
                       mb: 1,
                       overflow: 'hidden',
@@ -327,7 +325,7 @@ export const ImageVerificationStep: React.FC<ImageVerificationStepProps> = ({
               fontFamily: LUNIT.fontBody,
               textTransform: 'none',
               borderColor: LUNIT.lightGray,
-              color: LUNIT.midGray,
+              color: theme.palette.text.secondary,
             }}
           >
             Back

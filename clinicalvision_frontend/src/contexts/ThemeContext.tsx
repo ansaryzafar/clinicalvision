@@ -268,6 +268,9 @@ export const ThemeContextProvider: React.FC<ThemeContextProviderProps> = ({ chil
               '& .MuiInputBase-input': {
                 color: themeColors.text.primary,
               },
+              '& .MuiFormHelperText-root': {
+                color: themeColors.text.secondary,
+              },
             },
           },
         },
