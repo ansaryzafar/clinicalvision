@@ -4,34 +4,30 @@ Automated PostgreSQL backup and restore system for ClinicalVision AI.
 
 ## Features
 
-- ✅ **Automated Daily Backups** via systemd timer
-- ✅ **Compressed Backups** using gzip
-- ✅ **Integrity Verification** with SHA-256 checksums
-- ✅ **Retention Policy** (30 days, max 90 backups)
-- ✅ **Metadata Tracking** for each backup
-- ✅ **Safe Restore** with pre-restore safety backup
-- ✅ **Logging** via systemd journal
+- **Automated Daily Backups** via systemd timer
+- **Compressed Backups** using gzip
+- **Integrity Verification** with SHA-256 checksums
+- **Retention Policy** (30 days, max 90 backups)
+- **Metadata Tracking** for each backup
+- **Safe Restore** with pre-restore safety backup
+- **Logging** via systemd journal
 
 ## Quick Start
 
 ### Manual Backup
 
 ```bash
-# Create backup in default location (./backups)
-./scripts/backup_database.sh
+# Create backup in default location (./backups)./scripts/backup_database.sh
 
-# Create backup in custom location
-./scripts/backup_database.sh /path/to/backup/directory
+# Create backup in custom location./scripts/backup_database.sh /path/to/backup/directory
 ```
 
 ### Manual Restore
 
 ```bash
-# Interactive restore (will prompt for confirmation)
-./scripts/restore_database.sh backups/clinicalvision_20260113_120000.sql.gz
+# Interactive restore (will prompt for confirmation)./scripts/restore_database.sh backups/clinicalvision_20260113_120000.sql.gz
 
-# Force restore without confirmation (use with caution!)
-./scripts/restore_database.sh backups/clinicalvision_20260113_120000.sql.gz --force
+# Force restore without confirmation (use with caution!)./scripts/restore_database.sh backups/clinicalvision_20260113_120000.sql.gz --force
 ```
 
 ## Automated Backups Setup
@@ -48,7 +44,7 @@ sudo cp scripts/clinicalvision-backup.timer /etc/systemd/system/
 ```bash
 sudo nano /etc/systemd/system/clinicalvision-backup.service
 
-# Update these paths to match your installation:
+# Update these paths to match the installation:
 # WorkingDirectory=/opt/clinicalvision/backend
 # EnvironmentFile=/opt/clinicalvision/backend/.env
 # ExecStart=/opt/clinicalvision/backend/scripts/backup_database.sh /var/backups/clinicalvision
@@ -119,18 +115,18 @@ sudo systemctl restart clinicalvision-backup.timer
 Each backup creates three files:
 
 1. **Backup file:** `clinicalvision_YYYYMMDD_HHMMSS.sql.gz`
-   - Compressed SQL dump
-   - Plain format (human-readable when decompressed)
-   - No ownership/ACL information (portable)
+ - Compressed SQL dump
+ - Plain format (human-readable when decompressed)
+ - No ownership/ACL information (portable)
 
 2. **Checksum file:** `clinicalvision_YYYYMMDD_HHMMSS.sql.gz.sha256`
-   - SHA-256 hash for integrity verification
-   - Format: `<hash>  <filename>`
+ - SHA-256 hash for integrity verification
+ - Format: `<hash> <filename>`
 
 3. **Metadata file:** `clinicalvision_YYYYMMDD_HHMMSS.sql.gz.meta`
-   - JSON with backup details
-   - Timestamp, database info, size, checksum
-   - Postgres version used
+ - JSON with backup details
+ - Timestamp, database info, size, checksum
+ - Postgres version used
 
 ## Retention Policy
 
@@ -143,8 +139,8 @@ Each backup creates three files:
 
 Edit `scripts/backup_database.sh`:
 ```bash
-RETENTION_DAYS=30   # Change retention period
-MAX_BACKUPS=90      # Change maximum backup count
+RETENTION_DAYS=30 # Change retention period
+MAX_BACKUPS=90 # Change maximum backup count
 ```
 
 ## Restore Process
@@ -251,13 +247,13 @@ cat /tmp/restore_log.txt
 - Backups contain **sensitive patient data** - store securely
 - Restrict backup directory permissions: `750` or `700`
 - Consider **encrypting** backups for additional security:
-  ```bash
-  # Encrypt backup
-  gpg --symmetric --cipher-algo AES256 backup_file.sql.gz
-  
-  # Decrypt backup
-  gpg --decrypt backup_file.sql.gz.gpg > backup_file.sql.gz
-  ```
+ ```bash
+ # Encrypt backup
+ gpg --symmetric --cipher-algo AES256 backup_file.sql.gz
+ 
+ # Decrypt backup
+ gpg --decrypt backup_file.sql.gz.gpg > backup_file.sql.gz
+ ```
 - Use **separate storage** for production backups (not same server)
 - Implement **offsite backups** for disaster recovery
 
@@ -266,13 +262,11 @@ cat /tmp/restore_log.txt
 ### Backup to Remote Storage
 
 ```bash
-# Backup and upload to S3
-./scripts/backup_database.sh /tmp/backup && \
-  aws s3 cp /tmp/backup/*.sql.gz s3://my-backups/clinicalvision/
+# Backup and upload to S3./scripts/backup_database.sh /tmp/backup && \
+ aws s3 cp /tmp/backup/*.sql.gz s3://my-backups/clinicalvision/
 
-# Backup and rsync to remote server
-./scripts/backup_database.sh ./backups && \
-  rsync -avz ./backups/ user@backup-server:/backups/clinicalvision/
+# Backup and rsync to remote server./scripts/backup_database.sh./backups && \
+ rsync -avz./backups/ user@backup-server:/backups/clinicalvision/
 ```
 
 ### Automated Testing
@@ -280,11 +274,9 @@ cat /tmp/restore_log.txt
 ```bash
 # Test backup and restore in loop
 for i in {1..5}; do
-  echo "Test iteration $i"
-  ./scripts/backup_database.sh /tmp/test_backup
-  LATEST=$(ls -t /tmp/test_backup/*.sql.gz | head -1)
-  ./scripts/restore_database.sh "$LATEST" --force
-  echo "Test $i completed"
+ echo "Test iteration $i"./scripts/backup_database.sh /tmp/test_backup
+ LATEST=$(ls -t /tmp/test_backup/*.sql.gz | head -1)./scripts/restore_database.sh "$LATEST" --force
+ echo "Test $i completed"
 done
 ```
 
@@ -295,10 +287,10 @@ done
 # custom_backup.sh - Backup with notifications
 
 # Run backup
-if ./scripts/backup_database.sh /var/backups/clinicalvision; then
-  echo "Backup successful" | mail -s "Backup OK" admin@example.com
+if./scripts/backup_database.sh /var/backups/clinicalvision; then
+ echo "Backup successful" | mail -s "Backup OK" admin@example.com
 else
-  echo "Backup failed!" | mail -s "BACKUP FAILED" admin@example.com
+ echo "Backup failed!" | mail -s "BACKUP FAILED" admin@example.com
 fi
 ```
 
