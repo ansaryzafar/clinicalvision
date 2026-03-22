@@ -1076,8 +1076,8 @@ const LandingPage: React.FC = () => {
             maxWidth: '1440px',
             mx: 'auto',
             width: '100%',
-            /* Lunit container-spacing: 40px on tablet, 15px on mobile, 0 on desktop >1480px */
-            px: { xs: '15px', sm: '40px', lg: 0 },
+            /* Match navbar 60px side-padding until viewport exceeds maxWidth */
+            px: { xs: '15px', sm: '40px', lg: '60px', xl: 0 },
           }}
         >
           {/* Hero Wrap - lunit-hero__hero-wrap */}
@@ -1282,7 +1282,7 @@ const LandingPage: React.FC = () => {
           sx={{
             maxWidth: '1440px',
             mx: 'auto',
-            px: { xs: '20px', lg: 0 },
+            px: { xs: '20px', lg: '60px', xl: 0 },
           }}
         >
           <Box
@@ -1710,7 +1710,7 @@ const LandingPage: React.FC = () => {
           sx={{ 
             maxWidth: '1440px', 
             mx: 'auto', 
-            px: { xs: '15px', sm: '40px', lg: 0 },
+            px: { xs: '15px', sm: '40px', lg: '60px', xl: 0 },
             position: 'relative', 
             zIndex: 1 
           }}
@@ -2188,7 +2188,7 @@ const LandingPage: React.FC = () => {
           sx={{ 
             maxWidth: '1440px',
             mx: 'auto',
-            px: { xs: '15px', lg: '40px', xl: 0 },
+            px: { xs: '15px', lg: '60px', xl: 0 },
           }}
         >
           {/* Section Header */}
@@ -2761,7 +2761,7 @@ const LandingPage: React.FC = () => {
           sx={{ 
             maxWidth: '1440px',
             mx: 'auto',
-            px: { xs: '20px', lg: 0 },
+            px: { xs: '20px', lg: '60px', xl: 0 },
             display: 'flex',
             flexDirection: 'column',
             gap: { xs: '60px', md: '60px' },
@@ -3152,7 +3152,7 @@ const LandingPage: React.FC = () => {
           sx={{ 
             maxWidth: '1440px',
             mx: 'auto',
-            px: { xs: '20px', lg: 0 },
+            px: { xs: '20px', lg: '60px', xl: 0 },
             position: 'relative', 
             zIndex: 5 
           }}
@@ -3640,7 +3640,7 @@ const LandingPage: React.FC = () => {
       >
         <Box 
           className="lunit-technology__container"
-          sx={{ maxWidth: '1440px', mx: 'auto', px: { xs: '15px', lg: '40px', xl: 0 } }}
+          sx={{ maxWidth: '1440px', mx: 'auto', px: { xs: '15px', lg: '60px', xl: 0 } }}
         >
           <Box className="lunit-technology__content" sx={{ maxWidth: '900px' }}>
             {/* Main Heading */}
@@ -3768,7 +3768,7 @@ const LandingPage: React.FC = () => {
           transition: 'opacity 0.6s ease-out, transform 0.6s ease-out',
         }}
       >
-        <Box sx={{ maxWidth: '1440px', mx: 'auto', px: { xs: '15px', lg: '40px', xl: 0 } }}>
+        <Box sx={{ maxWidth: '1440px', mx: 'auto', px: { xs: '15px', lg: '60px', xl: 0 } }}>
           <Box
             className="supreme-investor-hero__container supreme-investor-hero__container--row"
             sx={{
