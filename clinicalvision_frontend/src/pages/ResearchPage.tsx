@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Typography, Grid, Button, alpha } from '@mui/material';
+import SEOHead from '../components/shared/SEOHead';
 import { Science, OpenInNew, CalendarMonth } from '@mui/icons-material';
 import { PageLayout, PageHero, PageSection, CTASection } from '../components/layout/PageLayout';
 import { lunitColors, lunitTypography, lunitRadius, lunitShadows } from '../styles/lunitDesignSystem';
@@ -72,6 +73,16 @@ const stats = [
 const ResearchPage: React.FC = () => {
   return (
     <PageLayout>
+      <SEOHead
+        title="Research — Advancing AI Diagnostics"
+        description="Explore ClinicalVision's peer-reviewed research in medical AI. Publications in Nature Medicine, Radiology, and IEEE on early detection, explainability, and multi-modal learning."
+        keywords={['medical AI research', 'breast cancer AI publications', 'deep learning radiology research', 'explainable AI research', 'mammography AI studies']}
+        canonicalPath="/research"
+        breadcrumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Research' },
+        ]}
+      />
       {/* Hero */}
       <PageHero
         dark

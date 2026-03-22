@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Typography, Grid, Button, Chip, alpha } from '@mui/material';
+import SEOHead from '../components/shared/SEOHead';
 import {
   Event,
   LocationOn,
@@ -64,6 +65,12 @@ const EventsPage: React.FC = () => {
 
   return (
     <PageLayout headerVariant="dark">
+      <SEOHead
+        title="Events — Conferences & Webinars"
+        description="Meet ClinicalVision at ECR 2026, RSNA 2026, and AI in Radiology conferences. Attend our webinars and workshops on AI-assisted cancer detection."
+        keywords={['ClinicalVision events', 'ECR 2026', 'RSNA 2026', 'medical AI conferences', 'radiology AI webinars', 'healthcare AI workshops']}
+        canonicalPath="/events"
+      />
       <PageHero
         dark
         label="Events"

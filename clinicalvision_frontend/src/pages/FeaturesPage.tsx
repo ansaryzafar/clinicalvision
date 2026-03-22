@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Typography, Grid, alpha, keyframes } from '@mui/material';
+import SEOHead from '../components/shared/SEOHead';
 import {
   Memory,
   Speed,
@@ -73,6 +74,17 @@ const stats = [
 const FeaturesPage: React.FC = () => {
   return (
     <PageLayout>
+      <SEOHead
+        title="Features — AI-Powered Clinical Capabilities"
+        description="Explore ClinicalVision's comprehensive AI features: real-time mammography analysis, explainable Grad-CAM overlays, uncertainty quantification, DICOM integration, and clinical-grade security."
+        keywords={['AI mammography features', 'Grad-CAM explainability', 'DICOM integration', 'uncertainty quantification', 'medical AI platform features', 'clinical workflow AI']}
+        canonicalPath="/features"
+        schemaType="softwareApplication"
+        breadcrumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Features' },
+        ]}
+      />
       {/* Enhanced Hero with dark theme */}
       <Box
         sx={{

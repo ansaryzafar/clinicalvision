@@ -38,6 +38,7 @@ export const ROUTES = {
   CONTACT: '/contact',
   DOCUMENTATION: '/documentation',
   BLOG: '/blog',
+  BLOG_POST: '/blog/:slug',
   SUPPORT: '/support',
   STATUS: '/status',
   PRIVACY: '/privacy',

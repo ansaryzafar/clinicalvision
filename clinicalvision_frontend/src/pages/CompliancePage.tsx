@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Typography, Grid, alpha, Tooltip } from '@mui/material';
+import SEOHead from '../components/shared/SEOHead';
 import {
   Verified,
   LocalHospital,
@@ -130,6 +131,12 @@ const CompliancePage: React.FC = () => {
 
   return (
     <PageLayout>
+      <SEOHead
+        title="Compliance — Healthcare Standards"
+        description="ClinicalVision meets the highest healthcare compliance standards: UK GDPR, DPA 2018, MHRA SaMD registration, IEC 62304 software lifecycle, and ISO 14971 risk management."
+        keywords={['medical AI compliance', 'MHRA SaMD registration', 'IEC 62304', 'ISO 14971', 'healthcare AI regulatory', 'UK GDPR compliance']}
+        canonicalPath="/compliance"
+      />
       {/* Hero */}
       <PageHero
         dark

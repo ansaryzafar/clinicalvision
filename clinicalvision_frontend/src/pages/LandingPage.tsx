@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import SEOHead from '../components/shared/SEOHead';
 import {
   Box,
   Typography,
@@ -196,6 +197,7 @@ const StatCard: React.FC<StatCardProps> = ({ value, prefix, suffix, label, index
       <Typography
         className="stat-number"
         variant="h2"
+        component="div"
         sx={{
           fontFamily: '"ClashGrotesk", system-ui, sans-serif',
           fontSize: 'clamp(45px, calc(45px + (100 - 45) * ((100vw - 320px) / (1600))), 100px)',
@@ -233,6 +235,7 @@ const StatCard: React.FC<StatCardProps> = ({ value, prefix, suffix, label, index
       />
       <Typography
         variant="h6"
+        component="p"
         sx={{
           fontFamily: '"Lexend", sans-serif',
           fontSize: 'clamp(16px, calc(16px + (20 - 16) * ((100vw - 320px) / (1600))), 20px)',
@@ -364,6 +367,13 @@ const LandingPage: React.FC = () => {
 
   return (
     <ThemeProvider theme={publicPagesTheme}>
+    <SEOHead
+      title="AI-Powered Breast Cancer Detection Platform"
+      description="ClinicalVision combines deep learning with explainable AI for mammography analysis. Uncertainty-quantified, clinically validated breast cancer detection with 97.5% sensitivity."
+      keywords={['breast cancer detection AI', 'mammography AI', 'medical imaging AI', 'explainable AI radiology', 'clinical decision support', 'ClinicalVision']}
+      canonicalPath="/"
+      schemaType="organization"
+    />
     <Box sx={{ minHeight: '100vh', bgcolor: lunitColors.white }}>
       {/* Enhanced Navigation Bar - Lunit Style */}
       <Box
@@ -773,6 +783,7 @@ const LandingPage: React.FC = () => {
               {/* Mobile Menu */}
               <IconButton
                 onClick={() => setMobileDrawerOpen(true)}
+                aria-label="Open navigation menu"
                 sx={{ 
                   display: { xs: 'flex', md: 'none' },
                   color: lunitColors.text,
@@ -888,7 +899,7 @@ const LandingPage: React.FC = () => {
         }}
       >
         <Box sx={{ px: 2, pb: 2, display: 'flex', justifyContent: 'flex-end' }}>
-          <IconButton onClick={() => setMobileDrawerOpen(false)} sx={{ color: lunitColors.text }}>
+          <IconButton onClick={() => setMobileDrawerOpen(false)} aria-label="Close navigation menu" sx={{ color: lunitColors.text }}>
             <ArrowForward />
           </IconButton>
         </Box>
@@ -1136,6 +1147,7 @@ const LandingPage: React.FC = () => {
                 {/* Subtitle - lunit-hero__subheading */}
                 <Typography
                   variant="h3"
+                  component="h2"
                   className="lunit-hero__subheading"
                   sx={{
                     fontFamily: '"ClashGrotesk", system-ui, sans-serif',
@@ -1797,6 +1809,7 @@ const LandingPage: React.FC = () => {
               {/* Headline */}
               <Typography
                 variant="h1"
+                component="h2"
                 className="lunit-hero__headline"
                 sx={{
                   fontFamily: '"ClashGrotesk", system-ui, sans-serif',
@@ -1826,6 +1839,7 @@ const LandingPage: React.FC = () => {
                 {/* Subheading */}
                 <Typography
                   variant="h3"
+                  component="h2"
                   className="lunit-hero__subheading"
                   sx={{
                     fontFamily: '"ClashGrotesk", system-ui, sans-serif',
@@ -2026,6 +2040,7 @@ const LandingPage: React.FC = () => {
                   </Typography>
                   <Typography
                     variant="h4"
+                    component="h3"
                     sx={{
                       fontFamily: '"ClashGrotesk", system-ui, sans-serif',
                       fontSize: 'clamp(20px, calc(20px + (28 - 20) * ((100vw - 320px) / (1600))), 28px)',
@@ -2138,6 +2153,7 @@ const LandingPage: React.FC = () => {
                         <Box>
                           <Typography 
                             variant="h6" 
+                            component="h4"
                             sx={{ 
                               mb: 0.5, 
                               color: lunitColors.white,
@@ -2888,6 +2904,7 @@ const LandingPage: React.FC = () => {
               <Box sx={{ position: 'relative', zIndex: 2 }}>
                 <Typography
                   variant="h4"
+                  component="h3"
                   sx={{
                     fontFamily: '"ClashGrotesk", system-ui, sans-serif',
                     fontSize: 'clamp(24px, calc(24px + (40 - 24) * ((100vw - 320px) / (1600))), 40px)',
@@ -3040,6 +3057,7 @@ const LandingPage: React.FC = () => {
               <Box sx={{ position: 'relative', zIndex: 2 }}>
                 <Typography
                   variant="h4"
+                  component="h3"
                   sx={{
                     fontFamily: '"ClashGrotesk", system-ui, sans-serif',
                     fontSize: 'clamp(24px, calc(24px + (40 - 24) * ((100vw - 320px) / (1600))), 40px)',
@@ -3196,6 +3214,7 @@ const LandingPage: React.FC = () => {
               <IconButton
                 onClick={() => setTestimonialIndex(prev => Math.max(0, prev - 1))}
                 disabled={testimonialIndex === 0}
+                aria-label="Previous testimonial"
                 sx={{
                   width: 38,
                   height: 38,
@@ -3219,6 +3238,7 @@ const LandingPage: React.FC = () => {
               <IconButton
                 onClick={() => setTestimonialIndex(prev => Math.min(1, prev + 1))}
                 disabled={testimonialIndex === 1}
+                aria-label="Next testimonial"
                 sx={{
                   width: 38,
                   height: 38,
@@ -4146,6 +4166,7 @@ const LandingPage: React.FC = () => {
                       </Box>
                       <Typography
                         variant="h5"
+                        component="h3"
                         sx={{
                           fontFamily: '"ClashGrotesk", system-ui, sans-serif',
                           fontSize: 'clamp(18px, calc(18px + (22 - 18) * ((100vw - 320px) / (1600))), 22px)',
@@ -4500,6 +4521,7 @@ const LandingPage: React.FC = () => {
             </Typography>
             <Typography
               variant="h5"
+              component="h3"
               sx={{
                 fontFamily: '"Lexend", sans-serif',
                 fontSize: '20px',
@@ -4655,6 +4677,7 @@ const LandingPage: React.FC = () => {
             <Box sx={{ flex: 1 }}>
               <Typography 
                 variant="h6" 
+                component="p"
                 sx={{ 
                   mb: 2.5,
                   fontFamily: '"Lexend", sans-serif',
@@ -4697,6 +4720,7 @@ const LandingPage: React.FC = () => {
             <Box sx={{ flex: 1 }}>
               <Typography 
                 variant="h6" 
+                component="p"
                 sx={{ 
                   mb: 2.5,
                   fontFamily: '"Lexend", sans-serif',
@@ -4740,6 +4764,7 @@ const LandingPage: React.FC = () => {
             <Box sx={{ flex: 1 }}>
               <Typography 
                 variant="h6" 
+                component="p"
                 sx={{ 
                   mb: 2.5,
                   fontFamily: '"Lexend", sans-serif',
@@ -4782,6 +4807,7 @@ const LandingPage: React.FC = () => {
             <Box sx={{ flex: 1 }}>
               <Typography 
                 variant="h6" 
+                component="p"
                 sx={{ 
                   mb: 2.5,
                   fontFamily: '"Lexend", sans-serif',

@@ -12,11 +12,18 @@ import { Box, Typography, Button, Stack, alpha } from '@mui/material';
 import { Home, ArrowBack } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../routes/paths';
+import SEOHead from '../components/shared/SEOHead';
 
 const NotFoundPage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
+    <>
+    <SEOHead
+      title="Page Not Found"
+      description="The page you're looking for doesn't exist or has been moved."
+      noIndex={true}
+    />
     <Box
       sx={{
         display: 'flex',
@@ -92,6 +99,7 @@ const NotFoundPage: React.FC = () => {
         </Button>
       </Stack>
     </Box>
+    </>
   );
 };
 

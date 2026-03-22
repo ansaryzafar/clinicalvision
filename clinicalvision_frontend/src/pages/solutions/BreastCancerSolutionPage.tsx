@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Box, Typography, Grid, Button, alpha } from '@mui/material';
+import SEOHead from '../../components/shared/SEOHead';
 import {
   Visibility,
   Psychology,
@@ -153,6 +154,17 @@ const BreastCancerSolutionPage: React.FC = () => {
 
   return (
     <PageLayout headerVariant="dark">
+      <SEOHead
+        title="Breast Cancer Detection — AI-Powered Mammography Analysis"
+        description="ClinicalVision's breast cancer detection solution combines dual-view fusion, uncertainty quantification, and Grad-CAM explainability for 97.5% sensitivity mammography analysis."
+        keywords={['breast cancer AI detection', 'mammography AI analysis', 'dual-view fusion', 'uncertainty quantification radiology', 'Grad-CAM mammography', 'AI breast screening']}
+        canonicalPath="/solutions/breast-cancer"
+        breadcrumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Solutions', path: '/solutions/breast-cancer' },
+          { name: 'Breast Cancer Detection' },
+        ]}
+      />
       <PageHero
         dark
         label="Breast Cancer Detection"

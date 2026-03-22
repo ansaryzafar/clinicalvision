@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Box, Typography, Grid, Button, alpha, Tooltip } from '@mui/material';
+import SEOHead from '../components/shared/SEOHead';
 import {
   MenuBook,
   Code,
@@ -101,6 +102,16 @@ const DocumentationPage: React.FC = () => {
 
   return (
     <PageLayout>
+      <SEOHead
+        title="Documentation — Guides & API Reference"
+        description="Comprehensive documentation for ClinicalVision: getting started guides, REST API reference, PACS/EHR/FHIR integrations, security compliance, and troubleshooting."
+        keywords={['ClinicalVision documentation', 'medical AI docs', 'DICOM API reference', 'PACS integration guide', 'healthcare AI developer docs']}
+        canonicalPath="/documentation"
+        breadcrumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Documentation' },
+        ]}
+      />
       {/* Hero */}
       <PageHero
         label="Documentation"

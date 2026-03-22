@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Typography, Grid, Button, alpha } from '@mui/material';
+import SEOHead from '../components/shared/SEOHead';
 import {
   Handshake,
   LocalHospital,
@@ -66,6 +67,12 @@ const PartnersPage: React.FC = () => {
 
   return (
     <PageLayout headerVariant="dark">
+      <SEOHead
+        title="Partners — Advancing Cancer Detection Together"
+        description="Partner with ClinicalVision. We collaborate with healthcare institutions, research labs, PACS/EHR integrators, and distribution partners to advance AI-powered cancer detection."
+        keywords={['ClinicalVision partners', 'medical AI partnerships', 'healthcare AI collaboration', 'PACS integration partners', 'radiology AI ecosystem']}
+        canonicalPath="/partners"
+      />
       <PageHero
         dark
         label="Partners"

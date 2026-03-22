@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Typography, Button, Grid, TextField, alpha, Collapse, Alert } from '@mui/material';
+import SEOHead from '../components/shared/SEOHead';
 import { Email, Phone, LocationOn, Send, Add, Remove, CheckCircle } from '@mui/icons-material';
 import { PageLayout, PageSection, CTASection } from '../components/layout/PageLayout';
 import { lunitColors, lunitTypography, lunitRadius, lunitShadows, lunitGradients } from '../styles/lunitDesignSystem';
@@ -86,6 +87,12 @@ const ContactPage: React.FC = () => {
 
   return (
     <PageLayout>
+      <SEOHead
+        title="Contact Us — Get in Touch"
+        description="Contact ClinicalVision for questions about our AI platform, enterprise pricing, deployment timelines, or regulatory status. Reach us by email, phone, or visit."
+        keywords={['contact ClinicalVision', 'medical AI support', 'healthcare AI inquiry', 'radiology AI contact', 'ClinicalVision sales']}
+        canonicalPath="/contact"
+      />
       {/* Enhanced Hero */}
       <Box
         sx={{

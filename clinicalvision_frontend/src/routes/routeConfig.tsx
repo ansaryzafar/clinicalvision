@@ -47,6 +47,7 @@ const ResearchPage = React.lazy(() => import('../pages/ResearchPage'));
 const ContactPage = React.lazy(() => import('../pages/ContactPage'));
 const DocumentationPage = React.lazy(() => import('../pages/DocumentationPage'));
 const BlogPage = React.lazy(() => import('../pages/BlogPage'));
+const BlogPostPage = React.lazy(() => import('../pages/BlogPostPage'));
 const SupportPage = React.lazy(() => import('../pages/SupportPage'));
 const StatusPage = React.lazy(() => import('../pages/StatusPage'));
 const PrivacyPage = React.lazy(() => import('../pages/PrivacyPage'));
@@ -108,6 +109,7 @@ export const routeConfig: RouteEntry[] = [
   { path: ROUTES.CONTACT,         component: ContactPage,       auth: false, layout: false },
   { path: ROUTES.DOCUMENTATION,   component: DocumentationPage, auth: false, layout: false },
   { path: ROUTES.BLOG,            component: BlogPage,          auth: false, layout: false },
+  { path: ROUTES.BLOG_POST,       component: BlogPostPage,      auth: false, layout: false },
   { path: ROUTES.SUPPORT,         component: SupportPage,       auth: false, layout: false },
   { path: ROUTES.STATUS,          component: StatusPage,        auth: false, layout: false },
   { path: ROUTES.PRIVACY,         component: PrivacyPage,       auth: false, layout: false },

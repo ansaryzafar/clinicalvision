@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Typography, Grid, alpha } from '@mui/material';
+import SEOHead from '../components/shared/SEOHead';
 import {
   Lock,
   Shield,
@@ -111,6 +112,12 @@ const practices = [
 const SecurityPage: React.FC = () => {
   return (
     <PageLayout>
+      <SEOHead
+        title="Security — Enterprise-Grade Protection"
+        description="ClinicalVision implements TLS 1.3, AES-256 encryption, MFA, RBAC, and comprehensive audit logging. Compliant with UK GDPR, IEC 62304, and ISO 14971."
+        keywords={['medical AI security', 'healthcare data encryption', 'HIPAA compliant AI', 'radiology AI security', 'ISO 14971 medical device']}
+        canonicalPath="/security"
+      />
       {/* Hero */}
       <PageHero
         dark

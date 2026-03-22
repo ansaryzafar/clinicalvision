@@ -1,3 +1,20 @@
 # https://www.robotstxt.org/robotstxt.html
+# ClinicalVision AI — Breast Cancer Detection Platform
+
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /dashboard
+Disallow: /workflow
+Disallow: /cases
+Disallow: /analysis-archive
+Disallow: /analysis-suite
+Disallow: /history
+Disallow: /settings
+Disallow: /fairness
+Disallow: /login
+Disallow: /register
+Disallow: /verify-email
+Disallow: /forgot-password
+Disallow: /reset-password
+
+Sitemap: https://clinicalvision.ai/sitemap.xml

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Typography, Grid, Button, alpha, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import SEOHead from '../components/shared/SEOHead';
 import {
   Email,
   Chat,
@@ -103,6 +104,18 @@ const SupportPage: React.FC = () => {
 
   return (
     <PageLayout>
+      <SEOHead
+        title="Support — We're Here to Help"
+        description="Get support for ClinicalVision AI. 24/7 live chat, email, and phone support. Access training sessions, FAQs, and compliance guidance for your practice."
+        keywords={['ClinicalVision support', 'medical AI help', 'healthcare AI support', 'radiology AI customer service', 'ClinicalVision FAQ']}
+        canonicalPath="/support"
+        schemaType="faqPage"
+        faqItems={faqs}
+        breadcrumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Support' },
+        ]}
+      />
       {/* Hero */}
       <PageHero
         label="Support"

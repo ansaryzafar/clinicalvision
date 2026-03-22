@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Typography, Button, Grid, TextField, MenuItem, alpha } from '@mui/material';
+import SEOHead from '../components/shared/SEOHead';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../routes/paths';
 import { PlayCircle, CheckCircle } from '@mui/icons-material';
@@ -136,6 +137,12 @@ const DemoPage: React.FC = () => {
 
   return (
     <PageLayout>
+      <SEOHead
+        title="Request a Demo — See ClinicalVision in Action"
+        description="Schedule a personalized 30-minute demo of ClinicalVision AI. See real-time mammography analysis, PACS integration, and explainable AI in action."
+        keywords={['ClinicalVision demo', 'medical AI demo', 'mammography AI demonstration', 'radiology AI trial', 'breast cancer detection demo']}
+        canonicalPath="/demo"
+      />
       {/* Hero */}
       <PageHero
         label="Request Demo"

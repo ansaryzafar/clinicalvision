@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { CssBaseline } from '@mui/material';
+import { HelmetProvider } from 'react-helmet-async';
 import { ThemeContextProvider } from './contexts/ThemeContext';
 import { Toaster } from 'react-hot-toast';
 // V3 Workflow - Clean rewrite with TDD
@@ -45,6 +46,7 @@ const AuthenticatedClinicalCaseProvider: React.FC<{ children: React.ReactNode }>
 
 function App() {
   return (
+    <HelmetProvider>
     <ThemeContextProvider>
       <CssBaseline />
       <Toaster
@@ -84,6 +86,7 @@ function App() {
         </AuthenticatedClinicalCaseProvider>
       </AuthProvider>
     </ThemeContextProvider>
+    </HelmetProvider>
   );
 }
 

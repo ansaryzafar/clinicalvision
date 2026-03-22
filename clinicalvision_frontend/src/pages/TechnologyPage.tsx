@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Box, Typography, Grid, Button, alpha } from '@mui/material';
+import SEOHead from '../components/shared/SEOHead';
 import {
   Psychology,
   Layers,
@@ -130,6 +131,17 @@ const TechnologyPage: React.FC = () => {
 
   return (
     <PageLayout headerVariant="dark">
+      <SEOHead
+        title="Technology — AI Architecture Built for Clinical Trust"
+        description="Explore ClinicalVision's AI technology: Monte Carlo dropout uncertainty quantification, Grad-CAM explainability, dual-view CC/MLO fusion, transfer learning, and bias-aware training."
+        keywords={['medical AI architecture', 'uncertainty quantification', 'Monte Carlo dropout', 'Grad-CAM radiology', 'dual-view mammography fusion', 'explainable AI technology']}
+        canonicalPath="/technology"
+        schemaType="softwareApplication"
+        breadcrumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Technology' },
+        ]}
+      />
       <PageHero
         dark
         label="Technology"

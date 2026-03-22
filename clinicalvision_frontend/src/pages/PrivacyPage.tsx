@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Typography, alpha, Container } from '@mui/material';
 import { PageLayout, PageHero } from '../components/layout/PageLayout';
+import SEOHead from '../components/shared/SEOHead';
 import { lunitColors, lunitTypography, lunitRadius } from '../styles/lunitDesignSystem';
 
 const sections = [
@@ -316,6 +317,12 @@ For EU/EEA residents, you may also contact your local supervisory authority.`,
 const PrivacyPage: React.FC = () => {
   return (
     <PageLayout>
+      <SEOHead
+        title="Privacy Policy"
+        description="ClinicalVision AI privacy policy. Learn how we collect, process, and protect your personal and health data under UK GDPR and Data Protection Act 2018."
+        keywords={['ClinicalVision privacy policy', 'medical AI data protection', 'UK GDPR healthcare', 'health data privacy', 'DICOM data privacy']}
+        canonicalPath="/privacy"
+      />
       {/* Hero */}
       <PageHero
         label="Legal"

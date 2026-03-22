@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Typography, Grid, Button, alpha } from '@mui/material';
+import SEOHead from '../../components/shared/SEOHead';
 import {
   NotificationsActive,
   Science,
@@ -106,6 +107,12 @@ const ComingSoonSolutionPage: React.FC = () => {
 
   return (
     <PageLayout headerVariant="dark">
+      <SEOHead
+        title={`${config.heroTitle} — Coming Soon`}
+        description={config.heroSubtitle}
+        keywords={[config.label, 'AI cancer detection', 'medical imaging AI', 'ClinicalVision solutions']}
+        canonicalPath={`/solutions/${cancerType}`}
+      />
       <PageHero
         dark
         label={config.label}

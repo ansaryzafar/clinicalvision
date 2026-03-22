@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Typography, Grid, alpha, Button, keyframes } from '@mui/material';
+import SEOHead from '../components/shared/SEOHead';
 import {
   ArrowForward,
   Public,
@@ -94,15 +95,21 @@ const CareersPage: React.FC = () => {
 
   return (
     <PageLayout>
+      <SEOHead
+        title="Careers — Join Our Team"
+        description="Join ClinicalVision and help revolutionize cancer detection with AI. We're hiring ML engineers, product managers, and full-stack developers. Remote-friendly roles in London."
+        keywords={['medical AI careers', 'healthcare AI jobs', 'machine learning engineer jobs', 'radiology AI careers', 'ClinicalVision careers']}
+        canonicalPath="/careers"
+      />
       {/* Hero - Lunit Style */}
       <Box
         sx={{
           background: lunitGradients.pageBannerBg,
           minHeight: '70vh',
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'flex-end',
           pt: { xs: '80px', md: '120px' },
-          pb: { xs: '60px', md: '100px' },
+          pb: { xs: '60px', md: '80px' },
           position: 'relative',
           overflow: 'hidden',
         }}

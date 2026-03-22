@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Typography, Grid, alpha } from '@mui/material';
+import SEOHead from '../components/shared/SEOHead';
 import { Speed, Security, Cloud, IntegrationInstructions } from '@mui/icons-material';
 import { PageLayout, PageHero, PageSection, CTASection } from '../components/layout/PageLayout';
 import { lunitColors, lunitTypography, lunitRadius, lunitShadows } from '../styles/lunitDesignSystem';
@@ -84,6 +85,12 @@ heatmap.save("analysis_overlay.png")`;
 const ApiPage: React.FC = () => {
   return (
     <PageLayout>
+      <SEOHead
+        title="API — Developer-Friendly AI Diagnostics"
+        description="Integrate ClinicalVision's AI diagnostics via our RESTful API. Python & JavaScript SDKs, OAuth 2.0, sub-3-second inference, DICOM upload, and 99.99% uptime SLA."
+        keywords={['medical AI API', 'radiology API', 'DICOM upload API', 'breast cancer detection API', 'healthcare AI integration', 'ClinicalVision API']}
+        canonicalPath="/api"
+      />
       {/* Hero */}
       <PageHero
         dark

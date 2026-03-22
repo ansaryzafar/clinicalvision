@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import { CloudUpload, Science } from '@mui/icons-material';
 import { EnhancedMammogramViewer } from '../components/viewer/EnhancedMammogramViewer';
+import SEOHead from '../components/shared/SEOHead';
 
 const DiagnosticViewer: React.FC = () => {
   const [images, setImages] = useState<any>(null);
@@ -126,6 +127,12 @@ const DiagnosticViewer: React.FC = () => {
 
   return (
     <Box sx={{ bgcolor: '#f5f5f5', minHeight: '100vh', py: 4 }}>
+      <SEOHead
+        title="Diagnostic Viewer Demo — Mammogram Analysis"
+        description="Interactive demonstration of ClinicalVision's Enhanced Mammogram Viewer with clinical AI features. Upload DICOM images or explore with simulated CC/MLO views."
+        keywords={['mammogram viewer demo', 'DICOM viewer', 'AI mammography demo', 'breast cancer detection demo', 'clinical AI viewer']}
+        canonicalPath="/diagnostic-viewer"
+      />
       <Container maxWidth="xl">
         <Stack spacing={3}>
           {/* Header */}

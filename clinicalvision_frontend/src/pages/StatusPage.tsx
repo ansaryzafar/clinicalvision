@@ -1,6 +1,5 @@
 import React from 'react';
-import { Box, Typography, Grid, alpha } from '@mui/material';
-import { CheckCircle, Schedule, Warning, Error as ErrorIcon } from '@mui/icons-material';
+import { Box, Typography, Grid, alpha } from '@mui/material';import SEOHead from '../components/shared/SEOHead';import { CheckCircle, Schedule, Warning, Error as ErrorIcon } from '@mui/icons-material';
 import { PageLayout, PageHero, PageSection } from '../components/layout/PageLayout';
 import { lunitColors, lunitTypography, lunitRadius } from '../styles/lunitDesignSystem';
 
@@ -85,6 +84,12 @@ const StatusPage: React.FC = () => {
 
   return (
     <PageLayout>
+      <SEOHead
+        title="System Status — Service Health"
+        description="Real-time status of ClinicalVision AI services. Check API, Analysis Engine, and Web App uptime, incident reports, and scheduled maintenance."
+        keywords={['ClinicalVision status', 'system uptime', 'service health', 'API status']}
+        canonicalPath="/status"
+      />
       {/* Hero */}
       <PageHero
         label="System Status"

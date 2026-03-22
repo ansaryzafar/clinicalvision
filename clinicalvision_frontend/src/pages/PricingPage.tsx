@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Typography, Button, Grid, Switch, alpha, keyframes } from '@mui/material';
+import SEOHead from '../components/shared/SEOHead';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../routes/paths';
 import { Check, Star } from '@mui/icons-material';
@@ -68,6 +69,16 @@ const PricingPage: React.FC = () => {
 
   return (
     <PageLayout>
+      <SEOHead
+        title="Pricing — Plans for Every Practice"
+        description="Simple, transparent pricing for ClinicalVision AI. Choose from Starter, Professional, and Enterprise plans with PACS integration, API access, and dedicated support."
+        keywords={['medical AI pricing', 'radiology AI cost', 'breast cancer detection pricing', 'healthcare AI subscription', 'ClinicalVision plans']}
+        canonicalPath="/pricing"
+        breadcrumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Pricing' },
+        ]}
+      />
       {/* Enhanced Hero */}
       <Box
         sx={{

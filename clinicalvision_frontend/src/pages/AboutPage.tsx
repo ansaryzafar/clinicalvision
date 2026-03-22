@@ -7,6 +7,7 @@
 
 import React, { useState } from 'react';
 import { Box, Typography, Grid, alpha, Button, Chip, Divider } from '@mui/material';
+import SEOHead from '../components/shared/SEOHead';
 import { 
   Timeline, 
   Verified, 
@@ -111,6 +112,12 @@ const AboutPage: React.FC = () => {
 
   return (
     <PageLayout>
+      <SEOHead
+        title="About Us — Our Mission & Team"
+        description="ClinicalVision brings clarity to medical imaging through explainable AI. Learn about our mission to advance breast cancer detection with transparent, uncertainty-aware deep learning."
+        keywords={['about ClinicalVision', 'medical AI company', 'breast cancer AI team', 'explainable AI healthcare', 'AI radiology startup']}
+        canonicalPath="/about"
+      />
       {/* Hero Section - Elegant and Aspirational */}
       <Box
         sx={{

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Typography, alpha, Container } from '@mui/material';
 import { PageLayout, PageHero } from '../components/layout/PageLayout';
+import SEOHead from '../components/shared/SEOHead';
 import { lunitColors, lunitTypography, lunitRadius } from '../styles/lunitDesignSystem';
 
 const sections = [
@@ -259,6 +260,12 @@ To report a suspected adverse event, malfunction, or patient safety concern rela
 const TermsPage: React.FC = () => {
   return (
     <PageLayout>
+      <SEOHead
+        title="Terms of Use"
+        description="ClinicalVision AI terms of use. Review the conditions governing use of our Software as a Medical Device (SaMD) clinical decision support platform."
+        keywords={['ClinicalVision terms of use', 'medical AI terms', 'SaMD terms and conditions', 'healthcare AI legal']}
+        canonicalPath="/terms"
+      />
       {/* Hero */}
       <PageHero
         label="Legal"
