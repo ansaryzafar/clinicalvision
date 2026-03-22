@@ -80,6 +80,7 @@ let mockHookReturn: {
 
 jest.mock('../../../../hooks/useMetrics', () => ({
   useModelIntelligenceMetrics: (opts: any) => mockHookReturn,
+  useSystemHealth: () => ({ data: { modelVersion: 'v1.3.0', status: 'healthy', uptime: 99.9 }, isLoading: false, error: null }),
 }));
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -213,7 +214,8 @@ describe('ModelIntelligenceTab', () => {
 
   it('shows fallback for summary metrics when empty', () => {
     wrap(<ModelIntelligenceTab period="30d" />);
-    expect(screen.getByTestId('active-model-version')).toHaveTextContent('—');
+    // Active model version falls back to system health data (v1.3.0) when metrics are empty
+    expect(screen.getByTestId('active-model-version')).toHaveTextContent('v1.3.0');
     expect(screen.getByTestId('top-review-trigger')).toHaveTextContent('—');
   });
 
