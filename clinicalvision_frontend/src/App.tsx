@@ -13,6 +13,7 @@ import ScrollToTop from './components/utils/ScrollToTop';
 import AppRoutes from './routes/AppRoutes';
 // GDPR/CCPA-compliant cookie consent banner
 import CookieConsentBanner from './components/shared/CookieConsentBanner';
+import ResearchPrototypeBanner from './components/shared/ResearchPrototypeBanner';
 
 /**
  * ClinicalVision AI - Main Application
@@ -80,6 +81,7 @@ function App() {
             <Router>
               <ScrollToTop />
               <AppRoutes />
+              <ResearchPrototypeBanner />
               <CookieConsentBanner />
             </Router>
           </WorkflowProvider>

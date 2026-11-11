@@ -29,27 +29,27 @@ const cancerTypeConfig: Record<
     label: 'Lung Cancer Detection',
     heroTitle: 'AI-Assisted Lung Cancer Detection',
     heroSubtitle:
-      'Extending our proven uncertainty quantification and explainable AI framework to lung imaging — bringing the same clinical transparency and confidence to thoracic radiology.',
+      'A possible future research direction. No lung imaging model exists yet.',
     description:
-      'Lung cancer remains the leading cause of cancer-related mortality worldwide. Our upcoming lung cancer detection module will apply dual-view fusion, attention-based explainability, and calibrated confidence scoring to CT and chest X-ray analysis.',
+      'Lung cancer remains the leading cause of cancer-related mortality worldwide. No lung cancer module has been built. It is only an idea for future research, with no timeline and no commitment.',
     icon: '🫁',
   },
   'prostate-cancer': {
     label: 'Prostate Cancer Detection',
     heroTitle: 'AI-Assisted Prostate Cancer Detection',
     heroSubtitle:
-      'Bringing our research-backed AI methodology to prostate cancer histopathology — with the same commitment to uncertainty quantification and clinical explainability.',
+      'A possible future research direction. No prostate histopathology model exists yet.',
     description:
-      'Prostate cancer diagnosis benefits enormously from quantitative, reproducible analysis. Our upcoming module will apply deep learning with uncertainty estimation to histopathology grading, reducing inter-observer variability.',
+      'No prostate cancer module has been built. It is only an idea for future research, with no timeline and no commitment.',
     icon: '🔎',
   },
   'colorectal-cancer': {
     label: 'Colorectal Cancer Detection',
     heroTitle: 'AI-Assisted Colorectal Cancer Detection',
     heroSubtitle:
-      'Expanding our clinical AI platform to colorectal pathology — with transparent predictions, calibrated confidence, and full explainability for every finding.',
+      'A possible future research direction. No colorectal model exists yet.',
     description:
-      'Colorectal cancer screening and diagnosis involve complex tissue analysis where AI can improve consistency and throughput. Our upcoming module will leverage the same peer-reviewed methodologies proven in our breast cancer solution.',
+      'No colorectal cancer module has been built. It is only an idea for future research, with no timeline and no commitment.',
     icon: '🧬',
   },
 };
@@ -60,25 +60,25 @@ const sharedStrengths = [
     icon: <Psychology sx={{ fontSize: 28 }} />,
     title: 'Uncertainty Quantification',
     description:
-      'Every prediction will include calibrated confidence intervals — the same Monte Carlo dropout methodology validated in our breast cancer detection solution.',
+      'A future model could reuse the Monte Carlo dropout approach from the breast prototype, where it has so far been only a weak error signal.',
   },
   {
     icon: <Visibility sx={{ fontSize: 28 }} />,
     title: 'Explainable AI',
     description:
-      'Attention-based visual overlays will show exactly which image regions drive each prediction, accessible to clinicians at all experience levels.',
+      'A future model could reuse heatmap overlays, which are an approximate aid and not a guarantee of the model\'s reasoning.',
   },
   {
     icon: <Speed sx={{ fontSize: 28 }} />,
-    title: 'Workflow Integration',
+    title: 'No Workflow Integration',
     description:
-      'Designed for seamless integration into existing clinical workflows with the same end-to-end pipeline architecture — from image ingestion to structured reporting.',
+      'No workflow integration has been built or tested, even for breast imaging.',
   },
   {
     icon: <Science sx={{ fontSize: 28 }} />,
-    title: 'Research-First Approach',
+    title: 'No Partnerships',
     description:
-      'Development is grounded in peer-reviewed methodology and active clinical research partnerships, ensuring every module meets the highest scientific standards.',
+      'There are no clinical research partnerships. Any future work would need suitable public datasets and expert input.',
   },
 ];
 
@@ -108,7 +108,7 @@ const ComingSoonSolutionPage: React.FC = () => {
   return (
     <PageLayout headerVariant="dark">
       <SEOHead
-        title={`${config.heroTitle} — Coming Soon`}
+        title={`${config.heroTitle} — Future Research Idea`}
         description={config.heroSubtitle}
         keywords={[config.label, 'AI cancer detection', 'medical imaging AI', 'ClinicalVision solutions']}
         canonicalPath={`/solutions/${cancerType}`}
@@ -363,7 +363,7 @@ const ComingSoonSolutionPage: React.FC = () => {
               mb: 2,
             }}
           >
-            Explore Our Live Solution
+            Explore the Research Prototype
           </Typography>
           <Typography
             sx={{
@@ -377,8 +377,8 @@ const ComingSoonSolutionPage: React.FC = () => {
               mb: 4,
             }}
           >
-            Our breast cancer detection platform is available now — see the technology
-            that powers all of our upcoming cancer detection solutions.
+            The breast cancer research prototype is the only model built so far. It is
+            not a medical device and is not for clinical use.
           </Typography>
           <Button
             variant="contained"
@@ -405,8 +405,8 @@ const ComingSoonSolutionPage: React.FC = () => {
       </PageSection>
 
       <CTASection
-        title="Stay Updated on Our Progress"
-        subtitle="Contact us to register your interest and receive updates as this solution approaches launch."
+        title="Interested in This Direction?"
+        subtitle="Get in touch to discuss it. No launch is planned or promised."
         buttonText="Contact Us"
         buttonPath={ROUTES.CONTACT}
         variant="dark"

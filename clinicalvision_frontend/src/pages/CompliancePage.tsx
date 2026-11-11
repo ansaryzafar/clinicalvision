@@ -17,113 +17,48 @@ import { ROUTES } from '../routes/paths';
 
 const regulations = [
   {
-    icon: <Gavel sx={{ fontSize: 32 }} />,
-    title: 'UK GDPR & DPA 2018',
-    region: 'United Kingdom',
-    description: 'ClinicalVision is fully compliant with the UK General Data Protection Regulation and Data Protection Act 2018, applying enhanced safeguards for special category health data under Article 9.',
-    features: [
-      'Lawful basis for processing established',
-      'Data subject rights procedures in place',
-      'Data Protection Impact Assessments conducted',
-      'Data Processing Agreements available',
-      'ICO complaint procedures documented',
-    ],
-  },
-  {
     icon: <LocalHospital sx={{ fontSize: 32 }} />,
-    title: 'MHRA — UK Medical Device Registration',
+    title: 'Medical Device Regulation',
     region: 'United Kingdom',
-    description: 'ClinicalVision is actively preparing for registration with the Medicines and Healthcare products Regulatory Agency (MHRA) as a Software as a Medical Device (SaMD) clinical decision support tool.',
+    description: 'ClinicalVision is a research prototype. It is not a medical device and has not been submitted to, cleared by or registered with the MHRA or any other regulator.',
     features: [
-      'SaMD classification assessment completed',
-      'Quality Management System (ISO 13485 aligned)',
-      'Risk management process (ISO 14971 applied)',
-      'Clinical evaluation programme underway',
-      'Post-market surveillance plan drafted',
+      'No MHRA registration or clearance',
+      'No CE/UKCA marking',
+      'No FDA clearance or approval',
+      'No clinical investigation has been carried out',
+      'Not for any decision affecting a real patient',
     ],
   },
   {
-    icon: <Verified sx={{ fontSize: 32 }} />,
-    title: 'IEC 62304 — Software Lifecycle',
-    region: 'International',
-    description: 'The Platform is developed following IEC 62304:2006+AMD1:2015, the international standard for medical device software lifecycle processes, ensuring traceability from requirements through to validation.',
+    icon: <Gavel sx={{ fontSize: 32 }} />,
+    title: 'Data Protection',
+    region: 'United Kingdom',
+    description: 'The demo is intended for public, de-identified research images only. Real patient data must not be uploaded. See the Privacy Policy for how personal data such as account details is handled.',
     features: [
-      'Software development lifecycle documented',
-      'Design controls and change management',
-      'Verification and validation procedures',
-      'Software of Unknown Provenance (SOUP) management',
-      'Full audit trails and version control',
+      'Use public, de-identified images only',
+      'Do not upload real patient data',
+      'See the Privacy Policy for details',
     ],
   },
   {
     icon: <Public sx={{ fontSize: 32 }} />,
-    title: 'Future Regulatory Roadmap',
-    region: 'Global',
-    description: 'Our compliance architecture is designed for regulatory portability. We are building towards EU MDR 2017/745 CE marking and FDA AI/ML-based SaMD guidance as part of our international expansion strategy.',
+    title: 'Evidence and Validation',
+    region: 'Research Status',
+    description: 'The model was evaluated on a held-out split of the public CBIS-DDSM dataset (701 test lesions, AUC 0.80). There has been no external, multi-site or prospective evaluation, and subgroup performance has not been measured.',
     features: [
-      'EU MDR pathway assessment initiated',
-      'FDA Pre-Submission planning',
-      'Clinical evidence generation programme',
-      'NIST AI Risk Management Framework alignment',
-      'Jurisdictional compliance packs in development',
+      'Internal hold-out evaluation only',
+      'No external or prospective validation',
+      'Subgroup metrics not available',
+      'No calibrator is shipped',
     ],
   },
 ];
 
 const frameworks = [
-  {
-    name: 'ISO 13485',
-    description: 'Quality management system aligned to medical device requirements',
-    status: 'Aligned',
-  },
-  {
-    name: 'ISO 14971',
-    description: 'Risk management applied throughout the product lifecycle',
-    status: 'Applied',
-  },
-  {
-    name: 'IEC 62304',
-    description: 'Medical device software lifecycle processes followed',
-    status: 'Applied',
-  },
-  {
-    name: 'ISO 27001',
-    description: 'Information security management — certification planned',
-    status: 'Planned',
-  },
-];
-
-const documents = [
-  {
-    title: 'Data Processing Agreement',
-    description: 'UK GDPR-compliant DPA for institutional data controllers',
-    type: 'PDF',
-  },
-  {
-    title: 'Security Whitepaper',
-    description: 'Comprehensive overview of our security architecture and controls',
-    type: 'PDF',
-  },
-  {
-    title: 'Privacy Impact Assessment',
-    description: 'Data Protection Impact Assessment for clinical imaging processing',
-    type: 'PDF',
-  },
-  {
-    title: 'Clinical Safety Case',
-    description: 'DCB 0129 Clinical Risk Management report for health IT systems',
-    type: 'PDF',
-  },
-  {
-    title: 'AI Model Card',
-    description: 'Model performance, training data provenance, and known limitations',
-    type: 'PDF',
-  },
-  {
-    title: 'Regulatory Roadmap',
-    description: 'MHRA, EU MDR, and FDA pathway timeline and milestones',
-    type: 'PDF',
-  },
+  { name: 'ISO 13485', description: 'Medical device quality management', status: 'Not certified' },
+  { name: 'IEC 62304', description: 'Medical device software lifecycle', status: 'Not certified' },
+  { name: 'ISO 14971', description: 'Medical device risk management', status: 'Not certified' },
+  { name: 'ISO 27001', description: 'Information security management', status: 'Not certified' },
 ];
 
 const CompliancePage: React.FC = () => {
@@ -132,9 +67,9 @@ const CompliancePage: React.FC = () => {
   return (
     <PageLayout>
       <SEOHead
-        title="Compliance — Healthcare Standards"
-        description="ClinicalVision meets the highest healthcare compliance standards: UK GDPR, DPA 2018, MHRA SaMD registration, IEC 62304 software lifecycle, and ISO 14971 risk management."
-        keywords={['medical AI compliance', 'MHRA SaMD registration', 'IEC 62304', 'ISO 14971', 'healthcare AI regulatory', 'UK GDPR compliance']}
+        title="Compliance — Research Prototype Status"
+        description="Regulatory and compliance status of the ClinicalVision research prototype: not a medical device, no regulatory clearance, no certifications."
+        keywords={['ClinicalVision compliance']}
         canonicalPath="/compliance"
       />
       {/* Hero */}
@@ -143,13 +78,13 @@ const CompliancePage: React.FC = () => {
         label="Compliance"
         title={
           <>
-            Healthcare{' '}
+            Compliance{' '}
             <Box component="span" sx={{ color: lunitColors.teal }}>
-              Compliance
+              Status
             </Box>
           </>
         }
-        subtitle="ClinicalVision meets the highest standards of healthcare compliance worldwide, ensuring patient safety and data protection."
+        subtitle="ClinicalVision is a research prototype. It is not a medical device and holds no regulatory clearance or certifications."
       />
 
       {/* Regulatory Compliance */}
@@ -176,7 +111,7 @@ const CompliancePage: React.FC = () => {
               color: lunitColors.headingColor,
             }}
           >
-            Regulatory Compliance
+            Regulatory Status
           </Typography>
         </Box>
 
@@ -296,7 +231,7 @@ const CompliancePage: React.FC = () => {
               color: lunitColors.headingColor,
             }}
           >
-            Security Frameworks
+            Standards and Certifications
           </Typography>
         </Box>
 
@@ -342,8 +277,8 @@ const CompliancePage: React.FC = () => {
                     px: 2,
                     py: 0.5,
                     borderRadius: lunitRadius.full,
-                    bgcolor: alpha(fw.status === 'Applied' || fw.status === 'Aligned' ? lunitColors.green : lunitColors.teal, 0.1),
-                    color: fw.status === 'Applied' || fw.status === 'Aligned' ? lunitColors.green : lunitColors.teal,
+                    bgcolor: alpha(lunitColors.teal, 0.1),
+                    color: lunitColors.teal,
                     fontFamily: lunitTypography.fontFamilyBody,
                     fontSize: '12px',
                     fontWeight: 600,
@@ -357,91 +292,11 @@ const CompliancePage: React.FC = () => {
         </Grid>
       </PageSection>
 
-      {/* Documentation */}
-      <PageSection>
-        <Box sx={{ textAlign: 'center', mb: 6 }}>
-          <Typography
-            sx={{
-              fontFamily: lunitTypography.fontFamilyBody,
-              fontSize: '14px',
-              fontWeight: 500,
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              color: lunitColors.teal,
-              mb: 2,
-            }}
-          >
-            Resources
-          </Typography>
-          <Typography
-            sx={{
-              fontFamily: lunitTypography.fontFamilyHeading,
-              fontSize: 'clamp(28px, 4vw, 40px)',
-              fontWeight: 300,
-              color: lunitColors.headingColor,
-            }}
-          >
-            Compliance Documents
-          </Typography>
-        </Box>
-
-        <Grid container spacing={3}>
-          {documents.map((doc, idx) => (
-            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={idx}>
-              <Tooltip title="Contact us to request this document" arrow>
-              <Box
-                onClick={() => navigate(ROUTES.CONTACT)}
-                sx={{
-                  p: 3,
-                  borderRadius: lunitRadius.lg,
-                  bgcolor: lunitColors.lightestGray,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 2,
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  '&:hover': {
-                    bgcolor: alpha(lunitColors.teal, 0.08),
-                  },
-                }}
-              >
-                <Description sx={{ fontSize: 32, color: lunitColors.teal }} />
-                <Box sx={{ flex: 1 }}>
-                  <Typography
-                    sx={{
-                      fontFamily: lunitTypography.fontFamilyHeading,
-                      fontSize: '15px',
-                      fontWeight: 500,
-                      color: lunitColors.headingColor,
-                      mb: 0.25,
-                    }}
-                  >
-                    {doc.title}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontFamily: lunitTypography.fontFamilyBody,
-                      fontSize: '12px',
-                      fontWeight: 300,
-                      color: lunitColors.darkGrey,
-                    }}
-                  >
-                    {doc.description}
-                  </Typography>
-                </Box>
-                <Email sx={{ fontSize: 18, color: lunitColors.grey }} />
-              </Box>
-              </Tooltip>
-            </Grid>
-          ))}
-        </Grid>
-      </PageSection>
-
       {/* CTA */}
       <CTASection
-        title="Need Compliance Documentation?"
-        subtitle="Our compliance team can provide documentation for your vendor assessment and security review processes."
-        buttonText="Request Documents"
+        title="Questions About the Research?"
+        subtitle="Get in touch about the research prototype, its evaluation or its limitations."
+        buttonText="Contact Us"
         buttonPath="/contact"
         variant="dark"
       />

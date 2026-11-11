@@ -129,7 +129,7 @@ describe('LandingPage — Solutions Overview Section', () => {
 
   const explainabilitySolutions = [
     'Integrated Gradients Analysis',
-    'Calibrated Confidence Scores',
+    'Confidence Scores',
     'Fairness Monitoring Dashboard',
   ];
 
@@ -185,7 +185,7 @@ describe('LandingPage — Solutions Overview Section', () => {
     'Clinical Narratives': '/solutions/breast-cancer#clinical-narratives',
     'Anatomical Mapping': '/solutions/breast-cancer#anatomical-mapping',
     'Integrated Gradients Analysis': '/technology#integrated-gradients',
-    'Calibrated Confidence Scores': '/technology#calibrated-confidence',
+    'Confidence Scores': '/technology#calibrated-confidence',
     'Fairness Monitoring Dashboard': '/technology#fairness-monitoring',
   };
 
@@ -214,12 +214,12 @@ describe('LandingPage — Solutions Overview Section', () => {
     'Bilateral Symmetry Analysis': 'Left vs right breast comparison',
     'Historical Trending': 'Track changes across prior studies',
     'GradCAM Attention Maps': 'Visual evidence heatmaps',
-    'Uncertainty Metrics': 'Calibrated confidence scoring',
+    'Uncertainty Metrics': 'Confidence scoring',
     'Clinical Narratives': 'Structured diagnostic reports',
     'Anatomical Mapping': 'Precise lesion localisation',
     'Integrated Gradients Analysis': 'Pixel-level attribution maps',
-    'Calibrated Confidence Scores': 'Statistically validated outputs',
-    'Fairness Monitoring Dashboard': 'Demographic parity tracking',
+    'Confidence Scores': 'Per-finding confidence output (not yet calibrated)',
+    'Fairness Monitoring Dashboard': 'Planned; demonstration data only',
   };
 
   it.each(Object.entries(solutionDescriptions))(
@@ -261,7 +261,7 @@ describe('LandingPage — Solutions Overview Section', () => {
       screen.getByText(/Upload a mammogram\. Receive instant AI-driven analysis/i)
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/Calibrated confidence scores and flagged uncertainties/i)
+      screen.getByText(/Confidence scores and flagged uncertainties/i)
     ).toBeInTheDocument();
   });
 
@@ -273,7 +273,7 @@ describe('LandingPage — Solutions Overview Section', () => {
       within(category as HTMLElement).getByText(/Multiple explanation methods for every finding/i)
     ).toBeInTheDocument();
     expect(
-      within(category as HTMLElement).getByText(/Integrated fairness monitoring validates/i)
+      within(category as HTMLElement).getByText(/Fairness monitoring is a planned capability/i)
     ).toBeInTheDocument();
   });
 

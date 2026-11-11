@@ -111,18 +111,18 @@ const SPECIALIZATIONS = [
 const FEATURE_HIGHLIGHTS = [
   {
     icon: <Speed sx={{ fontSize: 22 }} />,
-    title: 'Real-Time AI Analysis',
-    desc: 'Receive rapid diagnostic insights powered by state-of-the-art deep learning models.',
+    title: 'Research Demo Analysis',
+    desc: 'Try a research-grade deep learning model with heatmap explanations.',
   },
   {
     icon: <Security sx={{ fontSize: 22 }} />,
-    title: 'Enterprise-Grade Security',
-    desc: 'Built with end-to-end encryption and robust compliance frameworks for clinical environments.',
+    title: 'Research Use Only',
+    desc: 'Do not upload real patient data. Not a medical device and not for clinical use.',
   },
   {
     icon: <AutoAwesome sx={{ fontSize: 22 }} />,
-    title: 'Clinically Validated Accuracy',
-    desc: 'Rigorously tested across diverse mammography datasets and patient populations.',
+    title: 'Transparent Performance Reporting',
+    desc: 'Research-baseline results reported with their limitations; not yet clinically validated.',
   },
 ];
 
@@ -721,7 +721,7 @@ export const RegisterPage: React.FC = () => {
             mb: 5,
             maxWidth: 400,
           }}>
-            Create your account and get access to AI-powered diagnostic tools trusted by healthcare professionals worldwide.
+            Create your account and get access to AI-powered decision-support tools for breast imaging research.
           </Typography>
 
           {/* Feature highlights */}

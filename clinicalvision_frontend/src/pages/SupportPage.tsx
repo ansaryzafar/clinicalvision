@@ -16,75 +16,54 @@ import { ROUTES } from '../routes/paths';
 
 const supportChannels = [
   {
-    icon: <Chat sx={{ fontSize: 32 }} />,
-    title: 'Live Chat',
-    description: 'Get instant help from our support team',
-    availability: 'Available 24/7',
-    action: 'Start Chat',
-  },
-  {
     icon: <Email sx={{ fontSize: 32 }} />,
-    title: 'Email Support',
-    description: 'Send us a detailed message',
-    availability: 'Response within 24 hours',
-    action: 'Send Email',
-  },
-  {
-    icon: <Phone sx={{ fontSize: 32 }} />,
-    title: 'Phone Support',
-    description: 'Speak directly with our team',
-    availability: 'Mon-Fri, 9am-6pm GMT',
-    action: 'Call Now',
-  },
-  {
-    icon: <School sx={{ fontSize: 32 }} />,
-    title: 'Training',
-    description: 'Schedule onboarding or refresher training',
-    availability: 'By appointment',
-    action: 'Book Session',
+    title: 'Contact Form',
+    description: 'Send research enquiries or feedback',
+    availability: 'No guaranteed response time',
+    action: 'Contact Us',
   },
 ];
 
 const faqs = [
   {
-    question: 'What is ClinicalVision\'s regulatory classification and compliance status?',
-    answer: 'ClinicalVision is developed as a Software as a Medical Device (SaMD) clinical decision support tool following IEC 62304:2006+AMD1:2015, ISO 14971:2019, and ISO 13485:2016-aligned processes. We are actively preparing for MHRA registration in the UK and have designed our compliance architecture for regulatory portability across EU MDR 2017/745 and FDA AI/ML-based SaMD guidance. The Platform has not yet received regulatory clearance from any authority — contact us for our current regulatory roadmap and timeline.',
+    question: 'What is ClinicalVision\'s regulatory status?',
+    answer: 'ClinicalVision is a research prototype. It is not a medical device and has no regulatory clearance or registration from any authority. It must not be used for any decision affecting a real patient.',
   },
   {
-    question: 'How does the Platform integrate with existing PACS, RIS, and EHR infrastructure?',
-    answer: 'ClinicalVision supports native DICOM ingestion and provides documented REST APIs for integration with Picture Archiving and Communication Systems, Radiology Information Systems, and Electronic Health Record platforms. We support DICOM, HL7 FHIR, and DICOMweb standards. Dedicated integration engineers are assigned during enterprise onboarding to ensure zero-disruption deployment.',
+    question: 'Does ClinicalVision integrate with PACS, RIS or EHR systems?',
+    answer: 'Not at present. PACS, RIS and EHR integration is planned but has not been built or validated at any clinical site. The research demo works on public CBIS-DDSM images.',
   },
   {
     question: 'What encryption and data security measures protect patient information?',
-    answer: 'All data in transit is protected using TLS 1.3 with strong cipher suites. Data at rest is encrypted using AES-256. Infrastructure is hosted on enterprise-grade cloud platforms with role-based access control, multi-factor authentication, network segmentation, intrusion detection, and immutable audit logging. We conduct regular security reviews and are working towards independent penetration testing and formal security attestation as part of our security maturity programme.',
+    answer: 'The website and API are served over HTTPS (TLS 1.2 and 1.3). User accounts use hashed passwords and role-based access, and the application records audit log entries. There has been no independent penetration test or security audit, and the system holds no security certifications. Do not upload real patient data.',
   },
   {
     question: 'Does ClinicalVision use patient data to train its AI models?',
-    answer: 'No. Production models are trained exclusively on publicly available, de-identified datasets. Patient data uploaded by Platform users is never used for model training without explicit institutional consent, a formal Data Processing Agreement, and documented ethical approval. Any opted-in data undergoes full de-identification in accordance with ICO anonymisation guidance.',
+    answer: 'No. The models were trained on the public, de-identified CBIS-DDSM dataset. Images uploaded to the demo are not used to train the models. Do not upload real patient data.',
   },
   {
     question: 'What explainability tools are available for AI-generated predictions?',
-    answer: 'The Platform provides multiple explainability frameworks including Grad-CAM, Grad-CAM++, LIME, SHAP, and Integrated Gradients, enabling clinicians to inspect the evidential basis of each prediction. Uncertainty quantification via Monte Carlo Dropout provides epistemic uncertainty estimates, predictive entropy, and mutual information metrics to flag low-confidence cases for additional review.',
+    answer: 'The research prototype offers Grad-CAM heatmaps, plus LIME and SHAP endpoints. An experimental Monte Carlo Dropout uncertainty estimate is also computed; offline it was only a weak signal of model error (AUC 0.61). None of these have been validated with clinicians.',
   },
   {
-    question: 'How are AI model updates validated before production deployment?',
-    answer: 'Every model update undergoes rigorous validation against clinical performance benchmarks, demographic bias analysis (demographic parity, equalised odds), and regression testing across held-out test sets. Enterprise customers receive advance notification of material updates with the option to review validation reports, and may schedule deployment windows to align with institutional change-management procedures.',
+    question: 'How are AI model updates validated?',
+    answer: 'Model versions are evaluated on a held-out split of the public CBIS-DDSM dataset and documented in the model card. There is no external or prospective validation process, and no commitments are made about update notification or deployment windows.',
   },
   {
     question: 'What is the default data retention policy and can it be customised?',
-    answer: 'Patient imaging data and AI analysis outputs are retained for 90 days from analysis by default. Institutional customers may configure extended or reduced retention periods through their service agreement. Upon expiry or account termination, data is securely deleted using NIST SP 800-88 compliant sanitisation methods. A 30-day data export window is provided following any termination.',
+    answer: 'No data retention policy has been formally defined or independently verified for this research prototype, and retention periods are not configurable. Do not upload real patient data. See the Privacy Policy for details on account data.',
   },
   {
-    question: 'What AI fairness monitoring and bias mitigation capabilities does the Platform offer?',
-    answer: 'ClinicalVision monitors model performance across demographic groups using demographic parity and equalised odds metrics, aligned with the NIST AI Risk Management Framework and MHRA guidance on AI as a medical device. Fairness dashboards provide real-time visibility into model behaviour across patient subgroups, and bias reports are available on request for institutional governance review.',
+    question: 'Does ClinicalVision monitor fairness across patient subgroups?',
+    answer: 'Not yet. Subgroup performance has not been measured, and the fairness dashboard currently shows demonstration data only. Fairness monitoring is a planned capability.',
   },
   {
-    question: 'What are the available support tiers and response time guarantees?',
-    answer: 'Standard support includes email response within 24 hours and access to our knowledge base. Professional tier adds priority queue with 4-hour response during business hours. Enterprise customers receive dedicated account management, 1-hour critical-issue response, 24/7 phone support, and custom SLA terms with uptime guarantees backed by service credits.',
+    question: 'Is support available?',
+    answer: 'ClinicalVision is a research prototype with no support tiers, response-time guarantees or SLAs. Research enquiries and feedback can be sent through the contact page.',
   },
   {
     question: 'How does the Platform handle data subject access and erasure requests under UK GDPR?',
-    answer: 'Data subject access requests (Article 15) and erasure requests (Article 17) are processed in full compliance with UK GDPR. Requests should be directed to legal@clinicalvision.ai. We respond within one calendar month, with provision for a two-month extension for complex requests. Where we act as data processor, requests are coordinated with the institutional data controller per the Data Processing Agreement.',
+    answer: 'Requests about personal data, such as account details, can be sent through the contact page and will be handled on a best-effort basis. See the Privacy Policy for details.',
   },
 ];
 
@@ -105,9 +84,9 @@ const SupportPage: React.FC = () => {
   return (
     <PageLayout>
       <SEOHead
-        title="Support — We're Here to Help"
-        description="Get support for ClinicalVision AI. 24/7 live chat, email, and phone support. Access training sessions, FAQs, and compliance guidance for your practice."
-        keywords={['ClinicalVision support', 'medical AI help', 'healthcare AI support', 'radiology AI customer service', 'ClinicalVision FAQ']}
+        title="Support — Research Prototype"
+        description="ClinicalVision is a research prototype with no support tiers or SLAs. Read the FAQs or send a research enquiry through the contact page."
+        keywords={['ClinicalVision support', 'ClinicalVision FAQ']}
         canonicalPath="/support"
         schemaType="faqPage"
         faqItems={faqs}
@@ -121,13 +100,13 @@ const SupportPage: React.FC = () => {
         label="Support"
         title={
           <>
-            We're Here to{' '}
+            Research Prototype{' '}
             <Box component="span" sx={{ color: lunitColors.teal }}>
               Help
             </Box>
           </>
         }
-        subtitle="Get the assistance you need from our dedicated support team. We're committed to your success."
+        subtitle="ClinicalVision is a research prototype. There is no support team, support tier or response-time guarantee."
       />
 
       {/* Search */}

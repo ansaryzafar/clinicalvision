@@ -94,6 +94,9 @@ const DemoCasePicker: React.FC<DemoCasePickerProps> = ({
       >
         Try with Sample Cases
       </Typography>
+      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2, fontStyle: 'italic' }}>
+        All patient names and clinical histories are fictional. Images are public CBIS-DDSM research mammograms.
+      </Typography>
 
       {cases.length === 0 ? (
         <Typography variant="body2" color="text.secondary">

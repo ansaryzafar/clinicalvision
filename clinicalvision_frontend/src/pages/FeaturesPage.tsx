@@ -25,12 +25,12 @@ const features = [
   {
     icon: <Memory sx={{ fontSize: 40 }} />,
     title: 'Deep Learning Architecture',
-    description: 'State-of-the-art convolutional neural networks trained on millions of mammography images for unparalleled accuracy.',
+    description: 'A DenseNet-121 ensemble trained on the public CBIS-DDSM dataset. AUC 0.80 on a held-out split; not validated externally.',
   },
   {
     icon: <Speed sx={{ fontSize: 40 }} />,
-    title: 'Real-Time Analysis',
-    description: 'Get instant results with sub-second inference times, seamlessly integrating into your clinical workflow.',
+    title: 'Fast Demo Analysis',
+    description: 'The research demo returns results for an image in a short time. Speed has not been formally benchmarked.',
   },
   {
     icon: <Psychology sx={{ fontSize: 40 }} />,
@@ -39,13 +39,13 @@ const features = [
   },
   {
     icon: <Security sx={{ fontSize: 40 }} />,
-    title: 'Clinical-Grade Security',
-    description: 'Enterprise-grade encryption (TLS 1.3, AES-256), comprehensive audit logging, and UK GDPR-compliant data protection.',
+    title: 'Basic Security Controls',
+    description: 'HTTPS in transit, hashed passwords, role-based access and audit log records. No independent security audit or certification.',
   },
   {
     icon: <LocalHospital sx={{ fontSize: 40 }} />,
     title: 'DICOM Integration',
-    description: 'Native support for medical imaging standards with seamless PACS and EHR integration.',
+    description: 'Support for medical imaging standards. PACS and EHR integration is planned and has not been validated at a clinical site.',
   },
   {
     icon: <Analytics sx={{ fontSize: 40 }} />,
@@ -55,20 +55,20 @@ const features = [
   {
     icon: <CloudSync sx={{ fontSize: 40 }} />,
     title: 'Cloud & On-Premise',
-    description: 'Flexible deployment options to meet your infrastructure and data residency requirements.',
+    description: 'Designed to support cloud or on-premise deployment. The current system is a research prototype and is not deployed at any clinical site.',
   },
   {
     icon: <TrendingUp sx={{ fontSize: 40 }} />,
-    title: 'Continuous Learning',
-    description: 'Models continuously improve through federated learning while maintaining strict data privacy.',
+    title: 'Planned Improvements',
+    description: 'External validation and subgroup evaluation are planned. There is no continuous or federated learning.',
   },
 ];
 
 const stats = [
-  { value: '97.5%', label: 'Sensitivity' },
-  { value: '94.2%', label: 'Specificity' },
-  { value: '<1s', label: 'Analysis Time' },
-  { value: '99.9%', label: 'Uptime SLA' },
+  { value: '0.80', label: 'AUC (CBIS-DDSM, research baseline)' },
+  { value: '79.6%', label: 'Sensitivity at threshold 0.5' },
+  { value: '64.3%', label: 'Specificity at threshold 0.5' },
+  { value: '701', label: 'Held-out test lesions' },
 ];
 
 const FeaturesPage: React.FC = () => {
@@ -346,12 +346,12 @@ const FeaturesPage: React.FC = () => {
                 mb: 4,
               }}
             >
-              ClinicalVision integrates seamlessly with your PACS, RIS, and EHR systems through 
-              standard protocols and APIs. Deploy on-premise or in the cloud with minimal 
-              disruption to your existing workflows.
+              Planned integration with PACS, RIS, and EHR systems through standard protocols 
+              and APIs. Integration has not been validated at a clinical site; the current 
+              system is a research prototype.
             </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-              {['DICOM', 'HL7 FHIR', 'REST API', 'PACS', 'VNA'].map((tech) => (
+              {['DICOM', 'REST API'].map((tech) => (
                 <Box
                   key={tech}
                   sx={{
@@ -389,15 +389,10 @@ const FeaturesPage: React.FC = () => {
                   m: 0,
                 }}
               >
-{`// Quick integration example
-const analysis = await clinicalvision.analyze({
-  study_uid: "1.2.840.113619.2.55...",
-  modality: "MG",
-  priority: "routine"
-});
-
-console.log(analysis.findings);
-// → [{ type: "mass", probability: 0.92 }]`}
+{`// No SDK or public API exists.
+// The research demo calls its own backend:
+//   POST /inference/predict
+// See the API page for the endpoint list.`}
               </Box>
             </Box>
           </Grid>
@@ -406,9 +401,9 @@ console.log(analysis.findings);
 
       {/* CTA */}
       <CTASection
-        title="Ready to Transform Your Diagnostic Workflow?"
-        subtitle="Schedule a personalized demo to see how ClinicalVision can enhance your practice."
-        buttonText="Request a Demo"
+        title="Explore the Research Prototype"
+        subtitle="Try the research demo on public CBIS-DDSM images. Not a medical device. Not for clinical use."
+        buttonText="Try the Research Demo"
         buttonPath="/demo"
       />
     </PageLayout>

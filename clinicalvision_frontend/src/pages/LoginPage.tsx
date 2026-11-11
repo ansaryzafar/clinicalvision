@@ -38,10 +38,10 @@ import { ThemeProvider } from '@mui/material';
 
 /** Value propositions shown on the brand panel */
 const VALUE_PROPS = [
-  { text: 'High Detection Sensitivity', sub: 'Industry-leading accuracy for early detection' },
-  { text: 'Regulatory-Grade Platform', sub: 'Built to meet clinical compliance standards' },
-  { text: 'Privacy & Security First', sub: 'Enterprise-grade data protection by design' },
-  { text: 'Clinically Validated', sub: 'Trusted by leading healthcare institutions' },
+  { text: 'Explainable Research Baseline', sub: 'Heatmaps and uncertainty estimates; not yet clinically validated' },
+  { text: 'Designed for Compliance', sub: 'Built toward clinical regulatory standards' },
+  { text: 'Privacy & Security First', sub: 'Data protection by design' },
+  { text: 'Transparent Reporting', sub: 'Performance published with its limitations' },
 ];
 
 export const LoginPage: React.FC = () => {

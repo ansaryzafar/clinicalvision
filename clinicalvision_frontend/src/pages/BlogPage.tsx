@@ -30,8 +30,8 @@ const BlogPage: React.FC = () => {
   return (
     <PageLayout>
       <SEOHead
-        title="Blog — Insights & Updates"
-        description="Stay informed about the latest in AI diagnostics, clinical best practices, and healthcare innovation from ClinicalVision."
+        title="Blog — Research Notes"
+        description="Research notes on AI diagnostics from the ClinicalVision research prototype."
         keywords={['AI healthcare blog', 'breast cancer AI', 'medical imaging insights', 'radiology AI']}
         canonicalPath="/blog"
         breadcrumbs={[

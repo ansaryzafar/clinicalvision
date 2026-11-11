@@ -2,8 +2,8 @@
  * TDD — "Try Demo" Button & Registration Redirect Tests
  *
  * Tests:
- *  1. LandingPage renders a "Request a Demo" button in the hero section
- *  2. Clicking "Request a Demo" navigates to /demo
+ *  1. LandingPage renders a "Try the Research Demo" button in the hero section
+ *  2. Clicking "Try the Research Demo" navigates to /demo
  *  3. RegisterPage reads the ?redirect param and navigates there after registration
  *  4. User tier defaults to 'demo' for new users
  */
@@ -69,15 +69,15 @@ describe('LandingPage — Try Demo button', () => {
     mockNavigate.mockClear();
   });
 
-  it('renders a "Request a Demo" button in the hero section', () => {
+  it('renders a "Try the Research Demo" button in the hero section', () => {
     render(<LandingPage />);
-    const demoBtn = screen.getAllByRole('button', { name: /request a demo/i });
+    const demoBtn = screen.getAllByRole('button', { name: /try the research demo/i });
     expect(demoBtn.length).toBeGreaterThan(0);
   });
 
-  it('navigates to /demo when "Request a Demo" is clicked', () => {
+  it('navigates to /demo when "Try the Research Demo" is clicked', () => {
     render(<LandingPage />);
-    const demoBtns = screen.getAllByRole('button', { name: /request a demo/i });
+    const demoBtns = screen.getAllByRole('button', { name: /try the research demo/i });
     fireEvent.click(demoBtns[0]);
     expect(mockNavigate).toHaveBeenCalledWith('/demo');
   });

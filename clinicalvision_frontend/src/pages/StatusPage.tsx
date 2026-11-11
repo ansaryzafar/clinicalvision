@@ -1,367 +1,41 @@
 import React from 'react';
-import { Box, Typography, Grid, alpha } from '@mui/material';import SEOHead from '../components/shared/SEOHead';import { CheckCircle, Schedule, Warning, Error as ErrorIcon } from '@mui/icons-material';
+import { Typography } from '@mui/material';
+import SEOHead from '../components/shared/SEOHead';
 import { PageLayout, PageHero, PageSection } from '../components/layout/PageLayout';
-import { lunitColors, lunitTypography, lunitRadius } from '../styles/lunitDesignSystem';
+import { lunitColors, lunitTypography } from '../styles/lunitDesignSystem';
 
-const services = [
-  { name: 'API Services', status: 'operational', uptime: '99.99%' },
-  { name: 'Analysis Engine', status: 'operational', uptime: '99.98%' },
-  { name: 'Web Application', status: 'operational', uptime: '99.99%' },
-  { name: 'PACS Integration', status: 'operational', uptime: '99.97%' },
-  { name: 'Authentication Services', status: 'operational', uptime: '100%' },
-  { name: 'Data Storage', status: 'operational', uptime: '99.99%' },
-];
-
-const incidents = [
-  {
-    date: 'March 10, 2026',
-    title: 'Scheduled Maintenance',
-    status: 'completed',
-    description: 'Completed database optimization. No user impact.',
-    duration: '45 minutes',
-  },
-  {
-    date: 'February 28, 2026',
-    title: 'API Latency Increase',
-    status: 'resolved',
-    description: 'Brief period of elevated API response times. Issue identified and resolved.',
-    duration: '12 minutes',
-  },
-  {
-    date: 'February 15, 2026',
-    title: 'Scheduled Maintenance',
-    status: 'completed',
-    description: 'Infrastructure upgrades completed successfully.',
-    duration: '2 hours',
-  },
-];
-
-const uptimeHistory = [
-  { month: 'Mar 2026', uptime: 99.99 },
-  { month: 'Feb 2026', uptime: 99.98 },
-  { month: 'Jan 2026', uptime: 100.00 },
-  { month: 'Dec 2025', uptime: 99.99 },
-  { month: 'Nov 2025', uptime: 99.97 },
-  { month: 'Oct 2025', uptime: 99.99 },
-];
-
-const getStatusIcon = (status: string) => {
-  switch (status) {
-    case 'operational':
-      return <CheckCircle sx={{ color: lunitColors.green, fontSize: 20 }} />;
-    case 'degraded':
-      return <Warning sx={{ color: lunitColors.yellow, fontSize: 20 }} />;
-    case 'outage':
-      return <ErrorIcon sx={{ color: lunitColors.red, fontSize: 20 }} />;
-    case 'maintenance':
-      return <Schedule sx={{ color: lunitColors.teal, fontSize: 20 }} />;
-    default:
-      return <CheckCircle sx={{ color: lunitColors.green, fontSize: 20 }} />;
-  }
-};
-
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'operational':
-    case 'resolved':
-    case 'completed':
-      return lunitColors.green;
-    case 'degraded':
-      return lunitColors.yellow;
-    case 'outage':
-    case 'ongoing':
-      return lunitColors.red;
-    case 'maintenance':
-    case 'scheduled':
-      return lunitColors.teal;
-    default:
-      return lunitColors.green;
-  }
-};
-
-const StatusPage: React.FC = () => {
-  const allOperational = services.every(s => s.status === 'operational');
-
-  return (
-    <PageLayout>
-      <SEOHead
-        title="System Status — Service Health"
-        description="Real-time status of ClinicalVision AI services. Check API, Analysis Engine, and Web App uptime, incident reports, and scheduled maintenance."
-        keywords={['ClinicalVision status', 'system uptime', 'service health', 'API status']}
-        canonicalPath="/status"
-      />
-      {/* Hero */}
-      <PageHero
-        label="System Status"
-        title={
-          allOperational ? (
-            <>
-              All Systems{' '}
-              <Box component="span" sx={{ color: lunitColors.green }}>
-                Operational
-              </Box>
-            </>
-          ) : (
-            <>
-              Experiencing{' '}
-              <Box component="span" sx={{ color: lunitColors.yellow }}>
-                Issues
-              </Box>
-            </>
-          )
-        }
-        subtitle="Real-time status of ClinicalVision services. Check this page for updates on incidents and maintenance."
-      />
-
-      {/* Overall Status Banner */}
-      <PageSection background="light" paddingY="small">
-        <Box
-          sx={{
-            p: 3,
-            borderRadius: lunitRadius['2xl'],
-            bgcolor: alpha(allOperational ? lunitColors.green : lunitColors.yellow, 0.1),
-            border: `1px solid ${alpha(allOperational ? lunitColors.green : lunitColors.yellow, 0.3)}`,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 2,
-          }}
-        >
-          <CheckCircle sx={{ color: lunitColors.green, fontSize: 28 }} />
-          <Typography
-            sx={{
-              fontFamily: lunitTypography.fontFamilyHeading,
-              fontSize: '18px',
-              fontWeight: 500,
-              color: lunitColors.headingColor,
-            }}
-          >
-            All systems are operational
-          </Typography>
-          <Typography
-            sx={{
-              fontFamily: lunitTypography.fontFamilyBody,
-              fontSize: '14px',
-              color: lunitColors.darkGrey,
-            }}
-          >
-            Last updated: {new Date().toLocaleString()}
-          </Typography>
-        </Box>
-      </PageSection>
-
-      {/* Services Status */}
-      <PageSection>
-        <Typography
-          sx={{
-            fontFamily: lunitTypography.fontFamilyHeading,
-            fontSize: '24px',
-            fontWeight: 400,
-            color: lunitColors.headingColor,
-            mb: 3,
-          }}
-        >
-          Service Status
-        </Typography>
-
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          {services.map((service, idx) => (
-            <Box
-              key={idx}
-              sx={{
-                p: 3,
-                borderRadius: lunitRadius.lg,
-                bgcolor: lunitColors.lightestGray,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: 3,
-              }}
-            >
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                {getStatusIcon(service.status)}
-                <Typography
-                  sx={{
-                    fontFamily: lunitTypography.fontFamilyHeading,
-                    fontSize: '16px',
-                    fontWeight: 500,
-                    color: lunitColors.headingColor,
-                  }}
-                >
-                  {service.name}
-                </Typography>
-              </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-                <Typography
-                  sx={{
-                    fontFamily: lunitTypography.fontFamilyBody,
-                    fontSize: '13px',
-                    color: lunitColors.darkGrey,
-                  }}
-                >
-                  {service.uptime} uptime (90 days)
-                </Typography>
-                <Box
-                  sx={{
-                    px: 2,
-                    py: 0.5,
-                    borderRadius: lunitRadius.full,
-                    bgcolor: alpha(getStatusColor(service.status), 0.1),
-                    color: getStatusColor(service.status),
-                    fontFamily: lunitTypography.fontFamilyBody,
-                    fontSize: '12px',
-                    fontWeight: 600,
-                    textTransform: 'capitalize',
-                  }}
-                >
-                  {service.status}
-                </Box>
-              </Box>
-            </Box>
-          ))}
-        </Box>
-      </PageSection>
-
-      {/* Uptime History */}
-      <PageSection background="light">
-        <Typography
-          sx={{
-            fontFamily: lunitTypography.fontFamilyHeading,
-            fontSize: '24px',
-            fontWeight: 400,
-            color: lunitColors.headingColor,
-            mb: 3,
-          }}
-        >
-          Uptime History
-        </Typography>
-
-        <Grid container spacing={2}>
-          {uptimeHistory.map((month, idx) => (
-            <Grid size={{ xs: 6, sm: 4, md: 2 }} key={idx}>
-              <Box
-                sx={{
-                  p: 2,
-                  textAlign: 'center',
-                  borderRadius: lunitRadius.lg,
-                  bgcolor: lunitColors.white,
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontFamily: lunitTypography.fontFamilyBody,
-                    fontSize: '12px',
-                    color: lunitColors.darkGrey,
-                    mb: 1,
-                  }}
-                >
-                  {month.month}
-                </Typography>
-                <Typography
-                  sx={{
-                    fontFamily: lunitTypography.fontFamilyHeading,
-                    fontSize: '24px',
-                    fontWeight: 400,
-                    color: month.uptime >= 99.9 ? lunitColors.green : lunitColors.yellow,
-                  }}
-                >
-                  {month.uptime.toFixed(2)}%
-                </Typography>
-              </Box>
-            </Grid>
-          ))}
-        </Grid>
-      </PageSection>
-
-      {/* Recent Incidents */}
-      <PageSection>
-        <Typography
-          sx={{
-            fontFamily: lunitTypography.fontFamilyHeading,
-            fontSize: '24px',
-            fontWeight: 400,
-            color: lunitColors.headingColor,
-            mb: 3,
-          }}
-        >
-          Recent Incidents
-        </Typography>
-
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-          {incidents.map((incident, idx) => (
-            <Box
-              key={idx}
-              sx={{
-                p: 3,
-                borderRadius: lunitRadius['2xl'],
-                border: `1px solid ${alpha(lunitColors.darkerGray, 0.08)}`,
-              }}
-            >
-              <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 2 }}>
-                <Box>
-                  <Typography
-                    sx={{
-                      fontFamily: lunitTypography.fontFamilyBody,
-                      fontSize: '12px',
-                      color: lunitColors.darkGrey,
-                      mb: 0.5,
-                    }}
-                  >
-                    {incident.date}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontFamily: lunitTypography.fontFamilyHeading,
-                      fontSize: '18px',
-                      fontWeight: 500,
-                      color: lunitColors.headingColor,
-                    }}
-                  >
-                    {incident.title}
-                  </Typography>
-                </Box>
-                <Box
-                  sx={{
-                    px: 2,
-                    py: 0.5,
-                    borderRadius: lunitRadius.full,
-                    bgcolor: alpha(getStatusColor(incident.status), 0.1),
-                    color: getStatusColor(incident.status),
-                    fontFamily: lunitTypography.fontFamilyBody,
-                    fontSize: '12px',
-                    fontWeight: 600,
-                    textTransform: 'capitalize',
-                  }}
-                >
-                  {incident.status}
-                </Box>
-              </Box>
-              <Typography
-                sx={{
-                  fontFamily: lunitTypography.fontFamilyBody,
-                  fontSize: '14px',
-                  fontWeight: 300,
-                  color: lunitColors.text,
-                  mb: 1,
-                }}
-              >
-                {incident.description}
-              </Typography>
-              <Typography
-                sx={{
-                  fontFamily: lunitTypography.fontFamilyBody,
-                  fontSize: '13px',
-                  color: lunitColors.darkGrey,
-                }}
-              >
-                Duration: {incident.duration}
-              </Typography>
-            </Box>
-          ))}
-        </Box>
-      </PageSection>
-    </PageLayout>
-  );
-};
+const StatusPage: React.FC = () => (
+  <PageLayout>
+    <SEOHead
+      title="Service Status — Research Prototype"
+      description="ClinicalVision is a research prototype. There is no live service monitoring, uptime commitment or incident history."
+      keywords={['ClinicalVision status']}
+      canonicalPath="/status"
+    />
+    <PageHero
+      label="Service Status"
+      title="Research Prototype"
+      subtitle="ClinicalVision is a research prototype. It has no service-level agreement, no uptime commitment and no published incident history."
+    />
+    <PageSection background="light" paddingY="small">
+      <Typography
+        sx={{
+          fontFamily: lunitTypography.fontFamilyBody,
+          fontSize: '16px',
+          fontWeight: 300,
+          lineHeight: 1.8,
+          color: lunitColors.text,
+          maxWidth: 760,
+          mx: 'auto',
+          textAlign: 'center',
+        }}
+      >
+        This page does not display live monitoring data. The demo may be unavailable or change at any
+        time without notice. It is not a medical device and must not be relied on for any clinical
+        purpose.
+      </Typography>
+    </PageSection>
+  </PageLayout>
+);
 
 export default StatusPage;

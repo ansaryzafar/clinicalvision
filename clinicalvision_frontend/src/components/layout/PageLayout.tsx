@@ -66,8 +66,7 @@ const footerLinks = {
   solutions: [
     { label: 'Breast Cancer Detection', path: ROUTES.SOLUTION_BREAST_CANCER },
     { label: 'AI Analysis Platform', path: ROUTES.FEATURES },
-    { label: 'Pricing & Plans', path: ROUTES.PRICING },
-    { label: 'Request a Demo', path: ROUTES.DEMO },
+    { label: 'Research Demo', path: ROUTES.DEMO },
   ],
   company: [
     { label: 'About ClinicalVision', path: ROUTES.ABOUT },
@@ -129,9 +128,9 @@ const solutionsPlatformItems = [
     path: ROUTES.FEATURES,
   },
   {
-    label: 'Pricing & Plans',
-    description: 'Transparent pricing',
-    path: ROUTES.PRICING,
+    label: 'Research Demo',
+    description: 'Try the research prototype',
+    path: ROUTES.DEMO,
   },
 ];
 
@@ -618,7 +617,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ variant = 'light' }) => 
             ))}
           </Stack>
 
-          {/* Right Actions — Login + Request a Demo + Mobile Hamburger */}
+          {/* Right Actions — Login + Research Demo + Mobile Hamburger */}
           <Stack direction="row" spacing={1} alignItems="center">
             <IconButton
               onClick={() => setMobileDrawerOpen(true)}
@@ -677,7 +676,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ variant = 'light' }) => 
                   '&:focus-visible': { outline: `2px solid ${lunitColors.teal}`, outlineOffset: '2px' },
                 }}
               >
-                Request a Demo
+                Try the Research Demo
               </Button>
             </Box>
           </Stack>
@@ -844,7 +843,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ variant = 'light' }) => 
               '&:focus-visible': { outline: `2px solid ${lunitColors.teal}`, outlineOffset: '2px' },
             }}
           >
-            Request a Demo
+            Try the Research Demo
           </Button>
         </Box>
       </List>

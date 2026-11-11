@@ -48,13 +48,13 @@ beforeAll(() => {
 
 describe('Button Standardization — LandingPage', () => {
   // ── fontWeight 600 ──
-  it('hero "Request a Demo" button uses fontWeight 600', () => {
+  it('hero "Try the Research Demo" button uses fontWeight 600', () => {
     // The hero CTA appears after the hero headline "Precision Intelligence" —
     // find the fontWeight in that specific Button block
     const heroIdx = landingSrc.indexOf('Precision Intelligence');
     expect(heroIdx).toBeGreaterThan(0);
     const afterHero = landingSrc.substring(heroIdx);
-    const demoIdx = afterHero.indexOf('Request a Demo');
+    const demoIdx = afterHero.indexOf('Try the Research Demo');
     const heroBlock = afterHero.substring(0, demoIdx);
     const weights = heroBlock.match(/fontWeight:\s*(\d+)/g);
     expect(weights).not.toBeNull();
@@ -303,8 +303,8 @@ describe('Transition Consistency', () => {
 // ============================================================================
 
 describe('No Regressions — Critical Elements', () => {
-  it('LandingPage still has "Request a Demo" buttons', () => {
-    expect(landingSrc).toContain('Request a Demo');
+  it('LandingPage still has "Try the Research Demo" buttons', () => {
+    expect(landingSrc).toContain('Try the Research Demo');
   });
 
   it('LandingPage still has "Sign In" button', () => {

@@ -26,7 +26,7 @@ const capabilities = [
     icon: <Psychology sx={{ fontSize: 28 }} />,
     title: 'Uncertainty-Aware Detection',
     description:
-      'Monte Carlo dropout inference provides calibrated confidence intervals on every finding, enabling clinicians to prioritise cases that need the most attention and identify ambiguous regions for closer review.',
+      'Monte Carlo dropout inference provides uncertainty estimates on every finding, enabling clinicians to prioritise cases that need the most attention and identify ambiguous regions for closer review.',
   },
   {
     icon: <Visibility sx={{ fontSize: 28 }} />,
@@ -54,9 +54,9 @@ const capabilities = [
   },
   {
     icon: <VerifiedUser sx={{ fontSize: 28 }} />,
-    title: 'Bias-Monitored Performance',
+    title: 'Fairness Monitoring (Planned)',
     description:
-      'Continuous fairness monitoring across demographic subgroups ensures equitable performance. Built-in dashboards track model behaviour across patient populations.',
+      'Subgroup fairness monitoring is planned. Subgroup performance has not yet been measured, and the current dashboard shows demonstration data only.',
   },
 ];
 
@@ -64,7 +64,7 @@ const workflowSteps = [
   {
     step: '01',
     title: 'Image Ingestion',
-    description: 'Standard DICOM mammography images are ingested from any PACS or imaging system.',
+    description: 'DICOM mammography images are the intended input. PACS ingestion is planned and has not been validated at a clinical site.',
   },
   {
     step: '02',
@@ -156,7 +156,7 @@ const BreastCancerSolutionPage: React.FC = () => {
     <PageLayout headerVariant="dark">
       <SEOHead
         title="Breast Cancer Detection — AI-Powered Mammography Analysis"
-        description="ClinicalVision's breast cancer detection solution combines dual-view fusion, uncertainty quantification, and Grad-CAM explainability for 97.5% sensitivity mammography analysis."
+        description="ClinicalVision's breast cancer detection solution combines dual-view fusion, uncertainty quantification, and Grad-CAM explainability for research-stage mammography analysis (AUC 0.80 on a public lesion-level benchmark; not clinically validated)."
         keywords={['breast cancer AI detection', 'mammography AI analysis', 'dual-view fusion', 'uncertainty quantification radiology', 'Grad-CAM mammography', 'AI breast screening']}
         canonicalPath="/solutions/breast-cancer"
         breadcrumbs={[
@@ -197,7 +197,7 @@ const BreastCancerSolutionPage: React.FC = () => {
               },
             }}
           >
-            Request a Demo
+            Try the Research Demo
           </Button>
           <Button
             variant="outlined"
@@ -247,7 +247,7 @@ const BreastCancerSolutionPage: React.FC = () => {
               color: lunitColors.headingColor,
             }}
           >
-            Research-Backed, Clinically Validated
+            Research-Backed, Built for Validation
           </Typography>
         </Box>
 
@@ -420,7 +420,7 @@ const BreastCancerSolutionPage: React.FC = () => {
             {
               title: 'Literature-Backed Methodology',
               description:
-                'Our detection models are built on peer-reviewed architectures and validated through active clinical research partnerships with imaging centres.',
+                'Our detection models are built on peer-reviewed architectures. They have been evaluated on a public research dataset only and have not been clinically validated.',
             },
             {
               title: 'Productivity Without Compromise',
@@ -428,9 +428,9 @@ const BreastCancerSolutionPage: React.FC = () => {
                 'Designed to save time on routine screening reads while ensuring that complex or ambiguous cases are flagged for expert review — augmenting, never replacing, clinical judgement.',
             },
             {
-              title: 'Built for Regulatory Pathways',
+              title: 'Not Regulated',
               description:
-                'Complete data provenance, model versioning, and audit trails from day one. Developed following IEC 62304, ISO 14971, and ISO 13485 to support future MHRA, EU MDR, and FDA submissions.',
+                'Not a medical device. No regulatory submission has been made and the software has not been developed under a certified quality management system.',
             },
           ].map((item, idx) => (
             <Grid size={{ xs: 12, sm: 6 }} key={idx}>
@@ -566,9 +566,9 @@ const BreastCancerSolutionPage: React.FC = () => {
       </PageSection>
 
       <CTASection
-        title="Ready to See It in Action?"
-        subtitle="Request a demonstration tailored to your imaging environment and clinical workflow."
-        buttonText="Request a Demo"
+        title="Explore the Research Prototype"
+        subtitle="Try the research demo on public CBIS-DDSM images. Not a medical device. Not for clinical use."
+        buttonText="Try the Research Demo"
         buttonPath={ROUTES.DEMO}
         variant="dark"
       />

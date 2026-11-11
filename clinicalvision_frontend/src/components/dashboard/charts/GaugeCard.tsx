@@ -4,7 +4,7 @@
  * Renders a single headline metric as a 270° radial arc using
  * recharts RadialBarChart. Designed for KPIs like:
  *  - Average AI Confidence (87%)
- *  - Model Accuracy (94.2%)
+ *  - Model Accuracy (example value)
  *  - Cases Today (42)
  *  - Average Latency (320 ms)
  *

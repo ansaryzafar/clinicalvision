@@ -7,39 +7,21 @@ import { lunitColors, lunitTypography, lunitRadius, lunitShadows } from '../styl
 
 const publications = [
   {
-    title: 'Deep Learning for Mammographic Breast Cancer Detection: A Multi-Center Study',
-    journal: 'Nature Medicine',
-    year: '2024',
-    authors: 'Chen S, Park M, Rodriguez E, et al.',
-    abstract: 'We present a deep learning model achieving 97.5% sensitivity in breast cancer detection across 50,000 mammograms from 12 institutions...',
-    doi: 'preprint-pending',
+    title: 'ClinicalVision V12 Research Baseline: DenseNet-121 Ensemble for Lesion-Level Classification on CBIS-DDSM',
+    journal: 'Technical report (not peer-reviewed)',
+    year: '2026',
+    authors: 'ClinicalVision Research',
+    abstract: 'A three-model DenseNet-121 ensemble evaluated on 701 held-out CBIS-DDSM lesion crops reaches an AUC of 0.799 (79.6% sensitivity and 64.3% specificity at threshold 0.5). Internal hold-out evaluation only; no external or prospective validation...',
+    doi: 'not-published',
     doiStatus: 'pending' as const,
   },
   {
-    title: 'Dual-View Fusion for Improved Cancer Localization in Mammography',
-    journal: 'Radiology',
-    year: '2023',
-    authors: 'Park M, Kim D, Chen S, et al.',
-    abstract: 'Our dual-view fusion architecture simultaneously analyzes CC and MLO views, improving localization accuracy by 23% compared to single-view methods...',
-    doi: 'preprint-pending',
-    doiStatus: 'pending' as const,
-  },
-  {
-    title: 'Uncertainty Quantification in AI-Assisted Breast Cancer Screening',
-    journal: 'Medical Image Analysis',
-    year: '2023',
-    authors: 'Rodriguez E, Chen S, Park M, et al.',
-    abstract: 'We introduce Monte Carlo dropout-based uncertainty estimation, enabling clinicians to identify cases requiring additional review...',
-    doi: 'preprint-pending',
-    doiStatus: 'pending' as const,
-  },
-  {
-    title: 'Clinical Validation of AI-Assisted Mammography Reading Workflow',
-    journal: 'JAMA Network Open',
-    year: '2023',
-    authors: 'Mitchell J, Chen S, Rodriguez E, et al.',
-    abstract: 'A prospective study of 10,000 screening mammograms demonstrating 35% reduction in reading time with maintained diagnostic accuracy...',
-    doi: 'preprint-pending',
+    title: 'Monte Carlo Dropout Uncertainty Estimation in the V12 Baseline',
+    journal: 'Work in progress',
+    year: '2026',
+    authors: 'ClinicalVision Research',
+    abstract: 'We evaluate 9-pass Monte Carlo dropout as a review-triage signal. At the deployed settings MC averaging leaves ensemble AUC unchanged (0.772) and variance is a weak error signal (AUC 0.61); at a higher dropout rate it lowered single-model AUC. Calibration (isotonic, offline) is not yet shipped...',
+    doi: 'not-published',
     doiStatus: 'pending' as const,
   },
 ];
@@ -55,19 +37,19 @@ const researchAreas = [
   },
   {
     title: 'Multi-Modal Learning',
-    description: 'Integrating imaging with clinical history and genomics',
+    description: 'Future interest: combining imaging with clinical history (not implemented)',
   },
   {
     title: 'Equity & Bias',
-    description: 'Ensuring consistent performance across diverse populations',
+    description: 'Subgroup performance has not yet been measured',
   },
 ];
 
 const stats = [
-  { value: '15+', label: 'Peer-Reviewed Papers' },
-  { value: '4', label: 'Patents Filed' },
-  { value: '50K+', label: 'Research Images' },
-  { value: '12', label: 'Academic Partners' },
+  { value: '1', label: 'Research Baseline Model' },
+  { value: '3', label: 'Ensemble Members' },
+  { value: '701', label: 'Held-out Test Images' },
+  { value: '0.80', label: 'AUC (CBIS-DDSM)' },
 ];
 
 const ResearchPage: React.FC = () => {
@@ -75,7 +57,7 @@ const ResearchPage: React.FC = () => {
     <PageLayout>
       <SEOHead
         title="Research — Advancing AI Diagnostics"
-        description="Explore ClinicalVision's peer-reviewed research in medical AI. Publications in Nature Medicine, Radiology, and IEEE on early detection, explainability, and multi-modal learning."
+        description="ClinicalVision research on explainable, uncertainty-aware breast cancer AI: the V12 research baseline, its evaluation on CBIS-DDSM, and its limitations."
         keywords={['medical AI research', 'breast cancer AI publications', 'deep learning radiology research', 'explainable AI research', 'mammography AI studies']}
         canonicalPath="/research"
         breadcrumbs={[
@@ -95,7 +77,7 @@ const ResearchPage: React.FC = () => {
             </Box>
           </>
         }
-        subtitle="Our research team pushes the boundaries of medical AI, publishing peer-reviewed work and collaborating with leading institutions."
+        subtitle="Our research focuses on explainable, uncertainty-aware medical AI. We publish our results openly, including the limitations."
       />
 
       {/* Stats */}
@@ -146,7 +128,7 @@ const ResearchPage: React.FC = () => {
               mb: 2,
             }}
           >
-            Focus Areas
+            Areas of Interest
           </Typography>
           <Typography
             sx={{
@@ -228,7 +210,7 @@ const ResearchPage: React.FC = () => {
               color: lunitColors.headingColor,
             }}
           >
-            Recent Publications
+            Recent Work
           </Typography>
         </Box>
 
@@ -331,7 +313,7 @@ const ResearchPage: React.FC = () => {
                   },
                 }}
               >
-                {pub.doiStatus === 'pending' ? 'Preprint — DOI pending' : `DOI: ${pub.doi}`}
+                {pub.doiStatus === 'pending' ? 'Not yet published' : `DOI: ${pub.doi}`}
               </Button>
             </Box>
           ))}
@@ -341,8 +323,8 @@ const ResearchPage: React.FC = () => {
       {/* CTA */}
       <CTASection
         title="Interested in Collaboration?"
-        subtitle="We partner with academic institutions and healthcare organizations on research initiatives."
-        buttonText="Contact Research Team"
+        subtitle="We welcome collaboration with academic institutions and healthcare organizations on research and validation."
+        buttonText="Contact Us"
         buttonPath="/contact"
         variant="dark"
       />

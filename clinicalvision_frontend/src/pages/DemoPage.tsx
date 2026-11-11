@@ -9,10 +9,10 @@ import { lunitColors, lunitTypography, lunitRadius } from '../styles/lunitDesign
 import { api } from '../services/api';
 
 const demoFeatures = [
-  'Live mammogram analysis walkthrough',
-  'PACS integration demonstration',
-  'Workflow customization options',
-  'Q&A with product specialist',
+  'Walkthrough of the analysis workflow on public CBIS-DDSM mammograms',
+  'Grad-CAM heatmaps and experimental uncertainty estimates',
+  'Fictional patient cases; no real patient data',
+  'Discussion of the research baseline results and limitations',
 ];
 
 const roles = [
@@ -107,7 +107,7 @@ const DemoPage: React.FC = () => {
                 lineHeight: 1.8,
               }}
             >
-              Your demo request has been received. One of our product specialists will contact you within 24 hours to schedule your personalized demonstration.
+              Your request has been received. We will review it and get in touch about access to the research demo.
             </Typography>
             <Button
               variant="contained"
@@ -138,23 +138,23 @@ const DemoPage: React.FC = () => {
   return (
     <PageLayout>
       <SEOHead
-        title="Request a Demo — See ClinicalVision in Action"
-        description="Schedule a personalized 30-minute demo of ClinicalVision AI. See real-time mammography analysis, PACS integration, and explainable AI in action."
-        keywords={['ClinicalVision demo', 'medical AI demo', 'mammography AI demonstration', 'radiology AI trial', 'breast cancer detection demo']}
+        title="Research Demo — ClinicalVision Research Prototype"
+        description="Explore the ClinicalVision research prototype using publicly available CBIS-DDSM mammograms. Research demonstration only. Not a medical device. Not for clinical use."
+        keywords={['ClinicalVision research demo', 'mammography AI research prototype', 'explainable AI mammography', 'CBIS-DDSM']}
         canonicalPath="/demo"
       />
       {/* Hero */}
       <PageHero
-        label="Request Demo"
+        label="Research Demo"
         title={
           <>
-            See ClinicalVision{' '}
+            Try the{' '}
             <Box component="span" sx={{ color: lunitColors.teal }}>
-              In Action
+              Research Demo
             </Box>
           </>
         }
-        subtitle="Schedule a personalized demo with our team and see how AI can transform your diagnostic workflow."
+        subtitle="A research prototype for exploring AI-assisted mammography analysis on publicly available CBIS-DDSM images. Not a medical device. Not for clinical use."
       />
 
       {/* Form Section */}
@@ -207,7 +207,7 @@ const DemoPage: React.FC = () => {
                   lineHeight: 1.7,
                 }}
               >
-                In your 30-minute demo, we'll show you exactly how ClinicalVision integrates into your workflow and improves diagnostic accuracy.
+                The research demo shows the current prototype workflow on public research images with fictional patient details. Do not submit real patient data.
               </Typography>
 
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -245,18 +245,7 @@ const DemoPage: React.FC = () => {
                     lineHeight: 1.7,
                   }}
                 >
-                  "The demo convinced our entire team. Seeing ClinicalVision analyze a difficult case in real-time was remarkable."
-                </Typography>
-                <Typography
-                  sx={{
-                    fontFamily: lunitTypography.fontFamilyBody,
-                    fontSize: '13px',
-                    fontWeight: 500,
-                    color: lunitColors.teal,
-                    mt: 1,
-                  }}
-                >
-                  — Dr. James Mitchell, Radiology Director
+                  Research prototype. Not a medical device. Not for clinical use. Results have not been validated on external or prospective data.
                 </Typography>
               </Box>
             </Box>
@@ -273,7 +262,7 @@ const DemoPage: React.FC = () => {
                 mb: 3,
               }}
             >
-              Request Your Demo
+              Request Research Demo Access
             </Typography>
 
             <Box component="form" onSubmit={handleSubmit}>
@@ -484,7 +473,7 @@ const DemoPage: React.FC = () => {
                       },
                     }}
                   >
-                    Request Demo
+                    Request Research Demo Access
                   </Button>
                 </Grid>
               </Grid>

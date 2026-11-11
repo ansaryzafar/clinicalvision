@@ -32,22 +32,22 @@ const pillars = [
   {
     icon: <Psychology sx={{ fontSize: 32 }} />,
     title: 'Intelligent Analysis',
-    description: 'Advanced deep learning that understands the nuances of medical imaging, trained on rigorously curated clinical datasets.',
+    description: 'A DenseNet-121 ensemble trained on the public CBIS-DDSM mammography dataset.',
   },
   {
     icon: <Visibility sx={{ fontSize: 32 }} />,
     title: 'Transparent Reasoning',
-    description: 'Every insight comes with visual explanations, showing exactly where the AI focuses its attention.',
+    description: 'Grad-CAM heatmaps show which image regions influenced a prediction. They are an approximation, not a guarantee of the model\'s reasoning.',
   },
   {
     icon: <Shield sx={{ fontSize: 32 }} />,
-    title: 'Calibrated Confidence',
-    description: 'Know when to trust the AI and when to seek expert review. Our uncertainty quantification keeps you informed.',
+    title: 'Confidence Scores',
+    description: 'Monte Carlo dropout produces an uncertainty estimate. In our evaluation it is only a weak error signal.',
   },
   {
     icon: <HealthAndSafety sx={{ fontSize: 32 }} />,
-    title: 'Clinical Integrity',
-    description: 'Built for real-world clinical environments with fairness monitoring and continuous quality assurance.',
+    title: 'Honest Limitations',
+    description: 'Not a medical device and not for clinical use. Fairness monitoring is planned and subgroup performance has not been measured.',
   },
 ];
 
@@ -55,29 +55,29 @@ const pillars = [
 const philosophy = [
   {
     title: 'Human-AI Collaboration',
-    description: 'We believe AI should augment clinical expertise, not replace it. ClinicalVision serves as a second reader—a thoughtful assistant that supports radiologists in their decision-making process.',
+    description: 'We believe AI should augment clinical expertise, not replace it. Any future clinical tool would need to support, not replace, radiologists. This prototype is not for clinical use.',
   },
   {
     title: 'Explainability by Design',
-    description: 'Black-box AI has no place in healthcare. Every analysis includes intuitive visualizations that reveal the reasoning behind each assessment, fostering trust and clinical confidence.',
+    description: 'We think healthcare AI should be inspectable. Analyses include heatmap visualizations, which are an approximate aid and have not been clinically validated.',
   },
   {
-    title: 'Continuous Improvement',
-    description: 'Our models evolve through iterative refinement, incorporating feedback from clinical practice to deliver increasingly reliable performance over time.',
+    title: 'Iterative Research',
+    description: 'The model is refined through iterative experiments on public data. No clinical feedback has been incorporated.',
   },
 ];
 
 // Milestones - high level, no specific metrics
 const milestones = {
   'Present': [
-    { title: 'Production-Ready Platform', description: 'A complete clinical workflow solution with professional-grade interface and robust backend infrastructure.' },
-    { title: 'Validated Performance', description: 'Extensively tested against established benchmarks with competitive results across key clinical metrics.' },
-    { title: 'Fairness & Compliance', description: 'Real-time monitoring ensures equitable AI performance across diverse patient populations.' },
+    { title: 'Research Prototype', description: 'A working research prototype with a clinical-style workflow interface and a backend inference service. Not a medical device.' },
+    { title: 'Benchmarked on a Public Dataset', description: 'Evaluated on a held-out split of CBIS-DDSM (AUC 0.80). No external or prospective validation has been carried out.' },
+    { title: 'Fairness Monitoring (Planned)', description: 'Subgroup fairness monitoring is planned. Subgroup performance has not yet been measured.' },
   ],
   'Foundation': [
-    { title: 'Clinical Dataset Training', description: 'Models trained on curated mammography datasets with expert-verified annotations and rigorous preprocessing.' },
-    { title: 'Architecture Design', description: 'Modern ensemble approach combining proven neural network architectures with uncertainty-aware inference.' },
-    { title: 'Explainability Integration', description: 'Visual attention mechanisms that illuminate the AI reasoning process for clinical interpretability.' },
+    { title: 'Clinical Dataset Training', description: 'Models trained on the public CBIS-DDSM mammography dataset.' },
+    { title: 'Architecture Design', description: 'Ensemble of three DenseNet-121 models with Monte Carlo dropout inference.' },
+    { title: 'Explainability Integration', description: 'Grad-CAM heatmap overlays for each analysis.' },
   ],
 };
 
@@ -85,23 +85,23 @@ const milestones = {
 const differentiators = [
   {
     icon: <AutoAwesome />,
-    label: 'Ensemble Intelligence',
-    hint: 'Multiple model perspectives for robust predictions',
+    label: 'Model Ensemble',
+    hint: 'Three DenseNet-121 models averaged',
   },
   {
     icon: <TrendingUp />,
-    label: 'Competitive Accuracy',
-    hint: 'Performance validated against clinical standards',
+    label: 'Public-Benchmark Results',
+    hint: 'AUC 0.80 on held-out CBIS-DDSM; no external validation',
   },
   {
     icon: <Biotech />,
-    label: 'Research-Grade',
-    hint: 'Built on peer-reviewed methodologies',
+    label: 'Research Prototype',
+    hint: 'Standard published techniques; not peer-reviewed itself',
   },
   {
     icon: <Security />,
-    label: 'Uncertainty Aware',
-    hint: 'Knows the limits of its confidence',
+    label: 'Uncertainty Estimate',
+    hint: 'Monte Carlo dropout; a weak signal in testing',
   },
 ];
 
@@ -113,9 +113,9 @@ const AboutPage: React.FC = () => {
   return (
     <PageLayout>
       <SEOHead
-        title="About Us — Our Mission & Team"
-        description="ClinicalVision brings clarity to medical imaging through explainable AI. Learn about our mission to advance breast cancer detection with transparent, uncertainty-aware deep learning."
-        keywords={['about ClinicalVision', 'medical AI company', 'breast cancer AI team', 'explainable AI healthcare', 'AI radiology startup']}
+        title="About — ClinicalVision Research Prototype"
+        description="ClinicalVision is a solo research prototype exploring explainable, uncertainty-aware deep learning for breast imaging. Not a medical device."
+        keywords={['about ClinicalVision', 'explainable AI breast imaging']}
         canonicalPath="/about"
       />
       {/* Hero Section - Elegant and Aspirational */}
@@ -131,21 +131,6 @@ const AboutPage: React.FC = () => {
           overflow: 'hidden',
         }}
       >
-        {/* Background team image */}
-        <Box
-          component="img"
-          src="/images/team/team-meeting-glass-wall-1920w.webp"
-          alt=""
-          sx={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            opacity: 0.15,
-            pointerEvents: 'none',
-          }}
-        />
         {/* Gradient overlay */}
         <Box
           sx={{
@@ -184,9 +169,8 @@ const AboutPage: React.FC = () => {
               mb: 5,
             }}
           >
-            ClinicalVision brings clarity to medical imaging through thoughtful AI. 
-            We combine advanced deep learning with transparent reasoning—because 
-            in healthcare, understanding the "why" matters as much as the "what."
+            ClinicalVision is a solo research prototype exploring explainable AI for 
+            breast imaging. It is not a medical device and is not for clinical use.
           </Typography>
           
           {/* Subtle differentiators */}
@@ -245,8 +229,7 @@ const AboutPage: React.FC = () => {
             lineHeight: 1.8,
           }}
         >
-          Every decision in our platform reflects a commitment to clinical excellence, 
-          transparency, and responsible AI deployment.
+          The ideas guiding this research prototype.
         </Typography>
 
         <Grid container spacing={4}>
@@ -402,7 +385,7 @@ const AboutPage: React.FC = () => {
             letterSpacing: '-0.01em',
           }}
         >
-          The people behind the platform
+          The person behind the prototype
         </Typography>
         <Typography
           sx={{
@@ -411,50 +394,14 @@ const AboutPage: React.FC = () => {
             fontWeight: 300,
             color: lunitColors.text,
             textAlign: 'center',
-            maxWidth: 600,
+            maxWidth: 650,
             mx: 'auto',
-            mb: 8,
             lineHeight: 1.8,
           }}
         >
-          A multidisciplinary team of engineers, researchers, and clinicians united by a shared mission—making AI work for healthcare.
+          ClinicalVision is a solo research project built by Muhammad Ansary. There is no
+          company team, clinical advisory board or partner organisation.
         </Typography>
-
-        <Grid container spacing={3}>
-          {[
-            { src: '/images/team/team-discussion-closeup-card.webp', alt: 'Close-up team discussion on AI models' },
-            { src: '/images/team/team-collaboration-standing-card.webp', alt: 'Team collaborating around a whiteboard' },
-            { src: '/images/team/team-planning-laptops-card.webp', alt: 'Team planning session with laptops' },
-          ].map((img, idx) => (
-            <Grid size={{ xs: 12, md: 4 }} key={idx}>
-              <Box
-                sx={{
-                  borderRadius: lunitRadius['2xl'],
-                  overflow: 'hidden',
-                  aspectRatio: '3/2',
-                  position: 'relative',
-                  '&:hover img': {
-                    transform: 'scale(1.04)',
-                  },
-                }}
-              >
-                <Box
-                  component="img"
-                  src={img.src}
-                  alt={img.alt}
-                  loading="lazy"
-                  sx={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    display: 'block',
-                    transition: 'transform 0.5s ease',
-                  }}
-                />
-              </Box>
-            </Grid>
-          ))}
-        </Grid>
       </PageSection>
 
       {/* Performance Hint Section - Subtle */}
@@ -471,7 +418,7 @@ const AboutPage: React.FC = () => {
               letterSpacing: '-0.01em',
             }}
           >
-            Validated for clinical confidence
+            Evaluated on a public dataset
           </Typography>
           <Typography
             sx={{
@@ -483,9 +430,9 @@ const AboutPage: React.FC = () => {
               mb: 4,
             }}
           >
-            Our models undergo rigorous validation against established clinical benchmarks. 
-            The result is performance that radiologists can rely on—competitive accuracy paired 
-            with the transparency needed for confident decision-making.
+            The model was evaluated on a held-out split of the public CBIS-DDSM dataset
+            (701 lesions): AUC 0.80, 79.6% sensitivity and 64.3% specificity at a 0.5 threshold.
+            It has not been validated externally or prospectively and is not for clinical use.
           </Typography>
           <Box 
             sx={{ 
@@ -496,8 +443,12 @@ const AboutPage: React.FC = () => {
               mt: 5,
             }}
           >
-            {['Sensitivity', 'Specificity', 'Precision'].map((metric) => (
-              <Box key={metric} sx={{ textAlign: 'center' }}>
+            {[
+              { name: 'Sensitivity', value: '79.6%' },
+              { name: 'Specificity', value: '64.3%' },
+              { name: 'AUC', value: '0.80' },
+            ].map((metric) => (
+              <Box key={metric.name} sx={{ textAlign: 'center' }}>
                 <Box
                   sx={{
                     width: 80,
@@ -523,7 +474,7 @@ const AboutPage: React.FC = () => {
                     letterSpacing: '0.1em',
                   }}
                 >
-                  {metric}
+                  {metric.name}
                 </Typography>
                 <Typography
                   sx={{
@@ -534,7 +485,7 @@ const AboutPage: React.FC = () => {
                     mt: 0.5,
                   }}
                 >
-                  Clinically competitive
+                  {metric.value} (internal hold-out)
                 </Typography>
               </Box>
             ))}
@@ -555,7 +506,7 @@ const AboutPage: React.FC = () => {
             letterSpacing: '-0.01em',
           }}
         >
-          Our journey
+          Project status
         </Typography>
         <Typography
           sx={{
@@ -569,7 +520,7 @@ const AboutPage: React.FC = () => {
             mb: 6,
           }}
         >
-          From foundational research to clinical-ready platform.
+          Where the research prototype stands today.
         </Typography>
 
         {/* Phase Toggle */}
@@ -678,7 +629,7 @@ const AboutPage: React.FC = () => {
               lineHeight: 1.4,
             }}
           >
-            Where advanced AI meets clinical wisdom
+            A transparent research project
           </Typography>
           <Typography
             sx={{
@@ -689,9 +640,9 @@ const AboutPage: React.FC = () => {
               lineHeight: 1.8,
             }}
           >
-            ClinicalVision represents a thoughtful approach to medical AI—one that respects 
-            the complexity of clinical practice while delivering the insights that matter. 
-            Built with care, validated with rigor.
+            ClinicalVision is an experiment in making medical image AI more inspectable. 
+            Its results are preliminary, its limitations are documented, and it should not 
+            be used for any decision about a real patient.
           </Typography>
         </Box>
       </Box>
@@ -700,9 +651,9 @@ const AboutPage: React.FC = () => {
       {/* CTA Section */}
       <CTASection
         title="Experience ClinicalVision"
-        subtitle="See how AI-assisted analysis can support your clinical workflow with transparency and confidence."
-        buttonText="Start Analysis"
-        buttonPath="/analyze"
+        subtitle="Try the research demo on fictional cases. Research use only."
+        buttonText="Try the Research Demo"
+        buttonPath="/demo"
         variant="light"
       />
     </PageLayout>

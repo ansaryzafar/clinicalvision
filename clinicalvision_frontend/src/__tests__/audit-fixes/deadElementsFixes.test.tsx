@@ -101,7 +101,7 @@ describe('LandingPage CTA buttons', () => {
     mockNavigate.mockClear();
   });
 
-  it('B1: "Request a Demo" button should have an onClick handler', async () => {
+  it('B1: "Try the Research Demo" button should have an onClick handler', async () => {
     const LandingPage = (await import('../../pages/LandingPage')).default;
     
     render(
@@ -110,8 +110,8 @@ describe('LandingPage CTA buttons', () => {
       </TestWrapper>
     );
     
-    // Find all "Request a Demo" buttons — at least one should be clickable
-    const demoButtons = screen.getAllByRole('button', { name: /request a demo/i });
+    // Find all "Try the Research Demo" buttons — at least one should be clickable
+    const demoButtons = screen.getAllByRole('button', { name: /try the research demo/i });
     expect(demoButtons.length).toBeGreaterThan(0);
     
     // Click the last one (the CTA section one)
@@ -121,7 +121,7 @@ describe('LandingPage CTA buttons', () => {
     expect(mockNavigate).toHaveBeenCalledWith(ROUTES.DEMO);
   });
 
-  it('B2: "Schedule a Consultation" button should have an onClick handler', async () => {
+  it('B2: "Contact the Research Team" button should have an onClick handler', async () => {
     const LandingPage = (await import('../../pages/LandingPage')).default;
     
     render(
@@ -130,7 +130,7 @@ describe('LandingPage CTA buttons', () => {
       </TestWrapper>
     );
     
-    const consultButtons = screen.getAllByRole('button', { name: /schedule a consultation/i });
+    const consultButtons = screen.getAllByRole('button', { name: /contact the research team/i });
     expect(consultButtons.length).toBeGreaterThan(0);
     
     fireEvent.click(consultButtons[consultButtons.length - 1]);

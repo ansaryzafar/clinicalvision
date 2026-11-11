@@ -29,13 +29,13 @@ If you do not agree with any provision of these Terms, you must not access or us
     title: '3. Description of Services',
     content: `ClinicalVision provides an AI-powered clinical decision support platform for medical imaging analysis. The Platform offers:
 
-• **AI-Assisted Image Analysis** — Deep learning classification of mammographic images using ensemble neural network architectures, returning benign/malignant predictions with calibrated confidence scores
+• **AI-Assisted Image Analysis** — Deep learning classification of mammographic images using ensemble neural network architectures, returning benign/malignant predictions with confidence scores
 • **Explainable AI (XAI)** — Visual explanation tools including Grad-CAM, Grad-CAM++, LIME, SHAP, and Integrated Gradients, enabling clinicians to understand and verify AI reasoning
 • **Uncertainty Quantification** — Monte Carlo Dropout-based epistemic uncertainty estimation, predictive entropy, and mutual information metrics to flag cases requiring additional clinical review
 • **BI-RADS Structured Reporting** — Automated BI-RADS 0–6 classification (including 4A/4B/4C subdivisions), clinical narrative generation, and PDF report export with full audit trail
 • **DICOM Integration** — Native DICOM image handling with metadata extraction and clinical-grade image viewing
 • **Clinical Workflow Engine** — Structured workflow supporting image upload, AI analysis, patient demographics, measurements, clinical assessment, reporting, and case finalisation
-• **AI Fairness Monitoring** — Demographic parity and equalised odds monitoring across patient demographics, aligned with NIST AI Risk Management Framework
+• **AI Fairness Monitoring (planned)** — Subgroup fairness monitoring is a planned capability; the current dashboard shows demonstration data only
 • **Case Management** — Priority-scored worklist, case tracking, historical archive, and multi-user workflow support
 
 **CRITICAL NOTICE**: The Platform is classified as a clinical decision support tool and is intended solely to assist — never to replace — qualified healthcare professionals in their clinical judgement. All diagnostic and treatment decisions remain the exclusive responsibility of appropriately licensed and qualified medical practitioners. AI Outputs are supplementary and must be independently verified by the treating clinician before any clinical action is taken.`,

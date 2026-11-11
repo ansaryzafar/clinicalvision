@@ -16,95 +16,80 @@ import { lunitColors, lunitTypography, lunitRadius, lunitShadows } from '../styl
 const securityFeatures = [
   {
     icon: <Lock sx={{ fontSize: 32 }} />,
-    title: 'End-to-End Encryption',
-    description: 'All data is encrypted in transit using TLS 1.3 and at rest using AES-256 encryption.',
+    title: 'Encryption in Transit',
+    description: 'The website and API are served over HTTPS (TLS 1.2 and 1.3).',
   },
   {
     icon: <VpnKey sx={{ fontSize: 32 }} />,
-    title: 'Strong Authentication',
-    description: 'Multi-factor authentication, SSO integration, and secure API key management.',
+    title: 'Account Authentication',
+    description: 'User accounts are protected by password authentication with hashed passwords and token-based sessions.',
   },
   {
     icon: <Shield sx={{ fontSize: 32 }} />,
-    title: 'Access Controls',
-    description: 'Role-based access control (RBAC) with principle of least privilege enforcement.',
-  },
-  {
-    icon: <Storage sx={{ fontSize: 32 }} />,
-    title: 'Secure Infrastructure',
-    description: 'Hosted on enterprise-grade cloud infrastructure with encryption, access controls, and redundancy.',
+    title: 'Role-Based Access',
+    description: 'User accounts carry roles that restrict access to application features.',
   },
   {
     icon: <Policy sx={{ fontSize: 32 }} />,
-    title: 'Audit Logging',
-    description: 'Comprehensive audit trails for all data access and system activities.',
+    title: 'Audit Records',
+    description: 'The application records audit log entries for selected actions.',
+  },
+  {
+    icon: <Storage sx={{ fontSize: 32 }} />,
+    title: 'Research Hosting',
+    description: 'The demo runs on a single cloud virtual machine. It has no redundancy, no uptime commitment and no multi-region deployment.',
   },
   {
     icon: <BugReport sx={{ fontSize: 32 }} />,
-    title: 'Vulnerability Management',
-    description: 'Regular penetration testing, vulnerability scanning, and bug bounty program.',
+    title: 'No Independent Audit',
+    description: 'The system has not had an independent penetration test or security audit, and there is no bug bounty programme.',
   },
 ];
 
 const certifications = [
   {
-    name: 'UK GDPR & DPA 2018',
-    description: 'Compliant with UK data protection legislation for health data',
-    icon: '🇬🇧',
+    name: 'No Certifications',
+    description: 'ClinicalVision holds no security or quality certifications (for example ISO 27001 or SOC 2).',
+    icon: '📄',
   },
   {
-    name: 'IEC 62304',
-    description: 'Software development lifecycle following medical device standards',
-    icon: '⚙️',
-  },
-  {
-    name: 'ISO 14971',
-    description: 'Risk management processes applied throughout development',
-    icon: '🛡️',
-  },
-  {
-    name: 'ISO 13485',
-    description: 'Quality management system aligned to medical device requirements',
-    icon: '📋',
-  },
-  {
-    name: 'MHRA SaMD Pathway',
-    description: 'Actively preparing for UK medical device registration',
+    name: 'No Regulatory Clearance',
+    description: 'Not a medical device. No MHRA, CE/UKCA or FDA registration or clearance.',
     icon: '🏥',
   },
   {
-    name: 'AES-256 & TLS 1.3',
-    description: 'Enterprise-grade encryption for data at rest and in transit',
+    name: 'Not for Real Patient Data',
+    description: 'Do not upload real patient data. The demo is for public, de-identified research images only.',
     icon: '🔒',
   },
 ];
 
 const practices = [
   {
-    title: 'Security-First Development',
+    title: 'What Exists',
     items: [
-      'Secure coding practices and code review',
-      'Static and dynamic application security testing',
-      'Dependency vulnerability scanning',
-      'Security training for all developers',
+      'HTTPS for the website and API',
+      'Password hashing and token-based sessions',
+      'Role-based access in the application',
+      'Audit log records for selected actions',
     ],
   },
   {
-    title: 'Data Protection',
+    title: 'What Does Not Exist',
     items: [
-      'Data minimization and retention policies',
-      'Automatic de-identification capabilities',
-      'Secure data deletion upon request',
-      'Geographic data residency options',
+      'Independent penetration testing or security audit',
+      'Security certifications or attestations',
+      '24/7 monitoring or an incident-response service',
+      'Uptime, support or breach-notification commitments',
     ],
   },
   {
-    title: 'Incident Response',
+    title: 'Responsible Use',
     items: [
-      '24/7 security monitoring',
-      'Documented incident response procedures',
-      'Regular tabletop exercises',
-      'Breach notification within 72 hours',
+      'Use only public, de-identified research images',
+      'Do not upload real patient data',
+      'Treat all outputs as research results only',
+      'Report security concerns through the contact page',
     ],
   },
 ];
@@ -113,9 +98,9 @@ const SecurityPage: React.FC = () => {
   return (
     <PageLayout>
       <SEOHead
-        title="Security — Enterprise-Grade Protection"
-        description="ClinicalVision implements TLS 1.3, AES-256 encryption, MFA, RBAC, and comprehensive audit logging. Compliant with UK GDPR, IEC 62304, and ISO 14971."
-        keywords={['medical AI security', 'healthcare data encryption', 'HIPAA compliant AI', 'radiology AI security', 'ISO 14971 medical device']}
+        title="Security — Research Prototype"
+        description="Security status of the ClinicalVision research prototype: HTTPS, account authentication and role-based access. No certifications or independent audit. Not a medical device."
+        keywords={['ClinicalVision security']}
         canonicalPath="/security"
       />
       {/* Hero */}
@@ -124,13 +109,13 @@ const SecurityPage: React.FC = () => {
         label="Security"
         title={
           <>
-            Enterprise-Grade{' '}
+            Security{' '}
             <Box component="span" sx={{ color: lunitColors.teal }}>
-              Security
+              Status
             </Box>
           </>
         }
-        subtitle="Your data security is our top priority. We implement comprehensive measures to protect patient information and maintain trust."
+        subtitle="An honest summary of what protections exist in this research prototype and what does not. Do not upload real patient data."
       />
 
       {/* Security Features */}
@@ -217,13 +202,13 @@ const SecurityPage: React.FC = () => {
               color: lunitColors.headingColor,
             }}
           >
-            Standards & Compliance
+            Certifications & Clearance
           </Typography>
         </Box>
 
         <Grid container spacing={3}>
           {certifications.map((cert, idx) => (
-            <Grid size={{ xs: 6, sm: 4, md: 2 }} key={idx}>
+            <Grid size={{ xs: 12, sm: 4 }} key={idx}>
               <Box
                 sx={{
                   p: 3,
@@ -289,7 +274,7 @@ const SecurityPage: React.FC = () => {
               color: lunitColors.headingColor,
             }}
           >
-            Our Security Practices
+            Current Security Status
           </Typography>
         </Box>
 
@@ -341,9 +326,9 @@ const SecurityPage: React.FC = () => {
 
       {/* CTA */}
       <CTASection
-        title="Questions About Security?"
-        subtitle="Our security team is available to discuss your specific requirements and compliance needs."
-        buttonText="Contact Security Team"
+        title="Found a Security Issue?"
+        subtitle="Please report security concerns through the contact page."
+        buttonText="Contact Us"
         buttonPath="/contact"
         variant="dark"
       />

@@ -24,7 +24,7 @@ const corePillars = [
     icon: <Psychology sx={{ fontSize: 32 }} />,
     title: 'Uncertainty Quantification',
     description:
-      'Monte Carlo dropout inference produces calibrated confidence intervals on every prediction, letting clinicians distinguish high-confidence findings from cases that warrant additional review.',
+      'Monte Carlo dropout inference produces an experimental uncertainty estimate. In offline evaluation the variance was only a weak signal of model error (AUC 0.61), so it is not a reliable review-triage tool.',
   },
   {
     icon: <Visibility sx={{ fontSize: 32 }} />,
@@ -46,15 +46,15 @@ const corePillars = [
   },
   {
     icon: <Speed sx={{ fontSize: 32 }} />,
-    title: 'Real-Time Inference',
+    title: 'Inference Speed',
     description:
-      'Optimised model architectures deliver sub-second inference on standard clinical hardware, integrating seamlessly into existing reading workflows without adding wait times.',
+      'The research demo runs the ensemble on a single server. Inference time has not been formally benchmarked and the system has not been tested in any reading workflow.',
   },
   {
     icon: <VerifiedUser sx={{ fontSize: 32 }} />,
     title: 'Bias-Aware Training',
     description:
-      'Fairness monitoring across demographic subgroups is embedded in the training pipeline, with continuous post-deployment audits ensuring equitable performance.',
+      'Subgroup fairness monitoring is planned. Subgroup performance has not yet been measured, and the current dashboard shows demonstration data.',
   },
 ];
 
@@ -86,7 +86,7 @@ const platformCapabilities = [
     icon: <Psychology sx={{ fontSize: 28 }} />,
     title: 'Uncertainty Quantification',
     description:
-      'Monte Carlo dropout produces calibrated confidence intervals on every prediction. Cases with high uncertainty are automatically flagged for priority review, ensuring ambiguous findings receive human attention.',
+      'Monte Carlo dropout produces an experimental uncertainty estimate for each prediction. It has only been evaluated offline, where it was a weak signal of model error (AUC 0.61), and it has not been tested with any clinician.',
   },
   {
     id: 'integrated-gradients',
@@ -98,9 +98,9 @@ const platformCapabilities = [
   {
     id: 'calibrated-confidence',
     icon: <QueryStats sx={{ fontSize: 28 }} />,
-    title: 'Calibrated Confidence Scores',
+    title: 'Confidence Scores',
     description:
-      'Statistically validated confidence outputs where a stated 90% confidence corresponds to 90% real-world accuracy. Platt scaling and temperature calibration ensure scores clinicians can trust and act upon.',
+      'Per-finding confidence outputs from the ensemble. Calibration methods (isotonic, Platt, temperature) are implemented and evaluated offline, but a fitted calibrator is not yet deployed, so scores should be read as relative, uncalibrated indicators.',
   },
   {
     id: 'fairness-monitoring',
@@ -282,7 +282,7 @@ const TechnologyPage: React.FC = () => {
               }}
             >
               Our platform handles the entire clinical imaging workflow: DICOM ingestion,
-              intelligent pre-processing, multi-model inference with calibrated uncertainty
+              intelligent pre-processing, multi-model inference with uncertainty estimates
               scores, attention-based explainability overlays, and structured reporting —
               all within a single, auditable pipeline.
             </Typography>
@@ -396,7 +396,7 @@ const TechnologyPage: React.FC = () => {
             {
               title: 'Confidence You Can Act On',
               description:
-                'Every prediction comes with a calibrated confidence score. Clinicians know when the AI is certain and when a case deserves closer human attention.',
+                'Every prediction comes with a confidence score. Clinicians know when the AI is certain and when a case deserves closer human attention.',
             },
             {
               title: 'Transparent to All Levels',
@@ -404,9 +404,9 @@ const TechnologyPage: React.FC = () => {
                 'From attending radiologists to residents and referring GPs, our explainability layers are designed to be understandable without requiring AI expertise.',
             },
             {
-              title: 'Built for Regulatory Pathways',
+              title: 'Not Regulated',
               description:
-                'Developed following IEC 62304 and ISO 14971 from day one. Full audit trails, data provenance, and model versioning support future MHRA, CE, and FDA submissions.',
+                'Not a medical device. No regulatory submission has been made and the software has not been developed under a certified quality management system.',
             },
           ].map((item, idx) => (
             <Grid size={{ xs: 12, sm: 6 }} key={idx}>
@@ -543,8 +543,8 @@ const TechnologyPage: React.FC = () => {
 
       <CTASection
         title="See the Technology in Action"
-        subtitle="Request a live demonstration tailored to your clinical environment."
-        buttonText="Request a Demo"
+        subtitle="Try the research demo on public CBIS-DDSM images. Research prototype; not for clinical use."
+        buttonText="Try the Research Demo"
         buttonPath={ROUTES.DEMO}
         variant="dark"
       />

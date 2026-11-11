@@ -100,28 +100,17 @@ describe('BlogPage interactive elements (B3, B7)', () => {
 // ============================================================================
 // B4 + B5: CareersPage buttons
 // ============================================================================
-describe('CareersPage interactive elements (B4, B5)', () => {
+describe('CareersPage interactive elements (B4)', () => {
   beforeEach(() => mockNavigate.mockClear());
 
-  it('B4: "Apply Now" buttons should have click handlers', async () => {
+  it('B4: careers page states that no positions are open and links to contact', async () => {
     const CareersPage = (await import('../../pages/CareersPage')).default;
     render(<TestWrapper><CareersPage /></TestWrapper>);
 
-    const applyButtons = screen.getAllByRole('button', { name: /apply now/i });
-    expect(applyButtons.length).toBeGreaterThan(0);
+    expect(screen.getByText(/no open positions/i)).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /apply now/i })).not.toBeInTheDocument();
 
-    fireEvent.click(applyButtons[0]);
-    expect(mockNavigate).toHaveBeenCalled();
-  });
-
-  it('B5: "View all roles" should navigate', async () => {
-    const CareersPage = (await import('../../pages/CareersPage')).default;
-    render(<TestWrapper><CareersPage /></TestWrapper>);
-
-    const viewAllBtn = screen.getByRole('button', { name: /view all roles/i });
-    expect(viewAllBtn).toBeInTheDocument();
-    
-    fireEvent.click(viewAllBtn);
+    fireEvent.click(screen.getByRole('button', { name: /contact the research team/i }));
     expect(mockNavigate).toHaveBeenCalled();
   });
 });
@@ -136,19 +125,12 @@ describe('SupportPage action buttons (B6)', () => {
     const SupportPage = (await import('../../pages/SupportPage')).default;
     render(<TestWrapper><SupportPage /></TestWrapper>);
 
-    const actionButtons = [
-      screen.getByRole('button', { name: /start chat/i }),
-      screen.getByRole('button', { name: /send email/i }),
-      screen.getByRole('button', { name: /call now/i }),
-      screen.getByRole('button', { name: /book session/i }),
-    ];
+    // Only one honest channel remains: the contact form
+    expect(screen.queryByRole('button', { name: /start chat/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /call now/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /book session/i })).not.toBeInTheDocument();
 
-    actionButtons.forEach(btn => {
-      expect(btn).toBeInTheDocument();
-      fireEvent.click(btn);
-    });
-
-    // At least some buttons should trigger navigation or an action
+    fireEvent.click(screen.getByRole('button', { name: /contact us/i }));
     expect(mockNavigate).toHaveBeenCalled();
   });
 });
@@ -171,20 +153,22 @@ describe('DiagnosticViewer demo gating (A1)', () => {
 // A2/A3: Testimonials should have disclaimers
 // ============================================================================
 describe('Fabricated content disclaimers (A2, A3)', () => {
-  it('A2: LandingPage testimonials should have illustrative disclaimer', async () => {
+  it('A2: LandingPage has no testimonials and labels demo patients as fictional', async () => {
     const LandingPage = (await import('../../pages/LandingPage')).default;
     render(<TestWrapper><LandingPage /></TestWrapper>);
 
-    const testimonialDisclaimer = screen.queryByText(/anticipated clinical use cases|illustrative/i);
-    expect(testimonialDisclaimer).toBeInTheDocument();
+    expect(screen.queryByText(/trusted by clinical leaders/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/95\.2/)).not.toBeInTheDocument();
+    expect(screen.getAllByText(/fictional/i).length).toBeGreaterThan(0);
   });
 
-  it('A3: CareersPage testimonials should have illustrative disclaimer', async () => {
+  it('A3: CareersPage has no testimonials or partner-institution strip', async () => {
     const CareersPage = (await import('../../pages/CareersPage')).default;
     render(<TestWrapper><CareersPage /></TestWrapper>);
 
-    const disclaimer = screen.queryByText(/illustrative/i);
-    expect(disclaimer).toBeInTheDocument();
+    expect(screen.queryByText(/team interview/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/mayo clinic/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/leading institutions/i)).not.toBeInTheDocument();
   });
 });
 

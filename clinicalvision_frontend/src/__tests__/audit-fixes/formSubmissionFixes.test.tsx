@@ -130,11 +130,11 @@ describe('DemoPage form submission (A6)', () => {
     fillInput(screen.getByLabelText(/last name/i), 'User');
     fillInput(screen.getByLabelText(/work email/i), 'test@example.com');
 
-    // Two "Request Demo" buttons exist: one in navbar (type="button") and
+    // Two research-demo buttons exist: one in navbar (type="button") and
     // the form submit button (type="submit"). Select by type attribute.
     const submitBtn = document.querySelector('button[type="submit"]') as HTMLElement;
     expect(submitBtn).not.toBeNull();
-    expect(submitBtn.textContent).toMatch(/request demo/i);
+    expect(submitBtn.textContent).toMatch(/research demo/i);
     fireEvent.click(submitBtn);
 
     // API should be called

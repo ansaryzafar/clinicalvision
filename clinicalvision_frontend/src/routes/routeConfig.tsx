@@ -39,7 +39,6 @@ import SettingsPage from '../pages/SettingsPage';
 
 // Footer / info pages — rarely visited, safe to lazy load
 const FeaturesPage = React.lazy(() => import('../pages/FeaturesPage'));
-const PricingPage = React.lazy(() => import('../pages/PricingPage'));
 const DemoPage = React.lazy(() => import('../pages/DemoPage'));
 const ApiPage = React.lazy(() => import('../pages/ApiPage'));
 const CareersPage = React.lazy(() => import('../pages/CareersPage'));
@@ -101,7 +100,8 @@ export const routeConfig: RouteEntry[] = [
   // ── Public: Info Pages (lazy) ───────────────────────────────────────────
   { path: ROUTES.ABOUT,           component: AboutPage,         auth: false, layout: false },
   { path: ROUTES.FEATURES,        component: FeaturesPage,      auth: false, layout: false },
-  { path: ROUTES.PRICING,         component: PricingPage,       auth: false, layout: false },
+  // Pricing was removed: ClinicalVision is a research prototype with no commercial plans.
+  { path: ROUTES.PRICING,         redirectTo: ROUTES.DEMO,       auth: false, layout: false },
   { path: ROUTES.DEMO,            component: DemoPage,          auth: false, layout: false },
   { path: ROUTES.API,             component: ApiPage,           auth: false, layout: false },
   { path: ROUTES.CAREERS,         component: CareersPage,       auth: false, layout: false },

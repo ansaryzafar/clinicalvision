@@ -11,7 +11,7 @@ const contactMethods = [
     icon: <Email sx={{ fontSize: 32 }} />,
     title: 'Email Us',
     value: 'hello@clinicalvision.ai',
-    description: 'We respond within 24 hours',
+    description: 'Research enquiries and feedback',
   },
   {
     icon: <Phone sx={{ fontSize: 32 }} />,
@@ -33,28 +33,24 @@ const offices = [
 
 const faqs = [
   {
-    question: 'What is the typical deployment timeline for an enterprise implementation?',
-    answer: 'Standard deployment completes in 2–4 weeks, including PACS/RIS integration, user provisioning, and clinical validation. Complex multi-site deployments with custom integrations typically require 6–8 weeks. A dedicated implementation engineer is assigned throughout onboarding to ensure zero-disruption go-live.',
-  },
-  {
-    question: 'What training and clinical onboarding programmes are available?',
-    answer: 'We provide structured onboarding including hands-on clinical training sessions, comprehensive documentation, workflow-specific video guides, and sandbox environments for practice. Enterprise customers receive tailored training curricula aligned with their departmental protocols. Most radiologists achieve proficiency within the first week.',
+    question: 'Is ClinicalVision available for clinical use?',
+    answer: 'No. ClinicalVision is a research prototype. It is not a medical device, it has not been cleared or registered with any regulator (MHRA, CE/UKCA, FDA), and it must not be used for any decision affecting a real patient.',
   },
   {
     question: 'What is ClinicalVision\'s regulatory status?',
-    answer: 'ClinicalVision is developed as a Software as a Medical Device (SaMD) clinical decision support tool following IEC 62304, ISO 14971, and ISO 13485-aligned processes. We are actively preparing for MHRA registration in the UK. Our compliance architecture is designed for regulatory portability to support future EU MDR and FDA submissions. The Platform has not yet received regulatory clearance — contact us for our current regulatory roadmap.',
+    answer: 'ClinicalVision has no regulatory clearance or registration. Any future clinical use would require regulatory approval, including clinical validation, which has not been carried out.',
   },
   {
-    question: 'How is enterprise and institutional pricing structured?',
-    answer: 'Pricing is tailored to institutional volume, deployment model, and required support tier. We offer annual and multi-year licensing with volume-based pricing, dedicated support options, and optional on-premises or private-cloud deployment. Contact us for a detailed proposal aligned with your institution\'s requirements.',
+    question: 'How was the model evaluated?',
+    answer: 'The research baseline was evaluated on a held-out split of the public CBIS-DDSM dataset (701 test lesions): AUC 0.80, with 79.6% sensitivity and 64.3% specificity at a 0.5 threshold. There has been no external, multi-site or prospective evaluation, and subgroup performance has not been measured. See the model card for details and limitations.',
   },
   {
-    question: 'Can ClinicalVision be deployed on-premises or in a private cloud?',
-    answer: 'Yes. In addition to our managed cloud offering, ClinicalVision supports on-premises deployment and private-cloud hosting within your institution\'s infrastructure. This enables full data sovereignty and compliance with institutional data governance policies. Deployment architecture is discussed during the enterprise scoping phase.',
+    question: 'Can I try it?',
+    answer: 'Yes, through the research demo. It uses publicly available CBIS-DDSM mammograms with fictional patient details. Do not upload real patient data.',
   },
   {
-    question: 'What Service Level Agreements are available for enterprise customers?',
-    answer: 'Enterprise SLAs include 99.9%+ uptime guarantees, 1-hour critical-issue response, dedicated account management, scheduled maintenance windows, and service credits for any downtime exceeding agreed thresholds. Custom SLA terms are negotiated as part of each enterprise agreement.',
+    question: 'Do you offer pricing, pilots or deployments?',
+    answer: 'No. ClinicalVision is not a commercial product, and there are no pricing plans, pilot programmes or hospital deployments. If you are interested in research collaboration or have feedback, please get in touch.',
   },
 ];
 
@@ -89,8 +85,8 @@ const ContactPage: React.FC = () => {
     <PageLayout>
       <SEOHead
         title="Contact Us — Get in Touch"
-        description="Contact ClinicalVision for questions about our AI platform, enterprise pricing, deployment timelines, or regulatory status. Reach us by email, phone, or visit."
-        keywords={['contact ClinicalVision', 'medical AI support', 'healthcare AI inquiry', 'radiology AI contact', 'ClinicalVision sales']}
+        description="Contact the ClinicalVision research team about the research prototype, research collaboration or feedback. Not a medical device; not for clinical use."
+        keywords={['contact ClinicalVision', 'mammography AI research', 'explainable AI research collaboration']}
         canonicalPath="/contact"
       />
       {/* Enhanced Hero */}
@@ -565,9 +561,9 @@ const ContactPage: React.FC = () => {
 
       {/* CTA Section */}
       <CTASection
-        title="Ready to Transform Your Practice?"
-        subtitle="Schedule a personalized demo with our team and see how ClinicalVision can enhance your diagnostic capabilities."
-        buttonText="Request Demo"
+        title="Explore the Research Prototype"
+        subtitle="Try the research demo on public CBIS-DDSM images. Not a medical device. Not for clinical use."
+        buttonText="Try the Research Demo"
         buttonPath="/demo"
         variant="dark"
       />

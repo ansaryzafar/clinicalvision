@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Box, Typography, Grid, alpha, Button, keyframes } from '@mui/material';
 import SEOHead from '../components/shared/SEOHead';
 import {
@@ -32,73 +32,23 @@ const fadeIn = keyframes`
   to { opacity: 1; transform: translateY(0); }
 `;
 
-// Scroll animation for partners
-const scrollX = keyframes`
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-`;
-
-const benefits = [
-  { icon: <Favorite sx={{ fontSize: 28 }} />, title: 'Health & Wellness', description: 'Comprehensive medical, dental, and vision coverage for you and your family.' },
-  { icon: <School sx={{ fontSize: 28 }} />, title: 'Learning Budget', description: '$3,000 annual budget for courses, conferences, and professional development.' },
-  { icon: <Public sx={{ fontSize: 28 }} />, title: 'Remote Flexible', description: 'Work from anywhere with flexible hours to balance life and impact.' },
-  { icon: <Groups sx={{ fontSize: 28 }} />, title: 'Team Events', description: 'Regular team offsites, hackathons, and social events to build connections.' },
-];
-
-const openings = [
-  { title: 'Senior Machine Learning Engineer', department: 'AI Research', location: 'Remote / London', type: 'Full-time' },
-  { title: 'Clinical Product Manager', department: 'Product', location: 'London', type: 'Full-time' },
-  { title: 'Full Stack Engineer', department: 'Engineering', location: 'Remote', type: 'Full-time' },
-  { title: 'Medical Imaging Specialist', department: 'Clinical', location: 'London', type: 'Full-time' },
-  { title: 'DevOps Engineer', department: 'Infrastructure', location: 'Remote', type: 'Full-time' },
-  { title: 'UX Designer', department: 'Design', location: 'London', type: 'Full-time' },
-];
-
-const testimonials = [
-  {
-    quote: "At ClinicalVision, I feel empowered to tackle meaningful problems. When I express my ideas, my colleagues genuinely acknowledge and respect them. We debate openly and passionately.",
-    name: 'Dr. Maya Johnson',
-    role: 'Senior ML Researcher',
-    avatar: 'MJ',
-  },
-  {
-    quote: "I've worked at many organizations and ClinicalVision is by far the best in terms of challenging work, cutting-edge technology, and awesome people with lots of diversity.",
-    name: 'Alex Chen',
-    role: 'Principal Engineer',
-    avatar: 'AC',
-  },
-  {
-    quote: "The impact we make is real. Knowing that my code helps radiologists detect cancer earlier keeps me motivated every single day. This is why I do what I do.",
-    name: 'Sarah Park',
-    role: 'Staff Software Engineer',
-    avatar: 'SP',
-  },
-];
-
 // Culture pillars for dark gradient cards
 const culturePillars = [
-  { icon: <TrendingUp sx={{ fontSize: 32 }} />, title: 'Impact-Driven', description: 'Every line of code has the potential to save lives. We measure success by clinical outcomes.' },
+  { icon: <TrendingUp sx={{ fontSize: 32 }} />, title: 'Impact-Driven', description: 'We aim for work that could eventually support clinicians, and we are open about what has and has not been validated.' },
   { icon: <Psychology sx={{ fontSize: 32 }} />, title: 'Intellectual Curiosity', description: 'We foster an environment where questions are celebrated and learning never stops.' },
   { icon: <Groups sx={{ fontSize: 32 }} />, title: 'Collaborative Spirit', description: 'The best ideas emerge from diverse perspectives working together.' },
-  { icon: <LocalHospital sx={{ fontSize: 32 }} />, title: 'Clinical Excellence', description: 'We partner with leading clinicians to build tools that truly work in practice.' },
-];
-
-// Partner hospitals for scrolling section
-const partnerHospitals = [
-  'Stanford Health', 'Mayo Clinic', 'Johns Hopkins', 'Cleveland Clinic', 
-  'Mass General', 'UCLA Health', 'Duke Health', 'UPMC',
+  { icon: <LocalHospital sx={{ fontSize: 32 }} />, title: 'Clinical Excellence', description: 'We aim to work with clinicians to understand what would make tools like this useful in practice.' },
 ];
 
 const CareersPage: React.FC = () => {
   const navigate = useNavigate();
-  const [selectedTestimonial, setSelectedTestimonial] = useState(0);
 
   return (
     <PageLayout>
       <SEOHead
-        title="Careers — Join Our Team"
-        description="Join ClinicalVision and help revolutionize cancer detection with AI. We're hiring ML engineers, product managers, and full-stack developers. Remote-friendly roles in London."
-        keywords={['medical AI careers', 'healthcare AI jobs', 'machine learning engineer jobs', 'radiology AI careers', 'ClinicalVision careers']}
+        title="Careers"
+        description="ClinicalVision is a research prototype and is not currently hiring. Contact us about research collaboration."
+        keywords={['ClinicalVision careers']}
         canonicalPath="/careers"
       />
       {/* Hero - Lunit Style */}
@@ -150,9 +100,9 @@ const CareersPage: React.FC = () => {
               mb: 4,
             }}
           >
-            Join the Minds Turning
+            Research
             <Box component="span" sx={{ display: 'block', color: lunitColors.teal }}>
-              AI into a Force Against Cancer
+              Collaboration
             </Box>
           </Typography>
           <Typography
@@ -165,7 +115,7 @@ const CareersPage: React.FC = () => {
               lineHeight: 1.7,
             }}
           >
-            At ClinicalVision, we unite science, data, and purpose to change how the world fights cancer. Be part of a team where your work drives innovation—and saves lives.
+            ClinicalVision is a research prototype in explainable breast-imaging AI. We are not currently hiring, but welcome conversations with researchers and clinicians.
           </Typography>
         </Box>
       </Box>
@@ -182,7 +132,7 @@ const CareersPage: React.FC = () => {
             mb: 2,
           }}
         >
-          Open Positions
+          No Open Positions
         </Typography>
         <Typography
           sx={{
@@ -193,130 +143,27 @@ const CareersPage: React.FC = () => {
             textAlign: 'center',
             maxWidth: 600,
             mx: 'auto',
-            mb: 6,
+            mb: 4,
           }}
         >
-          Join our growing team. We're always looking for talented individuals passionate about AI and healthcare.
+          ClinicalVision is a research prototype and is not currently hiring. If you are interested in
+          research collaboration, please get in touch.
         </Typography>
-
-        <Box sx={{ maxWidth: 900, mx: 'auto' }}>
-          {openings.map((job, idx) => (
-            <Box
-              key={idx}
-              sx={{
-                p: 3,
-                mb: 2,
-                borderRadius: lunitRadius.lg,
-                border: `1px solid ${alpha(lunitColors.darkerGray, 0.1)}`,
-                display: 'flex',
-                flexDirection: { xs: 'column', md: 'row' },
-                alignItems: { xs: 'flex-start', md: 'center' },
-                justifyContent: 'space-between',
-                gap: 2,
-                transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
-                cursor: 'pointer',
-                position: 'relative',
-                overflow: 'hidden',
-                '&::before': {
-                  content: '""',
-                  position: 'absolute',
-                  left: 0,
-                  top: 0,
-                  bottom: 0,
-                  width: '3px',
-                  bgcolor: 'transparent',
-                  transition: 'all 0.3s ease',
-                },
-                '&:hover': {
-                  bgcolor: alpha(lunitColors.teal, 0.02),
-                  boxShadow: lunitShadows.cardHoverTeal,
-                  transform: 'translateX(4px)',
-                  '&::before': {
-                    bgcolor: lunitColors.teal,
-                  },
-                },
-              }}
-            >
-              <Box>
-                <Typography
-                  sx={{
-                    fontFamily: lunitTypography.fontFamilyHeading,
-                    fontSize: '18px',
-                    fontWeight: 500,
-                    color: lunitColors.headingColor,
-                    mb: 0.5,
-                  }}
-                >
-                  {job.title}
-                </Typography>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center' }}>
-                  <Typography
-                    sx={{
-                      fontFamily: lunitTypography.fontFamilyBody,
-                      fontSize: '14px',
-                      fontWeight: 400,
-                      color: lunitColors.teal,
-                    }}
-                  >
-                    {job.department}
-                  </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: lunitColors.darkGrey }}>
-                    <LocationOn sx={{ fontSize: 16 }} />
-                    <Typography sx={{ fontSize: '13px', fontFamily: lunitTypography.fontFamilyBody }}>
-                      {job.location}
-                    </Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: lunitColors.darkGrey }}>
-                    <AccessTime sx={{ fontSize: 16 }} />
-                    <Typography sx={{ fontSize: '13px', fontFamily: lunitTypography.fontFamilyBody }}>
-                      {job.type}
-                    </Typography>
-                  </Box>
-                </Box>
-              </Box>
-              <Button
-                endIcon={<EastOutlined />}
-                onClick={() => navigate(ROUTES.CONTACT)}
-                sx={{
-                  fontFamily: lunitTypography.fontFamilyBody,
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  bgcolor: lunitColors.black,
-                  color: lunitColors.white,
-                  px: 3,
-                  py: 1,
-                  borderRadius: lunitRadius.full,
-                  textTransform: 'none',
-                  '&:hover': {
-                    bgcolor: lunitColors.teal,
-                    color: lunitColors.black,
-                  },
-                }}
-              >
-                Apply Now
-              </Button>
-            </Box>
-          ))}
-
-          <Box sx={{ textAlign: 'center', mt: 4 }}>
-            <Button
-              endIcon={<ArrowForward />}
-              onClick={() => navigate(ROUTES.CAREERS)}
-              sx={{
-                fontFamily: lunitTypography.fontFamilyBody,
-                fontSize: '14px',
-                fontWeight: 500,
-                color: lunitColors.teal,
-                textTransform: 'none',
-                '&:hover': {
-                  bgcolor: 'transparent',
-                  textDecoration: 'underline',
-                },
-              }}
-            >
-              View all roles
-            </Button>
-          </Box>
+        <Box sx={{ textAlign: 'center' }}>
+          <Button
+            endIcon={<ArrowForward />}
+            onClick={() => navigate(ROUTES.CONTACT)}
+            sx={{
+              fontFamily: lunitTypography.fontFamilyBody,
+              fontSize: '14px',
+              fontWeight: 500,
+              color: lunitColors.teal,
+              textTransform: 'none',
+              '&:hover': { bgcolor: 'transparent', textDecoration: 'underline' },
+            }}
+          >
+            Contact the research team
+          </Button>
         </Box>
       </PageSection>
 
@@ -449,348 +296,11 @@ const CareersPage: React.FC = () => {
       </Box>
       </ScrollReveal>
 
-      {/* Team Interview / Testimonials Section */}
-      <ScrollReveal>
-      <Box sx={{ bgcolor: lunitColors.lightestGray, py: { xs: 8, md: 12 } }}>
-        <Box sx={{ maxWidth: 1200, mx: 'auto', px: { xs: 3, md: 6 } }}>
-          <Typography
-            sx={{
-              fontFamily: lunitTypography.fontFamilyHeading,
-              fontSize: 'clamp(28px, 4vw, 48px)',
-              fontWeight: 300,
-              color: lunitColors.headingColor,
-              textAlign: 'center',
-              mb: 6,
-            }}
-          >
-            ClinicalVision Team Interview
-          </Typography>
-
-          <Typography
-            sx={{
-              fontFamily: lunitTypography.fontFamilyBody,
-              fontSize: '12px',
-              fontWeight: 300,
-              color: lunitColors.grey,
-              textAlign: 'center',
-              mt: -4,
-              mb: 5,
-              fontStyle: 'italic',
-            }}
-          >
-            * Representative testimonials for illustrative purposes
-          </Typography>
-
-          <Grid container spacing={4} alignItems="center">
-            <Grid size={{ xs: 12, md: 7 }}>
-              <Box
-                sx={{
-                  p: { xs: 4, md: 5 },
-                  borderRadius: lunitRadius['2xl'],
-                  bgcolor: lunitColors.white,
-                  minHeight: 280,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  animation: `${fadeIn} 0.5s ease`,
-                  key: selectedTestimonial,
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontFamily: lunitTypography.fontFamilyBody,
-                    fontSize: 'clamp(18px, 2vw, 22px)',
-                    fontWeight: 300,
-                    color: lunitColors.text,
-                    lineHeight: 1.8,
-                    mb: 4,
-                    fontStyle: 'italic',
-                  }}
-                >
-                  "{testimonials[selectedTestimonial].quote}"
-                </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                  <Box
-                    sx={{
-                      width: 56,
-                      height: 56,
-                      borderRadius: '50%',
-                      bgcolor: alpha(lunitColors.teal, 0.1),
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        fontFamily: lunitTypography.fontFamilyHeading,
-                        fontSize: '18px',
-                        fontWeight: 500,
-                        color: lunitColors.teal,
-                      }}
-                    >
-                      {testimonials[selectedTestimonial].avatar}
-                    </Typography>
-                  </Box>
-                  <Box>
-                    <Typography
-                      sx={{
-                        fontFamily: lunitTypography.fontFamilyHeading,
-                        fontSize: '16px',
-                        fontWeight: 500,
-                        color: lunitColors.headingColor,
-                      }}
-                    >
-                      {testimonials[selectedTestimonial].name}
-                    </Typography>
-                    <Typography
-                      sx={{
-                        fontFamily: lunitTypography.fontFamilyBody,
-                        fontSize: '14px',
-                        fontWeight: 400,
-                        color: lunitColors.darkGrey,
-                      }}
-                    >
-                      {testimonials[selectedTestimonial].role}
-                    </Typography>
-                  </Box>
-                </Box>
-              </Box>
-
-              {/* Testimonial dots */}
-              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, mt: 3 }}>
-                {testimonials.map((_, idx) => (
-                  <Box
-                    key={idx}
-                    onClick={() => setSelectedTestimonial(idx)}
-                    sx={{
-                      width: selectedTestimonial === idx ? 24 : 10,
-                      height: 10,
-                      borderRadius: lunitRadius.full,
-                      bgcolor: selectedTestimonial === idx ? lunitColors.teal : alpha(lunitColors.darkerGray, 0.2),
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        bgcolor: selectedTestimonial === idx ? lunitColors.teal : alpha(lunitColors.darkerGray, 0.4),
-                      },
-                    }}
-                  />
-                ))}
-              </Box>
-            </Grid>
-            <Grid size={{ xs: 12, md: 5 }}>
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(2, 1fr)',
-                  gap: 2,
-                }}
-              >
-                {[
-                  { src: '/images/team/team-discussion-closeup-card.webp', alt: 'Team members in focused discussion' },
-                  { src: '/images/team/team-boardroom-full-card.webp', alt: 'Full team boardroom meeting' },
-                  { src: '/images/team/team-collaboration-standing-card.webp', alt: 'Team collaborating around a whiteboard' },
-                  { src: '/images/team/team-planning-laptops-card.webp', alt: 'Team planning session with laptops' },
-                ].map((img, idx) => (
-                  <Box
-                    key={idx}
-                    sx={{
-                      aspectRatio: '1',
-                      borderRadius: lunitRadius.lg,
-                      overflow: 'hidden',
-                      position: 'relative',
-                      '&:hover img': {
-                        transform: 'scale(1.05)',
-                      },
-                    }}
-                  >
-                    <Box
-                      component="img"
-                      src={img.src}
-                      alt={img.alt}
-                      loading="lazy"
-                      sx={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        display: 'block',
-                        transition: 'transform 0.4s ease',
-                      }}
-                    />
-                  </Box>
-                ))}
-              </Box>
-            </Grid>
-          </Grid>
-        </Box>
-      </Box>
-      </ScrollReveal>
-
-      {/* Benefits Section */}
-      <PageSection paddingY="large">
-        <Typography
-          sx={{
-            fontFamily: lunitTypography.fontFamilyHeading,
-            fontSize: 'clamp(28px, 4vw, 48px)',
-            fontWeight: 300,
-            color: lunitColors.headingColor,
-            textAlign: 'center',
-            mb: 2,
-          }}
-        >
-          Why Join ClinicalVision?
-        </Typography>
-        <Typography
-          sx={{
-            fontFamily: lunitTypography.fontFamilyBody,
-            fontSize: '16px',
-            fontWeight: 300,
-            color: lunitColors.text,
-            textAlign: 'center',
-            maxWidth: 600,
-            mx: 'auto',
-            mb: 6,
-          }}
-        >
-          We offer competitive benefits to support your growth, wellness, and work-life balance.
-        </Typography>
-
-        <Grid container spacing={4}>
-          {benefits.map((benefit, idx) => (
-            <Grid size={{ xs: 12, sm: 6, md: 3 }} key={idx}>
-              <Box
-                sx={{
-                  p: 4,
-                  height: '100%',
-                  borderRadius: lunitRadius['2xl'],
-                  bgcolor: lunitColors.white,
-                  border: `1px solid ${alpha(lunitColors.darkerGray, 0.08)}`,
-                  transition: 'all 0.3s ease',
-                  '&:hover': {
-                    boxShadow: lunitShadows.cardHoverTeal,
-                    transform: 'translateY(-4px)',
-                  },
-                }}
-              >
-                <Box
-                  sx={{
-                    width: 56,
-                    height: 56,
-                    borderRadius: lunitRadius.lg,
-                    bgcolor: alpha(lunitColors.teal, 0.1),
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: lunitColors.teal,
-                    mb: 2,
-                  }}
-                >
-                  {benefit.icon}
-                </Box>
-                <Typography
-                  sx={{
-                    fontFamily: lunitTypography.fontFamilyHeading,
-                    fontSize: '18px',
-                    fontWeight: 500,
-                    color: lunitColors.headingColor,
-                    mb: 1,
-                  }}
-                >
-                  {benefit.title}
-                </Typography>
-                <Typography
-                  sx={{
-                    fontFamily: lunitTypography.fontFamilyBody,
-                    fontSize: '14px',
-                    fontWeight: 300,
-                    color: lunitColors.text,
-                    lineHeight: 1.6,
-                  }}
-                >
-                  {benefit.description}
-                </Typography>
-              </Box>
-            </Grid>
-          ))}
-        </Grid>
-      </PageSection>
-
-      {/* Partner Hospitals - Scrolling Logos */}
-      <ScrollReveal>
-      <Box 
-        sx={{ 
-          py: { xs: 6, md: 8 },
-          bgcolor: lunitColors.lightestGray,
-          overflow: 'hidden',
-          position: 'relative',
-          '&::before, &::after': {
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            bottom: 0,
-            width: '100px',
-            zIndex: 2,
-          },
-          '&::before': {
-            left: 0,
-            background: `linear-gradient(90deg, ${lunitColors.lightestGray} 0%, transparent 100%)`,
-          },
-          '&::after': {
-            right: 0,
-            background: `linear-gradient(-90deg, ${lunitColors.lightestGray} 0%, transparent 100%)`,
-          },
-        }}
-      >
-        <Typography
-          sx={{
-            fontFamily: lunitTypography.fontFamilyBody,
-            fontSize: '14px',
-            fontWeight: 500,
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-            color: lunitColors.darkGrey,
-            textAlign: 'center',
-            mb: 4,
-          }}
-        >
-          Our Team Works With Leading Institutions
-        </Typography>
-        
-        <Box
-          sx={{
-            display: 'flex',
-            gap: 8,
-            animation: `${scrollX} 25s linear infinite`,
-            width: 'max-content',
-          }}
-        >
-          {[...partnerHospitals, ...partnerHospitals].map((hospital, idx) => (
-            <Typography
-              key={idx}
-              sx={{
-                fontFamily: lunitTypography.fontFamilyHeading,
-                fontSize: '20px',
-                fontWeight: 400,
-                color: alpha(lunitColors.darkerGray, 0.4),
-                whiteSpace: 'nowrap',
-                transition: 'color 0.3s ease',
-                '&:hover': {
-                  color: lunitColors.teal,
-                },
-              }}
-            >
-              {hospital}
-            </Typography>
-          ))}
-        </Box>
-      </Box>
-      </ScrollReveal>
-
       {/* CTA */}
       <CTASection
-        title="Don't See a Position That Fits?"
-        subtitle="Join our Talent Pool. We're always interested in meeting talented people, even if we don't have an open role that matches your background."
-        buttonText="Join Talent Pool"
+        title="Interested in Research Collaboration?"
+        subtitle="ClinicalVision is a research prototype. Get in touch if you would like to discuss the work."
+        buttonText="Contact Us"
         buttonPath="/contact"
         variant="dark"
       />

@@ -69,31 +69,6 @@ const AUTHORS = {
     role: 'Founder & Lead Developer',
     avatar: '/images/authors/avatar-ma.webp',
   },
-  drChen: {
-    name: 'Dr. Sarah Chen',
-    role: 'Chief Medical AI Officer',
-    avatar: '/images/authors/avatar-sc.webp',
-  },
-  drPatel: {
-    name: 'Dr. Raj Patel',
-    role: 'Director of Clinical Research',
-    avatar: '/images/authors/avatar-rp.webp',
-  },
-  emmaWilson: {
-    name: 'Emma Wilson',
-    role: 'Senior ML Engineer',
-    avatar: '/images/authors/avatar-ew.webp',
-  },
-  drKimura: {
-    name: 'Dr. Yuki Kimura',
-    role: 'Radiologist & Clinical Advisor',
-    avatar: '/images/authors/avatar-yk.webp',
-  },
-  jamesOkafor: {
-    name: 'James Okafor',
-    role: 'Healthcare Technology Analyst',
-    avatar: '/images/authors/avatar-jo.webp',
-  },
 };
 
 // =============================================================================
@@ -159,10 +134,10 @@ export const blogPosts: BlogPost[] = [
         id: 'validating-accuracy-at-scale',
         heading: 'Validating Accuracy at Scale',
         content: `
-          <p>The transition from promising research to clinical deployment demands rigorous, multi-centre validation. A landmark 2024 study published in <em>The Lancet Oncology</em> evaluated an AI system across 80,000 screening examinations from four European countries, demonstrating a <strong>13% improvement in cancer detection rate</strong> while simultaneously reducing false-positive recalls by 5.7%.</p>
-          <p>Google Health's 2025 ISBI trial further solidified the evidence base, showing that an AI system could identify <strong>25% of interval cancers</strong> — tumours that emerge between routine screening rounds — that had been initially classified as normal by human readers. This category of missed cancers has historically been the most clinically consequential, as interval cancers tend to be faster-growing and diagnosed at later stages.</p>
-          <p>At ClinicalVision, our own multi-centre validation demonstrated <strong>97.5% sensitivity</strong> (the proportion of true cancers correctly identified) with a specificity of 94.2%. These metrics were validated across 12 diverse healthcare institutions, with careful attention to demographic balance across age groups, breast density categories, and imaging equipment manufacturers.</p>
-          <blockquote>The question is no longer whether AI can match radiologist-level accuracy — the evidence is overwhelming. The question is how to deploy it responsibly, equitably, and at scale.</blockquote>
+          <p>The transition from promising research to clinical deployment demands rigorous, prospective validation. The MASAI randomised trial (Lång et al., 2023), published in <em>The Lancet Oncology</em>, enrolled about 80,000 women in a Swedish screening programme and found that AI-supported screening detected cancers at a similar or higher rate than standard double reading while reducing the screen-reading workload by roughly 44%.</p>
+          <p>Retrospective work such as McKinney et al. (2020) in <em>Nature</em> has also shown that AI can match or exceed radiologist performance on large screening datasets, although retrospective results do not always carry over to prospective settings.</p>
+          <p>ClinicalVision is at an earlier stage. Our V12 research baseline reaches an AUC of 0.799 (95% CI 0.77 to 0.83, with test-time augmentation) on 701 lesion-level CBIS-DDSM test images (79.6% sensitivity and 64.3% specificity at the default threshold). It has not been validated on external, multi-site or prospective data, and it is not a clinically validated product.</p>
+          <blockquote>The question is no longer only whether AI can approach radiologist-level accuracy on benchmark data. The question is how to validate it rigorously, and deploy it responsibly and equitably.</blockquote>
         `,
       },
       {
@@ -255,7 +230,7 @@ export const blogPosts: BlogPost[] = [
     ],
     relatedSlugs: [
       'understanding-birads-categories-clinicians-guide',
-      'clinicalvision-sensitivity-multi-center-study',
+      'clinicalvision-v12-research-baseline-results',
       'integrating-ai-radiology-workflow-best-practices',
     ],
   },
@@ -334,7 +309,7 @@ export const blogPosts: BlogPost[] = [
           <p>ClinicalVision's approach to BI-RADS prediction involves several innovations:</p>
           <ul>
             <li><strong>Multi-scale feature analysis:</strong> Our DenseNet-based architecture simultaneously analyses micro-calcification patterns (sub-millimetre features) and mass morphology (multi-centimetre structures), mirroring the radiologist's multi-resolution reading strategy.</li>
-            <li><strong>Confidence-calibrated predictions:</strong> Rather than outputting a single BI-RADS category, ClinicalVision provides calibrated probability distributions across categories. A prediction of "BI-RADS 4A with 62% confidence, BI-RADS 3 at 28%" gives clinicians nuanced information about the AI's assessment.</li>
+            <li><strong>Confidence-aware predictions:</strong> Rather than outputting a single BI-RADS category, a confidence-aware tool should show a probability distribution across categories (the current ClinicalVision baseline outputs uncalibrated probabilities). A prediction of "BI-RADS 4A with 62% confidence, BI-RADS 3 at 28%" gives clinicians nuanced information about the AI's assessment.</li>
             <li><strong>Uncertainty quantification:</strong> When the model encounters an ambiguous or out-of-distribution case, it explicitly flags high uncertainty, prompting the radiologist to apply additional scrutiny rather than defaulting to the AI's best guess.</li>
           </ul>
           <p>In a retrospective analysis of 5,000 screening mammograms, using ClinicalVision as a concurrent reader reduced inter-radiologist BI-RADS disagreement by <strong>34%</strong>, with the largest improvement observed at the BI-RADS 3/4A boundary.</p>
@@ -353,7 +328,7 @@ export const blogPosts: BlogPost[] = [
         id: 'clinical-integration',
         heading: 'Practical Integration: AI-Assisted BI-RADS in Clinical Workflow',
         content: `
-          <p>Implementing AI-assisted BI-RADS classification requires thoughtful workflow design. Based on feedback from our partner radiologists, ClinicalVision follows these principles:</p>
+          <p>Implementing AI-assisted BI-RADS classification requires thoughtful workflow design. ClinicalVision follows these principles:</p>
           <ul>
             <li><strong>Non-intrusive overlay:</strong> AI annotations (region-of-interest overlays, BI-RADS predictions, confidence scores) are displayed in a collapsible panel alongside the native mammogram — never obscuring the original image.</li>
             <li><strong>Radiologist-final authority:</strong> The AI provides a suggestion; the radiologist makes the final BI-RADS assessment. This maintains clinical accountability and regulatory compliance.</li>
@@ -393,64 +368,63 @@ export const blogPosts: BlogPost[] = [
     ],
     relatedSlugs: [
       'ai-transforming-breast-cancer-screening-2026',
-      'clinicalvision-sensitivity-multi-center-study',
+      'clinicalvision-v12-research-baseline-results',
       'role-of-uncertainty-quantification-medical-ai',
     ],
   },
 
   // ─────────────────────────────────────────────────────────────────────────
-  // POST 3: Multi-Center Sensitivity Study
+  // POST 3: V12 Research Baseline Results
   // ─────────────────────────────────────────────────────────────────────────
   {
-    slug: 'clinicalvision-sensitivity-multi-center-study',
-    title: 'ClinicalVision Achieves 97.5% Sensitivity in Multi-Center Study',
+    slug: 'clinicalvision-v12-research-baseline-results',
+    title: 'ClinicalVision V12 Research Baseline: What the Results Show, and What They Do Not',
     excerpt:
-      'Results from our latest clinical validation study across 12 healthcare institutions.',
+      'Our DenseNet-121 ensemble reaches an AUC of 0.799 on 701 CBIS-DDSM lesion crops. Here is how to read that number, and where its limits are.',
     date: 'March 5, 2026',
     isoDate: '2026-03-05',
     category: 'Research',
-    readTime: '5 min read',
-    wordCount: 1600,
+    readTime: '4 min read',
+    wordCount: 800,
     image: '/images/blog/thumb-sensitivity-study.webp',
-    imageAlt: 'Performance metrics chart showing ClinicalVision sensitivity and specificity results',
-    author: AUTHORS.drPatel,
+    imageAlt: 'Performance metrics chart showing the ClinicalVision V12 research baseline results',
+    author: AUTHORS.muhammadAnsary,
     seo: {
       metaDescription:
-        'ClinicalVision\'s multi-centre validation study demonstrates 97.5% sensitivity across 12 institutions — methodology, results, and what they mean for clinical adoption.',
+        'ClinicalVision V12 research baseline: AUC 0.799 on 701 CBIS-DDSM lesion crops. Methodology, results at two operating points, and an honest account of the limitations.',
       keywords: [
-        'clinical AI validation',
-        'multi-center study',
+        'breast cancer AI evaluation',
+        'CBIS-DDSM',
         'AI sensitivity specificity',
-        'breast cancer AI accuracy',
-        'ClinicalVision validation',
+        'DenseNet-121 ensemble',
+        'ClinicalVision research baseline',
       ],
     },
     sections: [
       {
         id: 'study-design',
-        heading: 'Study Design and Methodology',
+        heading: 'Evaluation Design',
         content: `
-          <p>Validating a medical AI system requires far more than reporting accuracy on a held-out test set from the same institution where the model was developed. Real-world clinical environments introduce variation in imaging equipment (GE, Hologic, Siemens, Fujifilm), acquisition protocols, patient demographics, and disease prevalence that can cause even high-performing models to degrade.</p>
-          <p>Our multi-centre validation study was designed to address these challenges head-on. Between September 2024 and December 2025, ClinicalVision's breast cancer detection model was evaluated on <strong>28,450 screening and diagnostic mammograms</strong> from 12 healthcare institutions across four countries (United States, United Kingdom, Germany, and Japan).</p>
-          <p>Key methodological decisions included:</p>
+          <p>Before describing any result, it is important to state what was measured. The V12 research baseline is a three-model DenseNet-121 ensemble (independently seeded) trained and evaluated on the public CBIS-DDSM dataset using lesion-level region-of-interest (ROI) crops. Each image is a pre-located lesion, and the task is to classify it as benign or malignant. This is not screening-level detection on full-field mammograms.</p>
+          <p>The held-out test set contains <strong>701 lesion images</strong> (426 benign and 275 malignant). Training used a three-stage progressive fine-tuning schedule, focal loss, and CLAHE contrast enhancement, with a separate validation split used for model selection.</p>
           <ul>
-            <li><strong>Strict temporal separation:</strong> The validation dataset contained only examinations acquired after the model's training data cutoff, eliminating any risk of data leakage.</li>
-            <li><strong>Enriched case mix:</strong> The study cohort was enriched with proven cancer cases (biopsy-confirmed) to achieve adequate statistical power, with cancer prevalence of approximately 8% — higher than typical screening prevalence (~0.5%) but standard practice for diagnostic accuracy studies.</li>
-            <li><strong>Ground truth adjudication:</strong> Pathology reports served as the reference standard for cancer cases; a minimum 24-month cancer-free follow-up was required for negative cases.</li>
+            <li><strong>Dataset:</strong> CBIS-DDSM, a curated subset of the Digital Database for Screening Mammography (scanned film).</li>
+            <li><strong>Ground truth:</strong> Pathology-confirmed labels supplied with the dataset.</li>
+            <li><strong>Validation:</strong> Internal hold-out test set only. No external, multi-site, or prospective validation has been carried out yet.</li>
           </ul>
         `,
       },
       {
         id: 'primary-results',
-        heading: 'Primary Results: Sensitivity and Specificity',
+        heading: 'Primary Results',
         content: `
-          <p>ClinicalVision demonstrated a <strong>per-examination sensitivity of 97.5%</strong> (95% CI: 96.1–98.5%) and a <strong>specificity of 94.2%</strong> (95% CI: 93.7–94.7%) at the pre-specified operating point optimised for population screening.</p>
-          <p>To contextualise these results: the average single-reader radiologist sensitivity in large benchmark studies ranges from 82% to 89%, with specificity of 88–93%. ClinicalVision's performance exceeds the upper bound of typical single-reader performance.</p>
-          <p>When stratified by key subgroups, performance remained robust:</p>
+          <p>On the 701-image test set the ensemble achieved an <strong>AUC of 0.799</strong>. At the deployed decision threshold of 0.5 it reached <strong>79.6% sensitivity</strong> and <strong>64.3% specificity</strong> (219 of 275 malignant lesions detected; 274 of 426 benign lesions correctly cleared). Moving the threshold to the Youden-optimal value of 0.656 trades sensitivity for specificity: 64.7% sensitivity and 79.8% specificity.</p>
+          <p>These results are modest. They are below published figures for large, purpose-built screening systems and below the 0.88 AUC target we originally set. We report them plainly because the purpose of this baseline is to give the platform a reproducible, auditable reference model, not to claim clinical performance.</p>
           <ul>
-            <li><strong>By breast density:</strong> Sensitivity was 98.1% for fatty/scattered breasts (ACR A/B) and 96.4% for heterogeneously/extremely dense breasts (ACR C/D) — a smaller density-related performance gap than typically observed in human readers.</li>
-            <li><strong>By cancer type:</strong> Sensitivity for invasive carcinomas was 98.2%, and for ductal carcinoma in situ (DCIS) was 94.8%, consistent with the known challenge of detecting DCIS mammographically.</li>
-            <li><strong>By imaging vendor:</strong> No statistically significant performance differences were observed across the four imaging equipment manufacturers in the study (p = 0.34, chi-square test).</li>
+            <li><strong>Operating point 0.5:</strong> 56 missed malignant lesions (false negatives) and 152 false alarms (false positives).</li>
+            <li><strong>Operating point 0.656:</strong> 97 false negatives and 86 false positives.</li>
+            <li><strong>Confidence interval:</strong> AUC 0.7995, 95% bootstrap CI 0.766 to 0.831. The 0.656 operating point was chosen on the test set itself, so its figures are optimistic.</li>
+            <li><strong>Test-time augmentation:</strong> this AUC uses 8-way test-time augmentation; without it the ensemble scores 0.772, which is what the live demo currently runs.</li>
           </ul>
         `,
       },
@@ -458,31 +432,25 @@ export const blogPosts: BlogPost[] = [
         id: 'comparison-benchmarks',
         heading: 'Comparison with Published Benchmarks',
         content: `
-          <p>Placing our results in the context of other validated breast cancer AI systems helps clarify their significance:</p>
-          <p>The ScreenTrust CAD system, evaluated in the MASAI trial (Lång et al., 2023), achieved a cancer detection rate of 6.7 per 1,000 screenings in the AI-supported arm versus 5.6 per 1,000 in the standard double-reading arm — a <strong>20% improvement</strong>. While direct sensitivity comparisons are complicated by different study designs, ClinicalVision's 97.5% sensitivity is <strong>consistent with the upper tier</strong> of published results.</p>
-          <p>Google Health's breast cancer AI, evaluated across multiple international datasets, reported AUC values of 0.889 (US) and 0.810 (UK). ClinicalVision's ROC-AUC on our multi-centre dataset was <strong>0.983</strong>, reflecting the benefit of our DenseNet-based multi-scale architecture combined with domain-specific data augmentation strategies.</p>
-          <p>Importantly, our study was designed for <strong>clinical decision support</strong>, not autonomous screening. The clinically relevant metric is not whether AI outperforms radiologists, but whether AI-augmented radiologists outperform unaugmented ones. Our companion reader study (currently in preparation) addresses this question directly.</p>
+          <p>Published systems are evaluated on different tasks, so these numbers cannot be compared directly. The MASAI trial (Lång et al., 2023) measured cancer detection in a screening programme, with 6.1 versus 5.1 cancers detected per 1,000 screens in the AI-supported and standard double-reading arms respectively, alongside a large reduction in reading workload. McKinney et al. (2020) reported AUC values of 0.889 (US) and 0.810 (UK) for full-mammogram screening interpretation on large datasets.</p>
+          <p>ClinicalVision's baseline classifies pre-located lesion crops from a small, public, legacy dataset. Its AUC of 0.799 should not be read as equivalent to, or competitive with, those screening results.</p>
+          <p>The platform is designed for <strong>clinical decision support</strong>, not autonomous screening. Showing that AI-assisted readers outperform unaided readers requires a reader study, which has not yet been conducted.</p>
         `,
       },
       {
         id: 'fairness-analysis',
-        heading: 'Fairness and Demographic Subgroup Analysis',
+        heading: 'Fairness and Subgroup Analysis',
         content: `
-          <p>A high aggregate sensitivity is meaningless if it masks disparities in performance across patient subgroups. We conducted pre-registered fairness analyses across age, ethnicity, and socioeconomic factors where data were available:</p>
-          <ul>
-            <li><strong>Age:</strong> Sensitivity was 97.8% for patients aged 50–69 (the core screening population) and 96.2% for patients aged 40–49. The slight decrease in younger patients is consistent with higher breast density in this age group.</li>
-            <li><strong>Ethnicity/race:</strong> In the US cohort (n = 8,200), sensitivity differences across self-reported racial groups (White, Black, Asian, Hispanic) were not statistically significant (p = 0.21). However, we note that the Japanese cohort was analysed separately due to population-level differences in breast cancer epidemiology and imaging protocols.</li>
-          </ul>
-          <p>These analyses informed the design of ClinicalVision's <strong>Fairness Dashboard</strong>, which continuously monitors real-time model performance across demographic dimensions in deployed clinical settings and alerts administrators to emerging disparities.</p>
+          <p>CBIS-DDSM does not include race, ethnicity or socioeconomic information, so we have not been able to measure performance across those groups, and we make no claim about the demographic fairness of the current model. Lesion type, breast density and assessment fields are available and will form the first subgroup analysis.</p>
+          <p>The platform's <strong>Fairness Dashboard</strong> demonstrates how subgroup monitoring would work in deployment. At present it is populated with demonstration data and does not represent measured model performance.</p>
         `,
       },
       {
         id: 'limitations-and-future',
         heading: 'Limitations and Next Steps',
         content: `
-          <p>We acknowledge several limitations. First, the enriched study design means that positive predictive value (PPV) and negative predictive value (NPV) cannot be directly extrapolated to population-level screening, where cancer prevalence is substantially lower. Second, while four countries were represented, the study did not include sites from Africa, South America, or South Asia — regions with different breast cancer epidemiology and imaging infrastructure.</p>
-          <p>Third, our evaluation focused on 2D digital mammography. Extension to digital breast tomosynthesis (DBT / 3D mammography), contrast-enhanced mammography, and automated breast ultrasound represents an active area of development.</p>
-          <p>Our next phase of validation — a prospective, real-time clinical trial — is currently enrolling at three partner institutions, with results expected in late 2026. This trial will evaluate ClinicalVision in its intended use environment, measuring not only diagnostic accuracy but also workflow efficiency, radiologist satisfaction, and time-to-diagnosis improvements.</p>
+          <p>The main limitations are: lesion-level crops rather than full mammograms; a single, small, legacy scanned-film dataset; internal hold-out validation only; a wide confidence interval (0.766 to 0.831); 31 patients who appear in both the official training and test lists (excluding their images gives AUC 0.804); and uncertainty estimates (Monte Carlo Dropout, 9 passes) that remain experimental. At the deployed settings, Monte Carlo averaging leaves ensemble AUC unchanged (0.772) and the variance is only a weak error signal (AUC 0.61), so uncertainty is used as a review-triage signal, not as a performance improvement.</p>
+          <p>Our next steps are an independent re-evaluation with bootstrap confidence intervals, patient-level split verification, evaluation on full-field and multi-vendor datasets, and a protocol for external and later prospective validation. No clinical trial is currently enrolling.</p>
         `,
       },
     ],
@@ -530,7 +498,7 @@ export const blogPosts: BlogPost[] = [
     wordCount: 2000,
     image: '/images/blog/thumb-ai-workflow.webp',
     imageAlt: 'Radiology workstation showing AI-integrated clinical workflow with split-screen analysis',
-    author: AUTHORS.drKimura,
+    author: AUTHORS.muhammadAnsary,
     seo: {
       metaDescription:
         'Best practices for integrating AI into radiology workflows — from PACS connectivity and change management to quality metrics and continuous improvement.',
@@ -548,7 +516,7 @@ export const blogPosts: BlogPost[] = [
         heading: 'Beyond the Algorithm: Why Workflow Matters More Than Model Accuracy',
         content: `
           <p>A common misconception in healthcare AI is that model performance — measured by AUC, sensitivity, and specificity on retrospective datasets — determines clinical success. In reality, <strong>implementation quality often matters more than algorithmic sophistication</strong>. A 99%-accurate model that disrupts radiologist workflow, introduces latency, or generates alert fatigue will fail clinically, while an 85%-accurate model that integrates seamlessly can deliver substantial value.</p>
-          <p>Our experience deploying ClinicalVision across 12 institutions has revealed that technical integration (DICOM, HL7, API connectivity) typically accounts for only 20–30% of implementation effort. The remaining 70–80% is <strong>workflow design, change management, and continuous optimisation</strong>.</p>
+          <p>Published implementation research (for example Strohm et al., 2020) points the same way: technical integration (DICOM, HL7, API connectivity) is only part of the effort, and the larger share is <strong>workflow design, change management, and continuous optimisation</strong>. ClinicalVision has not yet been deployed in a clinical site, so this article draws on that literature rather than our own deployments.</p>
           <p>This article distils the key lessons we have learned into actionable best practices for any radiology department considering AI adoption.</p>
         `,
       },
@@ -563,7 +531,7 @@ export const blogPosts: BlogPost[] = [
             <li><strong>Clinical readiness:</strong> Is there clinical champion — typically a senior radiologist — who is willing to lead the pilot, provide feedback, and advocate for the technology within the department?</li>
             <li><strong>Governance readiness:</strong> Is there a clear framework for evaluating AI performance post-deployment, handling disagreements between AI and clinicians, and reporting adverse events?</li>
           </ul>
-          <p>Institutions that score well on all four dimensions proceed to deployment in an average of 8–12 weeks. Those with gaps in governance or data readiness often require 6+ months of preparatory work.</p>
+          <p>Institutions that score well on all four dimensions are generally positioned to move to deployment faster. Those with gaps in governance or data readiness often need a substantial period of preparatory work first; timelines vary widely by site and are not something ClinicalVision has measured.</p>
         `,
       },
       {
@@ -583,7 +551,7 @@ export const blogPosts: BlogPost[] = [
         id: 'change-management',
         heading: 'Step 3: Invest in Change Management',
         content: `
-          <p>Technology adoption is fundamentally a human challenge. Our most successful deployments share common change management strategies:</p>
+          <p>Technology adoption is fundamentally a human challenge. Published implementation research points to common change management strategies (ClinicalVision itself has not been deployed in any clinical setting):</p>
           <ul>
             <li><strong>Transparent pilot design:</strong> Start with a low-stakes pilot — typically 4–6 weeks processing a subset of studies in parallel with the existing workflow, with no clinical action taken on AI outputs. This builds familiarity, generates performance data, and identifies integration issues without clinical risk.</li>
             <li><strong>Radiologist training:</strong> Conduct hands-on training sessions (not just slide decks) where radiologists review cases with and without AI assistance. Focus on the AI's limitations as much as its capabilities. Radiologists who understand the model's failure modes — such as reduced sensitivity for certain lesion morphologies — are better calibrated in their trust.</li>
@@ -598,9 +566,9 @@ export const blogPosts: BlogPost[] = [
         content: `
           <p>Deployment is not the finish line — it is the starting point for continuous quality improvement. Every clinical AI deployment should include:</p>
           <ul>
-            <li><strong>Performance dashboards:</strong> Track sensitivity, specificity, positive predictive value, and recall rate in real time. ClinicalVision's Analytics Dashboard provides these metrics broken down by radiologist, time period, breast density category, and imaging equipment.</li>
+            <li><strong>Performance dashboards:</strong> Track sensitivity, specificity, positive predictive value, and recall rate in real time.</li>
             <li><strong>Discordance analysis:</strong> When AI and radiologist disagree, log the case for retrospective review. These discordances are the richest source of insight for both model improvement and radiologist calibration.</li>
-            <li><strong>Drift detection:</strong> Monitor model performance over time for signs of "dataset drift" — changes in the input data distribution (new imaging equipment, software updates, different patient population) that may degrade model accuracy. ClinicalVision includes automated drift detection that alerts administrators when input characteristics deviate significantly from the training distribution.</li>
+            <li><strong>Drift detection:</strong> Monitor model performance over time for signs of "dataset drift" — changes in the input data distribution (new imaging equipment, software updates, different patient population) that may degrade model accuracy.</li>
             <li><strong>Patient outcome tracking:</strong> Where possible, link AI predictions to pathology outcomes. This creates the gold-standard feedback loop that enables both model retraining and clinical impact measurement.</li>
           </ul>
         `,
@@ -609,7 +577,7 @@ export const blogPosts: BlogPost[] = [
         id: 'common-pitfalls',
         heading: 'Common Pitfalls to Avoid',
         content: `
-          <p>Based on our deployment experience across 12 institutions, the most frequent pitfalls include:</p>
+          <p>Based on the published implementation literature, the most frequent pitfalls include:</p>
           <ul>
             <li><strong>Alert fatigue:</strong> Displaying low-confidence findings as alerts trains radiologists to ignore all AI outputs. Set aggressive confidence thresholds and display uncertain findings passively rather than as active alerts.</li>
             <li><strong>Mixing screening and diagnostic modes:</strong> Different clinical contexts demand different sensitivity/specificity operating points. Using a screening-optimised model for diagnostic workups (or vice versa) degrades clinical utility.</li>
@@ -628,22 +596,18 @@ export const blogPosts: BlogPost[] = [
       },
       {
         id: 2,
-        text: 'Defined Health / RSNA. (2023). Artificial Intelligence in Radiology: Current State and Future Outlook. Insights into Imaging, 14, 178.',
-      },
-      {
-        id: 3,
         text: 'van Leeuwen, K. G., Schalekamp, S., Rutten, M. J., et al. (2021). Artificial intelligence in radiology: 100 commercially available products and their scientific evidence. European Radiology, 31, 3797–3804.',
         url: 'https://doi.org/10.1007/s00330-021-07892-z',
       },
       {
-        id: 4,
+        id: 3,
         text: 'Strohm, L., Hehakaya, C., Ranschaert, E. R., et al. (2020). Implementation of artificial intelligence (AI) applications in radiology: hindering and facilitating factors. European Radiology, 30, 5525–5532.',
         url: 'https://doi.org/10.1007/s00330-020-06946-y',
       },
     ],
     relatedSlugs: [
       'ai-transforming-breast-cancer-screening-2026',
-      'clinicalvision-sensitivity-multi-center-study',
+      'clinicalvision-v12-research-baseline-results',
       'role-of-uncertainty-quantification-medical-ai',
     ],
   },
@@ -663,7 +627,7 @@ export const blogPosts: BlogPost[] = [
     wordCount: 2400,
     image: '/images/blog/thumb-uncertainty.webp',
     imageAlt: 'Uncertainty quantification visualization showing confidence intervals on AI predictions',
-    author: AUTHORS.emmaWilson,
+    author: AUTHORS.muhammadAnsary,
     seo: {
       metaDescription:
         'Why uncertainty quantification is critical for trustworthy medical AI — from Monte Carlo dropout to evidential deep learning, and how ClinicalVision implements it.',
@@ -716,24 +680,20 @@ export const blogPosts: BlogPost[] = [
         content: `
           <p>ClinicalVision implements a hybrid approach combining <strong>MC Dropout</strong> for computational efficiency with <strong>Deep Ensemble elements</strong> for improved calibration. Our architecture includes the following components:</p>
           <ul>
-            <li><strong>Multi-pass inference:</strong> During analysis, the model performs 20 stochastic forward passes with dropout active. The mean prediction serves as the point estimate; the variance across passes quantifies epistemic uncertainty. At the clinical level, this translates to a confidence interval displayed alongside each BI-RADS category prediction.</li>
-            <li><strong>Out-of-distribution detection:</strong> A separate lightweight module monitors the latent-space activations of the final convolutional layers. When an input's activation pattern falls significantly outside the training distribution (measured by Mahalanobis distance), the system flags the case with an "OOD warning" — indicating that the model's predictions may be unreliable.</li>
-            <li><strong>Calibrated confidence scores:</strong> Raw model outputs are calibrated using temperature scaling on a held-out calibration set, ensuring that a reported 90% confidence corresponds to approximately 90% true positive rate in practice. This calibration is periodically refreshed as new data becomes available.</li>
-            <li><strong>Uncertainty-aware routing:</strong> Cases with high composite uncertainty (combining aleatoric and epistemic components) are automatically flagged in the worklist for priority human review, ensuring that the most ambiguous cases receive the most careful attention.</li>
+            <li><strong>Multi-pass inference:</strong> During analysis, the model performs 9 stochastic forward passes (3 per ensemble member) with dropout active. The mean prediction serves as the point estimate; the variance across passes quantifies epistemic uncertainty. At the clinical level, this translates to a confidence interval displayed alongside each BI-RADS category prediction.</li>
+            <li><strong>Out-of-distribution detection (planned):</strong> A lightweight module that monitors latent-space activations and flags inputs that fall outside the training distribution is on our roadmap. It is not part of the current research baseline.</li>
+            <li><strong>Confidence scores (under evaluation):</strong> In offline experiments, isotonic calibration on a held-out set reduced expected calibration error from 0.162 to 0.084. The calibrator is not yet included in the deployed bundle, so displayed confidence scores should be treated as uncalibrated.</li>
+            <li><strong>Uncertainty-aware routing (design goal):</strong> The intended design flags cases with high uncertainty in the worklist for priority human review, so the most ambiguous cases receive the most careful attention.</li>
           </ul>
         `,
       },
       {
         id: 'clinical-impact',
-        heading: 'Clinical Impact: How Uncertainty Information Changes Decisions',
+        heading: 'Clinical Impact: What Has and Has Not Been Tested',
         content: `
-          <p>In a retrospective study comparing radiologists' decisions with and without access to ClinicalVision's uncertainty information, we observed significant changes in clinical behaviour:</p>
-          <ul>
-            <li><strong>Increased scrutiny on high-uncertainty cases:</strong> When the AI flagged a case as "high uncertainty," radiologists spent an average of <strong>35% more time</strong> reviewing the images before making their assessment, compared to cases where the AI expressed high confidence. This additional scrutiny led to the identification of 3 cancers that were initially missed in the standard reading arm.</li>
-            <li><strong>Reduced automation bias:</strong> When AI provided a confident but incorrect assessment (false negative), radiologists with access to the uncertainty estimate were <strong>2.4 times more likely</strong> to override the AI's suggestion compared to radiologists who only saw the AI's categorical prediction without uncertainty context.</li>
-            <li><strong>Appropriate calibration of trust:</strong> Radiologists reported that explicit uncertainty communication helped them develop a more nuanced understanding of the AI's capabilities, leading to what one participant described as "calibrated trust — I know when to lean in and when to lean on my own experience."</li>
-          </ul>
-          <blockquote>A model that says "I'm 95% confident this is benign" carries very different clinical weight from one that says "I'm 55% confident this is benign." Both might give the same point prediction, but only one helps the radiologist make a better decision.</blockquote>
+          <p>ClinicalVision has not run a reader study. No radiologist has used the system in a clinical or experimental setting, so there is no evidence about how uncertainty information changes decisions. In our own offline evaluation, the Monte Carlo dropout variance was only a weak signal of model error (AUC 0.61), so it should not be relied on as a triage tool.</p>
+          <p>Published research on human-AI interaction suggests that how uncertainty is communicated can affect trust and automation bias, but those findings come from other systems and settings and cannot be assumed to transfer to this prototype.</p>
+          <blockquote>A model that says "I'm 95% confident this is benign" carries very different clinical weight from one that says "I'm 55% confident this is benign." Whether our uncertainty estimate is informative enough to make that distinction is exactly what still needs to be tested.</blockquote>
         `,
       },
       {
@@ -743,7 +703,7 @@ export const blogPosts: BlogPost[] = [
           <p>Uncertainty quantification is an essential component of a broader movement toward <strong>trustworthy AI</strong> in healthcare — systems that are not only accurate but also transparent, fair, and accountable. Several emerging directions are particularly promising:</p>
           <ul>
             <li><strong>Hierarchical uncertainty communication:</strong> Different stakeholders need different levels of detail. A radiologist needs per-finding confidence intervals and uncertainty heatmaps. A referring physician needs a summary confidence score. A patient needs a plain-language explanation of what the AI's uncertainty means for their care. Designing interfaces for each audience is an active area of research.</li>
-            <li><strong>Uncertainty-guided active learning:</strong> Using model uncertainty to identify the most informative cases for annotation — those where the model is least certain — can dramatically improve data efficiency in model retraining, reducing the required annotation budget by up to 60%.</li>
+            <li><strong>Uncertainty-guided active learning:</strong> Using model uncertainty to identify the most informative cases for annotation — those where the model is least certain — can dramatically improve data efficiency in model retraining.</li>
             <li><strong>Regulatory integration:</strong> As regulatory frameworks mature, we expect uncertainty reporting to become a required component of AI device submissions. The EU AI Act already mandates that high-risk AI systems must include measures to interpret outputs correctly, which implicitly requires some form of uncertainty communication.</li>
           </ul>
           <p>At ClinicalVision, we believe that a model's ability to say "I don't know" is as valuable as its ability to say "I found something." This philosophy — humility by design — guides every aspect of our system architecture, from training methodology to clinical interface design.</p>
@@ -783,7 +743,7 @@ export const blogPosts: BlogPost[] = [
       },
     ],
     relatedSlugs: [
-      'clinicalvision-sensitivity-multi-center-study',
+      'clinicalvision-v12-research-baseline-results',
       'understanding-birads-categories-clinicians-guide',
       'integrating-ai-radiology-workflow-best-practices',
     ],
@@ -794,26 +754,26 @@ export const blogPosts: BlogPost[] = [
   // ─────────────────────────────────────────────────────────────────────────
   {
     slug: 'patient-perspectives-ai-cancer-screening',
-    title: 'Patient Perspectives on AI in Cancer Screening',
+    title: 'Patient Perspectives on AI in Cancer Screening: What the Research Says',
     excerpt:
-      'Survey results reveal how patients feel about AI-assisted diagnostics.',
+      'A summary of published research on how patients feel about AI-assisted diagnostics, and what it means for how we design and communicate.',
     date: 'February 10, 2026',
     isoDate: '2026-02-10',
     category: 'Patient Experience',
-    readTime: '5 min read',
-    wordCount: 1500,
+    readTime: '4 min read',
+    wordCount: 900,
     image: '/images/blog/thumb-patient-perspectives.webp',
-    imageAlt: 'Diverse group of patients participating in a healthcare survey discussion',
-    author: AUTHORS.jamesOkafor,
+    imageAlt: 'Diverse group of patients participating in a healthcare discussion',
+    author: AUTHORS.muhammadAnsary,
     seo: {
       metaDescription:
-        'Survey results reveal patient attitudes toward AI in cancer screening — including trust levels, information preferences, and the factors that build acceptance.',
+        'What published studies say about patient attitudes toward AI in cancer screening: trust, information needs, common concerns, and design implications.',
       keywords: [
         'patient perspectives AI',
         'AI cancer screening acceptance',
         'healthcare AI trust',
         'patient AI attitudes',
-        'AI diagnostics patient survey',
+        'AI diagnostics patient research',
       ],
     },
     sections: [
@@ -821,77 +781,59 @@ export const blogPosts: BlogPost[] = [
         id: 'survey-background',
         heading: 'Why Patient Voice Matters in AI Healthcare',
         content: `
-          <p>The conversation about AI in healthcare has predominantly been conducted among technologists, clinicians, and regulators. Yet the people most directly affected — patients — have been largely absent from the discourse. Understanding patient attitudes, concerns, and information needs is not merely a matter of ethics; it is a <strong>practical prerequisite for successful deployment</strong>. AI systems that patients distrust or misunderstand will face resistance that undermines clinical adoption regardless of technical merit.</p>
-          <p>In collaboration with patient advocacy groups, ClinicalVision conducted a multi-centre survey of <strong>1,200 women</strong> across the United States, United Kingdom, and Germany who had undergone at least one mammographic screening examination in the past two years. The survey explored attitudes toward AI-assisted cancer screening across five domains: awareness, trust, information preferences, concerns, and conditions for acceptance.</p>
+          <p>The conversation about AI in healthcare has predominantly been conducted among technologists, clinicians, and regulators. Yet the people most directly affected — patients — have been largely absent from the discourse. Understanding patient attitudes, concerns, and information needs is not merely a matter of ethics; it is a <strong>practical prerequisite for successful deployment</strong>.</p>
+          <p>ClinicalVision has not yet run its own patient survey. This article instead summarises themes from published, peer-reviewed research (listed below) and describes how they inform our design decisions. We make no claims about patient attitudes beyond what those studies report.</p>
         `,
       },
       {
         id: 'awareness-and-trust',
-        heading: 'Awareness and Trust: The Current Landscape',
+        heading: 'Trust: Support Tool, Not Replacement',
         content: `
-          <p>Key findings on awareness and trust levels:</p>
-          <ul>
-            <li><strong>68% of respondents</strong> were aware that AI is being used in medical imaging to some extent, though understanding of how AI functions varied substantially. Only 22% could accurately describe AI's role as a "decision support tool" rather than an "autonomous decision maker."</li>
-            <li><strong>54% expressed conditional trust</strong> in AI-assisted screening — they would accept AI involvement if a human radiologist reviewed and confirmed the AI's findings. An additional 18% expressed unconditional trust (comfortable with AI analysis regardless of human oversight), while 28% remained sceptical.</li>
-            <li><strong>Trust was positively correlated</strong> with prior positive healthcare experiences (r = 0.42, p < 0.001) and negatively correlated with personal or family history of medical error (r = −0.31, p < 0.01).</li>
-          </ul>
-          <p>These findings suggest that the framing of AI's role — explicitly as a <strong>tool that assists radiologists</strong> rather than replacing them — is critical for patient acceptance.</p>
+          <p>Across the studies cited here, a consistent theme is that patients are generally open to AI in imaging <strong>when it supports a clinician</strong> rather than replacing one. Ongena et al. (2020) found that patients' views were shaped by their familiarity with computers and their general trust in healthcare. Nelson et al. (2020), studying AI for skin cancer screening, likewise found that patients valued AI but wanted physician involvement to remain central.</p>
+          <p>The framing of AI's role — explicitly as a <strong>tool that assists radiologists</strong> — therefore matters. ClinicalVision is designed for decision support, with the radiologist making the final determination.</p>
         `,
       },
       {
         id: 'information-preferences',
         heading: 'What Do Patients Want to Know?',
         content: `
-          <p>When asked what information they would want to receive if AI were involved in their screening:</p>
-          <ul>
-            <li><strong>82%</strong> wanted to know that AI was being used in their care (transparent disclosure).</li>
-            <li><strong>71%</strong> wanted to understand the specific role AI played — whether it flagged their study for review, confirmed a radiologist's finding, or detected something the radiologist initially missed.</li>
-            <li><strong>64%</strong> wanted access to the AI's confidence level — knowing whether the system was "very confident" or "moderately confident" in its assessment.</li>
-            <li><strong>45%</strong> wanted to see the AI's visual analysis (heatmaps or marked regions) during result discussions with their clinician.</li>
-            <li><strong>Only 23%</strong> wanted detailed technical information about the AI model (architecture, training data, performance statistics).</li>
-          </ul>
-          <p>These results challenge the assumption that patients either want full technical transparency or prefer to remain uninformed. Most patients occupy a pragmatic middle ground: they want <strong>meaningful disclosure at a level they can understand</strong>, focused on what the AI did in their specific case rather than how it works in general.</p>
+          <p>Published work suggests that patients want to be told when AI is involved in their care and to understand its role in plain language, rather than receive technical detail about model architecture or training data (Lennartz et al., 2021; Ongena et al., 2020). Visual explanations such as heatmaps and confidence indicators may help clinicians explain a result, but their usefulness to patients has yet to be established for our system.</p>
+          <p>The practical implication is meaningful disclosure at a level patients can understand, focused on what the AI did in their specific case.</p>
         `,
       },
       {
         id: 'primary-concerns',
-        heading: 'Primary Concerns: What Worries Patients About AI',
+        heading: 'Common Concerns',
         content: `
-          <p>The top five patient concerns, ranked by frequency:</p>
+          <p>Qualitative research, including Richardson et al. (2021), identifies recurring patient concerns about AI in healthcare:</p>
           <ul>
-            <li><strong>False negatives (missed cancers):</strong> 76% — "What if the AI says I'm fine but I'm not?" This was the dominant concern across all demographic groups, reflecting the fundamental asymmetry of screening: a missed cancer has irreversible consequences.</li>
-            <li><strong>Loss of human connection:</strong> 58% — "Will my doctor still spend time explaining my results to me?" Patients worried that AI would depersonalise the screening experience, reducing face-to-face time with clinicians.</li>
-            <li><strong>Data privacy:</strong> 52% — "Who sees my images and the AI's analysis?" Concerns about data storage, sharing, and potential commercial use of health information.</li>
-            <li><strong>Algorithmic bias:</strong> 41% — "Does the AI work equally well for people like me?" This concern was significantly higher among respondents from minority ethnic groups (62% vs. 34%, p < 0.001).</li>
-            <li><strong>Accountability:</strong> 39% — "If the AI makes a mistake, who is responsible?" Patients expressed confusion about whether liability would rest with the AI company, the hospital, or the radiologist.</li>
+            <li><strong>Safety and missed findings:</strong> worry that AI errors, particularly false negatives, could go unnoticed.</li>
+            <li><strong>Loss of human connection:</strong> concern that AI could reduce time and communication with clinicians.</li>
+            <li><strong>Data privacy:</strong> uncertainty about who can access images and AI outputs, and how they are used.</li>
+            <li><strong>Bias:</strong> whether AI works equally well for people from different backgrounds.</li>
+            <li><strong>Accountability:</strong> confusion about who is responsible when an AI-assisted decision is wrong.</li>
           </ul>
         `,
       },
       {
         id: 'building-acceptance',
-        heading: 'Factors That Build Patient Acceptance',
+        heading: 'What Builds Acceptance',
         content: `
-          <p>The survey identified several factors that significantly increased patients' willingness to accept AI-assisted screening:</p>
-          <ul>
-            <li><strong>Human oversight guarantee:</strong> When told that "a qualified radiologist will always review and confirm the AI's findings," acceptance increased from 54% to <strong>81%</strong> — the single most impactful reassurance.</li>
-            <li><strong>Performance data transparency:</strong> Sharing that the AI "has been validated on 28,000+ examinations with 97.5% sensitivity" increased acceptance by 12 percentage points.</li>
-            <li><strong>Institutional endorsement:</strong> Learning that the patient's own hospital/clinic had independently evaluated and approved the AI system increased acceptance by 15 percentage points — more than generic FDA clearance (8 points).</li>
-            <li><strong>Opt-out option:</strong> Simply telling patients they could opt out of AI-assisted screening (even if few would exercise this option) increased acceptance by 9 percentage points, reflecting the importance of perceived autonomy.</li>
-          </ul>
-          <blockquote>The path to patient acceptance is not about proving AI is infallible — it is about demonstrating that AI makes an already comprehensive screening process even more thorough, with human expertise as the final safeguard.</blockquote>
+          <p>The literature points to a few factors that support acceptance: assurance of human oversight, honest communication about performance and limitations, and respect for patient autonomy. Overstating accuracy tends to undermine trust, which is one reason we publish our baseline results with their limitations rather than headline figures alone.</p>
+          <blockquote>The path to patient acceptance is not about proving AI is infallible — it is about demonstrating that AI supports a thorough screening process, with human expertise as the final safeguard.</blockquote>
         `,
       },
       {
         id: 'recommendations',
-        heading: 'Recommendations for Healthcare Providers',
+        heading: 'Implications for Healthcare Providers',
         content: `
-          <p>Based on our survey findings, we offer the following recommendations for healthcare providers deploying AI-assisted screening:</p>
+          <p>Based on this literature, we suggest the following for providers considering AI-assisted screening:</p>
           <ul>
-            <li><strong>Implement proactive disclosure:</strong> Inform patients that AI is being used before their screening appointment, not after. Include a brief, plain-language description in pre-visit materials.</li>
-            <li><strong>Train clinicians in AI communication:</strong> Equip radiologists and referring physicians with talking points for discussing AI's role during results consultations. Patients trust their own clinician's endorsement more than any marketing material.</li>
-            <li><strong>Publish fairness metrics:</strong> Actively communicate that the AI system is monitored for performance equity across demographic groups. For institutions using ClinicalVision, the Fairness Dashboard provides these metrics in patient-accessible formats.</li>
-            <li><strong>Maintain the human touch:</strong> Ensure that AI efficiency gains translate to more face-time with patients, not less. If AI reduces a radiologist's screening burden by 40%, allocate a portion of that time toward patient communication and counselling.</li>
-            <li><strong>Create feedback mechanisms:</strong> Give patients a way to ask questions about AI's role in their care and report concerns. This signals institutional accountability and builds trust through responsiveness.</li>
+            <li><strong>Disclose proactively:</strong> Inform patients that AI is used, ideally before the appointment, in plain language.</li>
+            <li><strong>Train clinicians in AI communication:</strong> Equip radiologists and referring physicians to explain AI's role during results consultations.</li>
+            <li><strong>Monitor and report performance equity:</strong> Measure AI performance across patient subgroups on local data, and share what is found.</li>
+            <li><strong>Maintain the human touch:</strong> Use efficiency gains to preserve, not reduce, time with patients.</li>
+            <li><strong>Create feedback mechanisms:</strong> Give patients a way to ask questions and report concerns.</li>
           </ul>
         `,
       },
@@ -921,143 +863,9 @@ export const blogPosts: BlogPost[] = [
     relatedSlugs: [
       'ai-transforming-breast-cancer-screening-2026',
       'integrating-ai-radiology-workflow-best-practices',
-      'rsna-2023-key-takeaways-ai-radiology',
     ],
   },
 
-  // ─────────────────────────────────────────────────────────────────────────
-  // POST 7: RSNA 2023 Takeaways for AI in Radiology
-  // ─────────────────────────────────────────────────────────────────────────
-  {
-    slug: 'rsna-2023-key-takeaways-ai-radiology',
-    title: 'RSNA 2023: Key Takeaways for AI in Radiology',
-    excerpt:
-      'Highlights and trends from the Radiological Society of North America annual meeting.',
-    date: 'February 5, 2026',
-    isoDate: '2026-02-05',
-    category: 'Events',
-    readTime: '6 min read',
-    wordCount: 1800,
-    image: '/images/blog/thumb-rsna-conference.webp',
-    imageAlt: 'RSNA 2023 conference hall with attendees viewing AI radiology technology exhibits',
-    author: AUTHORS.jamesOkafor,
-    seo: {
-      metaDescription:
-        'Key highlights from RSNA 2023 — from foundation models and multi-modal AI to workflow integration trends and the rise of agentic AI in radiology.',
-      keywords: [
-        'RSNA 2023 AI',
-        'radiology AI trends',
-        'RSNA conference highlights',
-        'AI radiology keynotes',
-        'medical imaging AI 2023',
-      ],
-    },
-    sections: [
-      {
-        id: 'rsna-overview',
-        heading: 'RSNA 2023: The Year AI Moved from Hype to Infrastructure',
-        content: `
-          <p>The 109th Scientific Assembly and Annual Meeting of the Radiological Society of North America (RSNA) convened in Chicago in November 2023, attracting over 40,000 attendees and featuring more than 3,000 scientific presentations. For the third consecutive year, artificial intelligence dominated the programme — but with a notable shift in tenor.</p>
-          <p>Previous years' discussions centred on <em>whether AI works</em> for clinical imaging. RSNA 2023 decisively moved the conversation to <em>how to deploy AI at scale</em> — addressing workflow integration, economic sustainability, regulatory compliance, and health equity. As RSNA President Dr. Matthew Mauro observed in his opening address: <strong>"We are past the proof-of-concept phase. The question is no longer if, but how."</strong></p>
-        `,
-      },
-      {
-        id: 'foundation-models',
-        heading: 'Foundation Models Arrive in Radiology',
-        content: `
-          <p>The biggest technical trend at RSNA 2023 was the emergence of <strong>foundation models</strong> — large, pre-trained AI models that can be adapted to multiple clinical tasks — in medical imaging. Inspired by the success of large language models (GPT-4, Claude) in natural language processing, several groups demonstrated vision-language models that could both analyse medical images and generate natural-language radiology reports.</p>
-          <p>Notable presentations included:</p>
-          <ul>
-            <li><strong>Google Health's Med-PaLM M:</strong> A multi-modal model that can interpret radiographs, answer clinical questions about them, and generate draft structured reports. While not yet clinically validated for autonomous use, the model demonstrated the potential for AI to move beyond detection toward comprehensive image understanding.</li>
-            <li><strong>Microsoft's BiomedCLIP:</strong> A contrastive learning model trained on paired medical images and text from PubMed, showing strong zero-shot performance across chest X-ray, pathology, and dermatology tasks.</li>
-            <li><strong>RAD-DINO:</strong> A self-supervised foundation model for radiological images from multiple institutions, designed to be fine-tuned for specific detection tasks with minimal labelled data — potentially addressing the chronic bottleneck of expert annotation in medical imaging AI.</li>
-          </ul>
-          <p>The implications for breast cancer detection are significant: foundation models pre-trained on diverse medical imaging data could serve as powerful starting points for mammography-specific models, potentially reducing the labelled data requirements from tens of thousands of annotated mammograms to just a few hundred.</p>
-        `,
-      },
-      {
-        id: 'workflow-platforms',
-        heading: 'From Point Solutions to Workflow Platforms',
-        content: `
-          <p>A recurring theme across the vendor exhibition halls was the evolution from individual AI algorithms to <strong>integrated workflow platforms</strong>. Major PACS vendors (GE HealthCare, Siemens Healthineers, Philips, Canon Medical) all demonstrated "AI orchestration" capabilities — platforms that can run multiple AI algorithms in parallel, route results to appropriate worklists, and aggregate findings into unified reports.</p>
-          <p>This platform approach addresses a critical pain point: in 2023, <strong>over 300 FDA-cleared AI medical devices</strong> existed across dozens of clinical applications (chest X-ray, mammography, CT head, echocardiography), but most hospitals used only 1–3 of them due to integration complexity. Each AI product typically required its own viewer, its own workflow, and its own interface — creating "AI silos" that fragmented rather than improved clinical efficiency.</p>
-          <p>The platform model aggregates multiple algorithms behind a single interface, with standardised APIs for PACS integration (DICOMweb, HL7 FHIR), unified result displays, and centralised performance monitoring. ClinicalVision's architecture was designed from the outset with this platform model in mind, providing REST and DICOM interfaces that can be integrated into any standards-compliant orchestration environment.</p>
-        `,
-      },
-      {
-        id: 'economic-evidence',
-        heading: 'The Economics of AI: ROI Evidence Emerges',
-        content: `
-          <p>For the first time at RSNA, multiple sessions were dedicated to the <strong>economic evidence for radiology AI</strong>. Key findings presented included:</p>
-          <ul>
-            <li>A Swedish study showed that AI-supported mammography screening could reduce per-screen costs by €4.50 through reader workload reduction, while simultaneously improving cancer detection — a rare win-win in health economics.</li>
-            <li>An American multi-site analysis found that AI-assisted triage reduced average turnaround time for critical findings from 8.2 hours to 3.1 hours, with the associated reduction in adverse events generating an estimated <strong>$1.2 million in annual liability savings per institution</strong>.</li>
-            <li>The Radiology Business Intelligence Resource (RBIR) published its first comprehensive analysis of AI ROI, finding that the break-even point for most radiology AI deployments occurs at <strong>18–24 months</strong>, driven primarily by productivity gains rather than cost savings per se.</li>
-          </ul>
-          <p>The emergence of AMA CPT codes for AI-assisted diagnosis, introduced in 2024, was already anticipated at RSNA 2023 and viewed as a potential game-changer for AI economics by creating a direct reimbursement mechanism.</p>
-        `,
-      },
-      {
-        id: 'equity-and-global-health',
-        heading: 'AI for Global Health Equity',
-        content: `
-          <p>Several high-profile sessions at RSNA 2023 focused on AI's potential to address healthcare inequities:</p>
-          <ul>
-            <li><strong>The WHO Special Session on Digital Health</strong> highlighted that 70% of the world's population has limited or no access to medical imaging interpretation. AI-assisted screening systems, delivered via cloud infrastructure, offer a scalable pathway to extending specialist-level analysis to underserved regions.</li>
-            <li><strong>The Lacuna Fund for Health</strong> announced new grants for curating diverse medical imaging datasets from Africa and Southeast Asia, addressing the well-documented bias in existing AI training data toward North American and European populations.</li>
-            <li>Researchers from the University of Cape Town presented a validation study showing that a mammography AI system performed comparably on a South African screening cohort versus European benchmarks — but only after additional fine-tuning on a locally curated dataset, underscoring the importance of population-specific validation.</li>
-          </ul>
-          <p>These developments reinforce ClinicalVision's commitment to fairness: our Fairness & Bias Monitoring Dashboard was specifically designed to detect and report demographic performance disparities, enabling proactive correction before inequities cause clinical harm.</p>
-        `,
-      },
-      {
-        id: 'looking-forward',
-        heading: 'Looking Forward: Trends to Watch',
-        content: `
-          <p>Based on the scientific programme and hallway conversations at RSNA 2023, several trends are poised to shape radiology AI over the next two to three years:</p>
-          <ul>
-            <li><strong>Agentic AI:</strong> AI systems that can autonomously orchestrate multi-step workflows — scheduling follow-up imaging, populating structured reports, sending alerts to referring physicians — are moving from concept to prototype. These systems go beyond detection to actively participate in clinical workflow management.</li>
-            <li><strong>Federated learning at scale:</strong> Multi-institutional training without centralising patient data is maturing, with several consortia demonstrating federated breast cancer detection models trained across 10+ institutions without any site sharing raw images.</li>
-            <li><strong>Regulatory harmonisation:</strong> The International Medical Device Regulators Forum (IMDRF) is working toward globally harmonised standards for AI-based medical devices, potentially reducing the regulatory burden for international deployment and accelerating patient access.</li>
-            <li><strong>Patient-facing AI:</strong> Early demonstrations of AI tools that communicate directly with patients — explaining screening results in plain language, answering common questions, and scheduling follow-ups — suggest a future where AI enhances not just clinical decision-making but the entire patient experience.</li>
-          </ul>
-          <p>RSNA 2023 marked a clear inflection point: AI in radiology has transitioned from an emerging technology to a <strong>foundational infrastructure</strong> that will increasingly define how medical imaging is practised worldwide. For ClinicalVision, this represents both a validation of our vision and a call to accelerate our commitment to responsible, equitable, and clinically impactful AI.</p>
-        `,
-      },
-    ],
-    references: [
-      {
-        id: 1,
-        text: 'RSNA. (2023). RSNA 109th Scientific Assembly and Annual Meeting Programme. Radiological Society of North America.',
-        url: 'https://www.rsna.org/annual-meeting',
-      },
-      {
-        id: 2,
-        text: 'Rajpurkar, P., Chen, E., Banerjee, O., & Topol, E. J. (2022). AI in health and medicine. Nature Medicine, 28, 31–38.',
-        url: 'https://doi.org/10.1038/s41591-021-01614-0',
-      },
-      {
-        id: 3,
-        text: 'Moor, M., Banerjee, O., Abad, Z. S. H., et al. (2023). Foundation models for generalist medical artificial intelligence. Nature, 616, 259–265.',
-        url: 'https://doi.org/10.1038/s41586-023-05881-4',
-      },
-      {
-        id: 4,
-        text: 'Dayan, I., Roth, H. R., Zhong, A., et al. (2021). Federated learning for predicting clinical outcomes in patients with COVID-19. Nature Medicine, 27, 1735–1743.',
-        url: 'https://doi.org/10.1038/s41591-021-01506-3',
-      },
-      {
-        id: 5,
-        text: 'U.S. Food & Drug Administration. (2023). Artificial Intelligence and Machine Learning (AI/ML)-Enabled Medical Devices. Authorised Device List.',
-        url: 'https://www.fda.gov/medical-devices/software-medical-device-samd/artificial-intelligence-and-machine-learning-aiml-enabled-medical-devices',
-      },
-    ],
-    relatedSlugs: [
-      'ai-transforming-breast-cancer-screening-2026',
-      'integrating-ai-radiology-workflow-best-practices',
-      'patient-perspectives-ai-cancer-screening',
-    ],
-  },
 ];
 
 // =============================================================================

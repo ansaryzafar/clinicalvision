@@ -97,7 +97,7 @@ describe('TechnologyPage — Explainability Feature Cards', () => {
     { id: 'explainable-ai', title: 'Explainable AI' },
     { id: 'uncertainty-quantification', title: 'Uncertainty Quantification' },
     { id: 'integrated-gradients', title: 'Integrated Gradients Analysis' },
-    { id: 'calibrated-confidence', title: 'Calibrated Confidence Scores' },
+    { id: 'calibrated-confidence', title: 'Confidence Scores' },
     { id: 'fairness-monitoring', title: 'Fairness Monitoring' },
   ];
 
