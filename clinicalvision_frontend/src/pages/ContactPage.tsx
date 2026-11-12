@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Typography, Button, Grid, TextField, alpha, Collapse, Alert } from '@mui/material';
 import SEOHead from '../components/shared/SEOHead';
-import { Email, Phone, LocationOn, Send, Add, Remove, CheckCircle } from '@mui/icons-material';
+import { Email, Send, Add, Remove, CheckCircle } from '@mui/icons-material';
 import { PageLayout, PageSection, CTASection } from '../components/layout/PageLayout';
 import { lunitColors, lunitTypography, lunitRadius, lunitShadows, lunitGradients } from '../styles/lunitDesignSystem';
 import { api } from '../services/api';
@@ -13,22 +13,6 @@ const contactMethods = [
     value: 'hello@clinicalvision.ai',
     description: 'Research enquiries and feedback',
   },
-  {
-    icon: <Phone sx={{ fontSize: 32 }} />,
-    title: 'Call Us',
-    value: '+44 7729 773519',
-    description: 'Mon-Fri, 9am-6pm GMT',
-  },
-  {
-    icon: <LocationOn sx={{ fontSize: 32 }} />,
-    title: 'Visit Us',
-    value: '24 Sandymount Avenue',
-    description: 'Harrow, Middlesex, UK',
-  },
-];
-
-const offices = [
-  { city: 'Harrow', country: 'United Kingdom', type: 'UK Head Office' },
 ];
 
 const faqs = [
@@ -61,6 +45,7 @@ const ContactPage: React.FC = () => {
     company: '',
     subject: '',
     message: '',
+    website: '', // honeypot: hidden from people, bots tend to fill it
   });
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -155,9 +140,9 @@ const ContactPage: React.FC = () => {
 
       {/* Contact Methods */}
       <PageSection background="light" paddingY="small">
-        <Grid container spacing={4}>
+        <Grid container spacing={4} sx={{ justifyContent: 'center' }}>
           {contactMethods.map((method, idx) => (
-            <Grid size={{ xs: 12, md: 4 }} key={idx}>
+            <Grid size={{ xs: 12, md: 6 }} key={idx}>
               <Box
                 sx={{
                   display: 'flex',
@@ -227,11 +212,11 @@ const ContactPage: React.FC = () => {
         </Grid>
       </PageSection>
 
-      {/* Contact Form & Offices */}
+      {/* Contact Form */}
       <PageSection>
-        <Grid container spacing={6}>
+        <Grid container spacing={6} sx={{ justifyContent: 'center' }}>
           {/* Form */}
-          <Grid size={{ xs: 12, md: 7 }}>
+          <Grid size={{ xs: 12, md: 8 }}>
             <Typography
               sx={{
                 fontFamily: lunitTypography.fontFamilyHeading,
@@ -252,6 +237,16 @@ const ContactPage: React.FC = () => {
               {submitError && (
                 <Alert severity="error" sx={{ mb: 2 }}>{submitError}</Alert>
               )}
+              <input
+                type="text"
+                name="hp_field"
+                value={formData.website}
+                onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                style={{ position: 'absolute', left: '-10000px', width: 1, height: 1, opacity: 0 }}
+              />
               <Grid container spacing={3}>
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField
@@ -384,70 +379,6 @@ const ContactPage: React.FC = () => {
             )}
           </Grid>
 
-          {/* Offices */}
-          <Grid size={{ xs: 12, md: 5 }}>
-            <Typography
-              sx={{
-                fontFamily: lunitTypography.fontFamilyHeading,
-                fontSize: '28px',
-                fontWeight: 400,
-                color: lunitColors.headingColor,
-                mb: 3,
-              }}
-            >
-              Global Offices
-            </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {offices.map((office, idx) => (
-                <Box
-                  key={idx}
-                  sx={{
-                    p: 3,
-                    borderRadius: lunitRadius.lg,
-                    bgcolor: lunitColors.lightestGray,
-                    transition: 'all 0.3s ease',
-                    '&:hover': {
-                      bgcolor: alpha(lunitColors.teal, 0.08),
-                    },
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      fontFamily: lunitTypography.fontFamilyBody,
-                      fontSize: '11px',
-                      fontWeight: 600,
-                      letterSpacing: '0.1em',
-                      textTransform: 'uppercase',
-                      color: lunitColors.teal,
-                      mb: 0.5,
-                    }}
-                  >
-                    {office.type}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontFamily: lunitTypography.fontFamilyHeading,
-                      fontSize: '18px',
-                      fontWeight: 500,
-                      color: lunitColors.headingColor,
-                    }}
-                  >
-                    {office.city}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontFamily: lunitTypography.fontFamilyBody,
-                      fontSize: '14px',
-                      fontWeight: 300,
-                      color: lunitColors.darkGrey,
-                    }}
-                  >
-                    {office.country}
-                  </Typography>
-                </Box>
-              ))}
-            </Box>
-          </Grid>
         </Grid>
       </PageSection>
 

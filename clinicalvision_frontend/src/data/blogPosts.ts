@@ -65,7 +65,7 @@ export interface BlogPost {
 
 const AUTHORS = {
   muhammadAnsary: {
-    name: 'Muhammad Ansary',
+    name: 'Zafar Ansary',
     role: 'Founder & Lead Developer',
     avatar: '/images/authors/avatar-ma.webp',
   },

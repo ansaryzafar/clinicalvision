@@ -128,7 +128,7 @@ describe('DemoPage form submission (A6)', () => {
     // Fill required fields using actual DemoPage labels
     fillInput(screen.getByLabelText(/first name/i), 'Test');
     fillInput(screen.getByLabelText(/last name/i), 'User');
-    fillInput(screen.getByLabelText(/work email/i), 'test@example.com');
+    fillInput(screen.getByLabelText(/email address/i), 'test@example.com');
 
     // Two research-demo buttons exist: one in navbar (type="button") and
     // the form submit button (type="submit"). Select by type attribute.
@@ -142,4 +142,43 @@ describe('DemoPage form submission (A6)', () => {
       expect(mockSubmitDemoRequest).toHaveBeenCalledTimes(1);
     });
   });
+});
+
+// ============================================================================
+// Failures must be reported honestly (messages must never be silently lost)
+// ============================================================================
+describe('Public form failures are never reported as success', () => {
+  it('ContactPage shows an error and keeps the form when sending fails', async () => {
+    mockSubmitContactForm.mockReset();
+    mockSubmitContactForm.mockRejectedValue(new Error('We could not send your message right now.'));
+    const ContactPage = (await import('../../pages/ContactPage')).default;
+
+    render(<TestWrapper><ContactPage /></TestWrapper>);
+    fillInput(screen.getByLabelText(/full name/i), 'Test User');
+    fillInput(screen.getByLabelText(/email address/i), 'test@example.com');
+    fillInput(screen.getByLabelText(/message/i), 'Test message');
+    fireEvent.click(screen.getByRole('button', { name: /send message/i }));
+
+    expect(await screen.findByText(/could not send your message/i)).toBeInTheDocument();
+    expect(screen.queryByText(/thank you/i)).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /send message/i })).toBeInTheDocument();
+    // Honeypot is sent empty
+    expect(mockSubmitContactForm.mock.calls[0][0].website).toBe('');
+  }, 15000);
+
+  it('DemoPage shows an error instead of the thank-you page when sending fails', async () => {
+    mockSubmitDemoRequest.mockReset();
+    mockSubmitDemoRequest.mockRejectedValue(new Error('We could not send your request.'));
+    const DemoPage = (await import('../../pages/DemoPage')).default;
+
+    render(<TestWrapper><DemoPage /></TestWrapper>);
+    fillInput(screen.getByLabelText(/first name/i), 'Test');
+    fillInput(screen.getByLabelText(/last name/i), 'User');
+    fillInput(screen.getByLabelText(/email address/i), 'test@example.com');
+    fireEvent.click(document.querySelector('button[type="submit"]') as HTMLElement);
+
+    expect(await screen.findByText(/could not send your request/i)).toBeInTheDocument();
+    expect(document.querySelector('button[type="submit"]')).not.toBeNull();
+    expect(mockSubmitDemoRequest.mock.calls[0][0].website).toBe('');
+  }, 15000);
 });

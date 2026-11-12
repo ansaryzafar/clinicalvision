@@ -64,6 +64,21 @@ const CareersPage: React.FC = () => {
           overflow: 'hidden',
         }}
       >
+        {/* Decorative background photo */}
+        <Box
+          component="img"
+          src="/images/team/team-boardroom-full-1920w.webp"
+          alt=""
+          sx={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            opacity: 0.18,
+            pointerEvents: 'none',
+          }}
+        />
         {/* Background gradient overlay */}
         <Box
           sx={{

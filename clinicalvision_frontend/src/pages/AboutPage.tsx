@@ -399,7 +399,7 @@ const AboutPage: React.FC = () => {
             lineHeight: 1.8,
           }}
         >
-          ClinicalVision is a solo research project built by Muhammad Ansary. There is no
+          ClinicalVision is a solo research project built by Zafar Ansary. There is no
           company team, clinical advisory board or partner organisation.
         </Typography>
       </PageSection>

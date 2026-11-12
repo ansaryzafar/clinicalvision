@@ -6,7 +6,7 @@ import { blogPosts } from '../../data/blogPosts';
 describe('public content has no fabricated authors or events', () => {
   it('attributes every blog post to the real author only', () => {
     const names = new Set(blogPosts.map((p) => p.author.name));
-    expect(Array.from(names)).toEqual(['Muhammad Ansary']);
+    expect(Array.from(names)).toEqual(['Zafar Ansary']);
   });
 
   it('does not include the unverifiable RSNA 2023 post', () => {

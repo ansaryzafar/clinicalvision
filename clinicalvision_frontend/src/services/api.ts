@@ -1491,7 +1491,31 @@ class ClinicalVisionAPI {
   // ========================================================================
 
   /**
-   * Submit contact form data
+   * Turn a failed public-form request into an honest, user-facing Error.
+   * A failure must never be reported to the visitor as a success.
+   */
+  private publicFormError(error: unknown): Error {
+    const status = axios.isAxiosError(error) ? error.response?.status : undefined;
+    if (status === 422) {
+      return new Error('Some details look invalid. Please check the form and try again.');
+    }
+    if (status === 429) {
+      return new Error(
+        'Too many messages were sent from your connection. Please try again later, or email hello@clinicalvision.ai.'
+      );
+    }
+    if (status === undefined) {
+      return new Error(
+        'We could not reach the server. Please check your connection and try again, or email hello@clinicalvision.ai.'
+      );
+    }
+    return new Error(
+      'We could not send your message right now. Please try again shortly, or email hello@clinicalvision.ai.'
+    );
+  }
+
+  /**
+   * Submit contact form data. Rejects if the message was not stored.
    */
   async submitContactForm(data: {
     name: string;
@@ -1499,20 +1523,18 @@ class ClinicalVisionAPI {
     company?: string;
     subject?: string;
     message: string;
-  }): Promise<{ success: boolean }> {
+    website?: string; // honeypot, must stay empty
+  }): Promise<{ success: boolean; reference?: string }> {
     try {
       const response = await this.client.post('/api/v1/contact', data);
       return response.data;
     } catch (error) {
-      // If the backend endpoint doesn't exist yet, log for observability
-      // but don't block the UX — graceful degradation
-      console.warn('Contact form submission endpoint not available:', error);
-      return { success: true }; // Graceful fallback
+      throw this.publicFormError(error);
     }
   }
 
   /**
-   * Submit demo request form data
+   * Submit demo request form data. Rejects if the request was not stored.
    */
   async submitDemoRequest(data: {
     firstName: string;
@@ -1521,15 +1543,14 @@ class ClinicalVisionAPI {
     phone?: string;
     company?: string;
     role?: string;
-    size?: string;
     message?: string;
-  }): Promise<{ success: boolean }> {
+    website?: string; // honeypot, must stay empty
+  }): Promise<{ success: boolean; reference?: string }> {
     try {
       const response = await this.client.post('/api/v1/demo-request', data);
       return response.data;
     } catch (error) {
-      console.warn('Demo request endpoint not available:', error);
-      return { success: true }; // Graceful fallback
+      throw this.publicFormError(error);
     }
   }
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Typography, Button, Grid, TextField, MenuItem, alpha } from '@mui/material';
+import { Box, Typography, Button, Grid, TextField, MenuItem, Alert, alpha } from '@mui/material';
 import SEOHead from '../components/shared/SEOHead';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../routes/paths';
@@ -16,19 +16,12 @@ const demoFeatures = [
 ];
 
 const roles = [
-  'Radiologist',
-  'Radiology Director',
-  'Hospital Administrator',
-  'IT Director',
-  'Practice Manager',
+  'Researcher',
+  'Radiologist or clinician',
+  'Student',
+  'Developer or engineer',
+  'Just curious',
   'Other',
-];
-
-const practiceSize = [
-  '1-5 radiologists',
-  '6-20 radiologists',
-  '21-50 radiologists',
-  '50+ radiologists',
 ];
 
 const DemoPage: React.FC = () => {
@@ -40,19 +33,25 @@ const DemoPage: React.FC = () => {
     phone: '',
     company: '',
     role: '',
-    size: '',
     message: '',
+    website: '', // honeypot: hidden from people, bots tend to fill it
   });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
+    setSubmitError(null);
     try {
       await api.submitDemoRequest(formData);
-    } catch (err) {
-      // Still show the thank you page even on error — form data was at least attempted
+      setSubmitted(true);
+    } catch (err: any) {
+      setSubmitError(err?.message || 'We could not send your request. Please try again, or email hello@clinicalvision.ai.');
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitted(true);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,7 +106,7 @@ const DemoPage: React.FC = () => {
                 lineHeight: 1.8,
               }}
             >
-              Your request has been received. We will review it and get in touch about access to the research demo.
+              Thank you for your interest in the research demo. Your request has been noted, and no response time can be guaranteed.
             </Typography>
             <Button
               variant="contained"
@@ -262,10 +261,23 @@ const DemoPage: React.FC = () => {
                 mb: 3,
               }}
             >
-              Request Research Demo Access
+              Ask About the Research Demo
             </Typography>
 
             <Box component="form" onSubmit={handleSubmit}>
+              {submitError && (
+                <Alert severity="error" sx={{ mb: 2 }}>{submitError}</Alert>
+              )}
+              <input
+                type="text"
+                name="hp_field"
+                value={formData.website}
+                onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                style={{ position: 'absolute', left: '-10000px', width: 1, height: 1, opacity: 0 }}
+              />
               <Grid container spacing={3}>
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField
@@ -315,7 +327,7 @@ const DemoPage: React.FC = () => {
                   <TextField
                     fullWidth
                     required
-                    label="Work Email"
+                    label="Email Address"
                     name="email"
                     type="email"
                     value={formData.email}
@@ -337,7 +349,7 @@ const DemoPage: React.FC = () => {
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField
                     fullWidth
-                    label="Phone Number"
+                    label="Phone Number (Optional)"
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
@@ -358,8 +370,7 @@ const DemoPage: React.FC = () => {
                 <Grid size={{ xs: 12 }}>
                   <TextField
                     fullWidth
-                    required
-                    label="Organization Name"
+                    label="Organisation or Institution (Optional)"
                     name="company"
                     value={formData.company}
                     onChange={handleChange}
@@ -377,12 +388,11 @@ const DemoPage: React.FC = () => {
                     }}
                   />
                 </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
+                <Grid size={{ xs: 12 }}>
                   <TextField
                     fullWidth
                     select
-                    required
-                    label="Your Role"
+                    label="Which best describes you? (Optional)"
                     name="role"
                     value={formData.role}
                     onChange={handleChange}
@@ -404,38 +414,12 @@ const DemoPage: React.FC = () => {
                     ))}
                   </TextField>
                 </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    fullWidth
-                    select
-                    label="Practice Size"
-                    name="size"
-                    value={formData.size}
-                    onChange={handleChange}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        borderRadius: lunitRadius.md,
-                        fontFamily: lunitTypography.fontFamilyBody,
-                        '&:hover fieldset': { borderColor: lunitColors.grey },
-                        '&.Mui-focused fieldset': { borderColor: lunitColors.teal },
-                      },
-                      '& .MuiInputLabel-root': {
-                        fontFamily: lunitTypography.fontFamilyBody,
-                        '&.Mui-focused': { color: lunitColors.teal },
-                      },
-                    }}
-                  >
-                    {practiceSize.map((size) => (
-                      <MenuItem key={size} value={size}>{size}</MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
                 <Grid size={{ xs: 12 }}>
                   <TextField
                     fullWidth
                     multiline
                     rows={4}
-                    label="Anything specific you'd like to see?"
+                    label="Anything you would like to explore? (Optional)"
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
@@ -459,6 +443,7 @@ const DemoPage: React.FC = () => {
                     variant="contained"
                     size="large"
                     fullWidth
+                    disabled={submitting}
                     sx={{
                       bgcolor: lunitColors.black,
                       color: lunitColors.white,
@@ -473,7 +458,7 @@ const DemoPage: React.FC = () => {
                       },
                     }}
                   >
-                    Request Research Demo Access
+                    {submitting ? 'Sending...' : 'Request a Research Demo'}
                   </Button>
                 </Grid>
               </Grid>
