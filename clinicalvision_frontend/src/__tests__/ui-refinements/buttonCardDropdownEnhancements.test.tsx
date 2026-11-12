@@ -49,9 +49,9 @@ beforeAll(() => {
 describe('Button Standardization — LandingPage', () => {
   // ── fontWeight 600 ──
   it('hero "Try the Research Demo" button uses fontWeight 600', () => {
-    // The hero CTA appears after the hero headline "Precision Intelligence" —
+    // The hero CTA appears after the hero headline "Explainable Intelligence" —
     // find the fontWeight in that specific Button block
-    const heroIdx = landingSrc.indexOf('Precision Intelligence');
+    const heroIdx = landingSrc.indexOf('Explainable Intelligence');
     expect(heroIdx).toBeGreaterThan(0);
     const afterHero = landingSrc.substring(heroIdx);
     const demoIdx = afterHero.indexOf('Try the Research Demo');

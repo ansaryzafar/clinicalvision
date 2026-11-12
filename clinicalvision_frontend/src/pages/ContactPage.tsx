@@ -148,7 +148,7 @@ const ContactPage: React.FC = () => {
               lineHeight: 1.7,
             }}
           >
-            Have questions about our platform? Our team is here to help you find the right solution for your practice.
+            Questions about the research, the model or its limitations? Researchers, clinicians and curious readers are all welcome to get in touch.
           </Typography>
         </Box>
       </Box>
@@ -245,7 +245,7 @@ const ContactPage: React.FC = () => {
             </Typography>
             {submitted ? (
               <Alert severity="success" icon={<CheckCircle />} sx={{ mb: 3 }}>
-                Thank you! Your message has been sent successfully. We'll get back to you within 24 hours.
+                Thank you! Your message has been sent. It will be read with care, though no response time can be guaranteed.
               </Alert>
             ) : (
             <Box component="form" onSubmit={handleSubmit}>

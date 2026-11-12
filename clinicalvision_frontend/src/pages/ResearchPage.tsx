@@ -29,11 +29,11 @@ const publications = [
 const researchAreas = [
   {
     title: 'Early Detection',
-    description: 'Improving sensitivity for early-stage cancers and subtle findings',
+    description: 'Exploring ways to improve sensitivity for early-stage cancers and subtle findings',
   },
   {
     title: 'Explainable AI',
-    description: 'Making AI decisions transparent and interpretable for clinicians',
+    description: 'Exploring how AI decisions can be made transparent and interpretable',
   },
   {
     title: 'Multi-Modal Learning',
@@ -56,7 +56,7 @@ const ResearchPage: React.FC = () => {
   return (
     <PageLayout>
       <SEOHead
-        title="Research — Advancing AI Diagnostics"
+        title="Research — Explainable AI for Breast Imaging"
         description="ClinicalVision research on explainable, uncertainty-aware breast cancer AI: the V12 research baseline, its evaluation on CBIS-DDSM, and its limitations."
         keywords={['medical AI research', 'breast cancer AI publications', 'deep learning radiology research', 'explainable AI research', 'mammography AI studies']}
         canonicalPath="/research"

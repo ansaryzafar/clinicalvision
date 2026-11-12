@@ -35,9 +35,9 @@ const fadeIn = keyframes`
 // Culture pillars for dark gradient cards
 const culturePillars = [
   { icon: <TrendingUp sx={{ fontSize: 32 }} />, title: 'Impact-Driven', description: 'We aim for work that could eventually support clinicians, and we are open about what has and has not been validated.' },
-  { icon: <Psychology sx={{ fontSize: 32 }} />, title: 'Intellectual Curiosity', description: 'We foster an environment where questions are celebrated and learning never stops.' },
-  { icon: <Groups sx={{ fontSize: 32 }} />, title: 'Collaborative Spirit', description: 'The best ideas emerge from diverse perspectives working together.' },
-  { icon: <LocalHospital sx={{ fontSize: 32 }} />, title: 'Clinical Excellence', description: 'We aim to work with clinicians to understand what would make tools like this useful in practice.' },
+  { icon: <Psychology sx={{ fontSize: 32 }} />, title: 'Intellectual Curiosity', description: 'Questions come first, and learning is the whole point of the project.' },
+  { icon: <Groups sx={{ fontSize: 32 }} />, title: 'Collaborative Spirit', description: 'Ideas improve with other perspectives, which is why conversations with researchers and clinicians are welcome.' },
+  { icon: <LocalHospital sx={{ fontSize: 32 }} />, title: 'Clinical Relevance', description: 'We aim to work with clinicians to understand what would make tools like this useful in practice.' },
 ];
 
 const CareersPage: React.FC = () => {
@@ -64,21 +64,6 @@ const CareersPage: React.FC = () => {
           overflow: 'hidden',
         }}
       >
-        {/* Background team image */}
-        <Box
-          component="img"
-          src="/images/team/team-boardroom-full-1920w.webp"
-          alt=""
-          sx={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            opacity: 0.18,
-            pointerEvents: 'none',
-          }}
-        />
         {/* Background gradient overlay */}
         <Box
           sx={{
@@ -203,7 +188,7 @@ const CareersPage: React.FC = () => {
               mb: 2,
             }}
           >
-            Our Culture
+            Guiding Principles
           </Typography>
           <Typography
             sx={{
@@ -215,7 +200,7 @@ const CareersPage: React.FC = () => {
               mb: 6,
             }}
           >
-            What Drives Us Every Day
+            What Drives the Project
           </Typography>
 
           <Grid container spacing={3}>

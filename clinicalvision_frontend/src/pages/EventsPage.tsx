@@ -23,7 +23,7 @@ const EventsPage: React.FC = () => {
             <span style={{ color: lunitColors.teal }}>Scheduled</span>
           </>
         }
-        subtitle="ClinicalVision is a solo research prototype. There are currently no conferences, webinars or workshops to announce."
+        subtitle="ClinicalVision is a solo research prototype, and there are no conferences, webinars or workshops to announce just yet."
       />
 
       <PageSection>
@@ -37,8 +37,7 @@ const EventsPage: React.FC = () => {
               lineHeight: 1.8,
             }}
           >
-            If an event is ever planned, it will be listed here. In the meantime you can try the
-            research demo or get in touch about the project.
+            If an event is ever planned, it will be listed here. In the meantime you are warmly invited to try the research demo or get in touch about the project.
           </Typography>
         </Box>
       </PageSection>

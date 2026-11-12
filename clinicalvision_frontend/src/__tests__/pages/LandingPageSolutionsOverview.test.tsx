@@ -79,10 +79,10 @@ describe('LandingPage — Solutions Overview Section', () => {
 
   // ── Section Structure ───────────────────────────────────────────────────
 
-  it('renders the section heading "One Platform. Complete Clinical Intelligence."', () => {
+  it('renders the section heading "One Platform. Every Step in View."', () => {
     render(<LandingPage />);
     expect(
-      screen.getByText('One Platform. Complete Clinical Intelligence.')
+      screen.getByText('One Platform. Every Step in View.')
     ).toBeInTheDocument();
   });
 
@@ -258,10 +258,10 @@ describe('LandingPage — Solutions Overview Section', () => {
   it('renders mammogram suite description paragraphs', () => {
     render(<LandingPage />);
     expect(
-      screen.getByText(/Upload a mammogram\. Receive instant AI-driven analysis/i)
+      screen.getByText(/Upload a mammogram and receive an AI-generated analysis/i)
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/Confidence scores and flagged uncertainties/i)
+      screen.getByText(/pointing to where a closer look may be worthwhile/i)
     ).toBeInTheDocument();
   });
 
@@ -270,7 +270,7 @@ describe('LandingPage — Solutions Overview Section', () => {
     const category = document.querySelector('[data-category="precision-oncology"]');
     expect(category).toBeInTheDocument();
     expect(
-      within(category as HTMLElement).getByText(/Multiple explanation methods for every finding/i)
+      within(category as HTMLElement).getByText(/Grad-CAM attention heatmaps, with LIME and SHAP/i)
     ).toBeInTheDocument();
     expect(
       within(category as HTMLElement).getByText(/Fairness monitoring is a planned capability/i)

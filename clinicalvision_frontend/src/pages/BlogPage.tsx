@@ -51,7 +51,7 @@ const BlogPage: React.FC = () => {
             </Box>
           </>
         }
-        subtitle="Stay informed about the latest in AI diagnostics, clinical best practices, and healthcare innovation."
+        subtitle="Candid research notes on explainable AI for breast imaging: what was built, what was measured and what was learned."
       />
 
       {/* Categories */}

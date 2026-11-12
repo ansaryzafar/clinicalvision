@@ -35,7 +35,7 @@ const features = [
   {
     icon: <Psychology sx={{ fontSize: 40 }} />,
     title: 'Explainable AI',
-    description: 'Visual heatmaps and confidence scores provide transparency into AI decision-making for clinical validation.',
+    description: 'Grad-CAM heatmaps and confidence scores offer a window into what the model is responding to. They are an approximation and have not been clinically validated.',
   },
   {
     icon: <Security sx={{ fontSize: 40 }} />,
@@ -44,17 +44,17 @@ const features = [
   },
   {
     icon: <LocalHospital sx={{ fontSize: 40 }} />,
-    title: 'DICOM Integration',
-    description: 'Support for medical imaging standards. PACS and EHR integration is planned and has not been validated at a clinical site.',
+    title: 'DICOM-Aware Uploads',
+    description: 'Image uploads are checked against the DICOM standard. PACS and EHR integration is planned and has not been validated at a clinical site.',
   },
   {
     icon: <Analytics sx={{ fontSize: 40 }} />,
-    title: 'Advanced Analytics',
-    description: 'Comprehensive dashboards for tracking performance metrics, outcomes, and population health trends.',
+    title: 'Dashboard Previews',
+    description: 'Dashboard views sketch how performance metrics might be tracked. They currently show demonstration data, not real outcomes.',
   },
   {
     icon: <CloudSync sx={{ fontSize: 40 }} />,
-    title: 'Cloud & On-Premise',
+    title: 'Flexible Deployment',
     description: 'Designed to support cloud or on-premise deployment. The current system is a research prototype and is not deployed at any clinical site.',
   },
   {
@@ -75,8 +75,8 @@ const FeaturesPage: React.FC = () => {
   return (
     <PageLayout>
       <SEOHead
-        title="Features — AI-Powered Clinical Capabilities"
-        description="Explore ClinicalVision's comprehensive AI features: real-time mammography analysis, explainable Grad-CAM overlays, uncertainty quantification, DICOM integration, and clinical-grade security."
+        title="Features — Explainable Breast-Imaging AI"
+        description="Explore what the ClinicalVision research prototype offers: mammography analysis, explainable Grad-CAM overlays, an experimental uncertainty estimate and DICOM-aware image handling."
         keywords={['AI mammography features', 'Grad-CAM explainability', 'DICOM integration', 'uncertainty quantification', 'medical AI platform features', 'clinical workflow AI']}
         canonicalPath="/features"
         schemaType="softwareApplication"
@@ -129,9 +129,9 @@ const FeaturesPage: React.FC = () => {
               mb: 3,
             }}
           >
-            AI-Powered Features for
+            Explainable Features for
             <Box component="span" sx={{ display: 'block', color: lunitColors.teal }}>
-              Clinical Excellence
+              Breast Imaging Research
             </Box>
           </Typography>
           <Typography
@@ -144,7 +144,7 @@ const FeaturesPage: React.FC = () => {
               lineHeight: 1.7,
             }}
           >
-            Our comprehensive platform combines cutting-edge AI with clinical workflow integration to deliver actionable insights for better patient outcomes.
+            A research prototype that pairs deep learning with visual explanations, so every result comes with evidence you can inspect.
           </Typography>
         </Box>
       </Box>
@@ -236,7 +236,7 @@ const FeaturesPage: React.FC = () => {
               color: lunitColors.headingColor,
             }}
           >
-            Everything You Need for AI-Assisted Diagnostics
+            A Closer Look at What the Prototype Offers
           </Typography>
         </Box>
 
@@ -323,7 +323,7 @@ const FeaturesPage: React.FC = () => {
                 mb: 2,
               }}
             >
-              Seamless Integration
+              Integration Roadmap
             </Typography>
             <Typography
               sx={{
@@ -334,7 +334,7 @@ const FeaturesPage: React.FC = () => {
                 mb: 3,
               }}
             >
-              Works with Your Existing Infrastructure
+              Designed to Grow into Existing Infrastructure
             </Typography>
             <Typography
               sx={{

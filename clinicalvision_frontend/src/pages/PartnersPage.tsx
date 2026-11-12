@@ -23,7 +23,7 @@ const PartnersPage: React.FC = () => {
             <span style={{ color: lunitColors.teal }}>Collaboration</span>
           </>
         }
-        subtitle="ClinicalVision is a solo research prototype. It has no commercial partners, customers or partner programme."
+        subtitle="ClinicalVision is a solo research prototype with no commercial partners, customers or partner programme, which makes this a good moment to start a conversation."
       />
 
       <PageSection>
@@ -51,8 +51,7 @@ const PartnersPage: React.FC = () => {
               lineHeight: 1.8,
             }}
           >
-            Researchers and clinicians who are interested in discussing the work, its limitations or
-            possible collaboration are welcome to get in touch. No collaboration is currently in place.
+            Researchers and clinicians who would like to discuss the work, its limitations or possible collaboration are warmly welcome to get in touch. No collaboration is currently in place, so there is room to shape one together.
           </Typography>
         </Box>
       </PageSection>

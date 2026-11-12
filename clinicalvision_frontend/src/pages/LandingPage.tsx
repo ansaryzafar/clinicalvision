@@ -289,13 +289,13 @@ const LandingPage: React.FC = () => {
 
   // ── Solutions mega-dropdown data ──────────────────────────────────────
   const solutionsClinicalItems = [
-    { label: 'Breast Cancer Detection', description: 'AI-powered mammography analysis', path: ROUTES.SOLUTION_BREAST_CANCER, status: 'live' as const, icon: <BiotechOutlined sx={{ fontSize: 22, color: lunitColors.teal }} /> },
+    { label: 'Breast Cancer Detection', description: 'Explainable mammography analysis', path: ROUTES.SOLUTION_BREAST_CANCER, status: 'live' as const, icon: <BiotechOutlined sx={{ fontSize: 22, color: lunitColors.teal }} /> },
     { label: 'Lung Cancer Detection', description: 'Thoracic imaging AI', path: ROUTES.SOLUTION_LUNG_CANCER, status: 'coming' as const, icon: <AirOutlined sx={{ fontSize: 22, color: lunitColors.grey }} /> },
     { label: 'Prostate Cancer Detection', description: 'Histopathology grading AI', path: ROUTES.SOLUTION_PROSTATE_CANCER, status: 'coming' as const, icon: <SearchOutlined sx={{ fontSize: 22, color: lunitColors.grey }} /> },
     { label: 'Colorectal Cancer Detection', description: 'Colorectal pathology AI', path: ROUTES.SOLUTION_COLORECTAL_CANCER, status: 'coming' as const, icon: <ScienceOutlined sx={{ fontSize: 22, color: lunitColors.grey }} /> },
   ];
   const solutionsPlatformItems = [
-    { label: 'Clinical Analysis Platform', description: 'End-to-end clinical workflow', path: ROUTES.FEATURES },
+    { label: 'Clinical Analysis Platform', description: 'A research workflow, start to finish', path: ROUTES.FEATURES },
     { label: 'Research Demo', description: 'Try the research prototype', path: ROUTES.DEMO },
   ];
 
@@ -312,9 +312,9 @@ const LandingPage: React.FC = () => {
       label: 'Technology',
       type: 'dropdown',
       children: [
-        { label: 'AI Models & Architecture', description: 'Core technology deep-dive', path: ROUTES.TECHNOLOGY, icon: <ArchitectureOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
-        { label: 'Research & Validation', description: 'Peer-reviewed publications', path: ROUTES.RESEARCH, icon: <ScienceOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
-        { label: 'Security & Compliance', description: 'Trust & regulatory', path: ROUTES.SECURITY, icon: <SecurityOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
+        { label: 'AI Models & Architecture', description: 'How the models work', path: ROUTES.TECHNOLOGY, icon: <ArchitectureOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
+        { label: 'Research & Evaluation', description: 'Research notes and evaluation results', path: ROUTES.RESEARCH, icon: <ScienceOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
+        { label: 'Security & Compliance', description: 'Safeguards and regulatory status', path: ROUTES.SECURITY, icon: <SecurityOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
       ],
     },
     {
@@ -322,8 +322,8 @@ const LandingPage: React.FC = () => {
       type: 'dropdown',
       children: [
         { label: 'Documentation', description: 'Guides & references', path: ROUTES.DOCUMENTATION, icon: <DescriptionOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
-        { label: 'API Reference', description: 'Integration tools', path: ROUTES.API, icon: <CodeOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
-        { label: 'Insights', description: 'Thought leadership', path: ROUTES.BLOG, icon: <ArticleOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
+        { label: 'API Reference', description: 'Explore the inference endpoints', path: ROUTES.API, icon: <CodeOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
+        { label: 'Insights', description: 'Articles and research notes', path: ROUTES.BLOG, icon: <ArticleOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
         { label: 'Support', description: 'Help & FAQs', path: ROUTES.SUPPORT, icon: <SupportAgentOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
       ],
     },
@@ -331,10 +331,10 @@ const LandingPage: React.FC = () => {
       label: 'Company',
       type: 'dropdown',
       children: [
-        { label: 'About ClinicalVision', description: 'Our mission & team', path: ROUTES.ABOUT, icon: <BusinessOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
-        { label: 'Careers', description: 'Join us', path: ROUTES.CAREERS, icon: <WorkOutlineOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
+        { label: 'About ClinicalVision', description: 'The project and its mission', path: ROUTES.ABOUT, icon: <BusinessOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
+        { label: 'Careers', description: 'Current opportunities', path: ROUTES.CAREERS, icon: <WorkOutlineOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
         { label: 'Partners', description: 'Collaborate with us', path: ROUTES.PARTNERS, icon: <HandshakeOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
-        { label: 'Events', description: 'Conferences & webinars', path: ROUTES.EVENTS, icon: <EventOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
+        { label: 'Events', description: 'Talks and announcements', path: ROUTES.EVENTS, icon: <EventOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
         { label: 'Contact Us', description: 'Get in touch', path: ROUTES.CONTACT, icon: <ContactMailOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
       ],
     },
@@ -682,7 +682,7 @@ const LandingPage: React.FC = () => {
                               }}
                             >
                               <Typography sx={{ fontFamily: '"Lexend", sans-serif', fontSize: '13px', fontWeight: 500, color: lunitColors.tealDarker }}>
-                                Request a personalized demo →
+                                Explore the research demo →
                               </Typography>
                             </Box>
                             </Paper>
@@ -1125,9 +1125,9 @@ const LandingPage: React.FC = () => {
                   m: 0,
                 }}
               >
-                Precision Intelligence
+                Explainable Intelligence
                 <Box component="span" sx={{ display: 'block' }}>
-                  with Quantified Certainty
+                  for Breast Imaging Research
                 </Box>
               </Typography>
 
@@ -1155,7 +1155,7 @@ const LandingPage: React.FC = () => {
                     m: 0,
                   }}
                 >
-                  Explainable. Uncertainty-aware. Research-stage.
+                  Explainable. Uncertainty-aware. Openly research-stage.
                 </Typography>
 
                 {/* Description - lunit-hero__description */}
@@ -1172,7 +1172,7 @@ const LandingPage: React.FC = () => {
                     maxWidth: { xs: '100%', lg: '68%' },
                   }}
                 >
-                  From mammogram to actionable insight — every flagged region includes visual evidence, and an uncertainty estimate. Research prototype, not for clinical use.
+                  From mammogram to visual evidence — every analysis comes with an attention heatmap and an experimental uncertainty estimate. A research prototype exploring how AI can show its work, and not for clinical use.
                 </Typography>
               </Box>
 
@@ -1531,7 +1531,7 @@ const LandingPage: React.FC = () => {
                     textWrap: 'balance',
                   }}
                 >
-                  From Black Box to Glass Box
+                  Opening the Black Box
                 </Typography>
               </Box>
 
@@ -1559,8 +1559,7 @@ const LandingPage: React.FC = () => {
                       mb: '12px',
                     }}
                   >
-                    Conventional AI delivers conclusions. ClinicalVision delivers evidence — attention 
-                    heatmaps that highlight the precise regions driving each diagnostic assessment.
+                    Most AI hands over a conclusion. ClinicalVision also shows its work — attention heatmaps that highlight the image regions that most influenced each prediction.
                   </Typography>
                   <Typography
                     component="p"
@@ -1573,8 +1572,7 @@ const LandingPage: React.FC = () => {
                       mb: '12px',
                     }}
                   >
-                    Confidence scores quantify diagnostic certainty. Structured clinical reports 
-                    integrate seamlessly into established radiology workflows.
+                    Confidence scores and an experimental uncertainty estimate accompany every result, and structured reports summarise the findings. Fitting into real radiology workflows is a goal for the future.
                   </Typography>
                   <Typography
                     component="p"
@@ -1587,7 +1585,7 @@ const LandingPage: React.FC = () => {
                       mb: 0,
                     }}
                   >
-                    Decision support that augments clinical expertise — never replaces it.
+                    Built to support clinical expertise — never to replace it.
                   </Typography>
                 </Box>
 
@@ -1847,7 +1845,7 @@ const LandingPage: React.FC = () => {
                     m: 0,
                   }}
                 >
-                  Inspect the regions. Examine the reasoning. Validate with confidence.
+                  Inspect the regions. Examine the reasoning. Judge for yourself.
                 </Typography>
 
                 {/* Description */}
@@ -2110,9 +2108,9 @@ const LandingPage: React.FC = () => {
               <Box sx={{ flex: 1 }}>
                 <Stack spacing={3}>
                   {[
-                    { icon: <Psychology />, title: 'Attention-Based Heatmaps', desc: 'Visualize the precise regions driving each diagnostic assessment' },
-                    { icon: <Science />, title: 'Confidence Scores', desc: 'Quantified certainty that signals when additional clinical review is warranted' },
-                    { icon: <TrendingUp />, title: 'Automated Clinical Reports', desc: 'Structured findings integrated directly into diagnostic workflows' },
+                    { icon: <Psychology />, title: 'Attention-Based Heatmaps', desc: 'See which image regions most influenced each prediction' },
+                    { icon: <Science />, title: 'Confidence Scores', desc: 'A probability score for each prediction, alongside an experimental uncertainty estimate' },
+                    { icon: <TrendingUp />, title: 'Automated Clinical Reports', desc: 'Structured findings, gathered into a clear report' },
                   ].map((item, idx) => (
                     <Box
                       key={idx}
@@ -2222,7 +2220,7 @@ const LandingPage: React.FC = () => {
                 m: 0,
               }}
             >
-              One Platform. Complete Clinical Intelligence.
+              One Platform. Every Step in View.
             </Typography>
           </Box>
 
@@ -2309,8 +2307,7 @@ const LandingPage: React.FC = () => {
                         mb: '15px',
                       }}
                     >
-                      Upload a mammogram. Receive instant AI-driven analysis with visual 
-                      evidence mapping the precise regions driving each diagnostic assessment.
+                      Upload a mammogram and receive an AI-generated analysis, with visual evidence showing the regions that most influenced each prediction.
                     </Typography>
                     <Typography
                       sx={{
@@ -2322,8 +2319,7 @@ const LandingPage: React.FC = () => {
                         m: 0,
                       }}
                     >
-                      Confidence scores and flagged uncertainties enable 
-                      intelligent case prioritization and targeted clinical review.
+                      Confidence scores and an experimental uncertainty estimate accompany each result, pointing to where a closer look may be worthwhile.
                     </Typography>
                   </Box>
                 </Box>
@@ -2586,8 +2582,7 @@ const LandingPage: React.FC = () => {
                         mb: '15px',
                       }}
                     >
-                      Multiple explanation methods for every finding. Attention heatmaps, 
-                      attribution scores, and structured clinical summaries — unified in a single diagnostic view.
+                      Grad-CAM attention heatmaps, with LIME and SHAP attributions available through the API — brought together in a single diagnostic view.
                     </Typography>
                     <Typography
                       sx={{
@@ -2794,7 +2789,7 @@ const LandingPage: React.FC = () => {
                 m: 0,
               }}
             >
-              Partnering to Advance Diagnostic Innovation
+              Open to Collaboration
             </Typography>
           </Box>
 
@@ -2923,9 +2918,7 @@ const LandingPage: React.FC = () => {
                     mb: 3,
                   }}
                 >
-                  Explore explainable diagnostic AI designed to fit radiology workflows. 
-                  Every finding comes with visual evidence for clinician verification. 
-                  Research prototype; not yet validated in a clinical setting.
+                  Explore explainable diagnostic AI designed with radiology workflows in mind. Every finding comes with visual evidence a clinician can inspect. A research prototype, not yet validated in a clinical setting.
                 </Typography>
                 <Button
                   endIcon={<ArrowForward />}
@@ -3076,9 +3069,7 @@ const LandingPage: React.FC = () => {
                     mb: 3,
                   }}
                 >
-                  Collaborate on explainability research, algorithmic fairness 
-                  evaluation, and multi-site clinical validation studies. 
-                  Advancing the science of trustworthy diagnostic AI.
+                  Interested in explainability research, algorithmic fairness evaluation, or future validation studies? Let us talk — the shared aim is more trustworthy diagnostic AI.
                 </Typography>
                 <Button
                   endIcon={<ArrowForward />}
@@ -3330,7 +3321,7 @@ const LandingPage: React.FC = () => {
                   letterSpacing: '-0.025em',
                 }}
               >
-                Setting the Standard for Trustworthy Diagnostic AI
+                Working Toward Trustworthy Diagnostic AI
               </Typography>
               <Box className="supreme-investor-hero__description-section">
                 <Typography
@@ -3344,8 +3335,7 @@ const LandingPage: React.FC = () => {
                     mb: { xs: 3, md: 4 },
                   }}
                 >
-                  Explainable outputs. Quantified uncertainty. Fairness monitoring planned. 
-                  We are building the diagnostic AI infrastructure that clinicians verify — and patients trust.
+                  Explainable outputs. Experimental uncertainty estimates. Fairness monitoring planned. We are exploring what diagnostic AI that clinicians can inspect might look like.
                 </Typography>
                 <Box className="supreme-investor-hero__cta-section">
                   <Button
@@ -3382,7 +3372,7 @@ const LandingPage: React.FC = () => {
                       },
                     }}
                   >
-                    View Publications & Validation
+                    View Research & Evaluation
                   </Button>
                 </Box>
               </Box>
@@ -3429,8 +3419,7 @@ const LandingPage: React.FC = () => {
                   maxWidth: '600px',
                 }}
               >
-                Research publications, clinical validation studies, and platform milestones. 
-                Documenting the advancement of transparent, evidence-based diagnostic AI.
+                Write-ups of the research, the evaluation results and the limitations found along the way — a candid record of building transparent diagnostic AI.
               </Typography>
             </Box>
             <Stack direction="row" spacing={2}>
@@ -3991,7 +3980,7 @@ const LandingPage: React.FC = () => {
                 letterSpacing: '-0.03em',
               }}
             >
-              AI That Substantiates Every Finding.
+              AI That Shows Its Work.
             </Typography>
             <Typography
               variant="h2"
@@ -4004,7 +3993,7 @@ const LandingPage: React.FC = () => {
                 letterSpacing: '-0.03em',
               }}
             >
-              Decisions You Can Verify.
+              Evidence You Can Examine.
             </Typography>
             <Typography
               variant="h5"
@@ -4020,8 +4009,7 @@ const LandingPage: React.FC = () => {
                 mx: 'auto',
               }}
             >
-              Upload. Analyze. Verify. Report. — A complete diagnostic workflow, from image 
-              acquisition to clinical decision support, in a single integrated platform.
+              Upload. Analyze. Inspect. Report. — A research workflow that takes a mammogram from upload to a structured report in one place. Not for clinical use.
             </Typography>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2.5} justifyContent="center">
               <Button

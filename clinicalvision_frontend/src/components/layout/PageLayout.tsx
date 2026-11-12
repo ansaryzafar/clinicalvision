@@ -93,7 +93,7 @@ const footerLinks = {
 const solutionsClinicalItems = [
   {
     label: 'Breast Cancer Detection',
-    description: 'AI-powered mammography analysis',
+    description: 'Explainable mammography analysis',
     path: ROUTES.SOLUTION_BREAST_CANCER,
     status: 'live' as const,
     icon: <BiotechOutlined sx={{ fontSize: 22, color: lunitColors.teal }} />,
@@ -124,7 +124,7 @@ const solutionsClinicalItems = [
 const solutionsPlatformItems = [
   {
     label: 'AI Analysis Platform',
-    description: 'End-to-end clinical workflow',
+    description: 'A research workflow, start to finish',
     path: ROUTES.FEATURES,
   },
   {
@@ -147,9 +147,9 @@ const navItems: NavItem[] = [
     label: 'Technology',
     type: 'dropdown',
     children: [
-      { label: 'AI Models & Architecture', description: 'Core technology deep-dive', path: ROUTES.TECHNOLOGY, icon: <ArchitectureOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
-      { label: 'Research & Publications', description: 'Peer-reviewed work', path: ROUTES.RESEARCH, icon: <ScienceOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
-      { label: 'Security & Compliance', description: 'Trust & regulatory', path: ROUTES.SECURITY, icon: <SecurityOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
+      { label: 'AI Models & Architecture', description: 'How the models work', path: ROUTES.TECHNOLOGY, icon: <ArchitectureOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
+      { label: 'Research & Evaluation', description: 'Research notes and evaluation results', path: ROUTES.RESEARCH, icon: <ScienceOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
+      { label: 'Security & Compliance', description: 'Safeguards and regulatory status', path: ROUTES.SECURITY, icon: <SecurityOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
     ],
   },
   {
@@ -157,8 +157,8 @@ const navItems: NavItem[] = [
     type: 'dropdown',
     children: [
       { label: 'Documentation', description: 'Guides & references', path: ROUTES.DOCUMENTATION, icon: <DescriptionOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
-      { label: 'Developer API', description: 'Integration tools', path: ROUTES.API, icon: <CodeOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
-      { label: 'Blog & Insights', description: 'Thought leadership', path: ROUTES.BLOG, icon: <ArticleOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
+      { label: 'Developer API', description: 'Explore the inference endpoints', path: ROUTES.API, icon: <CodeOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
+      { label: 'Blog & Insights', description: 'Articles and research notes', path: ROUTES.BLOG, icon: <ArticleOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
       { label: 'Support Center', description: 'Help & FAQs', path: ROUTES.SUPPORT, icon: <SupportAgentOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
     ],
   },
@@ -166,10 +166,10 @@ const navItems: NavItem[] = [
     label: 'Company',
     type: 'dropdown',
     children: [
-      { label: 'About ClinicalVision', description: 'Our mission & team', path: ROUTES.ABOUT, icon: <BusinessOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
-      { label: 'Careers', description: 'Join us', path: ROUTES.CAREERS, icon: <WorkOutlineOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
+      { label: 'About ClinicalVision', description: 'The project and its mission', path: ROUTES.ABOUT, icon: <BusinessOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
+      { label: 'Careers', description: 'Current opportunities', path: ROUTES.CAREERS, icon: <WorkOutlineOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
       { label: 'Partners', description: 'Collaborate with us', path: ROUTES.PARTNERS, icon: <HandshakeOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
-      { label: 'Events', description: 'Conferences & webinars', path: ROUTES.EVENTS, icon: <EventOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
+      { label: 'Events', description: 'Talks and announcements', path: ROUTES.EVENTS, icon: <EventOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
       { label: 'Contact Us', description: 'Get in touch', path: ROUTES.CONTACT, icon: <ContactMailOutlined sx={{ fontSize: 20, color: lunitColors.grey }} /> },
     ],
   },
@@ -524,7 +524,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ variant = 'light' }) => 
                             }}
                           >
                             <Typography sx={{ fontFamily: '"Lexend", sans-serif', fontSize: '13px', fontWeight: 500, color: lunitColors.tealDarker }}>
-                              Request a personalized demo →
+                              Explore the research demo →
                             </Typography>
                           </Box>
                           </Paper>
@@ -942,8 +942,8 @@ export const PageFooter: React.FC = () => {
                 maxWidth: '320px',
               }}
             >
-              AI-powered cancer detection platform empowering healthcare professionals
-              with intelligent diagnostic tools.
+              Explainable breast-imaging AI, built as a research prototype.
+              Not a medical device.
             </Typography>
           </Box>
 

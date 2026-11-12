@@ -30,19 +30,19 @@ const corePillars = [
     icon: <Visibility sx={{ fontSize: 32 }} />,
     title: 'Explainable AI',
     description:
-      'Gradient-weighted activation maps and attention overlays show exactly which regions of an image drive each prediction — making AI reasoning transparent to radiologists, pathologists, and referring physicians alike.',
+      'Gradient-weighted activation maps and attention overlays highlight the image regions that most influenced each prediction, giving reviewers a visual starting point for inspection. They are an approximation and have not been clinically validated.',
   },
   {
     icon: <Layers sx={{ fontSize: 32 }} />,
     title: 'Dual-View Fusion',
     description:
-      'Our architecture simultaneously processes complementary imaging views (e.g., CC and MLO mammograms), capturing cross-view correlations that single-view models miss.',
+      'The prototype can analyse complementary mammography views (CC and MLO) together, exploring whether combining views adds useful information. Its benefit has not been independently evaluated.',
   },
   {
     icon: <Architecture sx={{ fontSize: 32 }} />,
-    title: 'Transfer Learning at Scale',
+    title: 'Transfer Learning',
     description:
-      'Models pre-trained on large-scale medical imaging datasets are fine-tuned for each clinical task, reducing data requirements while maximising diagnostic accuracy.',
+      'Models are initialised from pre-trained weights and fine-tuned on CBIS-DDSM, a practical way to make the most of a modest public dataset.',
   },
   {
     icon: <Speed sx={{ fontSize: 32 }} />,
@@ -61,15 +61,15 @@ const corePillars = [
 const architectureHighlights = [
   {
     icon: <Hub sx={{ fontSize: 28 }} />,
-    title: 'End-to-End Pipeline',
+    title: 'Connected Pipeline',
     description:
-      'From DICOM ingestion through pre-processing, inference, uncertainty estimation, and structured reporting — a single seamless workflow with no manual handoffs.',
+      'From DICOM ingestion through pre-processing, inference, uncertainty estimation and structured reporting, the prototype runs as one connected workflow.',
   },
   {
     icon: <AutoGraph sx={{ fontSize: 28 }} />,
-    title: 'Continuous Learning',
+    title: 'Learning from Feedback (Future Idea)',
     description:
-      'Feedback loops allow clinician-verified outcomes to refine model performance over time, creating a system that improves with every case reviewed.',
+      'The model is fixed once trained. Learning from clinician feedback is an idea for the future; no feedback loop exists today and no clinician feedback has been collected.',
   },
 ];
 
@@ -79,7 +79,7 @@ const platformCapabilities = [
     icon: <Visibility sx={{ fontSize: 28 }} />,
     title: 'Explainable AI',
     description:
-      'GradCAM attention maps and activation overlays visualise exactly which image regions drive each prediction. Clinicians see the evidence behind every finding — making AI reasoning transparent and verifiable.',
+      'GradCAM attention maps and activation overlays visualise the image regions that most influenced each prediction, putting some of the evidence behind a finding on screen for inspection.',
   },
   {
     id: 'uncertainty-quantification',
@@ -93,7 +93,7 @@ const platformCapabilities = [
     icon: <Gradient sx={{ fontSize: 28 }} />,
     title: 'Integrated Gradients Analysis',
     description:
-      'Pixel-level attribution maps reveal the contribution of each input region to the model\'s output. Unlike simple saliency maps, integrated gradients satisfy theoretical axioms that guarantee faithful explanations.',
+      'Pixel-level attribution maps estimate the contribution of each input region to the model\'s output. The method has well-studied theoretical properties, though faithfulness on this model has not been verified.',
   },
   {
     id: 'calibrated-confidence',
@@ -107,7 +107,7 @@ const platformCapabilities = [
     icon: <Balance sx={{ fontSize: 28 }} />,
     title: 'Fairness Monitoring',
     description:
-      'Continuous demographic parity tracking across age, ethnicity, and density subgroups. Sensitivity parity, specificity parity, and AUC parity metrics ensure equitable diagnostic performance for all patient populations.',
+      'Planned: tracking sensitivity, specificity and AUC parity across subgroups such as age and breast density. Subgroup performance has not been measured, and the current dashboard shows demonstration data.',
   },
 ];
 
@@ -132,7 +132,7 @@ const TechnologyPage: React.FC = () => {
   return (
     <PageLayout headerVariant="dark">
       <SEOHead
-        title="Technology — AI Architecture Built for Clinical Trust"
+        title="Technology — Explainable AI Architecture"
         description="Explore ClinicalVision's AI technology: Monte Carlo dropout uncertainty quantification, Grad-CAM explainability, dual-view CC/MLO fusion, transfer learning, and bias-aware training."
         keywords={['medical AI architecture', 'uncertainty quantification', 'Monte Carlo dropout', 'Grad-CAM radiology', 'dual-view mammography fusion', 'explainable AI technology']}
         canonicalPath="/technology"
@@ -147,12 +147,12 @@ const TechnologyPage: React.FC = () => {
         label="Technology"
         title={
           <>
-            AI Architecture Built
+            AI Architecture Designed
             <br />
             for <span style={{ color: lunitColors.teal }}>Clinical Trust</span>
           </>
         }
-        subtitle="Research-grade deep learning meets clinical-grade reliability. Every layer of our technology is designed for transparency, accuracy, and real-world clinical integration."
+        subtitle="Research-grade deep learning with transparency at every layer — explanations, uncertainty and honest limitations, all in view."
       />
 
       {/* Core Technology Pillars */}
@@ -179,7 +179,7 @@ const TechnologyPage: React.FC = () => {
               color: lunitColors.headingColor,
             }}
           >
-            Built on Peer-Reviewed Science
+            Built on Established, Published Methods
           </Typography>
         </Box>
 
@@ -269,7 +269,7 @@ const TechnologyPage: React.FC = () => {
                 mb: 3,
               }}
             >
-              From Image to Insight — One Seamless Workflow
+              From Image to Insight — One Connected Workflow
             </Typography>
             <Typography
               sx={{
@@ -281,10 +281,7 @@ const TechnologyPage: React.FC = () => {
                 mb: 4,
               }}
             >
-              Our platform handles the entire clinical imaging workflow: DICOM ingestion,
-              intelligent pre-processing, multi-model inference with uncertainty estimates
-              scores, attention-based explainability overlays, and structured reporting —
-              all within a single, auditable pipeline.
+              The prototype covers the path from image to report: DICOM ingestion, pre-processing, multi-model inference with an experimental uncertainty estimate, attention-based explainability overlays and structured reporting, all in a single pipeline.
             </Typography>
             <Button
               variant="contained"
@@ -304,7 +301,7 @@ const TechnologyPage: React.FC = () => {
                 },
               }}
             >
-              View Research & Publications
+              View Research & Evaluation
             </Button>
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
@@ -382,29 +379,29 @@ const TechnologyPage: React.FC = () => {
               color: lunitColors.headingColor,
             }}
           >
-            Why Clinicians Trust Our Technology
+            What the Technology Is Designed to Offer
           </Typography>
         </Box>
 
         <Grid container spacing={4}>
           {[
             {
-              title: 'Published & Peer-Reviewed',
+              title: 'Open About the Evidence',
               description:
-                'Our models are validated through rigorous peer-reviewed research and published in leading medical imaging journals — not just internal benchmarks.',
+                'Results come from a held-out split of the public CBIS-DDSM dataset (AUC 0.80). They have not been peer-reviewed or externally validated, and the limitations are written up in the model card and blog.',
             },
             {
-              title: 'Confidence You Can Act On',
+              title: 'Confidence in Context',
               description:
-                'Every prediction comes with a confidence score. Clinicians know when the AI is certain and when a case deserves closer human attention.',
+                'Every prediction comes with a confidence score and an experimental uncertainty estimate. These are research signals, not clinical guidance, and the scores are not yet calibrated.',
             },
             {
-              title: 'Transparent to All Levels',
+              title: 'Explanations for Every Reader',
               description:
-                'From attending radiologists to residents and referring GPs, our explainability layers are designed to be understandable without requiring AI expertise.',
+                'The explainability views aim to be understandable without AI expertise. They have not yet been tested with radiologists or other clinicians.',
             },
             {
-              title: 'Not Regulated',
+              title: 'Clear About Regulatory Status',
               description:
                 'Not a medical device. No regulatory submission has been made and the software has not been developed under a certified quality management system.',
             },

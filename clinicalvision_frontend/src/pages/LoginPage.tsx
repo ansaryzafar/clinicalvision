@@ -39,8 +39,8 @@ import { ThemeProvider } from '@mui/material';
 /** Value propositions shown on the brand panel */
 const VALUE_PROPS = [
   { text: 'Explainable Research Baseline', sub: 'Heatmaps and uncertainty estimates; not yet clinically validated' },
-  { text: 'Designed for Compliance', sub: 'Built toward clinical regulatory standards' },
-  { text: 'Privacy & Security First', sub: 'Data protection by design' },
+  { text: 'Clear About Regulatory Status', sub: 'A research prototype, not a medical device' },
+  { text: 'Security Basics in Place', sub: 'HTTPS, hashed passwords and role-based access' },
   { text: 'Transparent Reporting', sub: 'Performance published with its limitations' },
 ];
 
@@ -202,7 +202,7 @@ export const LoginPage: React.FC = () => {
               letterSpacing: '-0.02em',
             }}
           >
-            AI-Powered Breast Cancer Detection
+            Explainable Breast Imaging AI
           </Typography>
 
           <Typography
@@ -216,7 +216,7 @@ export const LoginPage: React.FC = () => {
               maxWidth: 440,
             }}
           >
-            Advanced diagnostic intelligence that augments clinical decision-making with state-of-the-art deep learning.
+            A research prototype that pairs deep learning with visual explanations, so you can see what the model is responding to.
           </Typography>
 
           {/* Value propositions */}
@@ -256,7 +256,7 @@ export const LoginPage: React.FC = () => {
               color: alpha(lunitColors.white, 0.45),
               lineHeight: 1.6,
             }}>
-              Designed for healthcare professionals seeking smarter diagnostic workflows.
+              Made for researchers and curious clinicians exploring explainable AI. Not for clinical use.
             </Typography>
           </Box>
         </Box>

@@ -112,7 +112,7 @@ const FEATURE_HIGHLIGHTS = [
   {
     icon: <Speed sx={{ fontSize: 22 }} />,
     title: 'Research Demo Analysis',
-    desc: 'Try a research-grade deep learning model with heatmap explanations.',
+    desc: 'Try a deep learning model and see its heatmap explanations first-hand.',
   },
   {
     icon: <Security sx={{ fontSize: 22 }} />,
@@ -121,7 +121,7 @@ const FEATURE_HIGHLIGHTS = [
   },
   {
     icon: <AutoAwesome sx={{ fontSize: 22 }} />,
-    title: 'Transparent Performance Reporting',
+    title: 'Honest Performance Reporting',
     desc: 'Research-baseline results reported with their limitations; not yet clinically validated.',
   },
 ];
@@ -709,7 +709,7 @@ export const RegisterPage: React.FC = () => {
             mb: 1.5,
             letterSpacing: '-0.02em',
           }}>
-            Join the Future of Medical Imaging
+            Explore Explainable Medical Imaging AI
           </Typography>
 
           <Typography sx={{
@@ -721,7 +721,7 @@ export const RegisterPage: React.FC = () => {
             mb: 5,
             maxWidth: 400,
           }}>
-            Create your account and get access to AI-powered decision-support tools for breast imaging research.
+            Create an account to try the research demo and see how heatmap explanations and uncertainty estimates work for breast imaging.
           </Typography>
 
           {/* Feature highlights */}
@@ -774,7 +774,7 @@ export const RegisterPage: React.FC = () => {
               color: alpha(lunitColors.white, 0.45),
               lineHeight: 1.6,
             }}>
-              Built for radiologists and clinical teams advancing diagnostic excellence.
+              Made for researchers and curious clinicians exploring explainable AI. Not for clinical use.
             </Typography>
           </Box>
         </Box>
@@ -864,7 +864,7 @@ export const RegisterPage: React.FC = () => {
             color: lunitColors.darkGrey,
             mb: 3.5,
           }}>
-            Join the next generation of AI-powered medical imaging
+            Explore explainable AI for medical imaging
           </Typography>
 
           {/* Branded Stepper */}
