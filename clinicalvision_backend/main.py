@@ -14,7 +14,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, suppress
+import asyncio
 from slowapi.errors import RateLimitExceeded
 
 from app.core.config import settings
@@ -46,9 +47,22 @@ async def lifespan(app: FastAPI):
     os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
     logger.info(f"Upload directory: {settings.UPLOAD_DIR}")
     
+    # Contact-form delivery: retry any undelivered notification until it is sent
+    from app.services import contact_service
+    if not contact_service.smtp_is_configured():
+        logger.warning(
+            "Contact form email is NOT configured (EMAIL_ENABLED/SMTP_*). "
+            "Messages are stored in the contact_messages table and will be "
+            "delivered once SMTP is configured."
+        )
+    contact_retry_task = asyncio.create_task(contact_service.retry_worker())
+    
     yield
     
     # Shutdown
+    contact_retry_task.cancel()
+    with suppress(asyncio.CancelledError):
+        await contact_retry_task
     logger.info("Shutting down application")
 
 

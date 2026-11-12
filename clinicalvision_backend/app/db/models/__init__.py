@@ -11,6 +11,7 @@ from app.db.models.image import Image, ViewType, Laterality, ImageStatus
 from app.db.models.analysis import Analysis, PredictionClass, BIRADSCategory, AnalysisStatus
 from app.db.models.feedback import Feedback, FeedbackType, DiagnosisType, BIRADSAssessment
 from app.db.models.audit_log import AuditLog, AuditAction, ResourceType
+from app.db.models.contact_message import ContactMessage, ContactKind, DeliveryStatus
 
 # New models for industry standards compliance
 from app.db.models.dicom_metadata import (
@@ -107,4 +108,9 @@ __all__ = [
     "CaseWorkflowStep",
     "STEP_ORDER",
     "STEP_INDEX",
+
+    # Public contact / demo-request inbox
+    "ContactMessage",
+    "ContactKind",
+    "DeliveryStatus",
 ]

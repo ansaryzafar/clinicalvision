@@ -126,6 +126,12 @@ class Settings(BaseSettings):
     
     # Logging
     LOG_LEVEL: str = "INFO"
+
+    # Public contact / demo-request forms
+    # Comma-separated list of inboxes that receive a notification for every message.
+    # Messages are always stored in the database first; email is retried until delivered.
+    CONTACT_NOTIFY_EMAIL: str = "hello@clinicalvision.ai"
+    CONTACT_RETRY_INTERVAL_SECONDS: int = 60
     
     # CORS Configuration (can be overridden via CORS_ORIGINS env var)
     CORS_ORIGINS: Optional[str] = None  # Comma-separated list of allowed origins

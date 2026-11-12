@@ -37,6 +37,33 @@ def get_limiter() -> Limiter:
     return limiter
 
 
+def client_ip_key(request: Request) -> str:
+    """
+    Rate-limit key that identifies the real client behind our reverse proxy.
+
+    The API sits behind nginx, so the TCP peer is the proxy (a private/loopback
+    address) and would put every visitor in the same bucket. nginx sets
+    X-Real-IP from the connecting client address, which a client cannot
+    forge. The header is therefore only honoured when the TCP peer is a
+    private or loopback address; direct public connections use their own IP.
+    """
+    import ipaddress
+
+    peer = request.client.host if request.client else "unknown"
+    try:
+        peer_ip = ipaddress.ip_address(peer)
+    except ValueError:
+        return peer
+
+    if peer_ip.is_private or peer_ip.is_loopback:
+        real = request.headers.get("x-real-ip", "").strip()
+        try:
+            return str(ipaddress.ip_address(real))
+        except ValueError:
+            pass
+    return peer
+
+
 # Rate limit configurations for different endpoints
 RATE_LIMITS = {
     # Authentication endpoints - strict limits to prevent brute force
@@ -52,6 +79,12 @@ RATE_LIMITS = {
     
     # General API - generous limits
     "api": "200/minute",
+
+    # Public contact / demo-request forms - unauthenticated, so strict.
+    # Per-IP limits (semicolon = all must pass) plus a global daily ceiling
+    # so a distributed bot cannot flood the inbox.
+    "contact": "5/hour;20/day",
+    "contact_global": "300/day",
 }
 
 
