@@ -1559,7 +1559,7 @@ const LandingPage: React.FC = () => {
                       mb: '12px',
                     }}
                   >
-                    A bare prediction is hard to trust, so ClinicalVision also shows its work — Grad-CAM heatmaps that highlight the image regions the model relied on most, letting a reviewer judge whether it looked in a sensible place.
+                    Most AI hands over a conclusion. ClinicalVision shows its work — attention heatmaps that highlight the image regions that most influenced each prediction.
                   </Typography>
                   <Typography
                     component="p"
@@ -1572,7 +1572,7 @@ const LandingPage: React.FC = () => {
                       mb: '12px',
                     }}
                   >
-                    Every result also carries a confidence score and an experimental uncertainty estimate, and findings are summarised in a structured report. These are research-stage outputs: the heatmaps have not yet been checked against radiologist annotations, and the uncertainty estimate is only a modest signal of when the model may be wrong. Fitting into real radiology workflows is a goal for the future.
+                    Confidence scores and an experimental uncertainty estimate accompany every result, and structured reports summarise the findings. Fitting into real radiology workflows is a goal for the future.
                   </Typography>
                   <Typography
                     component="p"
@@ -1585,7 +1585,7 @@ const LandingPage: React.FC = () => {
                       mb: 0,
                     }}
                   >
-                    A research prototype, built to support clinical expertise — never to replace it.
+                    Built to support clinical expertise — never to replace it.
                   </Typography>
                 </Box>
 

@@ -390,18 +390,118 @@ const AboutPage: React.FC = () => {
         <Typography
           sx={{
             fontFamily: lunitTypography.fontFamilyBody,
-            fontSize: '17px',
+            fontSize: '18px',
+            fontWeight: 400,
+            color: lunitColors.headingColor,
+            textAlign: 'center',
+            mb: 0.5,
+          }}
+        >
+          Zafar Ansary
+        </Typography>
+        <Typography
+          sx={{
+            fontFamily: lunitTypography.fontFamilyBody,
+            fontSize: '15px',
             fontWeight: 300,
             color: lunitColors.text,
             textAlign: 'center',
-            maxWidth: 650,
-            mx: 'auto',
-            lineHeight: 1.8,
+            mb: 3,
           }}
         >
-          ClinicalVision is a solo research project built by Zafar Ansary. There is no
-          company team, clinical advisory board or partner organisation.
+          AI &amp; Machine Learning Engineer · BSc Computer Science, AI &amp; Machine Learning,
+          University of London
         </Typography>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 1, mb: 5 }}>
+          {[
+            'Machine Learning',
+            'Deep Learning',
+            'Generative AI',
+            'Data Science',
+            'Explainable AI',
+            'ML Engineering',
+            'Healthcare AI',
+          ].map((area) => (
+            <Chip
+              key={area}
+              label={area}
+              variant="outlined"
+              size="small"
+              sx={{
+                fontFamily: lunitTypography.fontFamilyBody,
+                fontWeight: 300,
+                color: lunitColors.text,
+                borderColor: alpha(lunitColors.teal, 0.5),
+              }}
+            />
+          ))}
+        </Box>
+        <Box sx={{ maxWidth: 720, mx: 'auto' }}>
+          {[
+            'ClinicalVision is a solo research project built by Zafar Ansary. His work spans machine learning, deep learning, generative AI, data science, explainable AI and end-to-end ML engineering, with a particular interest in applying AI to complex, high-impact domains such as healthcare.',
+            'He treats AI as an engineering problem rather than only a modelling exercise, working through the full lifecycle:',
+          ].map((text) => (
+            <Typography
+              key={text}
+              sx={{
+                fontFamily: lunitTypography.fontFamilyBody,
+                fontSize: '17px',
+                fontWeight: 300,
+                color: lunitColors.text,
+                lineHeight: 1.8,
+                mb: 2.5,
+              }}
+            >
+              {text}
+            </Typography>
+          ))}
+          <Typography
+            sx={{
+              fontFamily: lunitTypography.fontFamilyBody,
+              fontSize: '15px',
+              fontWeight: 400,
+              color: lunitColors.teal,
+              lineHeight: 1.9,
+              mb: 2.5,
+              textAlign: 'center',
+            }}
+          >
+            Problem definition → Data → Feature engineering → Model development → Evaluation →
+            Explainability → Validation → Deployment → Monitoring
+          </Typography>
+          <Typography
+            sx={{
+              fontFamily: lunitTypography.fontFamilyBody,
+              fontSize: '17px',
+              fontWeight: 300,
+              color: lunitColors.text,
+              lineHeight: 1.8,
+              mb: 2.5,
+            }}
+          >
+            ClinicalVision is where those interests meet: deep learning for medical imaging,
+            alongside explainability, uncertainty estimation, evaluation beyond accuracy, workflow
+            orchestration, auditability and responsible-AI considerations. It explores the gap
+            between a model that performs well in a notebook and an AI system that can be trusted,
+            fitted into a workflow and maintained, which depends as much on understanding the
+            clinical problem, the data, human interaction and the operating environment as on the
+            choice of model.
+          </Typography>
+          <Typography
+            sx={{
+              fontFamily: lunitTypography.fontFamilyBody,
+              fontSize: '15px',
+              fontWeight: 300,
+              color: alpha(lunitColors.text, 0.8),
+              lineHeight: 1.8,
+              textAlign: 'center',
+            }}
+          >
+            ClinicalVision AI is an independent research prototype with plenty of room to grow, and
+            conversations are welcome with clinicians, researchers and organisations who would like
+            to collaborate, evaluate it or help shape what it becomes.
+          </Typography>
+        </Box>
       </PageSection>
 
       {/* Performance Hint Section - Subtle */}
